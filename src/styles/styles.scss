@@ -1,10 +1,10 @@
 // Main SCSS entry point
 // Import partials and components
 
-// Base styles
+// Base styles (variables must come first)
+@import 'base/variables';
 @import 'base/reset';
 @import 'base/typography';
-@import 'base/variables';
 
 // Components
 @import 'components/header';
