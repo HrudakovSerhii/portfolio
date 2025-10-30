@@ -56,3 +56,35 @@ package.json, .gitignore
 - Title matches completed task/branch name
 - Include overview of major components, logic, and architectural changes
 - List key files modified with brief description of changes
+
+## Merge Request Template
+
+```
+### Overview
+[Brief description of what was accomplished and the main purpose]
+
+### Key Features Implemented
+- [Feature 1 with brief description]
+- [Feature 2 with brief description]
+- [Feature 3 with brief description]
+
+### Technical Stack
+- [Technology 1] - [Purpose/role]
+- [Technology 2] - [Purpose/role]
+- [Technology 3] - [Purpose/role]
+
+### Files Added/Modified
+- [file/path] - [Brief description of changes]
+- [file/path] - [Brief description of changes]
+- [directory/] - [Brief description of contents]
+
+### Build System
+```
+[Command examples with descriptions]
+```
+
+### Quality Assurance
+- ✅ [Quality check 1]
+- ✅ [Quality check 2]
+- ✅ [Quality check 3]
+```
