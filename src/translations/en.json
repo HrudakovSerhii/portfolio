@@ -4,15 +4,11 @@
       "home": { "text": "Home" },
       "about": { "text": "About" },
       "projects": { "text": "Projects" },
-      "contact": { "text": "Contact" },
-      "toggleMenu": { "ariaLabel": "Toggle navigation menu" }
+      "contact": { "text": "Contact" }
     },
     "footer": {
       "copyright": { "text": "© 2025 Serhii Portfolio" },
       "rights": { "text": "All rights reserved" }
-    },
-    "accessibility": {
-      "skipToMain": { "text": "Skip to main content" }
     }
   },
   "home": {
