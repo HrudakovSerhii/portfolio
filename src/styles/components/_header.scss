@@ -1,0 +1,13 @@
+// Header component styles
+
+.header {
+    background-color: $background-color;
+    border-bottom: 1px solid lighten($dark-gray, 30%);
+    padding: $spacing-md 0;
+    
+    &__title {
+        font-size: $font-size-xl;
+        color: $primary-color;
+        margin-bottom: 0;
+    }
+}
