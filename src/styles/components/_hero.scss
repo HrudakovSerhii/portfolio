@@ -1,0 +1,19 @@
+// Hero section styles
+
+.hero {
+    text-align: center;
+    padding: $spacing-xxl $spacing-md;
+    background-color: $light-gray;
+    
+    &__title {
+        color: $primary-color;
+        margin-bottom: $spacing-lg;
+    }
+    
+    &__description {
+        color: $dark-gray;
+        font-size: $font-size-large;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
