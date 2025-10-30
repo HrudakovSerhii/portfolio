@@ -6,8 +6,6 @@ inclusion: always
 
 ## Commit Message Format
 
-When generating commit messages, follow this structured format:
-
 ```
 <type>: <subject>
 - <description line 1>
@@ -22,25 +20,22 @@ When generating commit messages, follow this structured format:
 - **docs**: Documentation changes
 - **style**: Code style changes (formatting, no logic changes)
 - **refactor**: Code refactoring without feature changes
-- **test**: Adding or updating tests
 - **chore**: Build process, dependency updates, or maintenance tasks
 
-## Rules
+## Commit Rules
 
-1. **Branch verification**: Always ask for branch name if not provided
-2. **Subject line**: Keep under 50 characters, use imperative mood
-3. **Descriptions**: Maximum 2 sentences per bullet point, focus on "what" and "why"
-4. **File listing**: Include all modified files at the end
-5. **Scope clarity**: Ensure commit scope matches the actual changes
+1. **Subject**: Under 50 characters, imperative mood
+2. **Descriptions**: Max 2 sentences per bullet, focus on "what" and "why"
+3. **Files**: List all modified files at end
+4. **Scope**: Ensure commit scope matches actual changes
+5. **Atomic**: Each commit should be a complete, independent unit of work
 
-## Template Structure
+## Project-Specific Patterns
 
-```
-<type>: <concise subject in imperative mood>
-- <what was changed and why - max 2 sentences>
-- <additional context if needed - max 2 sentences>
-<file1.ext>, <file2.ext>, <folder/file3.ext>
-```
+- Branch names match task files: `phase1-project-foundation` → `tasks/phase1-project-foundation.md`
+- SCSS files use underscore prefix for partials: `_navigation.scss`
+- Translation keys follow dot notation: `home.header.title.text`
+- Static site structure: `src/` → `dist/` build output
 
 ## Examples
 
@@ -50,8 +45,14 @@ feat: Add responsive navigation menu
 - Added SCSS breakpoints for tablet and desktop layouts
 src/styles/_navigation.scss, src/scripts/navigation.js
 
-docs: Update project setup instructions
-- Added Node.js version requirements and installation steps
-- Included troubleshooting section for common build issues
-README.md, package.json
+chore: Setup build system with SCSS compilation
+- Added npm scripts for watch mode and production builds
+- Configured Sass compiler with minification for dist output
+package.json, .gitignore
 ```
+
+## Merge Request Guidelines
+
+- Title matches completed task/branch name
+- Include overview of major components, logic, and architectural changes
+- List key files modified with brief description of changes
