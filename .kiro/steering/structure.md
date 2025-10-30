@@ -46,3 +46,16 @@ Examples:
 - Minified JavaScript
 - Optimized assets
 - Production-ready HTML files
+
+### Performance Focus:
+
+- Prioritize vanilla JavaScript over frameworks
+- Optimize for static hosting and fast loading
+- Minimize dependencies and bundle size
+
+## Quality Assurance
+
+- Always verify syntax and functionality before completing tasks
+- Test responsive design considerations
+- Ensure accessibility compliance
+- Validate translation key consistency across language files
