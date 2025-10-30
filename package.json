@@ -4,7 +4,10 @@
   "description": "A fast-loading static portfolio website built with vanilla JS, HTML, and SCSS",
   "main": "src/scripts/app.js",
   "scripts": {
-    "build": "sass src/styles/styles.scss dist/styles.css --style=compressed",
+    "build": "npm run build:clean && npm run build:styles && npm run build:copy",
+    "build:clean": "rm -rf dist && mkdir -p dist",
+    "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
+    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/",
     "watch": "sass src/styles/styles.scss dist/styles.css --watch",
     "serve": "npx live-server dist",
     "dev": "npm run watch & npm run serve"
