@@ -1,4 +1,21 @@
 {
+  "name": "portfolio-website",
+  "version": "1.0.0",
+  "description": "A fast-loading static portfolio website built with vanilla JS, HTML, and SCSS",
+  "main": "src/scripts/app.js",
+  "scripts": {
+    "build": "sass src/styles/styles.scss dist/styles.css --style=compressed",
+    "watch": "sass src/styles/styles.scss dist/styles.css --watch",
+    "serve": "npx live-server dist",
+    "dev": "npm run watch & npm run serve"
+  },
+  "keywords": ["portfolio", "static-site", "scss", "vanilla-js"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "sass": "^1.69.5",
+    "live-server": "^1.2.2"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.2"
   }
