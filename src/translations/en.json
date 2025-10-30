@@ -1,20 +1,106 @@
 {
-  "home": {
-    "header": {
-      "title": {
-        "text": "Portfolio"
-      }
-    },
-    "hero": {
-      "title": {
-        "text": "Welcome to My Portfolio"
-      },
-      "description": {
-        "text": "Professional showcase of work and skills"
-      }
+  "global": {
+    "navigation": {
+      "home": { "text": "Home" },
+      "about": { "text": "About" },
+      "projects": { "text": "Projects" },
+      "contact": { "text": "Contact" }
     },
     "footer": {
-      "text": "© 2024 Portfolio"
+      "copyright": { "text": "© 2025 Serhii Portfolio" },
+      "rights": { "text": "All rights reserved" }
+    }
+  },
+  "home": {
+    "hero": {
+      "title": { "text": "Full Stack Developer" },
+      "subtitle": { "text": "I am frontend developer, full stack engineer, AI enthusiast, optimisation researcher, ecommerce specialist, storyteller, process builder, task owner and team leader" },
+      "cta": { "text": "View My Work" }
+    },
+    "skills": {
+      "title": { "text": "Skills & Technologies" },
+      "frontend": { "text": "Frontend Development" },
+      "backend": { "text": "Backend Development" },
+      "tools": { "text": "Development Tools" }
+    },
+    "featured": {
+      "title": { "text": "Featured Projects" },
+      "viewAll": { "text": "View All Projects" }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": { "text": "About Me" },
+      "subtitle": { "text": "Passionate developer with a focus on user experience" }
+    },
+    "bio": {
+      "title": { "text": "Background" },
+      "content": { "text": "I'm a dedicated full-stack developer with expertise in modern web technologies. I enjoy creating efficient, scalable solutions that provide excellent user experiences." }
+    },
+    "experience": {
+      "title": { "text": "Experience" },
+      "years": { "text": "10+ Years of Experience" }
+    },
+    "skills": {
+      "title": { "text": "Technical Skills" },
+      "frontend": { "text": "Frontend Technologies" },
+      "backend": { "text": "Backend Technologies" },
+      "tools": { "text": "Tools & Platforms" }
+    }
+  },
+  "projects": {
+    "hero": {
+      "title": { "text": "My Projects" },
+      "subtitle": { "text": "A showcase of my recent work and experiments" }
+    },
+    "filter": {
+      "all": { "text": "All Projects" },
+      "web": { "text": "Web Applications" },
+      "mobile": { "text": "Mobile Apps" },
+      "tools": { "text": "Tools & Utilities" }
+    },
+    "project": {
+      "viewLive": { "text": "View Live" },
+      "viewCode": { "text": "View Code" },
+      "technologies": { "text": "Technologies Used" }
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": { "text": "Get In Touch" },
+      "subtitle": { "text": "Let's discuss your next project" }
+    },
+    "form": {
+      "name": { "label": "Name", "placeholder": "Your name" },
+      "email": { "label": "Email", "placeholder": "hrudakovserhii@gmail.com" },
+      "message": { "label": "Message", "placeholder": "Tell me about your project..." },
+      "submit": { "text": "Send Message" },
+      "success": { "text": "Message sent successfully!" },
+      "error": { "text": "Please fill in all fields" }
+    },
+    "info": {
+      "title": { "text": "Contact Information" },
+      "email": { "text": "Email" },
+      "location": { "text": "Location" },
+      "availability": { "text": "Available for freelance work" }
+    }
+  },
+  "meta": {
+    "home": {
+      "title": { "text": "Serhii Hrudakov - Full Stack Developer Portfolio" },
+      "description": { "text": "Professional portfolio showcasing web development projects and skills of Serhii Hrudakov" }
+    },
+    "about": {
+      "title": { "text": "About - Serhii Hrudakov Developer" },
+      "description": { "text": "Learn about my background, experience, and technical skills" }
+    },
+    "projects": {
+      "title": { "text": "Projects - Serhii Hrudakov Portfolio" },
+      "description": { "text": "Explore my latest web development projects and case studies" }
+    },
+    "contact": {
+      "title": { "text": "Contact - Serhii Hrudakov Developer" },
+      "description": { "text": "Get in touch for your next web development project" }
     }
   }
 }
