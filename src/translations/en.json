@@ -1,0 +1,20 @@
+{
+  "home": {
+    "header": {
+      "title": {
+        "text": "Portfolio"
+      }
+    },
+    "hero": {
+      "title": {
+        "text": "Welcome to My Portfolio"
+      },
+      "description": {
+        "text": "Professional showcase of work and skills"
+      }
+    },
+    "footer": {
+      "text": "© 2024 Portfolio"
+    }
+  }
+}
