@@ -1,0 +1,45 @@
+// Typography styles
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: $line-height-tight;
+    margin-bottom: $spacing-md;
+}
+
+h1 {
+    font-size: $font-size-xxl;
+}
+
+h2 {
+    font-size: $font-size-xl;
+}
+
+h3 {
+    font-size: $font-size-large;
+}
+
+h4, h5, h6 {
+    font-size: $font-size-base;
+}
+
+p {
+    margin-bottom: $spacing-md;
+    line-height: $line-height-base;
+}
+
+a {
+    color: $secondary-color;
+    transition: color 0.3s ease;
+    
+    &:hover {
+        color: darken($secondary-color, 10%);
+    }
+}
+
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: italic;
+}

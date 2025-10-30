@@ -1,0 +1,14 @@
+// Footer component styles
+
+.footer {
+    background-color: $primary-color;
+    color: $background-color;
+    text-align: center;
+    padding: $spacing-lg $spacing-md;
+    margin-top: auto;
+    
+    &__text {
+        margin-bottom: 0;
+        font-size: $font-size-small;
+    }
+}
