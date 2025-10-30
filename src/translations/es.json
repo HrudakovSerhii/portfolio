@@ -1,0 +1,106 @@
+{
+  "global": {
+    "navigation": {
+      "home": { "text": "Inicio" },
+      "about": { "text": "Acerca de" },
+      "projects": { "text": "Proyectos" },
+      "contact": { "text": "Contacto" }
+    },
+    "footer": {
+      "copyright": { "text": "© 2025 Serhii Portfolio" },
+      "rights": { "text": "Todos los derechos reservados" }
+    }
+  },
+  "home": {
+    "hero": {
+      "title": { "text": "Desarrollador Full Stack" },
+      "subtitle": { "text": "Soy desarrollador frontend, ingeniero full stack, entusiasta de IA, investigador de optimización, especialista en ecommerce, narrador, constructor de procesos, propietario de tareas y líder de equipo" },
+      "cta": { "text": "Ver Mi Trabajo" }
+    },
+    "skills": {
+      "title": { "text": "Habilidades y Tecnologías" },
+      "frontend": { "text": "Desarrollo Frontend" },
+      "backend": { "text": "Desarrollo Backend" },
+      "tools": { "text": "Herramientas de Desarrollo" }
+    },
+    "featured": {
+      "title": { "text": "Proyectos Destacados" },
+      "viewAll": { "text": "Ver Todos los Proyectos" }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": { "text": "Acerca de Mí" },
+      "subtitle": { "text": "Desarrollador apasionado enfocado en la experiencia del usuario" }
+    },
+    "bio": {
+      "title": { "text": "Antecedentes" },
+      "content": { "text": "Soy un desarrollador full-stack dedicado con experiencia en tecnologías web modernas. Disfruto creando soluciones eficientes y escalables que brindan excelentes experiencias de usuario." }
+    },
+    "experience": {
+      "title": { "text": "Experiencia" },
+      "years": { "text": "10+ Años de Experiencia" }
+    },
+    "skills": {
+      "title": { "text": "Habilidades Técnicas" },
+      "frontend": { "text": "Tecnologías Frontend" },
+      "backend": { "text": "Tecnologías Backend" },
+      "tools": { "text": "Herramientas y Plataformas" }
+    }
+  },
+  "projects": {
+    "hero": {
+      "title": { "text": "Mis Proyectos" },
+      "subtitle": { "text": "Una muestra de mi trabajo reciente y experimentos" }
+    },
+    "filter": {
+      "all": { "text": "Todos los Proyectos" },
+      "web": { "text": "Aplicaciones Web" },
+      "mobile": { "text": "Apps Móviles" },
+      "tools": { "text": "Herramientas y Utilidades" }
+    },
+    "project": {
+      "viewLive": { "text": "Ver En Vivo" },
+      "viewCode": { "text": "Ver Código" },
+      "technologies": { "text": "Tecnologías Utilizadas" }
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": { "text": "Ponte en Contacto" },
+      "subtitle": { "text": "Hablemos de tu próximo proyecto" }
+    },
+    "form": {
+      "name": { "label": "Nombre", "placeholder": "Tu nombre" },
+      "email": { "label": "Email", "placeholder": "hrudakovserhii@gmail.com" },
+      "message": { "label": "Mensaje", "placeholder": "Cuéntame sobre tu proyecto..." },
+      "submit": { "text": "Enviar Mensaje" },
+      "success": { "text": "¡Mensaje enviado exitosamente!" },
+      "error": { "text": "Por favor completa todos los campos" }
+    },
+    "info": {
+      "title": { "text": "Información de Contacto" },
+      "email": { "text": "Email" },
+      "location": { "text": "Ubicación" },
+      "availability": { "text": "Disponible para trabajo freelance" }
+    }
+  },
+  "meta": {
+    "home": {
+      "title": { "text": "Serhii Hrudakov - Portfolio Desarrollador Full Stack" },
+      "description": { "text": "Portfolio profesional mostrando proyectos y habilidades de desarrollo web de Serhii Hrudakov" }
+    },
+    "about": {
+      "title": { "text": "Acerca de - Serhii Hrudakov Desarrollador" },
+      "description": { "text": "Conoce mi experiencia, antecedentes y habilidades técnicas" }
+    },
+    "projects": {
+      "title": { "text": "Proyectos - Portfolio Serhii Hrudakov" },
+      "description": { "text": "Explora mis últimos proyectos de desarrollo web y casos de estudio" }
+    },
+    "contact": {
+      "title": { "text": "Contacto - Serhii Hrudakov Desarrollador" },
+      "description": { "text": "Ponte en contacto para tu próximo proyecto de desarrollo web" }
+    }
+  }
+}
