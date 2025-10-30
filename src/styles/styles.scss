@@ -1,0 +1,19 @@
+// Main SCSS entry point
+// Import partials and components
+
+// Base styles
+@import 'base/reset';
+@import 'base/typography';
+@import 'base/variables';
+
+// Components
+@import 'components/header';
+@import 'components/navigation';
+@import 'components/hero';
+@import 'components/footer';
+
+// Layout
+@import 'layout/main';
+
+// Utilities
+@import 'utilities/helpers';
