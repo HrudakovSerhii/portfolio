@@ -4,20 +4,28 @@
   "description": "A fast-loading static portfolio website built with vanilla JS, HTML, and SCSS",
   "main": "src/scripts/app.js",
   "scripts": {
-    "build": "npm run build:clean && npm run build:styles && npm run build:copy",
+    "build": "npm run build:clean && npm run build:html && npm run build:styles && npm run build:copy",
     "build:clean": "rm -rf dist && mkdir -p dist",
+    "build:html": "node scripts/build-html.js",
     "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
     "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/",
     "watch": "sass src/styles/styles.scss dist/styles.css --watch",
+    "watch:html": "nodemon --watch src/templates --ext html --exec \"npm run build:html\"",
     "serve": "npx live-server dist",
-    "dev": "npm run watch & npm run serve"
+    "dev": "npm run build:html && npm run watch & npm run watch:html & npm run serve"
   },
-  "keywords": ["portfolio", "static-site", "scss", "vanilla-js"],
+  "keywords": [
+    "portfolio",
+    "static-site",
+    "scss",
+    "vanilla-js"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "sass": "^1.69.5",
-    "live-server": "^1.2.2"
+    "live-server": "^1.2.2",
+    "nodemon": "^3.1.10",
+    "sass": "^1.69.5"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.2"
