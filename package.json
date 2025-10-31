@@ -2,11 +2,12 @@
   "name": "portfolio-website",
   "version": "1.0.0",
   "description": "A fast-loading static portfolio website built with vanilla JS, HTML, and SCSS",
+  "type": "module",
   "main": "src/scripts/app.js",
   "scripts": {
     "build": "npm run build:clean && npm run build:html && npm run build:styles && npm run build:copy",
     "build:clean": "rm -rf dist && mkdir -p dist",
-    "build:html": "node scripts/build-html.js",
+    "build:html": "node scripts/build-html.mjs",
     "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
     "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/",
     "watch": "sass src/styles/styles.scss dist/styles.css --watch",
