@@ -1,34 +1,34 @@
 <!DOCTYPE html>
-<html lang="en" data-page="home">
+<html lang="en" data-page="projects">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="" data-translate="meta.home.description.text">
+    <meta name="description" content="" data-translate="meta.projects.description.text">
     <meta name="author" content="Serhii Hrudakov">
     <meta name="robots" content="index, follow">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://serhiihrudakov.github.io/">
-    <meta property="og:title" content="" data-translate="meta.home.title.text">
-    <meta property="og:description" content="" data-translate="meta.home.description.text">
+    <meta property="og:url" content="https://serhiihrudakov.github.io/projects.html">
+    <meta property="og:title" content="" data-translate="meta.projects.title.text">
+    <meta property="og:description" content="" data-translate="meta.projects.description.text">
     <meta property="og:image" content="/assets/images/og-image.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://serhiihrudakov.github.io/">
-    <meta property="twitter:title" content="" data-translate="meta.home.title.text">
-    <meta property="twitter:description" content="" data-translate="meta.home.description.text">
+    <meta property="twitter:url" content="https://serhiihrudakov.github.io/projects.html">
+    <meta property="twitter:title" content="" data-translate="meta.projects.title.text">
+    <meta property="twitter:description" content="" data-translate="meta.projects.description.text">
     <meta property="twitter:image" content="/assets/images/og-image.jpg">
     
-    <title data-translate="meta.home.title.text">Serhii Hrudakov - Full Stack Developer Portfolio</title>
+    <title data-translate="meta.projects.title.text">Projects - Serhii Hrudakov Portfolio</title>
     
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://serhiihrudakov.github.io/">
+    <link rel="canonical" href="https://serhiihrudakov.github.io/projects.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -38,22 +38,6 @@
     <link rel="stylesheet" href="../styles/styles.css">
     
     
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Serhii Hrudakov",
-      "jobTitle": "Full Stack Developer",
-      "url": "https://serhiihrudakov.github.io/",
-      "sameAs": [
-        "https://github.com/serhiihrudakov",
-        "https://linkedin.com/in/serhiihrudakov"
-      ],
-      "knowsAbout": ["JavaScript", "React", "Node.js", "Python", "Web Development"],
-      "description": "Professional full stack developer specializing in modern web technologies"
-    }
-    </script>
 </head>
 <body>
     <!-- Skip to main content for accessibility -->
@@ -80,9 +64,9 @@
             <ul class="navigation__menu" id="navigation-menu" role="menubar">
                 <li class="navigation__item" role="none">
                     <a href="/" 
-                       class="navigation__link navigation__link--active" 
+                       class="navigation__link " 
                        role="menuitem"
-                       aria-current="page"
+                       
                        data-translate="global.navigation.home.text">Home</a>
                 </li>
                 <li class="navigation__item" role="none">
@@ -94,9 +78,9 @@
                 </li>
                 <li class="navigation__item" role="none">
                     <a href="/projects.html" 
-                       class="navigation__link " 
+                       class="navigation__link navigation__link--active" 
                        role="menuitem"
-                       
+                       aria-current="page"
                        data-translate="global.navigation.projects.text">Projects</a>
                 </li>
                 <li class="navigation__item" role="none">
@@ -121,74 +105,86 @@
     </header>
     <main id="main-content" class="main" role="main">
         <!-- Hero Section -->
-        <section class="hero" aria-labelledby="hero-title">
+        <section class="hero hero--projects" aria-labelledby="hero-title">
             <div class="hero__container">
-                <h1 class="hero__title" id="hero-title" data-translate="home.hero.title.text">
-                    Full Stack Developer
+                <h1 class="hero__title" id="hero-title" data-translate="projects.hero.title.text">
+                    My Projects
                 </h1>
-                <p class="hero__subtitle" data-translate="home.hero.subtitle.text">
-                    I am frontend developer, full stack engineer, AI enthusiast, optimisation researcher, ecommerce specialist, storyteller, process builder, task owner and team leader
+                <p class="hero__subtitle" data-translate="projects.hero.subtitle.text">
+                    A showcase of my recent work and experiments
                 </p>
-                <div class="hero__actions">
-                    <a href="/projects.html" 
-                       class="button button--primary hero__cta"
-                       data-translate="home.hero.cta.text">
-                        View My Work
-                    </a>
+            </div>
+        </section>
+        
+        <!-- Filter Section -->
+        <section class="project-filters" aria-labelledby="filter-title">
+            <div class="project-filters__container">
+                <h2 class="project-filters__title visually-hidden" id="filter-title">
+                    Filter Projects
+                </h2>
+                <div class="filter-buttons" role="tablist" aria-label="Project categories">
+                    <button class="filter-button filter-button--active" 
+                            type="button"
+                            role="tab"
+                            aria-selected="true"
+                            aria-controls="projects-grid"
+                            data-filter="all"
+                            data-translate="projects.filter.all.text">
+                        All Projects
+                    </button>
+                    <button class="filter-button" 
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="projects-grid"
+                            data-filter="web"
+                            data-translate="projects.filter.web.text">
+                        Web Applications
+                    </button>
+                    <button class="filter-button" 
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="projects-grid"
+                            data-filter="mobile"
+                            data-translate="projects.filter.mobile.text">
+                        Mobile Apps
+                    </button>
+                    <button class="filter-button" 
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="projects-grid"
+                            data-filter="tools"
+                            data-translate="projects.filter.tools.text">
+                        Tools & Utilities
+                    </button>
                 </div>
             </div>
         </section>
         
-        <!-- Skills Section -->
-        <section class="skills" aria-labelledby="skills-title">
-            <div class="skills__container">
-                <h2 class="skills__title" id="skills-title" data-translate="home.skills.title.text">
-                    Skills & Technologies
+        <!-- Projects Grid -->
+        <section class="projects" aria-labelledby="projects-title">
+            <div class="projects__container">
+                <h2 class="projects__title visually-hidden" id="projects-title">
+                    Project Showcase
                 </h2>
-                <div class="skills__grid">
-                    <article class="skill-card">
-                        <h3 class="skill-card__title" data-translate="home.skills.frontend.text">
-                            Frontend Development
-                        </h3>
-                        <ul class="skill-card__list" data-skills="frontend">
-                            <!-- Skills will be populated by JavaScript -->
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3 class="skill-card__title" data-translate="home.skills.backend.text">
-                            Backend Development
-                        </h3>
-                        <ul class="skill-card__list" data-skills="backend">
-                            <!-- Skills will be populated by JavaScript -->
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3 class="skill-card__title" data-translate="home.skills.tools.text">
-                            Development Tools
-                        </h3>
-                        <ul class="skill-card__list" data-skills="tools">
-                            <!-- Skills will be populated by JavaScript -->
-                        </ul>
-                    </article>
+                <div class="projects-grid" 
+                     id="projects-grid" 
+                     role="tabpanel"
+                     aria-labelledby="filter-title"
+                     data-projects-container>
+                    <!-- Projects will be populated by JavaScript from projects.json -->
                 </div>
-            </div>
-        </section>
-        
-        <!-- Featured Projects Section -->
-        <section class="featured-projects" aria-labelledby="featured-title">
-            <div class="featured-projects__container">
-                <h2 class="featured-projects__title" id="featured-title" data-translate="home.featured.title.text">
-                    Featured Projects
-                </h2>
-                <div class="projects-grid" data-featured-projects>
-                    <!-- Featured projects will be populated by JavaScript -->
+                
+                <!-- Loading state -->
+                <div class="projects__loading" data-loading-state>
+                    <p>Loading projects...</p>
                 </div>
-                <div class="featured-projects__actions">
-                    <a href="/projects.html" 
-                       class="button button--secondary"
-                       data-translate="home.featured.viewAll.text">
-                        View All Projects
-                    </a>
+                
+                <!-- Empty state -->
+                <div class="projects__empty" data-empty-state style="display: none;">
+                    <p>No projects found for the selected filter.</p>
                 </div>
             </div>
         </section>
