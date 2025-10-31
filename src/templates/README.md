@@ -20,20 +20,18 @@ src/templates/
 
 1. **Templates**: Each page has a content template in `pages/` directory
 2. **Placeholders**: Header template uses `{{PLACEHOLDER}}` syntax for dynamic content
-3. **Build Script**: `scripts/build-html.cjs` combines header + content + footer
+3. **Build Script**: `scripts/build-html.js` combines header + content + footer
 4. **Output**: Generated HTML files are written to `src/pages/`
 
 ## Available Placeholders
 
 ### Page Information
-
 - `{{PAGE_NAME}}` - Page identifier (home, about, projects, contact)
 - `{{PAGE_URL}}` - Relative URL for the page
 - `{{PAGE_TITLE}}` - Page title for `<title>` tag
 - `{{STRUCTURED_DATA}}` - JSON-LD structured data (home page only)
 
 ### Navigation States
-
 - `{{HOME_ACTIVE}}` - Active class for home navigation
 - `{{ABOUT_ACTIVE}}` - Active class for about navigation
 - `{{PROJECTS_ACTIVE}}` - Active class for projects navigation
@@ -59,7 +57,7 @@ npm run dev
 ## Adding New Pages
 
 1. Create content template in `src/templates/pages/newpage.template.html`
-2. Add page configuration to `scripts/build-html.cjs` in the `pages` object
+2. Add page configuration to `scripts/build-html.js` in the `pages` object
 3. Run `npm run build:html` to generate the page
 
 ## Benefits
