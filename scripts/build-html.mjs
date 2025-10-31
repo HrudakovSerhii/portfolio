@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Page configurations
 const pages = {
@@ -80,59 +80,55 @@ function writeFile(filePath, content) {
 // Helper function to replace placeholders
 function replacePlaceholders(template, config) {
   let result = template;
-  
+
   // Replace basic placeholders
   result = result.replace(/\{\{PAGE_NAME\}\}/g, config.pageName);
   result = result.replace(/\{\{PAGE_URL\}\}/g, config.pageUrl);
   result = result.replace(/\{\{PAGE_TITLE\}\}/g, config.pageTitle);
   result = result.replace(/\{\{STRUCTURED_DATA\}\}/g, config.structuredData);
-  
+
   // Replace navigation active states
   const navItems = ['home', 'about', 'projects', 'contact'];
   navItems.forEach(item => {
     const isActive = item === config.activeNav;
     const activeClass = isActive ? 'navigation__link--active' : '';
     const ariaCurrent = isActive ? 'aria-current="page"' : '';
-    
+
     result = result.replace(new RegExp(`\\{\\{${item.toUpperCase()}_ACTIVE\\}\\}`, 'g'), activeClass);
     result = result.replace(new RegExp(`\\{\\{${item.toUpperCase()}_ARIA_CURRENT\\}\\}`, 'g'), ariaCurrent);
   });
-  
+
   return result;
 }
 
 // Main build function
 function buildPages() {
   console.log('🔨 Building HTML pages from templates...\n');
-  
+
   // Read templates
   const headerTemplate = readFile('src/templates/header.html');
   const footerTemplate = readFile('src/templates/footer.html');
-  
+
   // Build each page
   Object.entries(pages).forEach(([pageName, config]) => {
     console.log(`Building ${pageName}.html...`);
-    
+
     // Read page content template
     const pageTemplate = readFile(`src/templates/pages/${pageName}.template.html`);
-    
+
     // Replace placeholders in header
     const processedHeader = replacePlaceholders(headerTemplate, config);
-    
+
     // Combine header + page content + footer
     const fullPage = processedHeader + '\n' + pageTemplate + '\n' + footerTemplate;
-    
+
     // Write to pages directory
     const outputPath = `src/pages/${pageName}.html`;
     writeFile(outputPath, fullPage);
   });
-  
+
   console.log('\n✅ HTML build complete!');
 }
 
 // Run the build
-if (require.main === module) {
-  buildPages();
-}
-
-module.exports = { buildPages };
+buildPages();
