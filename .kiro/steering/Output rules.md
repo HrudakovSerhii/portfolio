@@ -20,6 +20,11 @@ inclusion: always
 
 ### When NOT to modify files:
 
+- User asks questions, seeks explanations, or requests information - provide answers without code changes
+- User asks "Can we..." or "How about..." - discuss the approach first, don't implement immediately
 - Issues exist but root cause is undefined - always diagnose before changing code
 - User has modified files themselves (marked as "updated by me") - review and suggest instead
 - Uncertainty about the correct solution - discuss with user first
+- User is exploring ideas or asking for opinions - engage in discussion only
+- Simple questions about existing code or architecture - explain without modifying
+- Requests for recommendations or best practices - provide guidance without implementation
