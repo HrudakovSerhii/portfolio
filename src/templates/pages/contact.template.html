@@ -1,0 +1,165 @@
+    <main id="main-content" class="main" role="main">
+        <!-- Hero Section -->
+        <section class="hero hero--contact" aria-labelledby="hero-title">
+            <div class="hero__container">
+                <h1 class="hero__title" id="hero-title" data-translate="contact.hero.title.text">
+                    Get In Touch
+                </h1>
+                <p class="hero__subtitle" data-translate="contact.hero.subtitle.text">
+                    Let's discuss your next project
+                </p>
+            </div>
+        </section>
+        
+        <!-- Contact Content -->
+        <section class="contact-content">
+            <div class="contact-content__container">
+                <div class="contact-content__grid">
+                    <!-- Contact Form -->
+                    <div class="contact-form-wrapper">
+                        <form class="contact-form" 
+                              id="contact-form" 
+                              novalidate
+                              aria-labelledby="form-title">
+                            <h2 class="contact-form__title" id="form-title">
+                                Send a Message
+                            </h2>
+                            
+                            <div class="form-group">
+                                <label for="contact-name" 
+                                       class="form-label" 
+                                       data-translate="contact.form.name.label">
+                                    Name
+                                </label>
+                                <input type="text" 
+                                       id="contact-name" 
+                                       name="name"
+                                       class="form-input" 
+                                       required
+                                       aria-describedby="name-error"
+                                       data-translate-placeholder="contact.form.name.placeholder">
+                                <span class="form-error" id="name-error" role="alert"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact-email" 
+                                       class="form-label" 
+                                       data-translate="contact.form.email.label">
+                                    Email
+                                </label>
+                                <input type="email" 
+                                       id="contact-email" 
+                                       name="email"
+                                       class="form-input" 
+                                       required
+                                       aria-describedby="email-error"
+                                       data-translate-placeholder="contact.form.email.placeholder">
+                                <span class="form-error" id="email-error" role="alert"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact-message" 
+                                       class="form-label" 
+                                       data-translate="contact.form.message.label">
+                                    Message
+                                </label>
+                                <textarea id="contact-message" 
+                                          name="message"
+                                          class="form-textarea" 
+                                          rows="6"
+                                          required
+                                          aria-describedby="message-error"
+                                          data-translate-placeholder="contact.form.message.placeholder"></textarea>
+                                <span class="form-error" id="message-error" role="alert"></span>
+                            </div>
+                            
+                            <button type="submit" 
+                                    class="button button--primary contact-form__submit"
+                                    data-translate="contact.form.submit.text">
+                                Send Message
+                            </button>
+                            
+                            <!-- Form status messages -->
+                            <div class="form-status" role="status" aria-live="polite">
+                                <div class="form-success" 
+                                     id="form-success" 
+                                     style="display: none;"
+                                     data-translate="contact.form.success.text">
+                                    Message sent successfully!
+                                </div>
+                                <div class="form-error-general" 
+                                     id="form-error" 
+                                     style="display: none;"
+                                     data-translate="contact.form.error.text">
+                                    Please fill in all fields
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <h2 class="contact-info__title" data-translate="contact.info.title.text">
+                            Contact Information
+                        </h2>
+                        
+                        <div class="contact-info__items">
+                            <div class="contact-info__item">
+                                <h3 class="contact-info__label" data-translate="contact.info.email.text">
+                                    Email
+                                </h3>
+                                <a href="mailto:hrudakovserhii@gmail.com" 
+                                   class="contact-info__value">
+                                    hrudakovserhii@gmail.com
+                                </a>
+                            </div>
+                            
+                            <div class="contact-info__item">
+                                <h3 class="contact-info__label" data-translate="contact.info.location.text">
+                                    Location
+                                </h3>
+                                <span class="contact-info__value">
+                                    Remote / Worldwide
+                                </span>
+                            </div>
+                            
+                            <div class="contact-info__item">
+                                <h3 class="contact-info__label">Status</h3>
+                                <span class="contact-info__value contact-info__value--available" 
+                                      data-translate="contact.info.availability.text">
+                                    Available for freelance work
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Links -->
+                        <div class="contact-info__social">
+                            <h3 class="contact-info__social-title">Connect</h3>
+                            <ul class="social-links social-links--large">
+                                <li>
+                                    <a href="https://github.com/serhiihrudakov" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       aria-label="GitHub Profile"
+                                       class="social-links__item">
+                                        <span class="social-links__icon" data-icon="github"></span>
+                                        <span class="social-links__text">GitHub</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://linkedin.com/in/serhiihrudakov" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       aria-label="LinkedIn Profile"
+                                       class="social-links__item">
+                                        <span class="social-links__icon" data-icon="linkedin"></span>
+                                        <span class="social-links__text">LinkedIn</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>

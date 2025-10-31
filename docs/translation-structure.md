@@ -1,24 +1,35 @@
+# Translation System Structure
+
+## Translation Key Convention
+Format: `page.view.component.content`
+
+## Content Categories
+
+### 1. Navigation & Global
+```json
 {
   "global": {
     "navigation": {
       "home": { "text": "Home" },
       "about": { "text": "About" },
       "projects": { "text": "Projects" },
-      "contact": { "text": "Contact" },
-      "toggleMenu": { "ariaLabel": "Toggle navigation menu" }
+      "contact": { "text": "Contact" }
     },
     "footer": {
-      "copyright": { "text": "© 2025 Serhii Portfolio" },
+      "copyright": { "text": "© 2024 Portfolio" },
       "rights": { "text": "All rights reserved" }
-    },
-    "accessibility": {
-      "skipToMain": { "text": "Skip to main content" }
     }
-  },
+  }
+}
+```
+
+### 2. Home Page Content
+```json
+{
   "home": {
     "hero": {
       "title": { "text": "Full Stack Developer" },
-      "subtitle": { "text": "I am frontend developer, full stack engineer, AI enthusiast, optimisation researcher, ecommerce specialist, storyteller, process builder, task owner and team leader" },
+      "subtitle": { "text": "Creating digital experiences with modern technologies" },
       "cta": { "text": "View My Work" }
     },
     "skills": {
@@ -31,7 +42,13 @@
       "title": { "text": "Featured Projects" },
       "viewAll": { "text": "View All Projects" }
     }
-  },
+  }
+}
+```
+
+### 3. About Page Content
+```json
+{
   "about": {
     "hero": {
       "title": { "text": "About Me" },
@@ -39,11 +56,11 @@
     },
     "bio": {
       "title": { "text": "Background" },
-      "content": { "text": "I'm a dedicated full-stack developer with expertise in modern web technologies. I enjoy creating efficient, scalable solutions that provide excellent user experiences." }
+      "content": { "text": "Professional bio content..." }
     },
     "experience": {
       "title": { "text": "Experience" },
-      "years": { "text": "10+ Years of Experience" }
+      "years": { "text": "Years of Experience" }
     },
     "skills": {
       "title": { "text": "Technical Skills" },
@@ -51,7 +68,13 @@
       "backend": { "text": "Backend Technologies" },
       "tools": { "text": "Tools & Platforms" }
     }
-  },
+  }
+}
+```
+
+### 4. Projects Page Content
+```json
+{
   "projects": {
     "hero": {
       "title": { "text": "My Projects" },
@@ -68,7 +91,13 @@
       "viewCode": { "text": "View Code" },
       "technologies": { "text": "Technologies Used" }
     }
-  },
+  }
+}
+```
+
+### 5. Contact Page Content
+```json
+{
   "contact": {
     "hero": {
       "title": { "text": "Get In Touch" },
@@ -76,7 +105,7 @@
     },
     "form": {
       "name": { "label": "Name", "placeholder": "Your name" },
-      "email": { "label": "Email", "placeholder": "hrudakovserhii@gmail.com" },
+      "email": { "label": "Email", "placeholder": "your.email@example.com" },
       "message": { "label": "Message", "placeholder": "Tell me about your project..." },
       "submit": { "text": "Send Message" },
       "success": { "text": "Message sent successfully!" },
@@ -88,23 +117,46 @@
       "location": { "text": "Location" },
       "availability": { "text": "Available for freelance work" }
     }
-  },
+  }
+}
+```
+
+### 6. SEO & Meta Content
+```json
+{
   "meta": {
     "home": {
-      "title": { "text": "Serhii Hrudakov - Full Stack Developer Portfolio" },
-      "description": { "text": "Professional portfolio showcasing web development projects and skills of Serhii Hrudakov" }
+      "title": { "text": "John Doe - Full Stack Developer Portfolio" },
+      "description": { "text": "Professional portfolio showcasing web development projects and skills" }
     },
     "about": {
-      "title": { "text": "About - Serhii Hrudakov Developer" },
+      "title": { "text": "About - John Doe Developer" },
       "description": { "text": "Learn about my background, experience, and technical skills" }
     },
     "projects": {
-      "title": { "text": "Projects - Serhii Hrudakov Portfolio" },
+      "title": { "text": "Projects - John Doe Portfolio" },
       "description": { "text": "Explore my latest web development projects and case studies" }
     },
     "contact": {
-      "title": { "text": "Contact - Serhii Hrudakov Developer" },
+      "title": { "text": "Contact - John Doe Developer" },
       "description": { "text": "Get in touch for your next web development project" }
     }
   }
 }
+```
+
+## Fallback Strategy
+- Default language: English (`en.json`)
+- Missing keys fall back to English version
+- Empty content shows key name as fallback
+- Language detection via URL parameter or browser preference
+
+## Supported Languages (Initial)
+1. **English** (`en.json`) - Primary
+2. **Spanish** (`es.json`) - Secondary
+
+## Content Modularity
+- Separate files for each language
+- Consistent key structure across all languages
+- Easy addition of new languages
+- Component-based content organization

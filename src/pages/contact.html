@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-page="contact">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content=""
+      data-translate="meta.contact.description.text"
+    />
+    <meta name="author" content="Serhii Hrudakov" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://serhiihrudakov.github.io/contact.html"
+    />
+    <meta
+      property="og:title"
+      content=""
+      data-translate="meta.contact.title.text"
+    />
+    <meta
+      property="og:description"
+      content=""
+      data-translate="meta.contact.description.text"
+    />
+    <meta property="og:image" content="/assets/images/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:url"
+      content="https://serhiihrudakov.github.io/contact.html"
+    />
+    <meta
+      property="twitter:title"
+      content=""
+      data-translate="meta.contact.title.text"
+    />
+    <meta
+      property="twitter:description"
+      content=""
+      data-translate="meta.contact.description.text"
+    />
+    <meta property="twitter:image" content="/assets/images/og-image.jpg" />
+
+    <title data-translate="meta.contact.title.text">Contact - Serhii Hrudakov Developer</title>
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Canonical URL -->
+    <link
+      rel="canonical"
+      href="https://serhiihrudakov.github.io/contact.html"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+
+    
+  </head>
+  <body>
+    <!-- Skip to main content for accessibility -->
+    <a
+      href="#main-content"
+      class="skip-link"
+      data-translate="global.accessibility.skipToMain.text"
+      >Skip to main content</a
+    >
+
+    <header class="header" role="banner">
+      <nav class="navigation" role="navigation" aria-label="Main navigation">
+        <div class="navigation__brand">
+          <h1 class="navigation__logo">
+            <a href="/" aria-label="Serhii Hrudakov - Home">SH</a>
+          </h1>
+        </div>
+
+        <!-- Mobile menu toggle -->
+        <button
+          class="navigation__toggle"
+          type="button"
+          aria-controls="navigation-menu"
+          aria-expanded="false"
+          aria-label="Toggle navigation menu"
+          data-translate-aria-label="global.navigation.toggleMenu.ariaLabel"
+        >
+          <span class="navigation__toggle-icon"></span>
+        </button>
+
+        <ul class="navigation__menu" id="navigation-menu" role="menubar">
+          <li class="navigation__item" role="none">
+            <a
+              href="/"
+              class="navigation__link "
+              role="menuitem"
+              
+              data-translate="global.navigation.home.text"
+              >Home</a
+            >
+          </li>
+          <li class="navigation__item" role="none">
+            <a
+              href="/about.html"
+              class="navigation__link "
+              role="menuitem"
+              
+              data-translate="global.navigation.about.text"
+              >About</a
+            >
+          </li>
+          <li class="navigation__item" role="none">
+            <a
+              href="/projects.html"
+              class="navigation__link "
+              role="menuitem"
+              
+              data-translate="global.navigation.projects.text"
+              >Projects</a
+            >
+          </li>
+          <li class="navigation__item" role="none">
+            <a
+              href="/contact.html"
+              class="navigation__link navigation__link--active"
+              role="menuitem"
+              aria-current="page"
+              data-translate="global.navigation.contact.text"
+              >Contact</a
+            >
+          </li>
+        </ul>
+
+        <!-- Language switcher -->
+        <div class="navigation__language">
+          <button
+            class="language-switcher"
+            type="button"
+            aria-label="Switch language"
+            data-current-lang="en"
+          >
+            <span class="language-switcher__current">EN</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+  </body>
+</html>
+
+    <main id="main-content" class="main" role="main">
+        <!-- Hero Section -->
+        <section class="hero hero--contact" aria-labelledby="hero-title">
+            <div class="hero__container">
+                <h1 class="hero__title" id="hero-title" data-translate="contact.hero.title.text">
+                    Get In Touch
+                </h1>
+                <p class="hero__subtitle" data-translate="contact.hero.subtitle.text">
+                    Let's discuss your next project
+                </p>
+            </div>
+        </section>
+        
+        <!-- Contact Content -->
+        <section class="contact-content">
+            <div class="contact-content__container">
+                <div class="contact-content__grid">
+                    <!-- Contact Form -->
+                    <div class="contact-form-wrapper">
+                        <form class="contact-form" 
+                              id="contact-form" 
+                              novalidate
+                              aria-labelledby="form-title">
+                            <h2 class="contact-form__title" id="form-title">
+                                Send a Message
+                            </h2>
+                            
+                            <div class="form-group">
+                                <label for="contact-name" 
+                                       class="form-label" 
+                                       data-translate="contact.form.name.label">
+                                    Name
+                                </label>
+                                <input type="text" 
+                                       id="contact-name" 
+                                       name="name"
+                                       class="form-input" 
+                                       required
+                                       aria-describedby="name-error"
+                                       data-translate-placeholder="contact.form.name.placeholder">
+                                <span class="form-error" id="name-error" role="alert"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact-email" 
+                                       class="form-label" 
+                                       data-translate="contact.form.email.label">
+                                    Email
+                                </label>
+                                <input type="email" 
+                                       id="contact-email" 
+                                       name="email"
+                                       class="form-input" 
+                                       required
+                                       aria-describedby="email-error"
+                                       data-translate-placeholder="contact.form.email.placeholder">
+                                <span class="form-error" id="email-error" role="alert"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact-message" 
+                                       class="form-label" 
+                                       data-translate="contact.form.message.label">
+                                    Message
+                                </label>
+                                <textarea id="contact-message" 
+                                          name="message"
+                                          class="form-textarea" 
+                                          rows="6"
+                                          required
+                                          aria-describedby="message-error"
+                                          data-translate-placeholder="contact.form.message.placeholder"></textarea>
+                                <span class="form-error" id="message-error" role="alert"></span>
+                            </div>
+                            
+                            <button type="submit" 
+                                    class="button button--primary contact-form__submit"
+                                    data-translate="contact.form.submit.text">
+                                Send Message
+                            </button>
+                            
+                            <!-- Form status messages -->
+                            <div class="form-status" role="status" aria-live="polite">
+                                <div class="form-success" 
+                                     id="form-success" 
+                                     style="display: none;"
+                                     data-translate="contact.form.success.text">
+                                    Message sent successfully!
+                                </div>
+                                <div class="form-error-general" 
+                                     id="form-error" 
+                                     style="display: none;"
+                                     data-translate="contact.form.error.text">
+                                    Please fill in all fields
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <h2 class="contact-info__title" data-translate="contact.info.title.text">
+                            Contact Information
+                        </h2>
+                        
+                        <div class="contact-info__items">
+                            <div class="contact-info__item">
+                                <h3 class="contact-info__label" data-translate="contact.info.email.text">
+                                    Email
+                                </h3>
+                                <a href="mailto:hrudakovserhii@gmail.com" 
+                                   class="contact-info__value">
+                                    hrudakovserhii@gmail.com
+                                </a>
+                            </div>
+                            
+                            <div class="contact-info__item">
+                                <h3 class="contact-info__label" data-translate="contact.info.location.text">
+                                    Location
+                                </h3>
+                                <span class="contact-info__value">
+                                    Remote / Worldwide
+                                </span>
+                            </div>
+                            
+                            <div class="contact-info__item">
+                                <h3 class="contact-info__label">Status</h3>
+                                <span class="contact-info__value contact-info__value--available" 
+                                      data-translate="contact.info.availability.text">
+                                    Available for freelance work
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Links -->
+                        <div class="contact-info__social">
+                            <h3 class="contact-info__social-title">Connect</h3>
+                            <ul class="social-links social-links--large">
+                                <li>
+                                    <a href="https://github.com/serhiihrudakov" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       aria-label="GitHub Profile"
+                                       class="social-links__item">
+                                        <span class="social-links__icon" data-icon="github"></span>
+                                        <span class="social-links__text">GitHub</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://linkedin.com/in/serhiihrudakov" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       aria-label="LinkedIn Profile"
+                                       class="social-links__item">
+                                        <span class="social-links__icon" data-icon="linkedin"></span>
+                                        <span class="social-links__text">LinkedIn</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer" role="contentinfo">
+        <div class="footer__container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <h2 class="footer__logo">Serhii Hrudakov</h2>
+                    <p class="footer__tagline">Full Stack Developer</p>
+                </div>
+                <div class="footer__links">
+                    <nav class="footer__nav" aria-label="Footer navigation">
+                        <ul class="footer__nav-list">
+                            <li><a href="/" data-translate="global.navigation.home.text">Home</a></li>
+                            <li><a href="/about.html" data-translate="global.navigation.about.text">About</a></li>
+                            <li><a href="/projects.html" data-translate="global.navigation.projects.text">Projects</a></li>
+                            <li><a href="/contact.html" data-translate="global.navigation.contact.text">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="footer__social">
+                    <ul class="social-links" aria-label="Social media links">
+                        <li>
+                            <a href="https://github.com/serhiihrudakov"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               aria-label="GitHub Profile">
+                                <span class="social-links__icon" data-icon="github"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://linkedin.com/in/serhiihrudakov"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               aria-label="LinkedIn Profile">
+                                <span class="social-links__icon" data-icon="linkedin"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p class="footer__copyright" data-translate="global.footer.copyright.text">
+                    © 2025 Serhii Portfolio
+                </p>
+                <p class="footer__rights" data-translate="global.footer.rights.text">
+                    All rights reserved
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="../scripts/app.cjs"></script>
+</body>
+</html>
