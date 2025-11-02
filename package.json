@@ -5,15 +5,18 @@
   "type": "module",
   "main": "src/scripts/app.js",
   "scripts": {
-    "build": "npm run build:clean && npm run build:html && npm run build:styles && npm run build:copy",
+    "build": "npm run build:clean && npm run build:styles && npm run build:copy",
     "build:clean": "rm -rf dist && mkdir -p dist",
-    "build:html": "node scripts/build-html.mjs",
     "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
     "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/",
     "watch": "sass src/styles/styles.scss dist/styles.css --watch",
-    "watch:html": "nodemon --watch src/templates --ext html --exec \"npm run build:html\"",
     "serve": "npx live-server dist",
-    "dev": "npm run build:html && npm run watch & npm run watch:html & npm run serve"
+    "dev": "npm run build && npm run watch & npm run serve",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:scss": "prettier --write \"src/**/*.scss\"",
+    "format:js": "prettier --write \"src/**/*.js\" \"scripts/**/*.js\"",
+    "format:html": "prettier --write \"src/**/*.html\""
   },
   "keywords": [
     "portfolio",
@@ -25,7 +28,6 @@
   "license": "MIT",
   "devDependencies": {
     "live-server": "^1.2.2",
-    "nodemon": "^3.1.10",
     "sass": "^1.69.5"
   },
   "dependencies": {
