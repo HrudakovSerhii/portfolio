@@ -8,8 +8,10 @@
     "build": "npm run build:clean && npm run build:styles && npm run build:copy",
     "build:clean": "rm -rf dist && mkdir -p dist",
     "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
-    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/",
-    "watch": "sass src/styles/styles.scss dist/styles.css --watch",
+    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/ && cp -r public dist/",
+    "watch": "npm run watch:styles & npm run watch:html",
+    "watch:styles": "sass src/styles/styles.scss dist/styles.css --watch",
+    "watch:html": "nodemon --watch src/pages --watch src/translations --watch public --ext html,json,jpg,png,svg,ico --exec \"npm run build:copy\"",
     "serve": "npx live-server dist",
     "dev": "npm run build && npm run watch & npm run serve",
     "format": "prettier --write .",
@@ -28,7 +30,8 @@
   "license": "MIT",
   "devDependencies": {
     "live-server": "^1.2.2",
-    "sass": "^1.69.5"
+    "sass": "^1.69.5",
+    "nodemon": "^3.0.2"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.2"
