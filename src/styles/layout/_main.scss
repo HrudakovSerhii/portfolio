@@ -1,31 +1,13 @@
 // Main layout styles
 
-.main-content {
-    position: relative;
+.main {
+    min-height: calc(100vh - 12rem); // Adjust based on header/footer height
     display: flex;
     flex-direction: column;
-    margin-top: $spacing-3xl;
-    z-index: 1;
-
-    @include desktop {
-        margin-top: 0;
-    }
 
     section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
+        min-height: calc(100vh - 4rem); // Adjust based on header/footer height
         height: 100%;
-        max-width: $content-max-width;
-        padding: $spacing-lg;
-
-        @include desktop {
-            padding: $spacing-xl;
-        }
-    }
-
-    .sections-container {
-        position: relative;
+        flex: 1;
     }
 }
