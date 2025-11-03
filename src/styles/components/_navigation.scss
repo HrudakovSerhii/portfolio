@@ -1,10 +1,22 @@
 // Navigation component styles
 
 .navigation {
-    max-width: 1200px;
     margin: 0 auto;
     padding: 0 $spacing-md;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: row;
+    justify-content: end;
+
+    .navigation__menu {
+        display: flex;
+        flex-direction: row;
+
+        li {
+            padding: 0 $spacing-sm;
+        }
+    }
+
+    .navigation__language {
+        flex: 0;
+    }
 }
