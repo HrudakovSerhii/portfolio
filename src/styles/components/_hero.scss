@@ -1,19 +1,45 @@
 // Hero section styles
 
 .hero {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: $spacing-xxl $spacing-md;
-    background-color: $light-gray;
-    
-    &__title {
-        color: $primary-color;
-        margin-bottom: $spacing-lg;
+    background-color: $background-color;
+
+    &__container {
+        max-width: 500px;
+        width: 100%;
+
+        &__title {
+            color: $primary-color;
+            margin-bottom: $spacing-lg;
+        }
+
+        &__subtitle {
+            margin-bottom: $spacing-xxl;
+        }
+
+        &__actions {
+            height: 100%;
+        }
     }
-    
-    &__description {
-        color: $dark-gray;
-        font-size: $font-size-large;
-        max-width: 600px;
-        margin: 0 auto;
+
+    &__photo {
+        width: 100%;
+        max-width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border-color: $primary-color;
+        border-style: solid;
+        border-width: 2px;
+        background-color: #6c757d;
+        overflow: hidden;
+        position: relative;
+
+        img {
+            position: absolute;
+            top: -25%;
+        }
     }
 }

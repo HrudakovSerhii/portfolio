@@ -30,7 +30,7 @@ p {
 a {
     color: $secondary-color;
     transition: color 0.3s ease;
-    
+
     &:hover {
         color: darken($secondary-color, 10%);
     }

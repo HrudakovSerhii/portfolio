@@ -1,0 +1,25 @@
+
+.button {
+  width: 160px;
+  height: 48px;
+  border-radius: 4px;
+  padding: $spacing-sm $spacing-md;
+
+  &--primary {
+    background-color: $accent-color;
+    color: $light-gray;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      outline: none;
+      background-color: lighten($accent-color, 10%);
+      color: $white;
+    }
+  }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
