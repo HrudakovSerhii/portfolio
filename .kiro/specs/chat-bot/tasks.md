@@ -68,7 +68,7 @@
   - Write tests for style switching and persistence
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.6, 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 9. Implement query processing and response generation
+- [x] 9. Implement query processing and response generation
 
   - Create query preprocessing and embedding generation
   - Implement semantic matching against CV sections using similarity thresholds
