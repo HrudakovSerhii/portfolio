@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## Components and Interfaces
 
-### 1. Chat Module (`src/scripts/modules/chat-bot.cjs`)
+### 1. Chat Module (`src/scripts/modules/chat-bot.js`)
 
 **Primary Interface:**
 ```javascript
@@ -111,7 +111,7 @@ class ChatBot {
 - Embedding generation and matching
 - Response template processing
 
-### 3. Conversation Manager (`src/scripts/modules/conversation-manager.cjs`)
+### 3. Conversation Manager (`src/scripts/modules/conversation-manager.js`)
 
 **Interface:**
 ```javascript
@@ -130,7 +130,7 @@ class ConversationManager {
 - Response style application
 - Template-based response generation
 
-### 4. CV Data Service (`src/scripts/modules/cv-data-service.cjs`)
+### 4. CV Data Service (`src/scripts/modules/cv-data-service.js`)
 
 **Interface:**
 ```javascript
@@ -150,7 +150,7 @@ class CVDataService {
 
 ### 5. UI Components
 
-**Chat Interface (`src/scripts/modules/chat-ui.cjs`):**
+**Chat Interface (`src/scripts/modules/chat-ui.js`):**
 ```javascript
 class ChatUI {
   showLoadingState()
