@@ -2,7 +2,7 @@
   "metadata": {
     "version": "1.0",
     "lastUpdated": "2024-10-30",
-    "totalSections": 15,
+    "totalSections": 11,
     "embeddingModel": "distilbert-base-uncased",
     "embeddingDimensions": 768
   },
