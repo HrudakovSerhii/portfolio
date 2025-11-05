@@ -1,0 +1,34 @@
+{
+  "description": "Sample embeddings structure for CV sections",
+  "note": "This file shows the expected structure after DistilBERT embeddings are computed",
+  "embeddingDimensions": 768,
+  "sampleEmbeddings": {
+    "exp_react": {
+      "keywords": [0.1234, 0.5678, -0.2345, 0.8901],
+      "responses": {
+        "hr": [0.2345, 0.6789, -0.1234, 0.9012],
+        "developer": [0.3456, 0.7890, -0.0123, 0.8123],
+        "friend": [0.4567, 0.8901, 0.1234, 0.7234]
+      },
+      "combined": [0.2789, 0.7123, -0.0778, 0.8456]
+    }
+  },
+  "computationStrategy": {
+    "keywords": "Average embeddings of all keywords in the array",
+    "responses": "Individual embeddings for each conversation style",
+    "combined": "Weighted average of keywords (0.4) + all responses (0.6)",
+    "similarity": "Cosine similarity between query embedding and combined section embedding"
+  },
+  "thresholds": {
+    "highConfidence": 0.8,
+    "mediumConfidence": 0.6,
+    "lowConfidence": 0.4,
+    "noMatch": "< 0.4"
+  },
+  "usage": {
+    "runtime": "Embeddings computed by ML Worker on first load",
+    "caching": "Stored in memory for session duration",
+    "matching": "Query embeddings compared against section embeddings",
+    "ranking": "Sections ranked by similarity score for response generation"
+  }
+}
