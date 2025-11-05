@@ -38,6 +38,12 @@ class ChatBot {
 
       // Initialize UI and show loading state immediately
       this.ui = new this._ChatUI();
+      this.ui.setEventHandlers({
+        onStyleSelect: (style) => this.selectConversationStyle(style),
+        onMessageSend: (message) => this.processMessage(message),
+        onRestart: () => this.restartConversation()
+      });
+      this.ui.initialize();
       this.ui.showLoadingState();
 
       // Initialize worker
@@ -48,6 +54,15 @@ class ChatBot {
       await this.cvDataService.loadCVData();
 
       this.conversationManager = new this._ConversationManager();
+      this.styleManager = new this._StyleManager();
+
+      // Check for persisted style
+      const persistedStyle = this.styleManager.loadPersistedStyle();
+      if (persistedStyle) {
+        this.currentStyle = persistedStyle;
+        this.conversationManager.setStyle(persistedStyle);
+        this.styleManager.setStyle(persistedStyle);
+      }
 
       this.isInitialized = true;
       this.ui.showStyleSelection();
@@ -97,19 +112,22 @@ class ChatBot {
     try {
       // Dynamic imports for lazy loading
       const [
-        { ChatUI },
-        { ConversationManager },
-        { CVDataService }
+        { default: ChatUI },
+        { default: ConversationManager },
+        { default: CVDataService },
+        { default: StyleManager }
       ] = await Promise.all([
         import('./chat-ui.js'),
         import('./conversation-manager.js'),
-        import('./cv-data-service.js')
+        import('./cv-data-service.js'),
+        import('./style-manager.js')
       ]);
 
       // Store classes for this instance
       this._ChatUI = ChatUI;
       this._ConversationManager = ConversationManager;
       this._CVDataService = CVDataService;
+      this._StyleManager = StyleManager;
     } catch (error) {
       throw new Error(`MODULE_LOAD_FAILED: ${error.message}`);
     }
@@ -188,17 +206,22 @@ class ChatBot {
       throw new Error('ChatBot not initialized');
     }
 
-    if (!['hr', 'developer', 'friend'].includes(style)) {
-      throw new Error('Invalid conversation style');
+    if (!this.styleManager.isValidStyle(style)) {
+      throw new Error(`Invalid conversation style: ${style}`);
     }
 
+    // Set style in all managers
     this.currentStyle = style;
     this.conversationManager.setStyle(style);
+    this.styleManager.setStyle(style);
+    
+    // Clear any existing messages and show chat interface
+    this.ui.clearMessages();
     this.ui.showChatInterface();
     
     // Show greeting message based on style
-    const greeting = this._getStyleGreeting(style);
-    this.ui.addMessage(greeting, false);
+    const greeting = this.styleManager.getGreeting(style);
+    this.ui.addMessage(greeting, false, style);
   }
 
   /**
@@ -239,8 +262,13 @@ class ChatBot {
       return;
     }
 
+    // Reset all managers
     this.currentStyle = null;
     this.conversationManager.clearHistory();
+    this.styleManager.resetStyle();
+    
+    // Clear UI and show style selection
+    this.ui.clearMessages();
     this.ui.showStyleSelection();
   }
 
@@ -271,14 +299,22 @@ class ChatBot {
       // Low confidence - trigger fallback
       this._handleLowConfidenceResponse();
     } else {
+      // Format response based on current style
+      const formattedAnswer = this.styleManager.formatResponse(answer, {
+        matchedSections,
+        confidence
+      });
+      
       // Add response to conversation history
       this.conversationManager.addMessage(
         this.ui.getLastUserMessage(),
-        answer
+        formattedAnswer,
+        matchedSections,
+        confidence
       );
       
       // Display response
-      this.ui.addMessage(answer, false);
+      this.ui.addMessage(formattedAnswer, false, this.currentStyle);
     }
   }
 
@@ -289,16 +325,16 @@ class ChatBot {
     this.ui.hideTypingIndicator();
     console.error('ChatBot: Worker error:', error);
     
-    const errorMessage = this._getStyleErrorMessage(this.currentStyle);
-    this.ui.addMessage(errorMessage, false);
+    const errorMessage = this.styleManager.getErrorMessage(this.currentStyle);
+    this.ui.addMessage(errorMessage, false, this.currentStyle);
   }
 
   /**
    * Handle low confidence responses
    */
   _handleLowConfidenceResponse() {
-    const rephraseMessage = this._getStyleRephraseMessage(this.currentStyle);
-    this.ui.addMessage(rephraseMessage, false);
+    const rephraseMessage = this.styleManager.getRephraseMessage(this.currentStyle);
+    this.ui.addMessage(rephraseMessage, false, this.currentStyle);
   }
 
   /**
@@ -308,8 +344,8 @@ class ChatBot {
     this.ui.hideTypingIndicator();
     console.error('ChatBot: Processing error:', error);
     
-    const errorMessage = this._getStyleErrorMessage(this.currentStyle);
-    this.ui.addMessage(errorMessage, false);
+    const errorMessage = this.styleManager.getErrorMessage(this.currentStyle);
+    this.ui.addMessage(errorMessage, false, this.currentStyle);
   }
 
   /**
@@ -342,44 +378,7 @@ class ChatBot {
     }
   }
 
-  /**
-   * Get greeting message for style
-   */
-  _getStyleGreeting(style) {
-    const greetings = {
-      hr: "Hello! I'm Serhii's AI assistant. I can help you learn about his professional experience, skills, and achievements. What would you like to know?",
-      developer: "Hey there! I'm an AI version of Serhii. Feel free to ask me about his technical experience, projects, or anything development-related. What's on your mind?",
-      friend: "Hi! 👋 I'm Serhii's AI buddy! Ask me anything about his work, projects, or just chat about tech stuff. What would you like to know? 😊"
-    };
-    
-    return greetings[style] || greetings.developer;
-  }
 
-  /**
-   * Get error message for style
-   */
-  _getStyleErrorMessage(style) {
-    const messages = {
-      hr: "I apologize, but I'm experiencing technical difficulties. Please try rephrasing your question or contact Serhii directly.",
-      developer: "Hmm, something went wrong on my end. Mind trying that again or rephrasing your question?",
-      friend: "Oops! 😅 Something got mixed up. Can you try asking that again in a different way?"
-    };
-    
-    return messages[style] || messages.developer;
-  }
-
-  /**
-   * Get rephrase message for style
-   */
-  _getStyleRephraseMessage(style) {
-    const messages = {
-      hr: "I'm not entirely certain about that topic. Could you please rephrase your question or be more specific about what you'd like to know?",
-      developer: "I'm not quite sure what you're looking for there. Could you rephrase that or give me a bit more context?",
-      friend: "Hmm, I'm not sure I got that! 🤔 Could you ask that in a different way? Maybe be a bit more specific?"
-    };
-    
-    return messages[style] || messages.developer;
-  }
 }
 
 export { ChatBot };
