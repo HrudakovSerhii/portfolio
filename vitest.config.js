@@ -4,12 +4,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    setupFiles: ['./test/setup.js'],
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/test/**'
-    ]
+    setupFiles: ['./test/setup.js']
   },
   resolve: {
     alias: {

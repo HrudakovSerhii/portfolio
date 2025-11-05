@@ -6,14 +6,14 @@
   - Update package.json with new dependencies and build scripts
   - _Requirements: 8.1, 8.4_
 
-- [ ] 2. Create CV data structure and sample content
+- [x] 2. Create CV data structure and sample content
   - Design JSON schema for CV data with embeddings support
   - Create sample CV data file with experience, skills, and projects sections
   - Implement response templates for all three conversation styles (HR/Developer/Friend)
   - Add personality traits and communication style definitions
   - _Requirements: 7.1, 7.2, 2.2, 2.3, 2.4_
 
-- [ ] 3. Implement CV data service module
+- [x] 3. Implement CV data service module
   - Create CVDataService class for loading and managing CV data
   - Implement methods for data validation and section retrieval
   - Add embedding computation and caching functionality
