@@ -10,7 +10,12 @@
 @import 'components/header';
 @import 'components/navigation';
 @import 'components/hero';
+@import 'components/skills';
+@import 'components/featured-projects';
 @import 'components/footer';
+
+// Elements
+@import "components/elements";
 
 // Layout
 @import 'layout/main';
