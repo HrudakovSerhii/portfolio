@@ -21,8 +21,7 @@ class CVDataService {
         return this.cvData;
       }
 
-      const response = await fetch('public/cv/cv-data.v2.json');
-
+      const response = await fetch('/src/data/chat-bot/cv-data.json');
       if (!response.ok) {
         throw new Error(`Failed to load CV data: ${response.status} ${response.statusText}`);
       }
@@ -52,7 +51,6 @@ class CVDataService {
   validateCVData(data) {
     // Check required top-level properties
     const requiredProps = ['metadata', 'sections', 'personality', 'responseTemplates'];
-
     for (const prop of requiredProps) {
       if (!data[prop]) {
         throw new Error(`Missing required property: ${prop}`);
@@ -61,7 +59,6 @@ class CVDataService {
 
     // Validate metadata
     const metadata = data.metadata;
-
     if (!metadata.version || !metadata.lastUpdated || !metadata.totalSections) {
       throw new Error('Invalid metadata structure');
     }
@@ -289,7 +286,6 @@ class CVDataService {
    */
   getEmbeddings(sectionId) {
     const section = this.getSectionById(sectionId);
-
     return section ? section.embeddings : null;
   }
 
@@ -389,49 +385,6 @@ class CVDataService {
       throw new Error('CV data not loaded. Call loadCVData() first.');
     }
     return this.cvData.metadata;
-  }
-
-  /**
-   * Prepare CV data chunks for semantic processing
-   * Transforms CV sections into standardized chunks for embedding and search
-   * @returns {Array} Array of CV chunks ready for semantic processing
-   */
-  prepareCVChunks() {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-
-    const chunks = [];
-
-    // Process all sections from all categories
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        // Use embeddingSourceText as the primary text content for chunks
-        const text = section.embeddingSourceText || section.details?.summary || '';
-
-        if (text.trim()) {
-          chunks.push({
-            id: section.id,
-            text: text,
-            keywords: section.keywords || [],
-            metadata: {
-              type: 'cv_section',
-              category: categoryName,
-              sectionName: sectionName,
-              path: `${categoryName}.${sectionName}`,
-              priority: section.priority || 0,
-              confidence: section.confidence || 0.5,
-              details: section.details || {},
-              relatedSections: section.relatedSections || []
-            },
-            // Include existing embeddings if available (only if valid array)
-            embedding: (section.embeddings && Array.isArray(section.embeddings) && section.embeddings.length > 0) ? section.embeddings : null
-          });
-        }
-      }
-    }
-
-    return chunks;
   }
 
   /**

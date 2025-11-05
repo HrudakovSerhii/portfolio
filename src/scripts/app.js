@@ -1,49 +1,26 @@
 // Main application entry point
 
 // Import utility modules
+import { initializeNavigation } from './modules/navigation.js';
 import { initializeTranslations } from './modules/translations.js';
 
 async function main() {
-    // Development flag - Set to false for production builds
-    // This controls debug logging throughout the application
-    window.isDev = true;
-
     console.log('Portfolio website initialized');
 
     // Initialize modules
+    initializeNavigation();
     initializeTranslations().finally();
 
-    const chatTriggerButton = document.getElementById('hero-chat-trigger');
-
-    // Make chat integration available globally for chat button
-    if (chatTriggerButton) {
-        chatTriggerButton.addEventListener('click', async () => {
-            try {
-                // Import and initialize chat integration
-                const chatIntegration = await import('./modules/chat-bot/chat-integration.js');
-
-                // Initialize chat if the function is available
-                if (chatIntegration.default && chatIntegration.default.initializeChat) {
-                    await chatIntegration.default.initializeChat();
-                } else if (window.initializeChat) {
-                    await window.initializeChat();
-                } else {
-                    console.error('Chat initialization function not found');
-                }
-
-                console.log('Chat integration loaded and ready');
-            } catch (error) {
-                console.error('Failed to load chat integration:', error);
-
-                // Show user-friendly error message
-                const errorMessage = error.message.includes('BROWSER_UNSUPPORTED') || error.message.includes('WebAssembly')
-                    ? "Oops, sorry, we couldn't load Serhii to your browser :("
-                    : "Having trouble loading the chat. Please try refreshing the page.";
-
-                alert(errorMessage);
-            }
-        })
-
+    // Initialize chat integration on home page
+    if (document.body.dataset.page === 'home' || document.querySelector('#hero-chat-trigger')) {
+        try {
+            // Dynamic import for chat integration
+            const { default: ChatIntegration } = await import('./modules/chat-bot/chat-integration.js');
+            const chatIntegration = new ChatIntegration();
+            await chatIntegration.initialize();
+        } catch (error) {
+            console.error('Failed to initialize chat integration:', error);
+        }
     }
 }
 
@@ -56,4 +33,4 @@ if (document.readyState === "loading") {
 }
 
 // Export for potential external use
-export { initializeTranslations };
+export { initializeNavigation, initializeTranslations };

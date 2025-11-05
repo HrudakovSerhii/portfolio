@@ -35,7 +35,7 @@ class ChatUI {
    */
   findChatElements() {
     // Find main chat container
-    this.chatContainer = document.getElementById('chat-container');
+    this.chatContainer = document.getElementById('hero-chat-container');
     this.chatTrigger = document.getElementById('hero-chat-trigger');
 
     if (!this.chatContainer) {
@@ -131,19 +131,6 @@ class ChatUI {
       retryBtn.addEventListener('click', () => {
         this.hideError();
         this.showLoadingState();
-        
-        // Trigger re-initialization if callback is available
-        if (this.onRetry) {
-          this.onRetry();
-        }
-      });
-    }
-
-    // Error close
-    const errorCloseBtn = this.chatContainer.querySelector('.error-close');
-    if (errorCloseBtn) {
-      errorCloseBtn.addEventListener('click', () => {
-        this.hide();
       });
     }
 
@@ -154,31 +141,9 @@ class ChatUI {
     if (fallbackForm) {
       fallbackForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const name = this.chatContainer.querySelector('.fallback-name').value.trim();
-        const email = this.chatContainer.querySelector('.fallback-email').value.trim();
-        
-        // Clear previous validation errors
-        this.clearFormValidationErrors();
-        
-        // Validate form data
-        const validation = this.validateFallbackForm(name, email);
-        
-        if (!validation.isValid) {
-          // Show validation errors
-          validation.errors.forEach(error => {
-            this.showFormValidationError(error.field, error.message);
-          });
-          return;
-        }
-
-        // Call the fallback submit handler if provided
-        if (this.onFallbackSubmit) {
-          this.onFallbackSubmit(name, email);
-        } else {
-          // Fallback to simple email generation
-          this.generateEmailLink(name, email);
-        }
+        const name = this.chatContainer.querySelector('.fallback-name').value;
+        const email = this.chatContainer.querySelector('.fallback-email').value;
+        this.generateEmailLink(name, email);
       });
     }
 
@@ -195,64 +160,25 @@ class ChatUI {
    */
   showLoadingState(message = "Wait, I'm loading as fast as I can!") {
     this.hideAllStates();
-    this.show();
-
     this.loadingContainer.classList.remove('hidden');
 
     const loadingMessage = this.loadingContainer.querySelector('.loading-message');
     loadingMessage.textContent = message;
 
-    // Initialize progress bar
+    // Animate progress bar
     const progressBar = this.loadingContainer.querySelector('.progress-bar');
     progressBar.style.width = '0%';
 
-    // Store progress bar reference for external updates
-    this.progressBar = progressBar;
-    
-    // Initialize progress tracking
-    this.progressState = {
-      embedding: 0,
-      eqa: 0,
-      textGen: 0
-    };
-  }
-
-  /**
-   * Update loading progress with weighted calculation
-   * Model sizes: SmolLM: 270MB (76%), distilbert-squad: 65MB (18%), all-MiniLM-L6-v2: 23MB (6%)
-   * @param {string} worker - Worker name ('embedding', 'eqa', 'textGen')
-   * @param {number} progress - Progress value (0-100)
-   */
-  updateProgress(worker, progress) {
-    if (!this.progressBar || !this.progressState) return;
-
-    // Update worker-specific progress
-    this.progressState[worker] = Math.min(100, Math.max(0, progress));
-
-    // Calculate weighted total progress
-    // Weights based on model sizes: Embedding 6%, EQA 18%, SmolLM 76%
-    const weights = {
-      embedding: 0.06,
-      eqa: 0.18,
-      textGen: 0.76
-    };
-
-    const totalProgress = 
-      (this.progressState.embedding * weights.embedding) +
-      (this.progressState.eqa * weights.eqa) +
-      (this.progressState.textGen * weights.textGen);
-
-    // Update progress bar smoothly
-    this.progressBar.style.width = `${totalProgress.toFixed(1)}%`;
-  }
-
-  /**
-   * Complete progress bar animation
-   */
-  completeProgress() {
-    if (this.progressBar) {
-      this.progressBar.style.width = '100%';
-    }
+    // Simulate loading progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+      }
+      progressBar.style.width = `${progress}%`;
+    }, 200);
   }
 
   /**
@@ -261,12 +187,6 @@ class ChatUI {
   showStyleSelection() {
     this.hideAllStates();
     this.styleSelection.classList.remove('hidden');
-
-    // Focus on first style option for accessibility
-    const firstOption = this.styleSelection.querySelector('.style-option');
-    if (firstOption) {
-      firstOption.focus();
-    }
   }
 
   /**
@@ -301,11 +221,6 @@ class ChatUI {
 
     this.messagesContainer.appendChild(messageElement);
     this.scrollToBottom();
-
-    // Store last user message for fallback handling
-    if (isUser) {
-      this.lastUserMessage = message;
-    }
   }
 
   /**
@@ -345,30 +260,15 @@ class ChatUI {
 
   /**
    * Show fallback form for email contact
-   * @param {string} message - Optional message to display above form
    */
-  showFallbackForm(message = null) {
+  showFallbackForm() {
     this.hideAllStates();
     const fallbackContainer = this.chatContainer.querySelector('.chat-fallback');
-    
-    // Update message if provided
-    if (message) {
-      const fallbackMessage = fallbackContainer.querySelector('.fallback-message');
-      if (fallbackMessage) {
-        fallbackMessage.textContent = message;
-      }
-    }
-    
     fallbackContainer.classList.remove('hidden');
 
-    // Clear previous form data
-    const nameInput = fallbackContainer.querySelector('.fallback-name');
-    const emailInput = fallbackContainer.querySelector('.fallback-email');
-    if (nameInput) nameInput.value = '';
-    if (emailInput) emailInput.value = '';
-
     // Focus on name input
-    if (nameInput) nameInput.focus();
+    const nameInput = fallbackContainer.querySelector('.fallback-name');
+    nameInput.focus();
   }
 
   /**
@@ -381,19 +281,10 @@ class ChatUI {
 
   /**
    * Generate mailto link with conversation context
-   * @param {string} name - User's name
-   * @param {string} email - User's email
-   * @param {string} mailtoUrl - Pre-generated mailto URL
-   * @param {string} style - Conversation style for confirmation message
    */
-  generateEmailLink(name, email, mailtoUrl = null, style = 'developer') {
-    if (mailtoUrl) {
-      // Use provided mailto URL
-      window.location.href = mailtoUrl;
-    } else {
-      // Fallback to simple mailto
-      const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
-      const body = encodeURIComponent(`Hi Serhii,
+  generateEmailLink(name, email) {
+    const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
+    const body = encodeURIComponent(`Hi Serhii,
 
 I was chatting with your AI assistant on your portfolio website and had some questions I'd like to discuss further.
 
@@ -406,19 +297,11 @@ Looking forward to hearing from you!
 Best regards,
 ${name}`);
 
-      const mailtoLink = `mailto:serhii@example.com?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
-    }
+    const mailtoLink = `mailto:your-email@example.com?subject=${subject}&body=${body}`;
+    window.location.href = mailtoLink;
 
-    // Show style-appropriate confirmation message
-    const confirmationMessages = {
-      hr: "Perfect! I've opened your email client with a professional message template. Please feel free to add any additional details you'd like to discuss.",
-      developer: "Great! I've opened your email client with a pre-filled message. Feel free to add any specific questions you had!",
-      friend: "Awesome! 🎉 I've set up an email for you! Just add whatever else you want to chat about and hit send! 😊"
-    };
-
-    const confirmationMessage = confirmationMessages[style] || confirmationMessages.developer;
-    this.addMessage(confirmationMessage, false, style);
+    // Show confirmation message
+    this.addMessage("Great! I've opened your email client with a pre-filled message. Feel free to add any specific questions you had!", false);
     this.hideFallbackForm();
     this.showChatInterface();
   }
@@ -428,14 +311,6 @@ ${name}`);
    */
   clearMessages() {
     this.messagesContainer.innerHTML = '';
-    this.lastUserMessage = null;
-  }
-
-  /**
-   * Get the last user message for fallback handling
-   */
-  getLastUserMessage() {
-    return this.lastUserMessage || '';
   }
 
   /**
@@ -515,82 +390,12 @@ ${name}`);
   }
 
   /**
-   * Show form validation error
-   * @param {string} field - Field name ('name' or 'email')
-   * @param {string} message - Error message
-   */
-  showFormValidationError(field, message) {
-    const fallbackContainer = this.chatContainer.querySelector('.chat-fallback');
-    const errorElement = fallbackContainer.querySelector(`.${field}-error`);
-    
-    if (errorElement) {
-      errorElement.textContent = message;
-      errorElement.classList.remove('hidden');
-    }
-
-    // Highlight the invalid field
-    const input = fallbackContainer.querySelector(`.fallback-${field}`);
-    if (input) {
-      input.classList.add('error');
-      input.focus();
-    }
-  }
-
-  /**
-   * Clear form validation errors
-   */
-  clearFormValidationErrors() {
-    const fallbackContainer = this.chatContainer.querySelector('.chat-fallback');
-    const errorElements = fallbackContainer.querySelectorAll('.validation-error');
-    const inputElements = fallbackContainer.querySelectorAll('.fallback-name, .fallback-email');
-
-    errorElements.forEach(element => {
-      element.classList.add('hidden');
-      element.textContent = '';
-    });
-
-    inputElements.forEach(element => {
-      element.classList.remove('error');
-    });
-  }
-
-  /**
-   * Validate fallback form data
-   * @param {string} name - User's name
-   * @param {string} email - User's email
-   * @returns {Object} Validation result with success status and errors
-   */
-  validateFallbackForm(name, email) {
-    const errors = [];
-
-    // Validate name
-    if (!name || name.trim().length < 2) {
-      errors.push({ field: 'name', message: 'Please enter your name (at least 2 characters)' });
-    } else if (name.trim().length > 50) {
-      errors.push({ field: 'name', message: 'Name must be less than 50 characters' });
-    }
-
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      errors.push({ field: 'email', message: 'Please enter a valid email address' });
-    }
-
-    return {
-      isValid: errors.length === 0,
-      errors: errors
-    };
-  }
-
-  /**
    * Set event handlers
    */
-  setEventHandlers({ onStyleSelect, onMessageSend, onRestart, onFallbackSubmit, onRetry }) {
+  setEventHandlers({ onStyleSelect, onMessageSend, onRestart }) {
     this.onStyleSelect = onStyleSelect;
     this.onMessageSend = onMessageSend;
     this.onRestart = onRestart;
-    this.onFallbackSubmit = onFallbackSubmit;
-    this.onRetry = onRetry;
   }
 }
 

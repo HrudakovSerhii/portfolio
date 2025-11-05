@@ -1,8 +1,6 @@
 // Chat UI Component Styles
 // Provides styling for the chat interface, loading states, and interactions
 
-@use 'sass:color';
-
 .chat-container {
   position: fixed;
   top: 50%;
@@ -12,17 +10,17 @@
   max-width: 500px;
   height: 80vh;
   max-height: 600px;
-  background-color: $light-gray;
-  border: 1px solid $dark-gray;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
-
+  
   &.visible {
     opacity: 1;
     visibility: visible;
@@ -34,31 +32,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-md $spacing-lg;
-  border-bottom: 1px solid $dark-gray;
-  background: $white;
-  border-radius: $border-radius-lg $border-radius-lg 0 0;
-
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 12px 12px 0 0;
+  
   .chat-title {
     margin: 0;
-    font-size: $font-size-large;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: $text-color;
+    color: var(--color-text-primary);
   }
-
+  
   .chat-close {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: $dark-gray;
+    color: var(--color-text-secondary);
     cursor: pointer;
-    padding: $spacing-xs;
-    border-radius: $border-radius-sm;
+    padding: 0.25rem;
+    border-radius: 4px;
     transition: all 0.2s ease;
-
+    
     &:hover {
-      background: $light-gray;
-      color: $text-color;
+      background: var(--color-hover);
+      color: var(--color-text-primary);
     }
   }
 }
@@ -77,35 +75,35 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: $spacing-xl;
+  padding: 2rem;
   text-align: center;
-
+  
   .loading-spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid $light-gray;
-    border-top: 3px solid $secondary-color;
+    border: 3px solid var(--color-border);
+    border-top: 3px solid var(--color-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: $spacing-md;
+    margin-bottom: 1rem;
   }
-
+  
   .loading-message {
-    margin: 0 0 $spacing-lg 0;
-    color: $dark-gray;
-    font-size: $font-size-small;
+    margin: 0 0 1.5rem 0;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
   }
-
+  
   .loading-progress {
     width: 100%;
     height: 4px;
-    background: $light-gray;
+    background: var(--color-border);
     border-radius: 2px;
     overflow: hidden;
-
+    
     .progress-bar {
       height: 100%;
-      background: $primary-color;
+      background: var(--color-primary);
       border-radius: 2px;
       transition: width 0.3s ease;
     }
@@ -119,53 +117,53 @@
 
 // Style Selection
 .chat-style-selection {
-  padding: $spacing-xl $spacing-lg;
-
+  padding: 2rem 1.5rem;
+  
   h4 {
-    margin: 0 0 $spacing-lg 0;
+    margin: 0 0 1.5rem 0;
     text-align: center;
-    color: $text-color;
-    font-size: $font-size-large;
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
   }
-
+  
   .style-options {
     display: flex;
     flex-direction: column;
-    gap: $spacing-sm;
+    gap: 0.75rem;
   }
-
+  
   .style-option {
     display: flex;
     align-items: center;
-    padding: $spacing-md;
-    background: $white;
-    border: 1px solid $dark-gray;
-    border-radius: $border-radius-md;
+    padding: 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
-
+    
     &:hover {
-      background: $light-gray;
-      border-color: $primary-color;
+      background: var(--color-hover);
+      border-color: var(--color-primary);
       transform: translateY(-1px);
     }
-
+    
     .style-icon {
-      font-size: $font-size-xl;
-      margin-right: $spacing-md;
+      font-size: 1.5rem;
+      margin-right: 1rem;
     }
-
+    
     .style-title {
       font-weight: 600;
-      color: $text-color;
+      color: var(--color-text-primary);
       display: block;
-      margin-bottom: $spacing-xs;
+      margin-bottom: 0.25rem;
     }
-
+    
     .style-description {
-      font-size: $font-size-small;
-      color: $dark-gray;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
       display: block;
     }
   }
@@ -182,21 +180,21 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: $spacing-md;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
-
+  gap: 1rem;
+  
   &::-webkit-scrollbar {
     width: 6px;
   }
-
+  
   &::-webkit-scrollbar-track {
-    background: $white;
+    background: var(--color-surface);
   }
-
+  
   &::-webkit-scrollbar-thumb {
-    background: $dark-gray;
+    background: var(--color-border);
     border-radius: 3px;
   }
 }
@@ -204,52 +202,52 @@
 .message {
   display: flex;
   align-items: flex-end;
-  gap: $spacing-sm;
-
+  gap: 0.5rem;
+  
   &.user-message {
     flex-direction: row-reverse;
-
+    
     .message-content {
-      background: $primary-color;
-      color: $white;
+      background: var(--color-primary);
+      color: white;
       border-radius: 18px 18px 4px 18px;
     }
   }
-
+  
   &.bot-message {
     .message-content {
-      background: $white;
-      color: $text-color;
-      border: 1px solid $dark-gray;
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
       border-radius: 18px 18px 18px 4px;
     }
   }
-
+  
   .message-content {
     max-width: 80%;
-    padding: $spacing-sm $spacing-md;
-
+    padding: 0.75rem 1rem;
+    
     .message-text {
-      line-height: $line-height-base;
+      line-height: 1.4;
       word-wrap: break-word;
     }
-
+    
     .message-time {
-      font-size: $font-size-extra-small;
+      font-size: 0.7rem;
       opacity: 0.7;
-      margin-top: $spacing-xs;
+      margin-top: 0.25rem;
     }
   }
-
+  
   .message-avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: $white;
+    background: var(--color-surface);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: $font-size-base;
+    font-size: 1rem;
     flex-shrink: 0;
   }
 }
@@ -258,28 +256,28 @@
 .typing-indicator {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  padding: 0 $spacing-md $spacing-md $spacing-md;
-
+  gap: 0.5rem;
+  padding: 0 1rem 1rem 1rem;
+  
   .typing-dots {
     display: flex;
     gap: 3px;
-
+    
     span {
       width: 6px;
       height: 6px;
-      background: $dark-gray;
+      background: var(--color-text-secondary);
       border-radius: 50%;
       animation: typing 1.4s infinite ease-in-out;
-
+      
       &:nth-child(1) { animation-delay: -0.32s; }
       &:nth-child(2) { animation-delay: -0.16s; }
     }
   }
-
+  
   .typing-text {
-    font-size: $font-size-small;
-    color: $dark-gray;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
     font-style: italic;
   }
 }
@@ -297,40 +295,40 @@
 
 // Input Area
 .chat-input {
-  border-top: 1px solid $dark-gray;
-  padding: $spacing-md;
-
+  border-top: 1px solid var(--color-border);
+  padding: 1rem;
+  
   .input-container {
     display: flex;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-sm;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
   }
-
+  
   .message-input {
     flex: 1;
-    padding: $spacing-sm $spacing-md;
-    border: 1px solid $dark-gray;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
     border-radius: 20px;
-    background: $white;
-    color: $text-color;
-    font-size: $font-size-small;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s ease;
-
+    
     &:focus {
-      border-color: $primary-color;
+      border-color: var(--color-primary);
     }
-
+    
     &::placeholder {
-      color: $dark-gray;
+      color: var(--color-text-secondary);
     }
   }
-
+  
   .send-button {
     width: 44px;
     height: 44px;
-    background: $primary-color;
-    color: $white;
+    background: var(--color-primary);
+    color: white;
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -338,36 +336,36 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-
+    
     &:hover {
-      background: color.scale($primary-color, $lightness: -10%);
+      background: var(--color-primary-dark);
       transform: scale(1.05);
     }
-
+    
     &:disabled {
-      background: $dark-gray;
+      background: var(--color-border);
       cursor: not-allowed;
       transform: none;
     }
   }
-
+  
   .chat-actions {
     text-align: center;
   }
-
+  
   .restart-button {
     background: none;
     border: none;
-    color: $dark-gray;
-    font-size: $font-size-small;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
     cursor: pointer;
-    padding: $spacing-sm;
-    border-radius: $border-radius-sm;
+    padding: 0.5rem;
+    border-radius: 4px;
     transition: all 0.2s ease;
-
+    
     &:hover {
-      color: $primary-color;
-      background: $light-gray;
+      color: var(--color-primary);
+      background: var(--color-hover);
     }
   }
 }
@@ -379,138 +377,112 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: $spacing-xl;
+  padding: 2rem;
   text-align: center;
-
+  
   .error-content {
-    max-width: 350px;
+    max-width: 300px;
   }
-
+  
   .error-icon {
-    font-size: $font-size-xxl;
-    margin-bottom: $spacing-md;
+    font-size: 3rem;
+    margin-bottom: 1rem;
     display: block;
-    color: $accent-color;
   }
-
+  
   .error-message {
-    margin: 0 0 $spacing-lg 0;
-    color: $dark-gray;
-    line-height: $line-height-base;
-    font-size: $font-size-base;
+    margin: 0 0 1.5rem 0;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
   }
-
+  
   .error-retry {
-    background: $primary-color;
-    color: $white;
+    background: var(--color-primary);
+    color: white;
     border: none;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-sm;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: $font-size-small;
+    font-size: 0.95rem;
     transition: background 0.2s ease;
-    margin-right: $spacing-sm;
-
+    
     &:hover {
-      background: color.scale($primary-color, $lightness: -10%);
+      background: var(--color-primary-dark);
     }
-  }
-
-  .error-close {
-    background: none;
-    color: $dark-gray;
-    border: 1px solid $dark-gray;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-sm;
-    cursor: pointer;
-    font-size: $font-size-small;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: $light-gray;
-      color: $text-color;
-    }
-  }
-
-  .error-actions {
-    display: flex;
-    gap: $spacing-sm;
-    justify-content: center;
-    flex-wrap: wrap;
   }
 }
 
 // Fallback Form
 .chat-fallback {
-  padding: $spacing-xl $spacing-lg;
-
+  padding: 2rem 1.5rem;
+  
   .fallback-content {
     text-align: center;
-
+    
     h4 {
-      margin: 0 0 $spacing-md 0;
-      color: $text-color;
+      margin: 0 0 1rem 0;
+      color: var(--color-text-primary);
     }
-
+    
     p {
-      margin: 0 0 $spacing-lg 0;
-      color: $dark-gray;
-      line-height: $line-height-base;
+      margin: 0 0 1.5rem 0;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
     }
   }
-
+  
   .fallback-form {
     display: flex;
     flex-direction: column;
-    gap: $spacing-md;
-
+    gap: 1rem;
+    
     input {
-      padding: $spacing-sm;
-      border: 1px solid $dark-gray;
-      border-radius: $border-radius-sm;
-      background: $white;
-      color: $text-color;
-      font-size: $font-size-small;
-
+      padding: 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      font-size: 0.95rem;
+      
       &:focus {
         outline: none;
-        border-color: $primary-color;
+        border-color: var(--color-primary);
       }
-
+      
       &::placeholder {
-        color: $dark-gray;
+        color: var(--color-text-secondary);
       }
     }
-
+    
     .fallback-submit {
-      background: $primary-color;
-      color: $white;
+      background: var(--color-primary);
+      color: white;
       border: none;
-      padding: $spacing-sm;
-      border-radius: $border-radius-sm;
+      padding: 0.75rem;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: $font-size-small;
+      font-size: 0.95rem;
       font-weight: 500;
       transition: background 0.2s ease;
-
+      
       &:hover {
-        background: color.scale($primary-color, $lightness: -10%);
+        background: var(--color-primary-dark);
       }
     }
-
+    
     .fallback-cancel {
       background: none;
-      color: $dark-gray;
-      border: 1px solid $dark-gray;
-      padding: $spacing-sm;
-      border-radius: $border-radius-sm;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+      padding: 0.75rem;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: $font-size-small;
+      font-size: 0.95rem;
       transition: all 0.2s ease;
-
+      
       &:hover {
-        background: $light-gray;
-        color: $text-color;
+        background: var(--color-hover);
+        color: var(--color-text-primary);
       }
     }
   }
@@ -519,12 +491,12 @@
 // Chat Trigger Button
 .chat-trigger {
   position: fixed;
-  bottom: $spacing-xl;
-  right: $spacing-xl;
+  bottom: 2rem;
+  right: 2rem;
   width: 60px;
   height: 60px;
-  background: $primary-color;
-  color: $white;
+  background: var(--color-primary);
+  color: white;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -532,27 +504,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: $shadow-md;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 999;
-
+  
   &:hover {
-    background: color.scale($primary-color, $lightness: -10%);
+    background: var(--color-primary-dark);
     transform: scale(1.1);
-    box-shadow: $shadow-lg;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
   }
-
+  
   &:active {
     transform: scale(0.95);
   }
-
+  
   .chat-trigger__icon {
-    font-size: $font-size-xl;
+    font-size: 1.5rem;
     margin-bottom: 2px;
   }
-
+  
   .chat-trigger__text {
-    font-size: $font-size-extra-small;
+    font-size: 0.7rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -565,32 +537,32 @@
 }
 
 // Responsive Design
-@media (max-width: $breakpoint-md) {
+@media (max-width: 768px) {
   .chat-container {
     width: 95%;
     height: 85vh;
     max-height: none;
   }
-
+  
   .chat-header {
-    padding: $spacing-sm $spacing-md;
-
+    padding: 0.75rem 1rem;
+    
     .chat-title {
-      font-size: $font-size-base;
+      font-size: 1rem;
     }
   }
-
+  
   .messages-container {
-    padding: $spacing-sm;
+    padding: 0.75rem;
   }
-
+  
   .chat-input {
-    padding: $spacing-sm;
+    padding: 0.75rem;
   }
-
+  
   .chat-style-selection,
   .chat-fallback {
-    padding: $spacing-lg $spacing-md;
+    padding: 1.5rem 1rem;
   }
 }
 
@@ -598,13 +570,13 @@
   .message .message-content {
     max-width: 85%;
   }
-
+  
   .style-option {
-    padding: $spacing-sm;
-
+    padding: 0.75rem;
+    
     .style-icon {
-      font-size: $font-size-large;
-      margin-right: $spacing-sm;
+      font-size: 1.25rem;
+      margin-right: 0.75rem;
     }
   }
 }
