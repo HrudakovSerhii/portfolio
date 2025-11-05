@@ -16,6 +16,9 @@
     "watch:chat-bot": "nodemon --watch src/scripts/workers --watch src/data/chat-bot --ext js,json --exec \"npm run build:chat-bot\"",
     "serve": "npx live-server dist",
     "dev": "npm run build && npm run watch & npm run serve",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "format:scss": "prettier --write \"src/**/*.scss\"",
@@ -31,9 +34,11 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "jsdom": "^27.1.0",
     "live-server": "^1.2.2",
     "nodemon": "^3.0.2",
-    "sass": "^1.69.5"
+    "sass": "^1.69.5",
+    "vitest": "^4.0.7"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.7.6",
