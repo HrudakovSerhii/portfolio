@@ -80,8 +80,8 @@ function showFallbackError(error) {
  */
 function showChatInterface() {
   if (chatBotInstance && chatBotInstance.ui) {
-    // Delegate to the actual UI instance
-    chatBotInstance.ui.showChatInterface();
+    // Show the chat container
+    chatBotInstance.ui.show();
   }
 }
 
@@ -89,15 +89,9 @@ function showChatInterface() {
  * Close the chat overlay
  */
 function closeChatOverlay() {
-  if (chatBotInstance && chatBotInstance.ui && chatBotInstance.ui.closeChatOverlay) {
-    // Delegate to the actual UI instance
-    chatBotInstance.ui.closeChatOverlay();
-  } else {
-    // Fallback for cases where UI isn't available
-    const overlay = document.getElementById('chat-overlay');
-    if (overlay) {
-      overlay.remove();
-    }
+  if (chatBotInstance && chatBotInstance.ui) {
+    // Hide the chat container
+    chatBotInstance.ui.hide();
   }
 }
 
@@ -105,68 +99,18 @@ function closeChatOverlay() {
  * Setup event listeners for chat interface
  */
 function setupChatEventListeners() {
-  // Close button
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.chat-close, .chat-error__close')) {
-      closeChatOverlay();
-    }
-  });
-
-  // Style selection buttons
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.chat-style-button')) {
-      const style = event.target.dataset.style;
-      if (chatBotInstance && style) {
-        chatBotInstance.selectConversationStyle(style);
-      }
-    }
-  });
-
-  // Message form submission
-  document.addEventListener('submit', (event) => {
-    if (event.target.matches('.chat-message-form')) {
-      event.preventDefault();
-      handleMessageSubmit(event.target);
-    }
-  });
-
-  // Restart conversation button
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.chat-restart-button')) {
-      if (chatBotInstance) {
-        chatBotInstance.restartConversation();
-      }
-    }
-  });
-
   // Escape key to close
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      const overlay = document.getElementById('chat-overlay');
-      if (overlay) {
+      const chatContainer = document.getElementById('chat-container');
+      if (chatContainer && chatContainer.classList.contains('visible')) {
         closeChatOverlay();
       }
     }
   });
 }
 
-/**
- * Handle message form submission
- */
-function handleMessageSubmit(form) {
-  const messageInput = form.querySelector('.chat-message-input');
-  const message = messageInput.value.trim();
 
-  if (!message || !chatBotInstance) {
-    return;
-  }
-
-  // Clear input
-  messageInput.value = '';
-
-  // Process message
-  chatBotInstance.processMessage(message);
-}
 
 /**
  * Cleanup chat resources when page unloads

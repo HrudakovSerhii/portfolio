@@ -187,6 +187,12 @@ class ChatUI {
   showStyleSelection() {
     this.hideAllStates();
     this.styleSelection.classList.remove('hidden');
+    
+    // Focus on first style option for accessibility
+    const firstOption = this.styleSelection.querySelector('.style-option');
+    if (firstOption) {
+      firstOption.focus();
+    }
   }
 
   /**
@@ -221,6 +227,11 @@ class ChatUI {
 
     this.messagesContainer.appendChild(messageElement);
     this.scrollToBottom();
+    
+    // Store last user message for fallback handling
+    if (isUser) {
+      this.lastUserMessage = message;
+    }
   }
 
   /**
@@ -311,6 +322,14 @@ ${name}`);
    */
   clearMessages() {
     this.messagesContainer.innerHTML = '';
+    this.lastUserMessage = null;
+  }
+
+  /**
+   * Get the last user message for fallback handling
+   */
+  getLastUserMessage() {
+    return this.lastUserMessage || '';
   }
 
   /**

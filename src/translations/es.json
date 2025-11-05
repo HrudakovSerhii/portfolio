@@ -19,7 +19,8 @@
     "hero": {
       "title": { "text": "Desarrollador Full Stack" },
       "subtitle": { "text": "Soy desarrollador frontend, ingeniero full stack, entusiasta de IA, investigador de optimización, especialista en ecommerce, narrador, constructor de procesos, propietario de tareas y líder de equipo" },
-      "cta": { "text": "Ver Mi Trabajo" }
+      "cta": { "text": "Ver Mi Trabajo" },
+      "chat": { "text": "Chatear con Serhii AI" }
     },
     "skills": {
       "title": { "text": "Habilidades y Tecnologías" },
@@ -87,6 +88,50 @@
       "email": { "text": "Email" },
       "location": { "text": "Ubicación" },
       "availability": { "text": "Disponible para trabajo freelance" }
+    }
+  },
+  "chat": {
+    "header": {
+      "title": { "text": "Chatear con Serhii AI" }
+    },
+    "loading": {
+      "message": { "text": "¡Espera, me estoy cargando lo más rápido que puedo!" }
+    },
+    "styleSelection": {
+      "title": { "text": "¿Cómo te gustaría chatear con Serhii?" },
+      "hr": {
+        "title": { "text": "Profesional (RRHH)" },
+        "description": { "text": "Respuestas formales y estructuradas sobre experiencia y logros" }
+      },
+      "developer": {
+        "title": { "text": "Técnico (Desarrollador)" },
+        "description": { "text": "Discusión conversacional y técnica sobre proyectos y habilidades" }
+      },
+      "friend": {
+        "title": { "text": "Casual (Amigo)" },
+        "description": { "text": "Chat amigable y entusiasta con personalidad y emojis" }
+      }
+    },
+    "typing": {
+      "text": { "text": "Serhii está pensando..." }
+    },
+    "input": {
+      "placeholder": { "text": "Pregúntame cualquier cosa sobre Serhii..." }
+    },
+    "restart": {
+      "text": { "text": "¿Te gustaría chatear con un Serhii AI diferente?" }
+    },
+    "error": {
+      "message": { "text": "Algo salió mal. Por favor intenta de nuevo." },
+      "retry": { "text": "Intentar de Nuevo" }
+    },
+    "fallback": {
+      "title": { "text": "¡Pongámonos en contacto!" },
+      "description": { "text": "No pude encontrar la respuesta correcta. Déjame conectarte directamente con Serhii por email." },
+      "name": { "placeholder": { "text": "Tu nombre" } },
+      "email": { "placeholder": { "text": "Tu email" } },
+      "submit": { "text": "Enviar Email" },
+      "cancel": { "text": "Continuar Chateando" }
     }
   },
   "meta": {
