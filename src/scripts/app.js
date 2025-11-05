@@ -11,15 +11,14 @@ async function main() {
     initializeNavigation();
     initializeTranslations().finally();
 
-    // Initialize chat integration on home page
+    // Make chat integration available globally for chat button
     if (document.body.dataset.page === 'home' || document.querySelector('#hero-chat-trigger')) {
         try {
-            // Dynamic import for chat integration
-            const { default: ChatIntegration } = await import('./modules/chat-bot/chat-integration.js');
-            const chatIntegration = new ChatIntegration();
-            await chatIntegration.initialize();
+            // Import chat integration functions and make them globally available
+            await import('./modules/chat-bot/chat-integration.js');
+            console.log('Chat integration loaded and ready');
         } catch (error) {
-            console.error('Failed to initialize chat integration:', error);
+            console.error('Failed to load chat integration:', error);
         }
     }
 }

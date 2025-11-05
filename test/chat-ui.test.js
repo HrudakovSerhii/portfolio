@@ -27,9 +27,9 @@ const ChatUI = vi.fn().mockImplementation(() => {
 
     findChatElements() {
       // Find existing elements in the DOM
-      this.chatContainer = document.getElementById('chat-container');
+      this.chatContainer = document.getElementById('hero-chat-container');
       this.chatTrigger = document.getElementById('chat-trigger');
-      
+
       if (!this.chatContainer) {
         throw new Error('Chat container not found in HTML');
       }
@@ -57,7 +57,7 @@ const ChatUI = vi.fn().mockImplementation(() => {
       // Message input
       const sendButton = this.chatContainer.querySelector('.send-button');
       const messageInput = this.chatContainer.querySelector('.message-input');
-      
+
       const sendMessage = () => {
         const message = messageInput.value.trim();
         if (message && this.onMessageSend) {
@@ -165,13 +165,13 @@ const ChatUI = vi.fn().mockImplementation(() => {
     hideAllStates() {
       const states = [
         '.chat-loading',
-        '.chat-style-selection', 
+        '.chat-style-selection',
         '.chat-messages',
         '.chat-input',
         '.chat-error',
         '.chat-fallback'
       ];
-      
+
       states.forEach(selector => {
         const element = this.chatContainer.querySelector(selector);
         if (element) {
@@ -243,7 +243,7 @@ describe('ChatUI', () => {
       </div>
       <button class="chat-trigger" id="chat-trigger">Chat</button>
     `;
-    
+
     // Create new ChatUI instance
     chatUI = new ChatUI();
   });
@@ -258,9 +258,9 @@ describe('ChatUI', () => {
   describe('Initialization', () => {
     it('should initialize correctly', () => {
       expect(chatUI.isInitialized).toBe(false);
-      
+
       chatUI.initialize();
-      
+
       expect(chatUI.isInitialized).toBe(true);
       expect(chatUI.chatContainer).toBeTruthy();
       expect(document.body.contains(chatUI.chatContainer)).toBe(true);
@@ -269,16 +269,16 @@ describe('ChatUI', () => {
     it('should not initialize twice', () => {
       chatUI.initialize();
       const firstContainer = chatUI.chatContainer;
-      
+
       chatUI.initialize();
-      
+
       expect(chatUI.chatContainer).toBe(firstContainer);
       expect(document.querySelectorAll('.chat-container')).toHaveLength(1);
     });
 
     it('should create all required UI elements', () => {
       chatUI.initialize();
-      
+
       expect(chatUI.chatContainer.querySelector('.chat-header')).toBeTruthy();
       expect(chatUI.chatContainer.querySelector('.chat-loading')).toBeTruthy();
       expect(chatUI.chatContainer.querySelector('.chat-style-selection')).toBeTruthy();
@@ -296,7 +296,7 @@ describe('ChatUI', () => {
 
     it('should show loading state correctly', () => {
       chatUI.showLoadingState();
-      
+
       expect(chatUI.loadingContainer.classList.contains('hidden')).toBe(false);
       expect(chatUI.styleSelection.classList.contains('hidden')).toBe(true);
     });
@@ -304,21 +304,21 @@ describe('ChatUI', () => {
     it('should show loading state with custom message', () => {
       const customMessage = 'Custom loading message';
       chatUI.showLoadingState(customMessage);
-      
+
       const messageElement = chatUI.loadingContainer.querySelector('.loading-message');
       expect(messageElement.textContent).toBe(customMessage);
     });
 
     it('should show style selection', () => {
       chatUI.showStyleSelection();
-      
+
       expect(chatUI.styleSelection.classList.contains('hidden')).toBe(false);
       expect(chatUI.loadingContainer.classList.contains('hidden')).toBe(true);
     });
 
     it('should show chat interface', () => {
       chatUI.showChatInterface();
-      
+
       const messagesDiv = chatUI.chatContainer.querySelector('.chat-messages');
       expect(messagesDiv.classList.contains('hidden')).toBe(false);
       expect(chatUI.inputContainer.classList.contains('hidden')).toBe(false);
@@ -327,17 +327,17 @@ describe('ChatUI', () => {
     it('should show error state', () => {
       const errorMessage = 'Test error message';
       chatUI.showError(errorMessage);
-      
+
       const errorContainer = chatUI.chatContainer.querySelector('.chat-error');
       const messageElement = errorContainer.querySelector('.error-message');
-      
+
       expect(errorContainer.classList.contains('hidden')).toBe(false);
       expect(messageElement.textContent).toBe(errorMessage);
     });
 
     it('should show fallback form', () => {
       chatUI.showFallbackForm();
-      
+
       const fallbackContainer = chatUI.chatContainer.querySelector('.chat-fallback');
       expect(fallbackContainer.classList.contains('hidden')).toBe(false);
     });
@@ -351,10 +351,10 @@ describe('ChatUI', () => {
     it('should add user message correctly', () => {
       const message = 'Hello, this is a test message';
       chatUI.addMessage(message, true);
-      
+
       const messageElements = chatUI.messagesContainer.querySelectorAll('.message');
       expect(messageElements).toHaveLength(1);
-      
+
       const messageElement = messageElements[0];
       expect(messageElement.classList.contains('user-message')).toBe(true);
       expect(messageElement.querySelector('.message-text').textContent).toBe(message);
@@ -363,10 +363,10 @@ describe('ChatUI', () => {
     it('should add bot message correctly', () => {
       const message = 'Hello, this is a bot response';
       chatUI.addMessage(message, false, 'developer');
-      
+
       const messageElements = chatUI.messagesContainer.querySelectorAll('.message');
       expect(messageElements).toHaveLength(1);
-      
+
       const messageElement = messageElements[0];
       expect(messageElement.classList.contains('bot-message')).toBe(true);
       expect(messageElement.querySelector('.message-text').textContent).toBe(message);
@@ -375,7 +375,7 @@ describe('ChatUI', () => {
     it('should escape HTML in messages', () => {
       const maliciousMessage = '<script>alert("xss")</script>';
       chatUI.addMessage(maliciousMessage, true);
-      
+
       const messageElement = chatUI.messagesContainer.querySelector('.message-text');
       expect(messageElement.innerHTML).toBe('&lt;script&gt;alert("xss")&lt;/script&gt;');
     });
@@ -383,11 +383,11 @@ describe('ChatUI', () => {
     it('should clear all messages', () => {
       chatUI.addMessage('Message 1', true);
       chatUI.addMessage('Message 2', false);
-      
+
       expect(chatUI.messagesContainer.children).toHaveLength(2);
-      
+
       chatUI.clearMessages();
-      
+
       expect(chatUI.messagesContainer.children).toHaveLength(0);
     });
   });
@@ -399,14 +399,14 @@ describe('ChatUI', () => {
 
     it('should show typing indicator', () => {
       chatUI.showTypingIndicator();
-      
+
       expect(chatUI.typingIndicator.classList.contains('hidden')).toBe(false);
     });
 
     it('should hide typing indicator', () => {
       chatUI.showTypingIndicator();
       chatUI.hideTypingIndicator();
-      
+
       expect(chatUI.typingIndicator.classList.contains('hidden')).toBe(true);
     });
   });
@@ -419,23 +419,23 @@ describe('ChatUI', () => {
     it('should handle style selection', () => {
       const mockStyleSelect = vi.fn();
       chatUI.setEventHandlers({ onStyleSelect: mockStyleSelect });
-      
+
       const hrOption = chatUI.chatContainer.querySelector('[data-style="hr"]');
       hrOption.click();
-      
+
       expect(mockStyleSelect).toHaveBeenCalledWith('hr');
     });
 
     it('should handle message sending via button', () => {
       const mockMessageSend = vi.fn();
       chatUI.setEventHandlers({ onMessageSend: mockMessageSend });
-      
+
       const messageInput = chatUI.chatContainer.querySelector('.message-input');
       const sendButton = chatUI.chatContainer.querySelector('.send-button');
-      
+
       messageInput.value = 'Test message';
       sendButton.click();
-      
+
       expect(mockMessageSend).toHaveBeenCalledWith('Test message');
       expect(messageInput.value).toBe('');
     });
@@ -443,36 +443,36 @@ describe('ChatUI', () => {
     it('should handle message sending via Enter key', () => {
       const mockMessageSend = vi.fn();
       chatUI.setEventHandlers({ onMessageSend: mockMessageSend });
-      
+
       const messageInput = chatUI.chatContainer.querySelector('.message-input');
       messageInput.value = 'Test message';
-      
+
       const enterEvent = new KeyboardEvent('keypress', { key: 'Enter' });
       messageInput.dispatchEvent(enterEvent);
-      
+
       expect(mockMessageSend).toHaveBeenCalledWith('Test message');
     });
 
     it('should handle restart button', () => {
       const mockRestart = vi.fn();
       chatUI.setEventHandlers({ onRestart: mockRestart });
-      
+
       const restartButton = chatUI.chatContainer.querySelector('.restart-button');
       restartButton.click();
-      
+
       expect(mockRestart).toHaveBeenCalled();
     });
 
     it('should not send empty messages', () => {
       const mockMessageSend = vi.fn();
       chatUI.setEventHandlers({ onMessageSend: mockMessageSend });
-      
+
       const messageInput = chatUI.chatContainer.querySelector('.message-input');
       const sendButton = chatUI.chatContainer.querySelector('.send-button');
-      
+
       messageInput.value = '   '; // Only whitespace
       sendButton.click();
-      
+
       expect(mockMessageSend).not.toHaveBeenCalled();
     });
   });
@@ -484,14 +484,14 @@ describe('ChatUI', () => {
 
     it('should show chat container', () => {
       chatUI.show();
-      
+
       expect(chatUI.chatContainer.classList.contains('visible')).toBe(true);
     });
 
     it('should hide chat container', () => {
       chatUI.show();
       chatUI.hide();
-      
+
       expect(chatUI.chatContainer.classList.contains('visible')).toBe(false);
     });
   });
@@ -500,12 +500,12 @@ describe('ChatUI', () => {
     it('should destroy chat UI properly', () => {
       chatUI.initialize();
       const container = chatUI.chatContainer;
-      
+
       expect(document.body.contains(container)).toBe(true);
       expect(chatUI.isInitialized).toBe(true);
-      
+
       chatUI.destroy();
-      
+
       expect(document.body.contains(container)).toBe(false);
       expect(chatUI.isInitialized).toBe(false);
     });
@@ -519,10 +519,10 @@ describe('ChatUI', () => {
     // Requirement 1.2: Loading states and progress indicators
     it('should meet requirement 1.2 - loading states and progress indicators', () => {
       chatUI.showLoadingState();
-      
+
       const spinner = chatUI.loadingContainer.querySelector('.loading-spinner');
       const progressBar = chatUI.loadingContainer.querySelector('.progress-bar');
-      
+
       expect(spinner).toBeTruthy();
       expect(progressBar).toBeTruthy();
       expect(chatUI.loadingContainer.classList.contains('hidden')).toBe(false);
@@ -532,10 +532,10 @@ describe('ChatUI', () => {
     it('should meet requirement 1.3 - error message display', () => {
       const errorMessage = 'Test error occurred';
       chatUI.showError(errorMessage);
-      
+
       const errorContainer = chatUI.chatContainer.querySelector('.chat-error');
       const messageElement = errorContainer.querySelector('.error-message');
-      
+
       expect(errorContainer.classList.contains('hidden')).toBe(false);
       expect(messageElement.textContent).toBe(errorMessage);
     });
@@ -543,10 +543,10 @@ describe('ChatUI', () => {
     // Requirement 2.1: Conversation style selection interface
     it('should meet requirement 2.1 - conversation style selection interface', () => {
       chatUI.showStyleSelection();
-      
+
       const styleOptions = chatUI.chatContainer.querySelectorAll('.style-option');
       expect(styleOptions).toHaveLength(3);
-      
+
       const styles = Array.from(styleOptions).map(option => option.dataset.style);
       expect(styles).toEqual(['hr', 'developer', 'friend']);
     });
@@ -554,15 +554,15 @@ describe('ChatUI', () => {
     // Requirement 6.1: Chat message display and input handling
     it('should meet requirement 6.1 - chat message display and input handling', () => {
       chatUI.showChatInterface();
-      
+
       const messageInput = chatUI.chatContainer.querySelector('.message-input');
       const sendButton = chatUI.chatContainer.querySelector('.send-button');
       const messagesContainer = chatUI.messagesContainer;
-      
+
       expect(messageInput).toBeTruthy();
       expect(sendButton).toBeTruthy();
       expect(messagesContainer).toBeTruthy();
-      
+
       // Test message display
       chatUI.addMessage('Test message', true);
       expect(messagesContainer.children).toHaveLength(1);

@@ -35,7 +35,7 @@ class ChatUI {
    */
   findChatElements() {
     // Find main chat container
-    this.chatContainer = document.getElementById('hero-chat-container');
+    this.chatContainer = document.getElementById('chat-container');
     this.chatTrigger = document.getElementById('hero-chat-trigger');
 
     if (!this.chatContainer) {
