@@ -3,17 +3,14 @@
  * Tests the CVDataService with actual CV data
  */
 
-import { createRequire } from "module";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
-const require = createRequire(import.meta.url);
+import CVDataService from '../../scripts/modules/chat-bot/cv-data-service.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// Import CVDataService
-const CVDataService = require("../../scripts/modules/chat-bot/cv-data-service.cjs");
 
 // Mock fetch for Node.js environment
 global.fetch = async () => {

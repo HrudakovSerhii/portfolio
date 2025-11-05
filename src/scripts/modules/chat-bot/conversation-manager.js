@@ -466,4 +466,4 @@ class ConversationManager {
   }
 }
 
-module.exports = ConversationManager;
+export default ConversationManager;
