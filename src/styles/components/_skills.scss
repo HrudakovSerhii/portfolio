@@ -1,6 +1,6 @@
 // Skills section
 
-.featured-projects {
+.skills {
   height: 100vh;
 
   &__container {
@@ -10,9 +10,16 @@
     justify-content: center;
     height: 100%;
     width: 50%;
+    padding: 0 2rem;
   }
 
   &__details__container {
     background-color: $light-gray;
+  }
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 }
