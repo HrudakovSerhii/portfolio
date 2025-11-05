@@ -1,13 +1,13 @@
 // Main layout styles
 
 .main {
-    min-height: calc(100vh - 12rem); // Adjust based on header/footer height
     display: flex;
     flex-direction: column;
 
     section {
-        min-height: calc(100vh - 4rem); // Adjust based on header/footer height
-        height: 100%;
-        flex: 1;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 0 $spacing-md;
     }
 }

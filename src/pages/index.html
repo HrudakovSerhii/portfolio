@@ -125,116 +125,127 @@
                   >
               </li>
           </ul>
-<!--        <div class="navigation__brand">-->
-<!--          <h1 class="navigation__logo">-->
-<!--            <a href="/" aria-label="Serhii Hrudakov - Home">SH</a>-->
-<!--          </h1>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Mobile menu toggle &ndash;&gt;-->
-<!--        <button-->
-<!--          class="navigation__toggle"-->
-<!--          type="button"-->
-<!--          aria-controls="navigation-menu"-->
-<!--          aria-expanded="false"-->
-<!--          aria-label="Toggle navigation menu"-->
-<!--          data-translate-aria-label="global.navigation.toggleMenu.ariaLabel"-->
-<!--        >-->
-<!--          <span class="navigation__toggle-icon"></span>-->
-<!--        </button>-->
-
-
-
-<!--        &lt;!&ndash; Language switcher &ndash;&gt;-->
-<!--        <div class="navigation__language">-->
-<!--          <button-->
-<!--            class="language-switcher"-->
-<!--            type="button"-->
-<!--            aria-label="Switch language"-->
-<!--            data-current-lang="en"-->
-<!--          >-->
-<!--            <span class="language-switcher__current">EN</span>-->
-<!--          </button>-->
-<!--        </div>-->
       </nav>
     </header>
 
     <main id="main-content" class="main" role="main">
         <!-- Hero Section -->
         <section class="hero" aria-labelledby="hero-title">
+            <div class="hero__photo">
+                <img src="public/hero.photo2.jpg" alt="hero-photo" />
+            </div>
             <div class="hero__container">
                 <h1 class="hero__title" id="hero-title" data-translate="home.hero.title.text">
-                    Full Stack Developer
+                    Hey! I'm <span>Serhii</span> - Frontend Developer
                 </h1>
+                <h2>Let's build a better Web Together!</h2>
                 <p class="hero__subtitle" data-translate="home.hero.subtitle.text">
                     I am frontend developer, full stack engineer, AI enthusiast, optimisation researcher, ecommerce specialist, storyteller, process builder, task owner and team leader
                 </p>
-                <div class="hero__actions">
-                    <a href="/projects.html"
-                       class="button button--primary hero__cta"
-                       data-translate="home.hero.cta.text">
-                        View My Work
-                    </a>
+            </div>
+            <div class="hero__actions">
+                <a href="/projects.html"
+                   class="button button--primary hero__cta"
+                   data-translate="home.hero.cta.text">
+                    View My Work
+                </a>
+                <span>Or</span>
+                <div class="hero__chat">
+                    <form id="chat-form" autocomplete="off">
+                        <label for="hero-chat-input" class="screen-reader-text" />
+                        <input class="hero__chat-input" id="hero-chat-input">
+                    </form>
                 </div>
             </div>
-            <div class="hero__photo">
-                <img src="public/hero.photo.jpg" alt="hero-photo" />
-            </div>
+
         </section>
 
-        <!-- Skills Section -->
-        <section class="skills" aria-labelledby="skills-title">
-            <div class="skills__container">
-                <h2 class="skills__title" id="skills-title" data-translate="home.skills.title.text">
-                    Skills & Technologies
-                </h2>
-                <div class="skills__grid">
-                    <article class="skill-card">
-                        <h3 class="skill-card__title" data-translate="home.skills.frontend.text">
-                            Frontend Development
-                        </h3>
-                        <ul class="skill-card__list" data-skills="frontend">
-                            <!-- Skills will be populated by JavaScript -->
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3 class="skill-card__title" data-translate="home.skills.backend.text">
-                            Backend Development
-                        </h3>
-                        <ul class="skill-card__list" data-skills="backend">
-                            <!-- Skills will be populated by JavaScript -->
-                        </ul>
-                    </article>
-                    <article class="skill-card">
-                        <h3 class="skill-card__title" data-translate="home.skills.tools.text">
-                            Development Tools
-                        </h3>
-                        <ul class="skill-card__list" data-skills="tools">
-                            <!-- Skills will be populated by JavaScript -->
-                        </ul>
-                    </article>
-                </div>
-            </div>
-        </section>
+<!--        &lt;!&ndash; Skills Section &ndash;&gt;-->
+<!--        <section class="skills" aria-labelledby="skills-title">-->
+<!--            <div class="skills__container">-->
+<!--                <h2 class="skills__title" id="skills-title" data-translate="home.skills.title.text">-->
+<!--                    Skills & Technologies-->
+<!--                </h2>-->
+<!--                <p class="skills__subtitle" data-translate="home.skills.subtitle.text">-->
+<!--                    A result-driven software engineer with a computer-->
+<!--                    science degree and 10+ years of experience in different-->
+<!--                    commercial projects. Interested in finding a team with a-->
+<!--                    collaborative learning environment and opportunities to-->
+<!--                    solve challenging development tasks.-->
+<!--                </p>-->
+<!--                <div class="skills__grid">-->
+<!--                    <article class="skill-card">-->
+<!--                        <h3 class="skill-card__title" data-translate="home.skills.frontend.text">-->
+<!--                            Frontend Development-->
+<!--                        </h3>-->
+<!--                        <ul class="skill-card__list" data-skills="frontend">-->
+<!--                            List of FE development skills and achievements-->
+<!--                        </ul>-->
+<!--                    </article>-->
+<!--                    <article class="skill-card">-->
+<!--                        <h3 class="skill-card__title" data-translate="home.skills.backend.text">-->
+<!--                            Backend Development-->
+<!--                        </h3>-->
+<!--                        <ul class="skill-card__list" data-skills="backend">-->
+<!--                            List of BE development skills and achievements-->
+<!--                        </ul>-->
+<!--                    </article>-->
+<!--                    <article class="skill-card">-->
+<!--                        <h3 class="skill-card__title" data-translate="home.skills.tools.text">-->
+<!--                            Development Tools-->
+<!--                        </h3>-->
+<!--                        <ul class="skill-card__list" data-skills="tools">-->
+<!--                            List of Development Tools-->
+<!--                            &lt;!&ndash; Skills will be populated by JavaScript &ndash;&gt;-->
+<!--                        </ul>-->
+<!--                    </article>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="skills__container skills__details__container">-->
+<!--                <article class="skill-details-card">-->
+<!--                    <h3 class="skill-details-card__title" data-translate="home.skills.frontend.text">-->
+<!--                        React, Redux, React Native-->
+<!--                    </h3>-->
+<!--                    <ul class="skill-details-card__list" data-skills="frontend">-->
+<!--                        &lt;!&ndash; Skills will be populated by JavaScript &ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </article>-->
+<!--            </div>-->
+<!--        </section>-->
 
-        <!-- Featured Projects Section -->
-        <section class="featured-projects" aria-labelledby="featured-title">
-            <div class="featured-projects__container">
-                <h2 class="featured-projects__title" id="featured-title" data-translate="home.featured.title.text">
-                    Featured Projects
-                </h2>
-                <div class="projects-grid" data-featured-projects>
-                    <!-- Featured projects will be populated by JavaScript -->
-                </div>
-                <div class="featured-projects__actions">
-                    <a href="/projects.html"
-                       class="button button--secondary"
-                       data-translate="home.featured.viewAll.text">
-                        View All Projects
-                    </a>
-                </div>
-            </div>
-        </section>
+<!--        &lt;!&ndash; Featured Projects Section &ndash;&gt;-->
+<!--        <section class="featured-projects" aria-labelledby="featured-title">-->
+<!--            <div class="featured-projects__container featured-projects__details__container">-->
+<!--                <h2 class="featured-projects__title" id="featured-title" data-translate="home.featured.title.text">-->
+<!--                    Featured Projects-->
+<!--                </h2>-->
+<!--                <div class="projects-grid" data-featured-projects>-->
+<!--                    &lt;!&ndash; Featured projects will be populated by JavaScript &ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="featured-projects__actions">-->
+<!--                    <a href="/projects.html"-->
+<!--                       class="button button&#45;&#45;secondary"-->
+<!--                       data-translate="home.featured.viewAll.text">-->
+<!--                        View All Projects-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="featured-projects__container">-->
+<!--                <h2 class="featured-projects__title" id="featured-details-title" data-translate="home.featured.title.text">-->
+<!--                    Featured Projects-->
+<!--                </h2>-->
+<!--                <div class="projects-grid" data-featured-projects>-->
+<!--                    &lt;!&ndash; Featured projects will be populated by JavaScript &ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="featured-projects__actions">-->
+<!--                    <a href="/projects.html"-->
+<!--                       class="button button&#45;&#45;secondary"-->
+<!--                       data-translate="home.featured.viewAll.text">-->
+<!--                        View All Projects-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
     </main>
 
     <footer class="footer" role="contentinfo">

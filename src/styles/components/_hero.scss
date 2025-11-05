@@ -1,15 +1,21 @@
 // Hero section styles
 
 .hero {
-    display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    padding: $spacing-xxl $spacing-md;
     background-color: $background-color;
+    height: calc(100vh - 4rem);
+    gap: 2rem;
 
     &__container {
-        max-width: 500px;
-        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 70%;
+
+        span {
+            color: $secondary-color;
+        }
 
         &__title {
             color: $primary-color;
@@ -39,7 +45,8 @@
 
         img {
             position: absolute;
-            top: -25%;
+            top: -5%;
+            right: 2%;
         }
     }
 }
