@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
 // Import ConversationManager using dynamic import for CommonJS module
-const ConversationManager = await import('../src/scripts/modules/chat-bot/conversation-manager.cjs').then(m => m.default);
+const ConversationManager = await import('../src/scripts/modules/chat-bot/conversation-manager.js').then(m => m.default);
 
 describe('ConversationManager', () => {
   let conversationManager;
@@ -98,7 +98,7 @@ describe('ConversationManager', () => {
     it('should get context with specified limit', () => {
       // Ensure clean state
       conversationManager.clearHistory();
-      
+
       for (let i = 1; i <= 7; i++) {
         conversationManager.addMessage(`Question ${i}`, `Answer ${i}`);
       }
@@ -123,7 +123,7 @@ describe('ConversationManager', () => {
     it('should get topic-aware context', () => {
       // Ensure clean state
       conversationManager.clearHistory();
-      
+
       // Add messages with different topics
       conversationManager.addMessage('React question 1', 'React answer 1', ['experience.react']);
       conversationManager.addMessage('Node.js question', 'Node.js answer', ['experience.nodejs']);
@@ -133,7 +133,7 @@ describe('ConversationManager', () => {
 
       // Get context for React topics - should return only React messages
       const reactContext = conversationManager.getContext(['experience.react']);
-      
+
       expect(reactContext).toHaveLength(3);
       expect(reactContext[0].userMessage).toBe('React question 1');
       expect(reactContext[1].userMessage).toBe('React question 2');
@@ -328,7 +328,7 @@ describe('ConversationManager', () => {
     it('should combine multiple responses coherently', () => {
       const responses = ['First response.', 'Second response.'];
       const combined = conversationManager.combineResponses(responses, 'developer', 'test query');
-      
+
       expect(combined).toContain('First response.');
       expect(combined).toContain('Second response.');
       expect(combined).toContain('Also,'); // Developer style connector
@@ -409,7 +409,7 @@ describe('ConversationManager', () => {
 
     it('should preserve full history but getContext returns last 5', () => {
       conversationManager.setStyle('developer');
-      
+
       // Rapidly add many messages
       for (let i = 0; i < 20; i++) {
         conversationManager.addMessage(`Question ${i}`, `Answer ${i}`);

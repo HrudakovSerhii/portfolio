@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createRequire } from 'module';
-
-// Import the CVDataService using require for CommonJS
-const require = createRequire(import.meta.url);
-const CVDataService = require('../src/scripts/modules/chat-bot/cv-data-service.cjs');
+import CVDataService from '../src/scripts/modules/chat-bot/cv-data-service.js';
 
 // Mock CV data for testing
 const mockCVData = {
@@ -150,10 +146,10 @@ describe('CVDataService', () => {
       });
 
       await service.loadCVData();
-      
+
       // Second call should not fetch again
       const result = await service.loadCVData();
-      
+
       expect(global.fetch).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockCVData);
     });
@@ -329,11 +325,11 @@ describe('CVDataService', () => {
       it('should find sections by keywords', () => {
         const matches = service.findSectionsByKeywords(['react', 'javascript']);
         expect(matches).toHaveLength(2);
-        
+
         // React section should have higher score (matches 'react')
         const reactMatch = matches.find(m => m.section.id === 'exp_react');
         const jsMatch = matches.find(m => m.section.id === 'skill_js');
-        
+
         expect(reactMatch).toBeDefined();
         expect(jsMatch).toBeDefined();
         expect(reactMatch.matchedKeywords).toContain('react');
@@ -388,7 +384,7 @@ describe('CVDataService', () => {
       it('should cache embeddings successfully', () => {
         const testEmbeddings = [0.4, 0.5, 0.6];
         service.cacheEmbeddings('exp_react', testEmbeddings);
-        
+
         const cached = service.getCachedEmbeddings('exp_react');
         expect(cached).toEqual(testEmbeddings);
       });
@@ -396,7 +392,7 @@ describe('CVDataService', () => {
       it('should update section embeddings when caching', () => {
         const testEmbeddings = [0.4, 0.5, 0.6];
         service.cacheEmbeddings('exp_react', testEmbeddings);
-        
+
         const section = service.getSectionById('exp_react');
         expect(section.embeddings).toEqual(testEmbeddings);
       });
@@ -463,7 +459,7 @@ describe('CVDataService', () => {
       it('should return all sections with metadata', () => {
         const sections = service.getAllSections();
         expect(sections).toHaveLength(2);
-        
+
         const reactSection = sections.find(s => s.id === 'exp_react');
         expect(reactSection.category).toBe('experience');
         expect(reactSection.name).toBe('react');
@@ -500,7 +496,7 @@ describe('CVDataService', () => {
           ok: true,
           json: () => Promise.resolve(mockCVData)
         });
-        
+
         await service.loadCVData();
         expect(service.isDataLoaded()).toBe(true);
       });
@@ -514,13 +510,13 @@ describe('CVDataService', () => {
           json: () => Promise.resolve(mockCVData)
         });
         await service.loadCVData();
-        
+
         // Cache some embeddings
         service.cacheEmbeddings('test_id', [0.1, 0.2, 0.3]);
-        
+
         // Reset
         service.reset();
-        
+
         expect(service.cvData).toBeNull();
         expect(service.isLoaded).toBe(false);
         expect(service.embeddingsCache.size).toBe(0);

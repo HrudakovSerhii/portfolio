@@ -1,6 +1,6 @@
 /**
  * CV Data Service Module
- * Handles loading, validation, and management of CV data for the chat-bot
+ * Handles loading, validation, and management of CV data for the chatbot
  */
 
 class CVDataService {
@@ -27,16 +27,16 @@ class CVDataService {
       }
 
       const data = await response.json();
-      
+
       // Validate the loaded data
       this.validateCVData(data);
-      
+
       this.cvData = data;
       this.isLoaded = true;
-      
+
       // Build sections index for faster lookups
       this.buildSectionsIndex();
-      
+
       return this.cvData;
     } catch (error) {
       throw new Error(`CV data loading failed: ${error.message}`);
@@ -113,7 +113,7 @@ class CVDataService {
       if (!templates[template]) {
         throw new Error(`Missing response template: ${template}`);
       }
-      
+
       for (const style of styles) {
         if (!templates[template][style]) {
           throw new Error(`Missing ${style} response for template: ${template}`);
@@ -146,7 +146,7 @@ class CVDataService {
     }
 
     // Validate embeddings (can be null or array of numbers)
-    if (section.embeddings !== null && (!Array.isArray(section.embeddings) || 
+    if (section.embeddings !== null && (!Array.isArray(section.embeddings) ||
         !section.embeddings.every(e => typeof e === 'number'))) {
       throw new Error(`Invalid embeddings in section: ${path}`);
     }
@@ -154,7 +154,7 @@ class CVDataService {
     // Validate responses
     const styles = ['hr', 'developer', 'friend'];
     for (const style of styles) {
-      if (!section.responses[style] || typeof section.responses[style] !== 'string' || 
+      if (!section.responses[style] || typeof section.responses[style] !== 'string' ||
           section.responses[style].length < 10) {
         throw new Error(`Invalid ${style} response in section: ${path}`);
       }
@@ -171,7 +171,7 @@ class CVDataService {
    */
   buildSectionsIndex() {
     this.sectionsIndex.clear();
-    
+
     if (!this.cvData || !this.cvData.sections) {
       return;
     }
@@ -246,11 +246,11 @@ class CVDataService {
     }
 
     const matches = new Map();
-    
+
     keywords.forEach(keyword => {
       const normalizedKeyword = keyword.toLowerCase();
       const keywordMatches = this.sectionsIndex.get(`keyword:${normalizedKeyword}`);
-      
+
       if (keywordMatches) {
         keywordMatches.forEach(match => {
           const existing = matches.get(match.path);
@@ -300,7 +300,7 @@ class CVDataService {
     }
 
     this.embeddingsCache.set(sectionId, embeddings);
-    
+
     // Also update the section data if it exists
     const section = this.getSectionById(sectionId);
     if (section) {
@@ -406,12 +406,4 @@ class CVDataService {
   }
 }
 
-// Export for CommonJS
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = CVDataService;
-}
-
-// Export for ES modules (if needed)
-if (typeof window !== 'undefined') {
-  window.CVDataService = CVDataService;
-}
+export default CVDataService;

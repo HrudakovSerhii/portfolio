@@ -151,13 +151,13 @@
                 </a>
                 <span>Or</span>
                 <div class="hero__chat">
-                    <form id="chat-form" autocomplete="off">
-                        <label for="hero-chat-input" class="screen-reader-text" />
-                        <input class="hero__chat-input" id="hero-chat-input">
-                    </form>
+                    <button class="hero__chat-trigger" id="hero-chat-trigger" type="button" aria-label="Start chat with Serhii AI">
+                        <span class="hero__chat-icon">💬</span>
+                        <span class="hero__chat-text" data-translate="home.hero.chat.text">Chat with Serhii AI</span>
+                    </button>
                 </div>
             </div>
-
+            <div id="hero-chat-container" />
         </section>
 
 <!--        &lt;!&ndash; Skills Section &ndash;&gt;-->
@@ -307,7 +307,9 @@
         </div>
     </footer>
 
+
+
     <!-- Scripts -->
-    <script type="module" src="../scripts/app.cjs"></script>
+    <script type="module" src="../scripts/app.js"></script>
 </body>
 </html>
