@@ -83,8 +83,17 @@ describe('ChatBot', () => {
     it('should accept valid conversation styles when initialized', async () => {
       // Mock successful initialization
       chatBot.isInitialized = true;
-      chatBot.ui = { showChatInterface: vi.fn(), addMessage: vi.fn() };
+      chatBot.ui = { 
+        showChatInterface: vi.fn(), 
+        addMessage: vi.fn(),
+        clearMessages: vi.fn()
+      };
       chatBot.conversationManager = { setStyle: vi.fn() };
+      chatBot.styleManager = { 
+        isValidStyle: vi.fn().mockReturnValue(true),
+        setStyle: vi.fn(),
+        getGreeting: vi.fn().mockReturnValue('Hello!')
+      };
       
       const validStyles = ['hr', 'developer', 'friend'];
       
@@ -96,6 +105,10 @@ describe('ChatBot', () => {
 
     it('should reject invalid conversation styles', async () => {
       chatBot.isInitialized = true;
+      chatBot.styleManager = { 
+        isValidStyle: vi.fn().mockReturnValue(false)
+      };
+      
       await expect(chatBot.selectConversationStyle('invalid')).rejects.toThrow('Invalid conversation style');
     });
 
@@ -146,12 +159,17 @@ describe('ChatBot', () => {
       chatBot.isInitialized = true;
       chatBot.currentStyle = 'developer';
       chatBot.conversationManager = { clearHistory: vi.fn() };
-      chatBot.ui = { showStyleSelection: vi.fn() };
+      chatBot.styleManager = { resetStyle: vi.fn() };
+      chatBot.ui = { 
+        showStyleSelection: vi.fn(),
+        clearMessages: vi.fn()
+      };
       
       await chatBot.restartConversation();
       
       expect(chatBot.currentStyle).toBe(null);
       expect(chatBot.conversationManager.clearHistory).toHaveBeenCalled();
+      expect(chatBot.styleManager.resetStyle).toHaveBeenCalled();
       expect(chatBot.ui.showStyleSelection).toHaveBeenCalled();
     });
   });
@@ -176,10 +194,40 @@ describe('ChatBot', () => {
   });
 
   describe('Style Messages', () => {
+    beforeEach(() => {
+      // Mock StyleManager for these tests
+      chatBot.styleManager = {
+        getGreeting: vi.fn((style) => {
+          const greetings = {
+            hr: 'Hello! I can help you learn about his professional experience.',
+            developer: 'Hey there! Feel free to ask me about technical experience.',
+            friend: 'Hi! 👋 Ask me anything about his work!'
+          };
+          return greetings[style] || greetings.developer;
+        }),
+        getErrorMessage: vi.fn((style) => {
+          const messages = {
+            hr: 'I apologize, but I\'m experiencing technical difficulties.',
+            developer: 'Hmm, something went wrong on my end.',
+            friend: 'Oops! 😅 Something got mixed up.'
+          };
+          return messages[style] || messages.developer;
+        }),
+        getRephraseMessage: vi.fn((style) => {
+          const messages = {
+            hr: 'Could you please rephrase your question?',
+            developer: 'Could you rephrase that or give me more context?',
+            friend: 'I\'m not sure I got that! 🤔 Could you ask differently?'
+          };
+          return messages[style] || messages.developer;
+        })
+      };
+    });
+
     it('should return appropriate greeting for each style', () => {
-      const hrGreeting = chatBot._getStyleGreeting('hr');
-      const devGreeting = chatBot._getStyleGreeting('developer');
-      const friendGreeting = chatBot._getStyleGreeting('friend');
+      const hrGreeting = chatBot.styleManager.getGreeting('hr');
+      const devGreeting = chatBot.styleManager.getGreeting('developer');
+      const friendGreeting = chatBot.styleManager.getGreeting('friend');
       
       expect(hrGreeting).toContain('professional');
       expect(devGreeting).toContain('technical');
@@ -187,9 +235,9 @@ describe('ChatBot', () => {
     });
 
     it('should return appropriate error messages for each style', () => {
-      const hrError = chatBot._getStyleErrorMessage('hr');
-      const devError = chatBot._getStyleErrorMessage('developer');
-      const friendError = chatBot._getStyleErrorMessage('friend');
+      const hrError = chatBot.styleManager.getErrorMessage('hr');
+      const devError = chatBot.styleManager.getErrorMessage('developer');
+      const friendError = chatBot.styleManager.getErrorMessage('friend');
       
       expect(hrError).toContain('apologize');
       expect(devError).toContain('wrong');
@@ -197,9 +245,9 @@ describe('ChatBot', () => {
     });
 
     it('should return appropriate rephrase messages for each style', () => {
-      const hrRephrase = chatBot._getStyleRephraseMessage('hr');
-      const devRephrase = chatBot._getStyleRephraseMessage('developer');
-      const friendRephrase = chatBot._getStyleRephraseMessage('friend');
+      const hrRephrase = chatBot.styleManager.getRephraseMessage('hr');
+      const devRephrase = chatBot.styleManager.getRephraseMessage('developer');
+      const friendRephrase = chatBot.styleManager.getRephraseMessage('friend');
       
       expect(hrRephrase).toContain('rephrase');
       expect(devRephrase).toContain('rephrase');
