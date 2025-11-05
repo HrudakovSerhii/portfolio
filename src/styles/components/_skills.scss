@@ -1,0 +1,25 @@
+// Skills section
+
+.skills {
+  height: 100vh;
+
+  &__container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 50%;
+    padding: 0 2rem;
+  }
+
+  &__details__container {
+    background-color: $light-gray;
+  }
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
