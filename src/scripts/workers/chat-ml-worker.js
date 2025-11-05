@@ -178,21 +178,28 @@ class MLWorker {
     }
 
     try {
-      // Generate embedding for the user query
-      const queryEmbedding = await this.generateEmbedding(message.toLowerCase());
+      // Preprocess the query
+      const preprocessedQuery = this.preprocessQuery(message, context);
 
-      // Find relevant sections using semantic similarity
-      const relevantSections = await this.findRelevantSections(queryEmbedding, 0.7);
+      // Generate embedding for the preprocessed query
+      const queryEmbedding = await this.generateEmbedding(preprocessedQuery);
 
-      // Generate response based on matched sections and style
-      const response = this.generateResponse(relevantSections, message, context, style);
+      // Find relevant sections using adaptive similarity thresholds
+      const relevantSections = await this.findRelevantSections(queryEmbedding, this.getAdaptiveThreshold(message));
+
+      // Generate response with enhanced synthesis and confidence scoring
+      const response = await this.generateEnhancedResponse(relevantSections, message, context, style);
+
+      // Validate response quality
+      const validatedResponse = this.validateResponseQuality(response, message);
 
       this.postMessage({
         type: 'response',
-        answer: response.answer,
-        confidence: response.confidence,
-        matchedSections: response.matchedSections,
-        query: message
+        answer: validatedResponse.answer,
+        confidence: validatedResponse.confidence,
+        matchedSections: validatedResponse.matchedSections,
+        query: message,
+        processingMetrics: validatedResponse.metrics
       });
 
     } catch (error) {
@@ -206,7 +213,118 @@ class MLWorker {
   }
 
   /**
-   * Find relevant CV sections using cosine similarity
+   * Preprocess user query to improve matching accuracy
+   */
+  preprocessQuery(message, context = []) {
+    let processedQuery = message.toLowerCase().trim();
+
+    // Extract context keywords from recent conversation
+    const contextKeywords = this.extractContextKeywords(context);
+    
+    // Expand query with synonyms and related terms
+    processedQuery = this.expandQueryWithSynonyms(processedQuery);
+    
+    // Add context if relevant
+    if (contextKeywords.length > 0) {
+      processedQuery += ' ' + contextKeywords.join(' ');
+    }
+
+    // Clean and normalize
+    processedQuery = this.normalizeQuery(processedQuery);
+
+    return processedQuery;
+  }
+
+  /**
+   * Extract relevant keywords from conversation context
+   */
+  extractContextKeywords(context) {
+    if (!context || context.length === 0) return [];
+
+    const keywords = new Set();
+    const recentMessages = context.slice(-2); // Last 2 exchanges
+
+    recentMessages.forEach(entry => {
+      if (entry.matchedSections) {
+        entry.matchedSections.forEach(sectionId => {
+          const sectionData = this.cvEmbeddings.get(sectionId);
+          if (sectionData && sectionData.section.keywords) {
+            sectionData.section.keywords.forEach(keyword => keywords.add(keyword));
+          }
+        });
+      }
+    });
+
+    return Array.from(keywords).slice(0, 3); // Limit to 3 most relevant
+  }
+
+  /**
+   * Expand query with synonyms and related terms
+   */
+  expandQueryWithSynonyms(query) {
+    const synonymMap = {
+      'react': ['reactjs', 'jsx', 'hooks', 'components'],
+      'javascript': ['js', 'es6', 'es2020', 'vanilla'],
+      'node': ['nodejs', 'backend', 'server'],
+      'css': ['styling', 'styles', 'scss', 'sass'],
+      'database': ['db', 'sql', 'mongodb', 'postgres'],
+      'api': ['rest', 'endpoint', 'service', 'backend'],
+      'frontend': ['ui', 'interface', 'client', 'browser'],
+      'backend': ['server', 'api', 'service', 'database'],
+      'experience': ['work', 'job', 'career', 'professional'],
+      'skills': ['abilities', 'expertise', 'knowledge', 'competencies'],
+      'projects': ['work', 'portfolio', 'applications', 'development']
+    };
+
+    let expandedQuery = query;
+    
+    Object.entries(synonymMap).forEach(([term, synonyms]) => {
+      if (query.includes(term)) {
+        // Add most relevant synonym
+        expandedQuery += ' ' + synonyms[0];
+      }
+    });
+
+    return expandedQuery;
+  }
+
+  /**
+   * Normalize and clean query text
+   */
+  normalizeQuery(query) {
+    return query
+      .replace(/[^\w\s]/g, ' ') // Remove special characters
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  }
+
+  /**
+   * Get adaptive similarity threshold based on query characteristics
+   */
+  getAdaptiveThreshold(query) {
+    const baseThreshold = 0.7;
+    
+    // Lower threshold for shorter queries (they might be less specific)
+    if (query.length < 20) {
+      return baseThreshold - 0.1;
+    }
+    
+    // Lower threshold for questions (they might be more exploratory)
+    if (query.includes('?') || query.startsWith('what') || query.startsWith('how') || query.startsWith('do you')) {
+      return baseThreshold - 0.05;
+    }
+    
+    // Higher threshold for very specific technical terms
+    const technicalTerms = ['framework', 'library', 'algorithm', 'architecture', 'implementation'];
+    if (technicalTerms.some(term => query.toLowerCase().includes(term))) {
+      return baseThreshold + 0.05;
+    }
+    
+    return baseThreshold;
+  }
+
+  /**
+   * Find relevant CV sections using enhanced semantic similarity
    */
   async findRelevantSections(queryEmbedding, threshold = 0.7) {
     const similarities = [];
@@ -214,10 +332,16 @@ class MLWorker {
     for (const [sectionId, sectionData] of this.cvEmbeddings.entries()) {
       const similarity = this.cosineSimilarity(queryEmbedding, sectionData.embedding);
       
-      if (similarity >= threshold) {
+      // Apply keyword boost for exact matches
+      const keywordBoost = this.calculateKeywordBoost(queryEmbedding, sectionData);
+      const adjustedSimilarity = Math.min(1.0, similarity + keywordBoost);
+      
+      if (adjustedSimilarity >= threshold) {
         similarities.push({
           sectionId: sectionId,
-          similarity: similarity,
+          similarity: adjustedSimilarity,
+          rawSimilarity: similarity,
+          keywordBoost: keywordBoost,
           section: sectionData.section,
           category: sectionData.category,
           key: sectionData.key
@@ -225,8 +349,18 @@ class MLWorker {
       }
     }
 
-    // Sort by similarity score (highest first)
+    // Sort by adjusted similarity score (highest first)
     return similarities.sort((a, b) => b.similarity - a.similarity);
+  }
+
+  /**
+   * Calculate keyword boost for sections with exact keyword matches
+   */
+  calculateKeywordBoost(queryEmbedding, sectionData) {
+    // This is a simplified boost - in a real implementation, 
+    // you might analyze the original query text against section keywords
+    // For now, return a small boost for high-confidence sections
+    return 0.02; // Small boost to maintain semantic similarity priority
   }
 
   /**
@@ -258,43 +392,345 @@ class MLWorker {
   }
 
   /**
-   * Generate response based on matched sections and conversation style
+   * Generate enhanced response with improved synthesis and confidence scoring
    */
-  generateResponse(relevantSections, query, context, style) {
+  async generateEnhancedResponse(relevantSections, query, context, style) {
     if (relevantSections.length === 0) {
       return {
         answer: this.getNoMatchResponse(style),
         confidence: 0,
-        matchedSections: []
+        matchedSections: [],
+        metrics: { processingTime: 0, sectionsAnalyzed: 0 }
       };
     }
 
-    // Get the best matching section
-    const bestMatch = relevantSections[0];
-    const section = bestMatch.section;
+    const startTime = Date.now();
 
-    // Get style-appropriate response
-    let response = section.responses[style] || section.responses.developer || 'I have experience in this area.';
+    // Calculate overall confidence score
+    const overallConfidence = this.calculateOverallConfidence(relevantSections, query);
 
-    // Add context awareness if there are previous messages
-    if (context.length > 0) {
-      response = this.addContextualElements(response, context, style);
-    }
+    // Synthesize response from multiple sections if applicable
+    const synthesizedResponse = await this.synthesizeMultiSectionResponse(
+      relevantSections, 
+      query, 
+      context, 
+      style
+    );
 
-    // If multiple sections are relevant, mention related areas
-    if (relevantSections.length > 1) {
-      response = this.addRelatedSections(response, relevantSections.slice(1, 3), style);
-    }
+    // Add contextual enhancements
+    const contextualResponse = this.enhanceWithContext(synthesizedResponse, context, style, relevantSections);
+
+    const processingTime = Date.now() - startTime;
 
     return {
-      answer: response,
-      confidence: bestMatch.similarity,
+      answer: contextualResponse,
+      confidence: overallConfidence,
       matchedSections: relevantSections.slice(0, 3).map(match => ({
         id: match.sectionId,
         category: match.category,
-        similarity: match.similarity
-      }))
+        similarity: match.similarity,
+        rawSimilarity: match.rawSimilarity,
+        keywordBoost: match.keywordBoost
+      })),
+      metrics: {
+        processingTime,
+        sectionsAnalyzed: relevantSections.length,
+        synthesisMethod: relevantSections.length > 1 ? 'multi-section' : 'single-section'
+      }
     };
+  }
+
+  /**
+   * Calculate overall confidence score based on multiple factors
+   */
+  calculateOverallConfidence(relevantSections, query) {
+    if (relevantSections.length === 0) return 0;
+
+    const bestMatch = relevantSections[0];
+    let confidence = bestMatch.similarity;
+
+    // Boost confidence if multiple sections are relevant (indicates comprehensive knowledge)
+    if (relevantSections.length > 1) {
+      const secondBest = relevantSections[1];
+      if (secondBest.similarity > 0.6) {
+        confidence = Math.min(1.0, confidence + 0.05);
+      }
+    }
+
+    // Adjust based on query characteristics
+    confidence = this.adjustConfidenceForQuery(confidence, query);
+
+    // Ensure confidence is within valid range
+    return Math.max(0, Math.min(1, confidence));
+  }
+
+  /**
+   * Adjust confidence based on query characteristics
+   */
+  adjustConfidenceForQuery(baseConfidence, query) {
+    let adjustedConfidence = baseConfidence;
+
+    // Higher confidence for specific technical queries
+    const specificTerms = ['react', 'javascript', 'node', 'typescript', 'scss'];
+    if (specificTerms.some(term => query.toLowerCase().includes(term))) {
+      adjustedConfidence += 0.03;
+    }
+
+    // Lower confidence for very broad queries
+    const broadTerms = ['experience', 'skills', 'background', 'about'];
+    if (broadTerms.some(term => query.toLowerCase().includes(term)) && query.length < 30) {
+      adjustedConfidence -= 0.05;
+    }
+
+    // Higher confidence for direct questions about specific projects
+    if (query.toLowerCase().includes('project') && query.includes('?')) {
+      adjustedConfidence += 0.02;
+    }
+
+    return adjustedConfidence;
+  }
+
+  /**
+   * Synthesize response from multiple relevant sections
+   */
+  async synthesizeMultiSectionResponse(relevantSections, query, context, style) {
+    if (relevantSections.length === 1) {
+      return this.getSingleSectionResponse(relevantSections[0], style);
+    }
+
+    // Group sections by category for better synthesis
+    const sectionsByCategory = this.groupSectionsByCategory(relevantSections);
+    
+    // Determine synthesis strategy based on query type and sections
+    const synthesisStrategy = this.determineSynthesisStrategy(query, sectionsByCategory);
+
+    switch (synthesisStrategy) {
+      case 'comprehensive':
+        return this.synthesizeComprehensiveResponse(relevantSections, style, query);
+      case 'focused':
+        return this.synthesizeFocusedResponse(relevantSections, style, query);
+      case 'comparative':
+        return this.synthesizeComparativeResponse(relevantSections, style, query);
+      default:
+        return this.getSingleSectionResponse(relevantSections[0], style);
+    }
+  }
+
+  /**
+   * Get response from a single section
+   */
+  getSingleSectionResponse(sectionMatch, style) {
+    const section = sectionMatch.section;
+    return section.responses[style] || section.responses.developer || 'I have experience in this area.';
+  }
+
+  /**
+   * Group sections by category for better synthesis
+   */
+  groupSectionsByCategory(sections) {
+    const grouped = {};
+    sections.forEach(section => {
+      if (!grouped[section.category]) {
+        grouped[section.category] = [];
+      }
+      grouped[section.category].push(section);
+    });
+    return grouped;
+  }
+
+  /**
+   * Determine the best synthesis strategy
+   */
+  determineSynthesisStrategy(query, sectionsByCategory) {
+    const categoryCount = Object.keys(sectionsByCategory).length;
+    
+    // If query asks for comparison or mentions multiple technologies
+    if (query.includes('vs') || query.includes('compare') || query.includes('difference')) {
+      return 'comparative';
+    }
+    
+    // If sections span multiple categories, provide comprehensive view
+    if (categoryCount > 1) {
+      return 'comprehensive';
+    }
+    
+    // If multiple sections in same category, provide focused view
+    if (categoryCount === 1 && Object.values(sectionsByCategory)[0].length > 1) {
+      return 'focused';
+    }
+    
+    return 'single';
+  }
+
+  /**
+   * Synthesize comprehensive response covering multiple categories
+   */
+  synthesizeComprehensiveResponse(sections, style, query) {
+    const topSections = sections.slice(0, 3);
+    const responses = topSections.map(section => section.section.responses[style]).filter(Boolean);
+    
+    if (responses.length === 0) {
+      return this.getNoMatchResponse(style);
+    }
+
+    const connectors = this.getStyleConnectors(style);
+    const intro = this.getComprehensiveIntro(style, query);
+    
+    // Combine responses with appropriate connectors
+    let combinedResponse = intro + ' ' + responses[0];
+    
+    if (responses.length > 1) {
+      combinedResponse += ` ${connectors.continuation} ` + responses.slice(1).join(` ${connectors.continuation} `);
+    }
+    
+    return combinedResponse;
+  }
+
+  /**
+   * Synthesize focused response within a single category
+   */
+  synthesizeFocusedResponse(sections, style, query) {
+    const primarySection = sections[0];
+    const relatedSections = sections.slice(1, 3);
+    
+    let response = primarySection.section.responses[style];
+    
+    if (relatedSections.length > 0) {
+      const connectors = this.getStyleConnectors(style);
+      const relatedTopics = relatedSections
+        .map(s => s.section.keywords[0])
+        .join(', ');
+      
+      response += ` ${connectors.continuation} I also have experience with ${relatedTopics}.`;
+    }
+    
+    return response;
+  }
+
+  /**
+   * Synthesize comparative response for comparison queries
+   */
+  synthesizeComparativeResponse(sections, style, query) {
+    if (sections.length < 2) {
+      return this.getSingleSectionResponse(sections[0], style);
+    }
+
+    const section1 = sections[0];
+    const section2 = sections[1];
+    
+    const connectors = this.getStyleConnectors(style);
+    const compareIntro = this.getComparisonIntro(style);
+    
+    return `${compareIntro} ${section1.section.responses[style]} ${connectors.continuation} ${section2.section.responses[style]}`;
+  }
+
+  /**
+   * Get style-specific connectors for response synthesis
+   */
+  getStyleConnectors(style) {
+    const connectors = {
+      hr: {
+        continuation: 'Additionally,',
+        conclusion: 'These qualifications demonstrate'
+      },
+      developer: {
+        continuation: 'Also,',
+        conclusion: 'So yeah,'
+      },
+      friend: {
+        continuation: 'Oh, and',
+        conclusion: 'Pretty cool stuff, right?'
+      }
+    };
+
+    return connectors[style] || connectors.developer;
+  }
+
+  /**
+   * Get comprehensive introduction based on style
+   */
+  getComprehensiveIntro(style, query) {
+    const intros = {
+      hr: 'Regarding your question about my background,',
+      developer: 'Great question! Let me break that down for you.',
+      friend: 'Oh, that\'s a good one! 😊 Let me tell you about that.'
+    };
+
+    return intros[style] || intros.developer;
+  }
+
+  /**
+   * Get comparison introduction based on style
+   */
+  getComparisonIntro(style) {
+    const intros = {
+      hr: 'I have experience with both areas.',
+      developer: 'I\'ve worked with both of those.',
+      friend: 'Oh, I know both of those! 😄'
+    };
+
+    return intros[style] || intros.developer;
+  }
+
+  /**
+   * Enhance response with contextual information
+   */
+  enhanceWithContext(response, context, style, relevantSections) {
+    if (!context || context.length === 0) {
+      return response;
+    }
+
+    // Check if this continues a previous conversation topic
+    const contextualConnection = this.findContextualConnection(context, relevantSections);
+    
+    if (contextualConnection) {
+      const contextualPhrases = {
+        hr: 'Building on our previous discussion, ',
+        developer: 'Following up on that, ',
+        friend: 'Oh, and speaking of what we talked about, '
+      };
+
+      const phrase = contextualPhrases[style] || contextualPhrases.developer;
+      return phrase + response;
+    }
+
+    return response;
+  }
+
+  /**
+   * Find connection between current response and previous context
+   */
+  findContextualConnection(context, relevantSections) {
+    if (context.length === 0 || relevantSections.length === 0) {
+      return false;
+    }
+
+    const lastEntry = context[context.length - 1];
+    if (!lastEntry.matchedSections) {
+      return false;
+    }
+
+    // Check if any current sections relate to previous sections
+    const currentSectionIds = relevantSections.map(s => s.sectionId);
+    const previousSectionIds = lastEntry.matchedSections.map(s => s.id || s);
+
+    return currentSectionIds.some(id => 
+      previousSectionIds.some(prevId => this.areSectionsRelated(id, prevId))
+    );
+  }
+
+  /**
+   * Check if two sections are related
+   */
+  areSectionsRelated(sectionId1, sectionId2) {
+    // Simple relationship check - could be enhanced with more sophisticated logic
+    if (sectionId1 === sectionId2) return true;
+    
+    // Check if they're in the same category
+    const category1 = sectionId1.split('_')[0];
+    const category2 = sectionId2.split('_')[0];
+    
+    return category1 === category2;
   }
 
   /**
@@ -332,6 +768,92 @@ class MLWorker {
   }
 
   /**
+   * Validate response quality and adjust if necessary
+   */
+  validateResponseQuality(response, originalQuery) {
+    const validation = {
+      answer: response.answer,
+      confidence: response.confidence,
+      matchedSections: response.matchedSections,
+      metrics: response.metrics || {}
+    };
+
+    // Check response length (too short might indicate poor matching)
+    if (response.answer.length < 20) {
+      validation.confidence = Math.max(0, validation.confidence - 0.1);
+      validation.metrics.qualityFlags = ['short_response'];
+    }
+
+    // Check if response actually addresses the query
+    const queryRelevance = this.assessQueryRelevance(response.answer, originalQuery);
+    if (queryRelevance < 0.5) {
+      validation.confidence = Math.max(0, validation.confidence - 0.15);
+      validation.metrics.qualityFlags = validation.metrics.qualityFlags || [];
+      validation.metrics.qualityFlags.push('low_relevance');
+    }
+
+    // Ensure minimum confidence threshold for quality responses
+    if (validation.confidence < 0.3) {
+      validation.answer = this.getFallbackResponse(originalQuery);
+      validation.confidence = 0.2; // Low but not zero to indicate fallback
+      validation.matchedSections = [];
+      validation.metrics.qualityFlags = validation.metrics.qualityFlags || [];
+      validation.metrics.qualityFlags.push('fallback_triggered');
+    }
+
+    // Add quality score to metrics
+    validation.metrics.qualityScore = this.calculateQualityScore(validation);
+
+    return validation;
+  }
+
+  /**
+   * Assess how well the response addresses the original query
+   */
+  assessQueryRelevance(response, query) {
+    // Simple keyword overlap assessment
+    const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+    const responseWords = response.toLowerCase().split(/\s+/);
+    
+    let matches = 0;
+    queryWords.forEach(word => {
+      if (responseWords.some(respWord => respWord.includes(word) || word.includes(respWord))) {
+        matches++;
+      }
+    });
+
+    return queryWords.length > 0 ? matches / queryWords.length : 0;
+  }
+
+  /**
+   * Get fallback response for low-quality matches
+   */
+  getFallbackResponse(query) {
+    return "I'd be happy to help you with that! Could you be a bit more specific about what you'd like to know? I can share details about my experience, skills, or projects.";
+  }
+
+  /**
+   * Calculate overall quality score for the response
+   */
+  calculateQualityScore(validation) {
+    let score = validation.confidence * 0.6; // Base score from confidence
+    
+    // Add points for response length (within reasonable bounds)
+    const lengthScore = Math.min(0.2, validation.answer.length / 500);
+    score += lengthScore;
+    
+    // Add points for multiple matched sections (indicates comprehensive knowledge)
+    const sectionScore = Math.min(0.1, validation.matchedSections.length * 0.03);
+    score += sectionScore;
+    
+    // Subtract points for quality flags
+    const qualityFlags = validation.metrics.qualityFlags || [];
+    score -= qualityFlags.length * 0.05;
+    
+    return Math.max(0, Math.min(1, score));
+  }
+
+  /**
    * Add information about related sections
    */
   addRelatedSections(response, relatedSections, style) {
@@ -364,19 +886,19 @@ const mlWorker = new MLWorker();
 
 // Handle messages from main thread
 self.onmessage = async function(event) {
-  const { type, data } = event.data;
+  const { type, message, context, style, modelPath, cvData } = event.data;
 
   try {
     switch (type) {
       case 'initialize':
-        await mlWorker.initialize(data.cvData);
+        await mlWorker.initialize(cvData);
         break;
 
       case 'process_query':
         await mlWorker.processQuery(
-          data.message,
-          data.context || [],
-          data.style || 'developer'
+          message,
+          context || [],
+          style || 'developer'
         );
         break;
 
