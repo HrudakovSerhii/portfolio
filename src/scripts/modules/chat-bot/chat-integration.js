@@ -1,255 +1,200 @@
 /**
- * Chat Integration - Connects ChatUI with the hero section trigger
- * Handles initialization and event coordination between UI components
+ * Chat Integration - Lazy loading entry point for chat-bot feature
+ * This module handles the initial loading and integration with the main portfolio
  */
 
-// Dynamic imports will be used in the initialize method
+let chatBotInstance = null;
+let isLoading = false;
 
-class ChatIntegration {
-  constructor() {
-    this.chatUI = null;
-    this.conversationManager = null;
-    this.isInitialized = false;
-    this.heroTrigger = null;
+/**
+ * Initialize and show the chat-bot interface
+ * This is the main entry point called from the portfolio
+ */
+async function initializeChat() {
+  if (isLoading) {
+    return;
   }
 
-  /**
-   * Initialize the chat integration
-   */
-  async initialize() {
-    if (this.isInitialized) return;
-
-    try {
-      // Find the hero chat trigger button
-      this.heroTrigger = document.getElementById('hero-chat-trigger');
-
-      if (!this.heroTrigger) {
-        console.warn('Hero chat trigger not found');
-        return;
-      }
-
-      // Dynamic imports for modules
-      const { default: ChatUI } = await import('./chat-ui.js');
-      const { default: ConversationManager } = await import('./conversation-manager.js');
-
-      // Initialize ChatUI
-      this.chatUI = new ChatUI();
-      this.chatUI.initialize();
-
-      // Initialize ConversationManager
-      this.conversationManager = new ConversationManager();
-      await this.conversationManager.initialize();
-
-      // Set up event handlers
-      this.setupEventHandlers();
-
-      this.isInitialized = true;
-      console.log('Chat integration initialized successfully');
-
-    } catch (error) {
-      console.error('Failed to initialize chat integration:', error);
-      this.showError('Failed to initialize chat system');
-    }
+  if (chatBotInstance && chatBotInstance.isInitialized) {
+    // Chat is already initialized, just show it
+    showChatInterface();
+    return;
   }
 
-  /**
-   * Set up event handlers for chat interactions
-   */
-  setupEventHandlers() {
-    // Hero trigger button click
-    this.heroTrigger.addEventListener('click', () => {
-      this.startChat();
-    });
+  try {
+    isLoading = true;
+    
+    // Lazy load the ChatBot class
+    const { ChatBot } = await import('./chat-bot.js');
+    
+    // Create and initialize chat-bot instance
+    chatBotInstance = new ChatBot();
+    const success = await chatBotInstance.initialize();
 
-    // ChatUI event handlers
-    this.chatUI.setEventHandlers({
-      onStyleSelect: (style) => this.handleStyleSelection(style),
-      onMessageSend: (message) => this.handleMessageSend(message),
-      onRestart: () => this.handleRestart()
-    });
-
-    // ConversationManager event handlers
-    this.conversationManager.setEventHandlers({
-      onResponse: (response) => this.handleBotResponse(response),
-      onError: (error) => this.handleError(error),
-      onFallback: () => this.handleFallback()
-    });
-  }
-
-  /**
-   * Start the chat interaction
-   */
-  async startChat() {
-    try {
-      // Show chat UI
-      this.chatUI.show();
-
-      // Check if conversation manager is ready
-      if (!this.conversationManager.isReady()) {
-        this.chatUI.showLoadingState('Initializing AI assistant...');
-
-        // Wait for initialization
-        await this.conversationManager.waitForReady();
-      }
-
-      // Show style selection
-      this.chatUI.showStyleSelection();
-
-    } catch (error) {
-      console.error('Failed to start chat:', error);
-      this.chatUI.showError('Failed to start chat. Please try again.');
-    }
-  }
-
-  /**
-   * Handle conversation style selection
-   */
-  async handleStyleSelection(style) {
-    try {
-      this.chatUI.showLoadingState('Setting up your conversation style...');
-
-      // Set conversation style
-      await this.conversationManager.setConversationStyle(style);
-
-      // Show chat interface
-      this.chatUI.showChatInterface();
-
-      // Add welcome message
-      const welcomeMessage = this.getWelcomeMessage(style);
-      this.chatUI.addMessage(welcomeMessage, false, style);
-
-    } catch (error) {
-      console.error('Failed to set conversation style:', error);
-      this.chatUI.showError('Failed to set conversation style. Please try again.');
-    }
-  }
-
-  /**
-   * Handle user message sending
-   */
-  async handleMessageSend(message) {
-    try {
-      // Add user message to UI
-      this.chatUI.addMessage(message, true);
-
-      // Show typing indicator
-      this.chatUI.showTypingIndicator();
-
-      // Send message to conversation manager
-      await this.conversationManager.sendMessage(message);
-
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      this.chatUI.hideTypingIndicator();
-      this.chatUI.showError('Failed to send message. Please try again.');
-    }
-  }
-
-  /**
-   * Handle bot response
-   */
-  handleBotResponse(response) {
-    // Hide typing indicator
-    this.chatUI.hideTypingIndicator();
-
-    // Add bot message to UI
-    const currentStyle = this.conversationManager.getCurrentStyle();
-    this.chatUI.addMessage(response, false, currentStyle);
-  }
-
-  /**
-   * Handle conversation restart
-   */
-  async handleRestart() {
-    try {
-      // Clear messages
-      this.chatUI.clearMessages();
-
-      // Reset conversation manager
-      await this.conversationManager.reset();
-
-      // Show style selection again
-      this.chatUI.showStyleSelection();
-
-    } catch (error) {
-      console.error('Failed to restart conversation:', error);
-      this.chatUI.showError('Failed to restart conversation. Please try again.');
-    }
-  }
-
-  /**
-   * Handle errors from conversation manager
-   */
-  handleError(error) {
-    console.error('Conversation error:', error);
-    this.chatUI.hideTypingIndicator();
-
-    // Show appropriate error message based on error type
-    let errorMessage = 'Something went wrong. Please try again.';
-
-    if (error.type === 'network') {
-      errorMessage = 'Network error. Please check your connection and try again.';
-    } else if (error.type === 'validation') {
-      errorMessage = 'Invalid input. Please rephrase your question.';
-    } else if (error.type === 'rate_limit') {
-      errorMessage = 'Too many requests. Please wait a moment and try again.';
+    if (!success) {
+      throw new Error('ChatBot initialization failed');
     }
 
-    this.chatUI.showError(errorMessage);
-  }
+    // Setup event listeners for chat interface
+    setupChatEventListeners();
 
-  /**
-   * Handle fallback to email contact
-   */
-  handleFallback() {
-    this.chatUI.hideTypingIndicator();
-    this.chatUI.showFallbackForm();
-  }
-
-  /**
-   * Get welcome message based on conversation style
-   */
-  getWelcomeMessage(style) {
-    const welcomeMessages = {
-      hr: "Hello! I'm Serhii's AI assistant. I'm here to provide you with detailed information about his professional background, skills, and experience. What would you like to know about his qualifications?",
-
-      developer: "Hey there! I'm Serhii's AI assistant, and I'm excited to chat with a fellow developer! I can tell you all about his technical skills, projects, and development experience. What interests you most about his work?",
-
-      friend: "Hi! I'm Serhii's AI assistant, and I'm here to have a friendly chat about him and his work. Feel free to ask me anything - I love talking about his projects, interests, and experiences. What would you like to know?"
-    };
-
-    return welcomeMessages[style] || welcomeMessages.friend;
-  }
-
-  /**
-   * Show error message
-   */
-  showError(message) {
-    if (this.chatUI) {
-      this.chatUI.showError(message);
+  } catch (error) {
+    console.error('Chat initialization error:', error);
+    
+    // If we have a chatBot instance with UI, use it for error display
+    if (chatBotInstance && chatBotInstance.ui) {
+      chatBotInstance.ui.showError(getErrorMessage(error.message));
     } else {
-      console.error('Chat error:', message);
+      // Fallback error display
+      showFallbackError(error.message);
     }
-  }
-
-  /**
-   * Destroy the chat integration
-   */
-  destroy() {
-    if (this.chatUI) {
-      this.chatUI.destroy();
-    }
-
-    if (this.conversationManager) {
-      this.conversationManager.destroy();
-    }
-
-    if (this.heroTrigger) {
-      this.heroTrigger.removeEventListener('click', this.startChat);
-    }
-
-    this.isInitialized = false;
+  } finally {
+    isLoading = false;
   }
 }
 
-export default ChatIntegration;
+/**
+ * Get appropriate error message for different error types
+ */
+function getErrorMessage(error) {
+  if (error.includes('BROWSER_UNSUPPORTED') || error.includes('WebAssembly')) {
+    return "Oops, sorry, we couldn't load Serhii to your browser :(";
+  } else if (error.includes('WORKER_TIMEOUT') || error.includes('network')) {
+    return "Having trouble downloading my brain 🧠 Check your connection?";
+  }
+  return "Something went wrong. Please try again.";
+}
+
+/**
+ * Fallback error display when UI is not available
+ */
+function showFallbackError(error) {
+  const errorMessage = getErrorMessage(error);
+  
+  // Simple alert as fallback - in production this could be a toast notification
+  alert(errorMessage);
+}
+
+/**
+ * Show the chat interface
+ */
+function showChatInterface() {
+  if (chatBotInstance && chatBotInstance.ui) {
+    // Delegate to the actual UI instance
+    chatBotInstance.ui.showChatInterface();
+  }
+}
+
+/**
+ * Close the chat overlay
+ */
+function closeChatOverlay() {
+  if (chatBotInstance && chatBotInstance.ui && chatBotInstance.ui.closeChatOverlay) {
+    // Delegate to the actual UI instance
+    chatBotInstance.ui.closeChatOverlay();
+  } else {
+    // Fallback for cases where UI isn't available
+    const overlay = document.getElementById('chat-overlay');
+    if (overlay) {
+      overlay.remove();
+    }
+  }
+}
+
+/**
+ * Setup event listeners for chat interface
+ */
+function setupChatEventListeners() {
+  // Close button
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('.chat-close, .chat-error__close')) {
+      closeChatOverlay();
+    }
+  });
+
+  // Style selection buttons
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('.chat-style-button')) {
+      const style = event.target.dataset.style;
+      if (chatBotInstance && style) {
+        chatBotInstance.selectConversationStyle(style);
+      }
+    }
+  });
+
+  // Message form submission
+  document.addEventListener('submit', (event) => {
+    if (event.target.matches('.chat-message-form')) {
+      event.preventDefault();
+      handleMessageSubmit(event.target);
+    }
+  });
+
+  // Restart conversation button
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('.chat-restart-button')) {
+      if (chatBotInstance) {
+        chatBotInstance.restartConversation();
+      }
+    }
+  });
+
+  // Escape key to close
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      const overlay = document.getElementById('chat-overlay');
+      if (overlay) {
+        closeChatOverlay();
+      }
+    }
+  });
+}
+
+/**
+ * Handle message form submission
+ */
+function handleMessageSubmit(form) {
+  const messageInput = form.querySelector('.chat-message-input');
+  const message = messageInput.value.trim();
+
+  if (!message || !chatBotInstance) {
+    return;
+  }
+
+  // Clear input
+  messageInput.value = '';
+
+  // Process message
+  chatBotInstance.processMessage(message);
+}
+
+/**
+ * Cleanup chat resources when page unloads
+ */
+function cleanupChat() {
+  if (chatBotInstance) {
+    chatBotInstance.destroy();
+    chatBotInstance = null;
+  }
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', cleanupChat);
+
+// Setup chat button event listener when module loads
+document.addEventListener('DOMContentLoaded', () => {
+  const chatButton = document.getElementById('hero-chat-trigger');
+  if (chatButton) {
+    chatButton.addEventListener('click', initializeChat);
+  }
+});
+
+// Make functions available globally for HTML onclick handlers
+window.initializeChat = initializeChat;
+window.closeChatOverlay = closeChatOverlay;
+
+export { 
+  initializeChat, 
+  closeChatOverlay, 
+  cleanupChat 
+};
