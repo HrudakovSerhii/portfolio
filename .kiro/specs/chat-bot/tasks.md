@@ -1,12 +1,14 @@
 # Implementation Plan
 
 - [x] 1. Setup project dependencies and basic structure
+
   - Install @huggingface/transformers package for ML processing
   - Create directory structure for chat-bot modules and workers
   - Update package.json with new dependencies and build scripts
   - _Requirements: 8.1, 8.4_
 
 - [x] 2. Create CV data structure and sample content
+
   - Design JSON schema for CV data with embeddings support
   - Create sample CV data file with experience, skills, and projects sections
   - Implement response templates for all three conversation styles (HR/Developer/Friend)
@@ -14,13 +16,15 @@
   - _Requirements: 7.1, 7.2, 2.2, 2.3, 2.4_
 
 - [x] 3. Implement CV data service module
+
   - Create CVDataService class for loading and managing CV data
   - Implement methods for data validation and section retrieval
   - Add embedding computation and caching functionality
   - Write unit tests for data loading and validation
   - _Requirements: 7.1, 7.3, 7.4_
 
-- [ ] 4. Create ML Worker for DistilBERT processing
+- [x] 4. Create ML Worker for DistilBERT processing
+
   - Set up Web Worker with Transformers.js integration
   - Implement DistilBERT model loading and initialization
   - Create semantic similarity computation functions
@@ -29,6 +33,7 @@
   - _Requirements: 3.1, 3.2, 8.1, 8.2_
 
 - [ ] 5. Build conversation manager module
+
   - Create ConversationManager class for history and context management
   - Implement 5-message context window with automatic cleanup
   - Add conversation style management and persistence
@@ -37,6 +42,7 @@
   - _Requirements: 4.1, 4.2, 4.3, 2.5, 3.4_
 
 - [ ] 6. Develop chat UI components
+
   - Create ChatUI class for interface management
   - Implement loading states and progress indicators
   - Build conversation style selection interface
@@ -45,6 +51,7 @@
   - _Requirements: 1.2, 1.3, 2.1, 6.1_
 
 - [ ] 7. Implement main chat-bot module with lazy loading
+
   - Create ChatBot main class as entry point
   - Implement lazy loading mechanism for chat module
   - Add worker initialization and communication setup
@@ -53,6 +60,7 @@
   - _Requirements: 1.1, 1.4, 1.5, 8.4_
 
 - [ ] 8. Build conversation style selection and management
+
   - Implement style selection UI with three options (HR/Developer/Friend)
   - Create style-specific greeting messages and response formatting
   - Add conversation restart functionality with style re-selection
@@ -61,6 +69,7 @@
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.6, 5.1, 5.2, 5.3, 5.4_
 
 - [ ] 9. Implement query processing and response generation
+
   - Create query preprocessing and embedding generation
   - Implement semantic matching against CV sections using similarity thresholds
   - Build response synthesis combining multiple relevant CV sections
@@ -69,6 +78,7 @@
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 7.3, 7.4_
 
 - [ ] 10. Build fallback handling system
+
   - Implement query understanding failure detection
   - Create style-appropriate rephrase request messages
   - Build two-attempt fallback flow (rephrase → email contact)
@@ -77,6 +87,7 @@
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
 - [ ] 11. Add conversation context and memory management
+
   - Implement conversation history storage and retrieval
   - Create context-aware response generation using previous Q&A
   - Add context size management (5-message limit)
@@ -85,6 +96,7 @@
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.5_
 
 - [ ] 12. Integrate chat button and loading states
+
   - Add "Chat" button to main portfolio interface
   - Implement loading message display during model initialization
   - Create progress indicators for model download and setup
@@ -93,6 +105,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 13. Implement performance optimizations
+
   - Add model caching and progressive loading
   - Implement query response time optimization (target <3 seconds)
   - Add memory management and cleanup on session end
@@ -101,6 +114,7 @@
   - _Requirements: 8.1, 8.2, 8.3, 9.4_
 
 - [ ] 14. Add privacy and security measures
+
   - Implement client-side only data processing
   - Add conversation data cleanup on session end
   - Create secure worker message validation
@@ -109,6 +123,7 @@
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
 - [ ] 15. Create comprehensive test suite
+
   - Write unit tests for all core modules (CVDataService, ConversationManager, ChatUI)
   - Create integration tests for worker communication and ML processing
   - Add end-to-end tests for complete conversation flows
@@ -117,6 +132,7 @@
   - _Requirements: All requirements validation_
 
 - [ ] 16. Build production deployment configuration
+
   - Update build scripts to include chat-bot assets and dependencies
   - Configure model file serving and caching headers
   - Add compression for model files and JavaScript bundles
@@ -125,6 +141,7 @@
   - _Requirements: 8.1, 8.3, 8.4_
 
 - [ ] 17. Integrate with existing portfolio styling and navigation
+
   - Create SCSS styles for chat interface matching portfolio design
   - Implement responsive design for mobile and desktop chat
   - Add chat interface animations and transitions
