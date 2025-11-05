@@ -182,11 +182,11 @@ class ChatBot {
    */
   _setupWorkerMessageHandling() {
     this.worker.onmessage = (event) => {
-      const { type, answer, confidence, matchedSections, error } = event.data;
+      const { type, answer, confidence, matchedSections, processingMetrics, error } = event.data;
       
       switch (type) {
         case 'response':
-          this._handleWorkerResponse(answer, confidence, matchedSections);
+          this._handleWorkerResponse(answer, confidence, matchedSections, processingMetrics);
           break;
         case 'error':
           this._handleWorkerError(error);
@@ -292,8 +292,13 @@ class ChatBot {
   /**
    * Handle worker response
    */
-  _handleWorkerResponse(answer, confidence, matchedSections) {
+  _handleWorkerResponse(answer, confidence, matchedSections, processingMetrics) {
     this.ui.hideTypingIndicator();
+    
+    // Log processing metrics for debugging
+    if (processingMetrics) {
+      console.log('Query processing metrics:', processingMetrics);
+    }
     
     if (confidence < 0.5) {
       // Low confidence - trigger fallback
@@ -302,7 +307,8 @@ class ChatBot {
       // Format response based on current style
       const formattedAnswer = this.styleManager.formatResponse(answer, {
         matchedSections,
-        confidence
+        confidence,
+        metrics: processingMetrics
       });
       
       // Add response to conversation history
