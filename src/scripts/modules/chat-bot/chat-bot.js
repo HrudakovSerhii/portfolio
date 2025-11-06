@@ -11,6 +11,9 @@ class ChatBot {
     this.cvDataService = null;
     this.currentStyle = null;
     this.initializationPromise = null;
+    this.performanceManager = null;
+    this.sessionStartTime = Date.now();
+    this.queryCount = 0;
   }
 
   /**
@@ -48,6 +51,10 @@ class ChatBot {
       });
       this.ui.initialize();
       this.ui.showLoadingState();
+
+      // Initialize performance manager
+      this.performanceManager = new this._PerformanceManager();
+      this.performanceManager.initialize();
 
       // Initialize CV data service first
       this.cvDataService = new this._CVDataService();
@@ -117,23 +124,27 @@ class ChatBot {
   }
 
   /**
-   * Lazy load required modules
+   * Lazy load required modules with performance optimization
    */
   async _loadModules() {
     try {
-      // Dynamic imports for lazy loading
+      // Dynamic imports for lazy loading with performance tracking
+      const moduleLoadStart = performance.now();
+      
       const [
         { default: ChatUI },
         { default: ConversationManager },
         { default: CVDataService },
         { default: StyleManager },
-        { default: FallbackHandler }
+        { default: FallbackHandler },
+        { default: PerformanceManager }
       ] = await Promise.all([
         import('./chat-ui.js'),
         import('./conversation-manager.js'),
         import('./cv-data-service.js'),
         import('./style-manager.js'),
-        import('./fallback-handler.js')
+        import('./fallback-handler.js'),
+        import('./performance-manager.js')
       ]);
 
       // Store classes for this instance
@@ -142,6 +153,13 @@ class ChatBot {
       this._CVDataService = CVDataService;
       this._StyleManager = StyleManager;
       this._FallbackHandler = FallbackHandler;
+      this._PerformanceManager = PerformanceManager;
+      
+      const moduleLoadTime = performance.now() - moduleLoadStart;
+      if (window.isDev) {
+        console.log(`Chat modules loaded in ${moduleLoadTime.toFixed(2)}ms`);
+      }
+      
     } catch (error) {
       throw new Error(`MODULE_LOAD_FAILED: ${error.message}`);
     }
@@ -242,7 +260,7 @@ class ChatBot {
   }
 
   /**
-   * Process user message
+   * Process user message with performance tracking
    * @param {string} message - User's message
    */
   async processMessage(message) {
@@ -251,6 +269,10 @@ class ChatBot {
     }
 
     try {
+      // Track query performance
+      this.queryCount++;
+      const queryStartTime = performance.now();
+      
       // Add user message to UI
       this.ui.addMessage(message, true);
       this.ui.showTypingIndicator();
@@ -258,12 +280,21 @@ class ChatBot {
       // Get conversation context
       const context = this.conversationManager.getContext();
 
+      // Log performance event
+      this.performanceManager?.logPerformanceEvent('query_started', {
+        queryLength: message.length,
+        contextSize: context.length,
+        style: this.currentStyle,
+        queryNumber: this.queryCount
+      });
+
       // Send to worker for processing
       this.worker.postMessage({
         type: 'process_query',
         message: message,
         context: context,
-        style: this.currentStyle
+        style: this.currentStyle,
+        queryId: `query_${this.queryCount}_${Date.now()}`
       });
 
     } catch (error) {
@@ -298,20 +329,46 @@ class ChatBot {
   }
 
   /**
-   * Clean up resources
+   * Clean up resources with performance cleanup
    */
   destroy() {
-    if (this.worker) {
-      this.worker.terminate();
-      this.worker = null;
+    // Log session statistics
+    if (this.performanceManager) {
+      const sessionDuration = Date.now() - this.sessionStartTime;
+      this.performanceManager.logPerformanceEvent('session_ended', {
+        sessionDuration,
+        totalQueries: this.queryCount,
+        averageQueryTime: this.performanceManager.getAverageQueryTime()
+      });
     }
 
+    // Clean up worker
+    if (this.worker) {
+      // Send cleanup message to worker before terminating
+      this.worker.postMessage({ type: 'cleanup' });
+      
+      // Give worker time to cleanup, then terminate
+      setTimeout(() => {
+        if (this.worker) {
+          this.worker.terminate();
+          this.worker = null;
+        }
+      }, 100);
+    }
+
+    // Clean up managers
     if (this.conversationManager) {
       this.conversationManager.clearHistory();
     }
 
+    if (this.performanceManager) {
+      this.performanceManager.cleanup();
+    }
+
+    // Reset state
     this.isInitialized = false;
     this.initializationPromise = null;
+    this.queryCount = 0;
   }
 
   /**
@@ -321,7 +378,7 @@ class ChatBot {
     this.ui.hideTypingIndicator();
 
     // Log processing metrics for debugging
-    if (processingMetrics) {
+    if (processingMetrics && window.isDev) {
       console.log('Query processing metrics:', processingMetrics);
     }
 
@@ -495,10 +552,68 @@ class ChatBot {
   }
 
   /**
+   * Get performance metrics
+   * @returns {Object} Performance metrics
+   */
+  getPerformanceMetrics() {
+    if (!this.performanceManager) {
+      return { error: 'Performance manager not initialized' };
+    }
+
+    const metrics = this.performanceManager.getMetrics();
+    
+    // Add session-specific metrics
+    return {
+      ...metrics,
+      sessionMetrics: {
+        sessionDuration: Date.now() - this.sessionStartTime,
+        totalQueries: this.queryCount,
+        queriesPerMinute: this.queryCount / ((Date.now() - this.sessionStartTime) / 60000),
+        isInitialized: this.isInitialized,
+        currentStyle: this.currentStyle
+      }
+    };
+  }
+
+  /**
+   * Request performance metrics from worker
+   */
+  async getWorkerPerformanceMetrics() {
+    if (!this.worker) {
+      return { error: 'Worker not available' };
+    }
+
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        resolve({ error: 'Worker metrics request timeout' });
+      }, 5000);
+
+      const messageHandler = (event) => {
+        if (event.data.type === 'performance_metrics') {
+          clearTimeout(timeout);
+          this.worker.removeEventListener('message', messageHandler);
+          resolve(event.data.metrics);
+        }
+      };
+
+      this.worker.addEventListener('message', messageHandler);
+      this.worker.postMessage({ type: 'get_performance_metrics' });
+    });
+  }
+
+  /**
    * Handle initialization errors
    */
   _handleInitializationError(error) {
     console.error('ChatBot: Initialization error:', error);
+
+    // Log performance event
+    if (this.performanceManager) {
+      this.performanceManager.logPerformanceEvent('initialization_error', {
+        error: error.message,
+        sessionDuration: Date.now() - this.sessionStartTime
+      });
+    }
 
     let errorMessage;
     switch (error.message) {

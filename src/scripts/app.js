@@ -5,6 +5,10 @@ import { initializeNavigation } from './modules/navigation.js';
 import { initializeTranslations } from './modules/translations.js';
 
 async function main() {
+    // Development flag - Set to false for production builds
+    // This controls debug logging throughout the application
+    window.isDev = true;
+    
     console.log('Portfolio website initialized');
 
     // Initialize modules
