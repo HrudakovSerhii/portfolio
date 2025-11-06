@@ -17,11 +17,28 @@ async function main() {
     if (chatTriggerButton) {
         chatTriggerButton.addEventListener('click', async () => {
             try {
-                // Import chat integration functions and make them globally available
-                await import('./modules/chat-bot/chat-integration.js');
+                // Import and initialize chat integration
+                const chatIntegration = await import('./modules/chat-bot/chat-integration.js');
+                
+                // Initialize chat if the function is available
+                if (chatIntegration.default && chatIntegration.default.initializeChat) {
+                    await chatIntegration.default.initializeChat();
+                } else if (window.initializeChat) {
+                    await window.initializeChat();
+                } else {
+                    console.error('Chat initialization function not found');
+                }
+                
                 console.log('Chat integration loaded and ready');
             } catch (error) {
                 console.error('Failed to load chat integration:', error);
+                
+                // Show user-friendly error message
+                const errorMessage = error.message.includes('BROWSER_UNSUPPORTED') || error.message.includes('WebAssembly')
+                    ? "Oops, sorry, we couldn't load Serhii to your browser :("
+                    : "Having trouble loading the chat. Please try refreshing the page.";
+                
+                alert(errorMessage);
             }
         })
 

@@ -43,7 +43,8 @@ class ChatBot {
         onStyleSelect: (style) => this.selectConversationStyle(style),
         onMessageSend: (message) => this.processMessage(message),
         onRestart: () => this.restartConversation(),
-        onFallbackSubmit: (name, email) => this.handleFallbackSubmit(name, email)
+        onFallbackSubmit: (name, email) => this.handleFallbackSubmit(name, email),
+        onRetry: () => this.retryInitialization()
       });
       this.ui.initialize();
       this.ui.showLoadingState();
@@ -68,7 +69,14 @@ class ChatBot {
       }
 
       this.isInitialized = true;
-      this.ui.showStyleSelection();
+      
+      // Complete progress bar animation
+      this._completeProgressBar();
+      
+      // Show style selection after a brief delay
+      setTimeout(() => {
+        this.ui.showStyleSelection();
+      }, 500);
 
       return true;
     } catch (error) {
@@ -448,6 +456,42 @@ class ChatBot {
 
     const errorMessage = this.styleManager.getErrorMessage(this.currentStyle);
     this.ui.addMessage(errorMessage, false, this.currentStyle);
+  }
+
+  /**
+   * Retry initialization after an error
+   */
+  async retryInitialization() {
+    // Reset state
+    this.isInitialized = false;
+    this.initializationPromise = null;
+    
+    // Clean up existing worker if any
+    if (this.worker) {
+      this.worker.terminate();
+      this.worker = null;
+    }
+
+    // Retry initialization
+    return this.initialize();
+  }
+
+  /**
+   * Complete the progress bar animation
+   */
+  _completeProgressBar() {
+    if (this.ui && this.ui.chatContainer) {
+      const progressBar = this.ui.chatContainer.querySelector('.progress-bar');
+      if (progressBar) {
+        progressBar.style.width = '100%';
+        
+        // Clear any existing progress interval
+        if (this.ui.chatContainer._progressInterval) {
+          clearInterval(this.ui.chatContainer._progressInterval);
+          this.ui.chatContainer._progressInterval = null;
+        }
+      }
+    }
   }
 
   /**

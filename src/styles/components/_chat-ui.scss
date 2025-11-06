@@ -381,7 +381,7 @@
   text-align: center;
 
   .error-content {
-    max-width: 300px;
+    max-width: 350px;
   }
 
   .error-icon {
@@ -395,6 +395,7 @@
     margin: 0 0 $spacing-lg 0;
     color: $dark-gray;
     line-height: $line-height-base;
+    font-size: $font-size-base;
   }
 
   .error-retry {
@@ -406,10 +407,34 @@
     cursor: pointer;
     font-size: $font-size-small;
     transition: background 0.2s ease;
+    margin-right: $spacing-sm;
 
     &:hover {
       background: darken($primary-color, 10%);
     }
+  }
+
+  .error-close {
+    background: none;
+    color: $dark-gray;
+    border: 1px solid $dark-gray;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    font-size: $font-size-small;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $light-gray;
+      color: $text-color;
+    }
+  }
+
+  .error-actions {
+    display: flex;
+    gap: $spacing-sm;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 }
 
