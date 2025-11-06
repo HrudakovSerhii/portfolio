@@ -9,14 +9,15 @@ let pipeline, env;
 // Load transformers library dynamically
 async function loadTransformers() {
   try {
-    const transformers = await import('@huggingface/transformers');
+    const transformers = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers');
+
     pipeline = transformers.pipeline;
     env = transformers.env;
-    
+
     // Configure Transformers.js environment for web worker
     env.allowRemoteModels = true;
     env.allowLocalModels = false;
-    
+
     return true;
   } catch (error) {
     console.error('Failed to load transformers:', error);
@@ -37,10 +38,10 @@ class MLWorker {
    * Initialize the DistilBERT model and tokenizer
    */
   async initialize(cvData) {
-    debugger
     try {
       // First load the transformers library
       const transformersLoaded = await loadTransformers();
+
       if (!transformersLoaded) {
         throw new Error('Failed to load transformers library');
       }
@@ -51,14 +52,14 @@ class MLWorker {
       });
 
       // Load the feature extraction pipeline with DistilBERT
-      this.model = await pipeline('feature-extraction', 'distilbert-base-uncased', {
+      this.model = await pipeline('feature-extraction', 'Xenova/distilbert-base-uncased', {
         quantized: true, // Use quantized model for better performance
         progress_callback: (progress) => {
           this.postMessage({
             type: 'progress',
             progress: progress
           });
-        }
+        },
       });
 
       this.cvData = cvData;
