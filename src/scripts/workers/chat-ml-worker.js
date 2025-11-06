@@ -3,11 +3,26 @@
  * Handles model loading, embedding generation, and semantic similarity computation
  */
 
-import { pipeline, env } from '@huggingface/transformers';
+// Global variables for transformers
+let pipeline, env;
 
-// Configure Transformers.js environment for web worker
-env.allowRemoteModels = true;
-env.allowLocalModels = false;
+// Load transformers library dynamically
+async function loadTransformers() {
+  try {
+    const transformers = await import('@huggingface/transformers');
+    pipeline = transformers.pipeline;
+    env = transformers.env;
+    
+    // Configure Transformers.js environment for web worker
+    env.allowRemoteModels = true;
+    env.allowLocalModels = false;
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to load transformers:', error);
+    return false;
+  }
+}
 
 class MLWorker {
   constructor() {
@@ -22,7 +37,14 @@ class MLWorker {
    * Initialize the DistilBERT model and tokenizer
    */
   async initialize(cvData) {
+    debugger
     try {
+      // First load the transformers library
+      const transformersLoaded = await loadTransformers();
+      if (!transformersLoaded) {
+        throw new Error('Failed to load transformers library');
+      }
+
       this.postMessage({
         type: 'status',
         message: 'Loading DistilBERT model...'
@@ -40,12 +62,12 @@ class MLWorker {
       });
 
       this.cvData = cvData;
-      
+
       // Pre-compute embeddings for CV sections
       await this.precomputeEmbeddings();
 
       this.isInitialized = true;
-      
+
       this.postMessage({
         type: 'ready',
         success: true,
@@ -85,7 +107,7 @@ class MLWorker {
           // Create text for embedding from keywords and responses
           const textForEmbedding = this.createEmbeddingText(section);
           const embedding = await this.generateEmbedding(textForEmbedding);
-          
+
           // Store embedding with section reference
           const sectionId = section.id || `${categoryKey}_${sectionKey}`;
           this.cvEmbeddings.set(sectionId, {
@@ -125,7 +147,7 @@ class MLWorker {
    */
   createEmbeddingText(section) {
     const parts = [];
-    
+
     // Add keywords
     if (section.keywords && Array.isArray(section.keywords)) {
       parts.push(section.keywords.join(' '));
@@ -160,7 +182,7 @@ class MLWorker {
     try {
       // Generate embedding using the model
       const output = await this.model(text, { pooling: 'mean', normalize: true });
-      
+
       // Convert to regular array for easier manipulation
       return Array.from(output.data);
     } catch (error) {
@@ -220,10 +242,10 @@ class MLWorker {
 
     // Extract context keywords from recent conversation
     const contextKeywords = this.extractContextKeywords(context);
-    
+
     // Expand query with synonyms and related terms
     processedQuery = this.expandQueryWithSynonyms(processedQuery);
-    
+
     // Add context if relevant
     if (contextKeywords.length > 0) {
       processedQuery += ' ' + contextKeywords.join(' ');
@@ -277,7 +299,7 @@ class MLWorker {
     };
 
     let expandedQuery = query;
-    
+
     Object.entries(synonymMap).forEach(([term, synonyms]) => {
       if (query.includes(term)) {
         // Add most relevant synonym
@@ -303,23 +325,23 @@ class MLWorker {
    */
   getAdaptiveThreshold(query) {
     const baseThreshold = 0.7;
-    
+
     // Lower threshold for shorter queries (they might be less specific)
     if (query.length < 20) {
       return baseThreshold - 0.1;
     }
-    
+
     // Lower threshold for questions (they might be more exploratory)
     if (query.includes('?') || query.startsWith('what') || query.startsWith('how') || query.startsWith('do you')) {
       return baseThreshold - 0.05;
     }
-    
+
     // Higher threshold for very specific technical terms
     const technicalTerms = ['framework', 'library', 'algorithm', 'architecture', 'implementation'];
     if (technicalTerms.some(term => query.toLowerCase().includes(term))) {
       return baseThreshold + 0.05;
     }
-    
+
     return baseThreshold;
   }
 
@@ -331,11 +353,11 @@ class MLWorker {
 
     for (const [sectionId, sectionData] of this.cvEmbeddings.entries()) {
       const similarity = this.cosineSimilarity(queryEmbedding, sectionData.embedding);
-      
+
       // Apply keyword boost for exact matches
       const keywordBoost = this.calculateKeywordBoost(queryEmbedding, sectionData);
       const adjustedSimilarity = Math.min(1.0, similarity + keywordBoost);
-      
+
       if (adjustedSimilarity >= threshold) {
         similarities.push({
           sectionId: sectionId,
@@ -357,7 +379,7 @@ class MLWorker {
    * Calculate keyword boost for sections with exact keyword matches
    */
   calculateKeywordBoost(queryEmbedding, sectionData) {
-    // This is a simplified boost - in a real implementation, 
+    // This is a simplified boost - in a real implementation,
     // you might analyze the original query text against section keywords
     // For now, return a small boost for high-confidence sections
     return 0.02; // Small boost to maintain semantic similarity priority
@@ -411,9 +433,9 @@ class MLWorker {
 
     // Synthesize response from multiple sections if applicable
     const synthesizedResponse = await this.synthesizeMultiSectionResponse(
-      relevantSections, 
-      query, 
-      context, 
+      relevantSections,
+      query,
+      context,
       style
     );
 
@@ -500,7 +522,7 @@ class MLWorker {
 
     // Group sections by category for better synthesis
     const sectionsByCategory = this.groupSectionsByCategory(relevantSections);
-    
+
     // Determine synthesis strategy based on query type and sections
     const synthesisStrategy = this.determineSynthesisStrategy(query, sectionsByCategory);
 
@@ -543,22 +565,22 @@ class MLWorker {
    */
   determineSynthesisStrategy(query, sectionsByCategory) {
     const categoryCount = Object.keys(sectionsByCategory).length;
-    
+
     // If query asks for comparison or mentions multiple technologies
     if (query.includes('vs') || query.includes('compare') || query.includes('difference')) {
       return 'comparative';
     }
-    
+
     // If sections span multiple categories, provide comprehensive view
     if (categoryCount > 1) {
       return 'comprehensive';
     }
-    
+
     // If multiple sections in same category, provide focused view
     if (categoryCount === 1 && Object.values(sectionsByCategory)[0].length > 1) {
       return 'focused';
     }
-    
+
     return 'single';
   }
 
@@ -568,21 +590,21 @@ class MLWorker {
   synthesizeComprehensiveResponse(sections, style, query) {
     const topSections = sections.slice(0, 3);
     const responses = topSections.map(section => section.section.responses[style]).filter(Boolean);
-    
+
     if (responses.length === 0) {
       return this.getNoMatchResponse(style);
     }
 
     const connectors = this.getStyleConnectors(style);
     const intro = this.getComprehensiveIntro(style, query);
-    
+
     // Combine responses with appropriate connectors
     let combinedResponse = intro + ' ' + responses[0];
-    
+
     if (responses.length > 1) {
       combinedResponse += ` ${connectors.continuation} ` + responses.slice(1).join(` ${connectors.continuation} `);
     }
-    
+
     return combinedResponse;
   }
 
@@ -592,18 +614,18 @@ class MLWorker {
   synthesizeFocusedResponse(sections, style, query) {
     const primarySection = sections[0];
     const relatedSections = sections.slice(1, 3);
-    
+
     let response = primarySection.section.responses[style];
-    
+
     if (relatedSections.length > 0) {
       const connectors = this.getStyleConnectors(style);
       const relatedTopics = relatedSections
         .map(s => s.section.keywords[0])
         .join(', ');
-      
+
       response += ` ${connectors.continuation} I also have experience with ${relatedTopics}.`;
     }
-    
+
     return response;
   }
 
@@ -617,10 +639,10 @@ class MLWorker {
 
     const section1 = sections[0];
     const section2 = sections[1];
-    
+
     const connectors = this.getStyleConnectors(style);
     const compareIntro = this.getComparisonIntro(style);
-    
+
     return `${compareIntro} ${section1.section.responses[style]} ${connectors.continuation} ${section2.section.responses[style]}`;
   }
 
@@ -682,7 +704,7 @@ class MLWorker {
 
     // Check if this continues a previous conversation topic
     const contextualConnection = this.findContextualConnection(context, relevantSections);
-    
+
     if (contextualConnection) {
       const contextualPhrases = {
         hr: 'Building on our previous discussion, ',
@@ -714,7 +736,7 @@ class MLWorker {
     const currentSectionIds = relevantSections.map(s => s.sectionId);
     const previousSectionIds = lastEntry.matchedSections.map(s => s.id || s);
 
-    return currentSectionIds.some(id => 
+    return currentSectionIds.some(id =>
       previousSectionIds.some(prevId => this.areSectionsRelated(id, prevId))
     );
   }
@@ -725,11 +747,11 @@ class MLWorker {
   areSectionsRelated(sectionId1, sectionId2) {
     // Simple relationship check - could be enhanced with more sophisticated logic
     if (sectionId1 === sectionId2) return true;
-    
+
     // Check if they're in the same category
     const category1 = sectionId1.split('_')[0];
     const category2 = sectionId2.split('_')[0];
-    
+
     return category1 === category2;
   }
 
@@ -752,7 +774,7 @@ class MLWorker {
   addContextualElements(response, context, style) {
     // Simple context awareness - could be enhanced
     const lastMessage = context[context.length - 1];
-    
+
     if (lastMessage && lastMessage.userMessage) {
       const contextualPrefixes = {
         hr: "Building on our previous discussion, ",
@@ -814,7 +836,7 @@ class MLWorker {
     // Simple keyword overlap assessment
     const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
     const responseWords = response.toLowerCase().split(/\s+/);
-    
+
     let matches = 0;
     queryWords.forEach(word => {
       if (responseWords.some(respWord => respWord.includes(word) || word.includes(respWord))) {
@@ -837,19 +859,19 @@ class MLWorker {
    */
   calculateQualityScore(validation) {
     let score = validation.confidence * 0.6; // Base score from confidence
-    
+
     // Add points for response length (within reasonable bounds)
     const lengthScore = Math.min(0.2, validation.answer.length / 500);
     score += lengthScore;
-    
+
     // Add points for multiple matched sections (indicates comprehensive knowledge)
     const sectionScore = Math.min(0.1, validation.matchedSections.length * 0.03);
     score += sectionScore;
-    
+
     // Subtract points for quality flags
     const qualityFlags = validation.metrics.qualityFlags || [];
     score -= qualityFlags.length * 0.05;
-    
+
     return Math.max(0, Math.min(1, score));
   }
 
