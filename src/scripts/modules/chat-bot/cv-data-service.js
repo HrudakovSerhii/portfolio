@@ -52,6 +52,7 @@ class CVDataService {
   validateCVData(data) {
     // Check required top-level properties
     const requiredProps = ['metadata', 'sections', 'personality', 'responseTemplates'];
+
     for (const prop of requiredProps) {
       if (!data[prop]) {
         throw new Error(`Missing required property: ${prop}`);
@@ -60,6 +61,7 @@ class CVDataService {
 
     // Validate metadata
     const metadata = data.metadata;
+
     if (!metadata.version || !metadata.lastUpdated || !metadata.totalSections) {
       throw new Error('Invalid metadata structure');
     }
@@ -287,6 +289,7 @@ class CVDataService {
    */
   getEmbeddings(sectionId) {
     const section = this.getSectionById(sectionId);
+
     return section ? section.embeddings : null;
   }
 
