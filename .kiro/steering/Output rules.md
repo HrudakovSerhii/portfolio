@@ -35,3 +35,4 @@ inclusion: always
 - Always ask the user to run the application in their IDE instead of generating npm commands
 - User prefers to use their additional IDE for editing and running applications
 - Focus on code implementation and let user handle application execution
+- When running tests, use the correct format: `npm test filename` (not `npm test -- filename --run`)

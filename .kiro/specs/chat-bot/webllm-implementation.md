@@ -7,6 +7,7 @@ This specification outlines the implementation of WebLLM (Llama-2-7B) as a paral
 ## Problem Statement
 
 Current DistilBERT system issues:
+
 - **Hallucination**: Combining irrelevant CV sections for queries like "OOP experience"
 - **Complex custom logic**: Brittle similarity thresholds and response synthesis
 - **Quality validation failures**: Inaccurate responses passing validation
@@ -15,6 +16,7 @@ Current DistilBERT system issues:
 ## Solution Architecture
 
 ### Dual-Engine Approach
+
 ```
 User Query
     ↓
@@ -35,12 +37,14 @@ Best Response Selection
 #### 1.1 WebLLM Worker (`src/scripts/workers/webllm-worker.js`)
 
 **Responsibilities:**
+
 - Load and initialize Llama-2-7B-chat model
 - Handle model memory management
 - Process queries with prompt-based approach
 - Generate contextual responses
 
 **Key Features:**
+
 ```javascript
 class WebLLMWorker {
   async initialize() {
@@ -48,7 +52,7 @@ class WebLLMWorker {
     // Set up memory management
     // Configure model parameters
   }
-  
+
   async processQuery(query, cvData, style, context) {
     // Generate structured prompt
     // Process with Llama-2-7B
@@ -59,6 +63,7 @@ class WebLLMWorker {
 ```
 
 **Model Configuration:**
+
 - Model: `Llama-2-7b-chat-hf-q4f16_1` (quantized for performance)
 - Max tokens: 512 for responses
 - Temperature: 0.3 (focused responses)
@@ -67,25 +72,28 @@ class WebLLMWorker {
 #### 1.2 WebLLM Service (`src/scripts/modules/chat-bot/webllm-service.js`)
 
 **Responsibilities:**
+
 - Manage WebLLM worker communication
 - Handle prompt template system
 - Process responses and extract metadata
 - Implement error handling and retries
 
 **API Design:**
+
 ```javascript
 class WebLLMService {
-  async initialize(cvData) { }
-  async processQuery(query, context, style) { }
-  async isModelReady() { }
-  async getModelStatus() { }
-  cleanup() { }
+  async initialize(cvData) {}
+  async processQuery(query, context, style) {}
+  async isModelReady() {}
+  async getModelStatus() {}
+  cleanup() {}
 }
 ```
 
 #### 1.3 Dual Engine Manager (`src/scripts/modules/chat-bot/dual-engine-manager.js`)
 
 **Responsibilities:**
+
 - Route queries to selected engine
 - Implement A/B testing logic
 - Compare response quality
@@ -93,6 +101,7 @@ class WebLLMService {
 - Collect performance metrics
 
 **Engine Selection Logic:**
+
 ```javascript
 class DualEngineManager {
   selectEngine(query, userPreference, performanceMetrics) {
@@ -108,6 +117,7 @@ class DualEngineManager {
 #### 2.1 System Prompts
 
 **Base System Prompt:**
+
 ```
 You are Serhii's portfolio assistant. Your role is to answer questions about Serhii's professional background using ONLY the provided CV data.
 
@@ -124,13 +134,15 @@ Previous Context: {context}
 ```
 
 **Style-Specific Prompts:**
+
 - **HR Style**: Professional, achievement-focused, metrics-oriented
-- **Developer Style**: Technical, collaborative, solution-oriented  
+- **Developer Style**: Technical, collaborative, solution-oriented
 - **Friend Style**: Casual, enthusiastic, story-telling
 
 #### 2.2 Query Processing Templates
 
 **Relevance Check Template:**
+
 ```
 Based on the provided CV data, can you answer this question: "{query}"?
 
@@ -142,6 +154,7 @@ Analysis:
 ```
 
 **Response Generation Template:**
+
 ```
 Question: {query}
 CV Data: {relevantSections}
@@ -158,12 +171,15 @@ Response:
 #### 3.1 A/B Testing Framework
 
 **Test Scenarios:**
+
 1. **Accuracy Tests**
+
    - Existing CV content queries
    - Non-existent topic queries (OOP, Python, etc.)
    - Ambiguous or edge case questions
 
 2. **Performance Tests**
+
    - Model load time comparison
    - Response generation speed
    - Memory usage patterns
@@ -175,23 +191,26 @@ Response:
    - Style consistency validation
 
 **Metrics Collection:**
+
 ```javascript
 class PerformanceMonitor {
-  trackModelLoad(engine, loadTime, memoryUsage) { }
-  trackQueryProcessing(engine, query, responseTime, accuracy) { }
-  trackUserSatisfaction(engine, rating, feedback) { }
-  generateComparisonReport() { }
+  trackModelLoad(engine, loadTime, memoryUsage) {}
+  trackQueryProcessing(engine, query, responseTime, accuracy) {}
+  trackUserSatisfaction(engine, rating, feedback) {}
+  generateComparisonReport() {}
 }
 ```
 
 #### 3.2 User Interface Enhancements
 
 **Engine Selection UI:**
+
 - Toggle between DistilBERT and WebLLM
 - Performance indicator (speed vs accuracy)
 - Model status display (loading, ready, error)
 
 **Debug Interface:**
+
 - Response comparison view
 - Performance metrics display
 - Query processing logs
@@ -202,11 +221,13 @@ class PerformanceMonitor {
 #### 4.1 Performance Optimizations
 
 **Model Loading:**
+
 - Progressive loading with user feedback
 - Caching strategies for repeat visits
 - Memory-aware model selection
 
 **Response Generation:**
+
 - Streaming responses for long answers
 - Response caching for common queries
 - Timeout handling and fallbacks
@@ -214,11 +235,13 @@ class PerformanceMonitor {
 #### 4.2 Production Readiness
 
 **Error Handling:**
+
 - Graceful degradation to DistilBERT
 - Network failure recovery
 - Memory exhaustion handling
 
 **Monitoring:**
+
 - Performance metrics logging
 - Error rate tracking
 - User preference analytics
@@ -226,6 +249,7 @@ class PerformanceMonitor {
 ## Technical Specifications
 
 ### Dependencies
+
 ```json
 {
   "@mlc-ai/web-llm": "^0.2.46",
@@ -234,22 +258,24 @@ class PerformanceMonitor {
 ```
 
 ### Browser Requirements
+
 - **Minimum**: Chrome 90+, Firefox 88+, Safari 14+
 - **Recommended**: 8GB+ RAM, WebGL 2.0 support
 - **Mobile**: Limited support, fallback to DistilBERT
 
 ### Performance Targets
 
-| Metric | DistilBERT | WebLLM Target |
-|--------|------------|---------------|
-| Model Load Time | 5-10s | 20-30s |
-| Response Time | 1-3s | 3-8s |
-| Memory Usage | 500MB | 1.5-2GB |
-| Accuracy Score | 60-70% | 85-95% |
+| Metric          | DistilBERT | WebLLM Target |
+| --------------- | ---------- | ------------- |
+| Model Load Time | 5-10s      | 20-30s        |
+| Response Time   | 1-3s       | 3-8s          |
+| Memory Usage    | 500MB      | 1.5-2GB       |
+| Accuracy Score  | 60-70%     | 85-95%        |
 
 ## Implementation Files
 
 ### New Files to Create
+
 ```
 src/scripts/workers/webllm-worker.js
 src/scripts/modules/chat-bot/webllm-service.js
@@ -262,6 +288,7 @@ test/performance-comparison.test.js
 ```
 
 ### Modified Files
+
 ```
 src/scripts/modules/chat-bot/chat-integration.js
 src/scripts/modules/chat-bot/conversation-manager.js
@@ -272,18 +299,21 @@ package.json
 ## Testing Strategy
 
 ### Unit Tests
+
 - WebLLM service initialization and communication
 - Prompt template generation and validation
 - Dual engine manager routing logic
 - Performance monitor metrics collection
 
 ### Integration Tests
+
 - End-to-end query processing with both engines
 - Fallback scenarios and error handling
 - Memory management and cleanup
 - Cross-browser compatibility
 
 ### Performance Tests
+
 - Load time benchmarking
 - Memory usage profiling
 - Response quality comparison
@@ -292,35 +322,40 @@ package.json
 ## Risk Mitigation
 
 ### Technical Risks
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Large model size | Slow loading | Progressive loading, caching |
-| High memory usage | Browser crashes | Memory monitoring, cleanup |
-| Browser compatibility | Limited reach | Maintain DistilBERT fallback |
-| Network dependency | Offline issues | Local model caching |
+
+| Risk                  | Impact          | Mitigation                   |
+| --------------------- | --------------- | ---------------------------- |
+| Large model size      | Slow loading    | Progressive loading, caching |
+| High memory usage     | Browser crashes | Memory monitoring, cleanup   |
+| Browser compatibility | Limited reach   | Maintain DistilBERT fallback |
+| Network dependency    | Offline issues  | Local model caching          |
 
 ### User Experience Risks
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Long load times | User abandonment | Progress indicators, expectations |
-| Inconsistent responses | Confusion | A/B testing, quality validation |
-| Performance degradation | Poor experience | Automatic fallback to DistilBERT |
+
+| Risk                    | Impact           | Mitigation                        |
+| ----------------------- | ---------------- | --------------------------------- |
+| Long load times         | User abandonment | Progress indicators, expectations |
+| Inconsistent responses  | Confusion        | A/B testing, quality validation   |
+| Performance degradation | Poor experience  | Automatic fallback to DistilBERT  |
 
 ## Success Criteria
 
 ### Accuracy Improvements
+
 - [ ] Reduce hallucination rate by 80%
 - [ ] Improve query relevance detection to 95%+
 - [ ] Eliminate fabricated information in responses
 - [ ] Better handling of "unknown topic" queries
 
 ### Performance Benchmarks
+
 - [ ] Model load time under 30 seconds
 - [ ] Response generation under 8 seconds
 - [ ] Memory usage under 2GB peak
 - [ ] Fallback activation under 1 second
 
 ### User Experience Goals
+
 - [ ] More natural conversation flow
 - [ ] Consistent personality across responses
 - [ ] Reduced need for query rephrasing
@@ -329,11 +364,13 @@ package.json
 ## Future Enhancements
 
 ### Model Alternatives
+
 - Evaluate Mistral-7B for better performance
 - Test quantized versions (Q4, Q8)
 - Consider fine-tuned models for CV/portfolio use
 
 ### Advanced Features
+
 - Multi-turn conversation memory
 - Context-aware follow-up questions
 - Integration with external knowledge bases
@@ -342,12 +379,14 @@ package.json
 ## Documentation Requirements
 
 ### Technical Documentation
+
 - WebLLM integration guide
 - Prompt engineering best practices
 - Performance optimization guide
 - Troubleshooting documentation
 
 ### User Documentation
+
 - Engine comparison guide
 - Performance expectations
 - Browser compatibility matrix
