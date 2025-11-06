@@ -42,9 +42,11 @@ class ModelLoader {
     
     // Check cache first
     const cachedModel = this.performanceManager.getCachedModel(config.modelId);
+
     if (cachedModel && config.cacheEnabled) {
       this.loadedModel = cachedModel;
       this.notifyProgress(100, 'cached');
+
       return cachedModel;
     }
     
@@ -169,11 +171,13 @@ class ModelLoader {
     try {
       // Try to load from CDN with fallback
       const transformers = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6');
+
       return transformers;
     } catch (error) {
       // Fallback to local installation if available
       try {
         const transformers = await import('@huggingface/transformers');
+
         return transformers;
       } catch (fallbackError) {
         throw new Error(`Failed to load transformers library: ${error.message}`);
