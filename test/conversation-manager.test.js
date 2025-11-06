@@ -131,18 +131,19 @@ describe('ConversationManager', () => {
       conversationManager.addMessage('Python question', 'Python answer', ['skills.python']);
       conversationManager.addMessage('React question 3', 'React answer 3', ['experience.react']);
 
-      // Get context for React topics - should return only React messages
+      // Get context for React topics - now includes related experience topics
       const reactContext = conversationManager.getContext(['experience.react']);
 
-      expect(reactContext).toHaveLength(3);
+      expect(reactContext).toHaveLength(4); // React + Node.js (same category)
       expect(reactContext[0].userMessage).toBe('React question 1');
-      expect(reactContext[1].userMessage).toBe('React question 2');
-      expect(reactContext[2].userMessage).toBe('React question 3');
+      expect(reactContext[1].userMessage).toBe('Node.js question');
+      expect(reactContext[2].userMessage).toBe('React question 2');
+      expect(reactContext[3].userMessage).toBe('React question 3');
 
-      // Get context for Node.js topics
+      // Get context for Node.js topics - now includes related experience topics
       const nodeContext = conversationManager.getContext(['experience.nodejs']);
-      expect(nodeContext).toHaveLength(1);
-      expect(nodeContext[0].userMessage).toBe('Node.js question');
+      expect(nodeContext).toHaveLength(4); // All experience topics
+      expect(nodeContext.some(msg => msg.userMessage === 'Node.js question')).toBe(true);
     });
 
     it('should fall back to recent messages when no topic matches found', () => {
@@ -157,9 +158,9 @@ describe('ConversationManager', () => {
 
     it('should handle related topics correctly', () => {
       expect(conversationManager.areTopicsRelated('experience.react', 'experience.react')).toBe(true);
-      expect(conversationManager.areTopicsRelated('experience.react', 'experience.nodejs')).toBe(false);
-      expect(conversationManager.areTopicsRelated('experience.react', 'skills.javascript')).toBe(false);
-      expect(conversationManager.areTopicsRelated('skills.python', 'skills.javascript')).toBe(false);
+      expect(conversationManager.areTopicsRelated('experience.react', 'experience.nodejs')).toBe(true); // Same category
+      expect(conversationManager.areTopicsRelated('experience.react', 'skills.javascript')).toBe(false); // Different category
+      expect(conversationManager.areTopicsRelated('skills.python', 'skills.javascript')).toBe(true); // Same category
     });
 
     it('should clear history and generate new session ID', () => {
@@ -379,6 +380,187 @@ describe('ConversationManager', () => {
     });
   });
 
+  describe('Context-Aware Response Generation', () => {
+    beforeEach(() => {
+      conversationManager.setStyle('developer');
+    });
+
+    it('should generate context-aware responses with conversation analysis', () => {
+      // Add some conversation history
+      conversationManager.addMessage(
+        'Tell me about React',
+        'React is great for building UIs',
+        ['experience.react'],
+        0.9
+      );
+
+      const cvMatches = [{
+        id: 'experience.react',
+        responses: { developer: 'React hooks are powerful.' },
+        confidence: 0.95
+      }];
+
+      const result = conversationManager.generateContextAwareResponse(
+        'How do you use React hooks?',
+        cvMatches
+      );
+
+      expect(result.response).toBeDefined();
+      expect(result.contextUsed).toBe(true);
+      expect(result.contextSize).toBeGreaterThan(0);
+      expect(result.conversationFlow).toBeDefined();
+      expect(result.topicContinuity).toBeGreaterThan(0);
+      expect(result.followUpSuggestions).toBeDefined();
+    });
+
+    it('should detect follow-up questions correctly', () => {
+      conversationManager.addMessage(
+        'React experience?',
+        'React answer',
+        ['experience.react']
+      );
+
+      const context = conversationManager.getContext(['experience.react']);
+      const isFollowUp = conversationManager.isFollowUpQuestion(context, ['experience.react']);
+      expect(isFollowUp).toBe(true);
+
+      const isNotFollowUp = conversationManager.isFollowUpQuestion(context, ['skills.python']);
+      expect(isNotFollowUp).toBe(false);
+    });
+
+    it('should analyze conversation flow correctly', () => {
+      conversationManager.addMessage('React question', 'React answer', ['experience.react']);
+      conversationManager.addMessage('More React', 'More React answer', ['experience.react']);
+
+      const context = conversationManager.getContext(['experience.react']);
+      const analysis = conversationManager.analyzeConversationFlow(
+        context,
+        ['experience.react'],
+        'Tell me more about React'
+      );
+
+      expect(analysis.flow).toBe('topic_continuation');
+      expect(analysis.topicContinuity).toBe(1);
+      expect(analysis.queryType).toBe('follow_up'); // "more" is detected first, so it's classified as follow_up
+    });
+
+    it('should classify different query types', () => {
+      expect(conversationManager.classifyQuery('How do you use React?')).toBe('question');
+      expect(conversationManager.classifyQuery('Tell me about JavaScript')).toBe('request_explanation');
+      expect(conversationManager.classifyQuery('Can you show me more details?')).toBe('follow_up');
+      expect(conversationManager.classifyQuery('Give me an example')).toBe('request_example');
+      expect(conversationManager.classifyQuery('React is cool')).toBe('general');
+    });
+
+    it('should generate appropriate follow-up suggestions', () => {
+      conversationManager.setStyle('developer');
+      const suggestions = conversationManager.generateFollowUpSuggestions(['experience.react'], 'developer');
+      
+      expect(suggestions).toBeDefined();
+      expect(Array.isArray(suggestions)).toBe(true);
+      if (suggestions.length > 0) {
+        expect(typeof suggestions[0]).toBe('string');
+      }
+    });
+
+    it('should get specific contextual phrases for different query patterns', () => {
+      const context = [{
+        userMessage: 'Tell me more about React',
+        botResponse: 'React is great',
+        matchedSections: ['experience.react']
+      }];
+
+      const phrase = conversationManager.getSpecificContextualPhrase(context, 'developer');
+      expect(phrase).toContain('deeper');
+
+      const context2 = [{
+        userMessage: 'How do you work with React?',
+        botResponse: 'I use React hooks',
+        matchedSections: ['experience.react']
+      }];
+
+      const phrase2 = conversationManager.getSpecificContextualPhrase(context2, 'developer');
+      expect(phrase2).toContain('work with');
+    });
+  });
+
+  describe('Context Size Management and Cleanup', () => {
+    beforeEach(() => {
+      conversationManager.setStyle('developer');
+    });
+
+    it('should maintain exactly 5-message context window for processing', () => {
+      // Add 10 messages
+      for (let i = 1; i <= 10; i++) {
+        conversationManager.addMessage(
+          `Question ${i}`,
+          `Answer ${i}`,
+          [`topic${i}`],
+          0.8
+        );
+      }
+
+      // Context should return exactly 5 messages (the most recent)
+      const context = conversationManager.getContext();
+      expect(context).toHaveLength(5);
+      expect(context[0].userMessage).toBe('Question 6');
+      expect(context[4].userMessage).toBe('Question 10');
+    });
+
+    it('should clear context completely on conversation restart', () => {
+      // Add some conversation history
+      conversationManager.addMessage('Question 1', 'Answer 1', ['topic1']);
+      conversationManager.addMessage('Question 2', 'Answer 2', ['topic2']);
+      
+      expect(conversationManager.history).toHaveLength(2);
+      expect(conversationManager.getContext()).toHaveLength(2);
+      
+      const oldSessionId = conversationManager.sessionId;
+      
+      // Clear history (simulating conversation restart)
+      conversationManager.clearHistory();
+      
+      expect(conversationManager.history).toHaveLength(0);
+      expect(conversationManager.getContext()).toHaveLength(0);
+      expect(conversationManager.sessionId).not.toBe(oldSessionId);
+    });
+
+    it('should preserve context across style changes within same session', () => {
+      conversationManager.setStyle('developer');
+      conversationManager.addMessage('Dev question', 'Dev answer', ['topic1']);
+      
+      // Change style but keep history
+      conversationManager.setStyle('hr');
+      conversationManager.addMessage('HR question', 'HR answer', ['topic2']);
+      
+      const context = conversationManager.getContext();
+      expect(context).toHaveLength(2);
+      expect(context[0].style).toBe('developer');
+      expect(context[1].style).toBe('hr');
+    });
+
+    it('should handle context retrieval with topic filtering and size limits', () => {
+      // Add mixed topic messages
+      conversationManager.addMessage('React Q1', 'React A1', ['experience.react']);
+      conversationManager.addMessage('Node Q1', 'Node A1', ['experience.nodejs']);
+      conversationManager.addMessage('React Q2', 'React A2', ['experience.react']);
+      conversationManager.addMessage('Python Q1', 'Python A1', ['skills.python']);
+      conversationManager.addMessage('React Q3', 'React A3', ['experience.react']);
+      conversationManager.addMessage('React Q4', 'React A4', ['experience.react']);
+      conversationManager.addMessage('React Q5', 'React A5', ['experience.react']);
+
+      // Get React context with limit of 3
+      const reactContext = conversationManager.getContext(['experience.react'], 3);
+      expect(reactContext).toHaveLength(3);
+      expect(reactContext.every(msg => msg.matchedSections.includes('experience.react'))).toBe(true);
+      
+      // Should get the 3 most recent React messages
+      expect(reactContext[0].userMessage).toBe('React Q3');
+      expect(reactContext[1].userMessage).toBe('React Q4');
+      expect(reactContext[2].userMessage).toBe('React Q5');
+    });
+  });
+
   describe('Edge Cases and Error Handling', () => {
     it('should handle empty CV matches gracefully', () => {
       conversationManager.setStyle('developer');
@@ -425,6 +607,19 @@ describe('ConversationManager', () => {
       expect(context).toHaveLength(5);
       expect(context[0].userMessage).toBe('Question 15');
       expect(context[4].userMessage).toBe('Question 19');
+    });
+
+    it('should handle context-aware response generation without style set', () => {
+      const manager = new ConversationManager();
+      const cvMatches = [{ id: 'test', responses: { developer: 'test' } }];
+      
+      expect(() => manager.generateContextAwareResponse('test', cvMatches)).toThrow('Conversation style must be set');
+    });
+
+    it('should handle empty context in conversation flow analysis', () => {
+      const analysis = conversationManager.analyzeConversationFlow([], ['topic1'], 'test query');
+      expect(analysis.flow).toBe('new_topic');
+      expect(analysis.topicContinuity).toBe(0);
     });
   });
 });
