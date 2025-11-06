@@ -123,7 +123,10 @@
     },
     "error": {
       "message": { "text": "Algo salió mal. Por favor intenta de nuevo." },
-      "retry": { "text": "Intentar de Nuevo" }
+      "retry": { "text": "Intentar de Nuevo" },
+      "browserUnsupported": { "text": "¡Ups, lo siento, no pudimos cargar a Serhii en tu navegador! :(" },
+      "networkError": { "text": "Tengo problemas descargando mi cerebro 🧠 ¿Puedes revisar tu conexión?" },
+      "loadingError": { "text": "Tengo problemas iniciando mi cerebro 🧠 Por favor intenta de nuevo." }
     },
     "fallback": {
       "title": { "text": "¡Pongámonos en contacto!" },
