@@ -42,7 +42,8 @@ class ChatBot {
       this.ui.setEventHandlers({
         onStyleSelect: (style) => this.selectConversationStyle(style),
         onMessageSend: (message) => this.processMessage(message),
-        onRestart: () => this.restartConversation()
+        onRestart: () => this.restartConversation(),
+        onFallbackSubmit: (name, email) => this.handleFallbackSubmit(name, email)
       });
       this.ui.initialize();
       this.ui.showLoadingState();
@@ -56,6 +57,7 @@ class ChatBot {
 
       this.conversationManager = new this._ConversationManager();
       this.styleManager = new this._StyleManager();
+      this.fallbackHandler = new this._FallbackHandler(this.styleManager, this.conversationManager);
 
       // Check for persisted style
       const persistedStyle = this.styleManager.loadPersistedStyle();
@@ -116,12 +118,14 @@ class ChatBot {
         { default: ChatUI },
         { default: ConversationManager },
         { default: CVDataService },
-        { default: StyleManager }
+        { default: StyleManager },
+        { default: FallbackHandler }
       ] = await Promise.all([
         import('./chat-ui.js'),
         import('./conversation-manager.js'),
         import('./cv-data-service.js'),
-        import('./style-manager.js')
+        import('./style-manager.js'),
+        import('./fallback-handler.js')
       ]);
 
       // Store classes for this instance
@@ -129,6 +133,7 @@ class ChatBot {
       this._ConversationManager = ConversationManager;
       this._CVDataService = CVDataService;
       this._StyleManager = StyleManager;
+      this._FallbackHandler = FallbackHandler;
     } catch (error) {
       throw new Error(`MODULE_LOAD_FAILED: ${error.message}`);
     }
@@ -270,6 +275,14 @@ class ChatBot {
     this.currentStyle = null;
     this.conversationManager.clearHistory();
     this.styleManager.resetStyle();
+    
+    // Reset fallback handler if it exists
+    if (this.fallbackHandler) {
+      this.fallbackHandler.resetFallbackAttempts();
+    }
+
+    // Clear stored fallback query
+    this.currentFallbackQuery = null;
 
     // Clear UI and show style selection
     this.ui.clearMessages();
@@ -304,9 +317,17 @@ class ChatBot {
       console.log('Query processing metrics:', processingMetrics);
     }
 
-    if (confidence < 0.5) {
-      // Low confidence - trigger fallback
-      this._handleLowConfidenceResponse();
+    const lastUserMessage = this.ui.getLastUserMessage();
+
+    // Check if fallback handling is needed
+    const fallbackDecision = this.fallbackHandler.shouldTriggerFallback(
+      confidence, 
+      lastUserMessage, 
+      matchedSections
+    );
+
+    if (fallbackDecision.shouldFallback) {
+      this._handleFallbackResponse(fallbackDecision, lastUserMessage);
     } else {
       // Format response based on current style
       const formattedAnswer = this.styleManager.formatResponse(answer, {
@@ -317,7 +338,7 @@ class ChatBot {
 
       // Add response to conversation history
       this.conversationManager.addMessage(
-        this.ui.getLastUserMessage(),
+        lastUserMessage,
         formattedAnswer,
         matchedSections,
         confidence
@@ -340,7 +361,78 @@ class ChatBot {
   }
 
   /**
-   * Handle low confidence responses
+   * Handle fallback responses based on fallback decision
+   * @param {Object} fallbackDecision - Decision object from fallback handler
+   * @param {string} originalQuery - Original user query
+   */
+  _handleFallbackResponse(fallbackDecision, originalQuery) {
+    const fallbackResponse = this.fallbackHandler.generateFallbackResponse(
+      fallbackDecision.action,
+      this.currentStyle,
+      { originalQuery, reason: fallbackDecision.reason }
+    );
+
+    // Add fallback message to conversation history
+    this.conversationManager.addMessage(
+      originalQuery,
+      fallbackResponse.message,
+      [],
+      0 // Zero confidence for fallback responses
+    );
+
+    // Display the fallback message
+    this.ui.addMessage(fallbackResponse.message, false, this.currentStyle);
+
+    // Handle UI action if needed
+    if (fallbackResponse.uiAction === 'show_email_form') {
+      // Store the original query for email generation
+      this.currentFallbackQuery = originalQuery;
+      
+      // Show email form after a brief delay
+      setTimeout(() => {
+        this.ui.showFallbackForm();
+      }, 1000);
+    }
+  }
+
+  /**
+   * Handle fallback form submission
+   * @param {string} name - User's name
+   * @param {string} email - User's email
+   */
+  handleFallbackSubmit(name, email) {
+    // Sanitize inputs
+    const sanitizedName = this.fallbackHandler.sanitizeInput(name);
+    const sanitizedEmail = this.fallbackHandler.sanitizeInput(email);
+
+    // Validate inputs
+    if (!this.fallbackHandler.validateName(sanitizedName)) {
+      this.ui.showFormValidationError('name', 'Please enter a valid name (2-50 characters)');
+      return;
+    }
+
+    if (!this.fallbackHandler.validateEmail(sanitizedEmail)) {
+      this.ui.showFormValidationError('email', 'Please enter a valid email address');
+      return;
+    }
+
+    // Generate mailto link with conversation context
+    const mailtoUrl = this.fallbackHandler.generateMailtoLink(
+      sanitizedName,
+      sanitizedEmail,
+      this.currentFallbackQuery || 'General inquiry',
+      this.currentStyle
+    );
+
+    // Use the UI method to open email and show confirmation
+    this.ui.generateEmailLink(sanitizedName, sanitizedEmail, mailtoUrl, this.currentStyle);
+
+    // Clear the stored fallback query
+    this.currentFallbackQuery = null;
+  }
+
+  /**
+   * Handle low confidence responses (legacy method for compatibility)
    */
   _handleLowConfidenceResponse() {
     const rephraseMessage = this.styleManager.getRephraseMessage(this.currentStyle);
