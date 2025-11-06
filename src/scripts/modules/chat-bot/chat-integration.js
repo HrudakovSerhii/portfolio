@@ -7,7 +7,7 @@ let chatBotInstance = null;
 let isLoading = false;
 
 /**
- * Initialize and show the chat-bot interface
+ * Initialize and show the chatbot interface
  * This is the main entry point called from the portfolio
  */
 async function initializeChat() {
@@ -23,12 +23,13 @@ async function initializeChat() {
 
   try {
     isLoading = true;
-    
+
     // Lazy load the ChatBot class
     const { ChatBot } = await import('./chat-bot.js');
-    
-    // Create and initialize chat-bot instance
+
+    // Create and initialize chatbot instance
     chatBotInstance = new ChatBot();
+    debugger
     const success = await chatBotInstance.initialize();
 
     if (!success) {
@@ -40,7 +41,7 @@ async function initializeChat() {
 
   } catch (error) {
     console.error('Chat initialization error:', error);
-    
+
     // If we have a chatBot instance with UI, use it for error display
     if (chatBotInstance && chatBotInstance.ui) {
       chatBotInstance.ui.showError(getErrorMessage(error.message));
@@ -61,6 +62,8 @@ function getErrorMessage(error) {
     return "Oops, sorry, we couldn't load Serhii to your browser :(";
   } else if (error.includes('WORKER_TIMEOUT') || error.includes('network')) {
     return "Having trouble downloading my brain 🧠 Check your connection?";
+  } else if (error.includes('WORKER_ERROR')) {
+    return "Having trouble starting my brain 🧠 Please try again.";
   }
   return "Something went wrong. Please try again.";
 }
@@ -70,7 +73,7 @@ function getErrorMessage(error) {
  */
 function showFallbackError(error) {
   const errorMessage = getErrorMessage(error);
-  
+
   // Simple alert as fallback - in production this could be a toast notification
   alert(errorMessage);
 }
@@ -111,7 +114,6 @@ function setupChatEventListeners() {
 }
 
 
-
 /**
  * Cleanup chat resources when page unloads
  */
@@ -125,20 +127,18 @@ function cleanupChat() {
 // Cleanup on page unload
 window.addEventListener('beforeunload', cleanupChat);
 
-// Setup chat button event listener when module loads
-document.addEventListener('DOMContentLoaded', () => {
-  const chatButton = document.getElementById('hero-chat-trigger');
-  if (chatButton) {
-    chatButton.addEventListener('click', initializeChat);
-  }
-});
-
 // Make functions available globally for HTML onclick handlers
 window.initializeChat = initializeChat;
 window.closeChatOverlay = closeChatOverlay;
 
-export { 
-  initializeChat, 
-  closeChatOverlay, 
-  cleanupChat 
+if (document.readyState === "loading") {
+  // Loading hasn't finished yet, initialize application on load complete
+  document.addEventListener("DOMContentLoaded", initializeChat);
+} else {
+  // `DOMContentLoaded` has already fired, initialize application
+  initializeChat().finally();
+}
+
+export default {
+  initializeChat,
 };
