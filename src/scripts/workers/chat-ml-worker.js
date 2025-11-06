@@ -181,11 +181,23 @@ class MLWorker {
     }
 
     try {
-      // Generate embedding using the model
+      // Generate embedding using the feature extraction model
       const output = await this.model(text, { pooling: 'mean', normalize: true });
 
-      // Convert to regular array for easier manipulation
-      return Array.from(output.data);
+      // The output is a tensor, we need to extract the data
+      let embedding;
+      if (output.data) {
+        embedding = Array.from(output.data);
+      } else if (output.tolist) {
+        embedding = output.tolist();
+      } else if (Array.isArray(output)) {
+        embedding = output;
+      } else {
+        // Try to convert tensor to array
+        embedding = Array.from(output);
+      }
+
+      return embedding;
     } catch (error) {
       console.error('Failed to generate embedding:', error);
       throw error;

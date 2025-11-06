@@ -18,12 +18,12 @@ class ChatBot {
    * @returns {Promise<boolean>} Success status
    */
   async initialize() {
-    debugger
     if (this.initializationPromise) {
       return this.initializationPromise;
     }
 
     this.initializationPromise = this._performInitialization();
+
     return this.initializationPromise;
   }
 
@@ -47,12 +47,12 @@ class ChatBot {
       this.ui.initialize();
       this.ui.showLoadingState();
 
-      // Initialize worker
-      await this._initializeWorker();
-
-      // Initialize other services
+      // Initialize CV data service first
       this.cvDataService = new this._CVDataService();
       await this.cvDataService.loadCVData();
+
+      // Initialize worker with CV data
+      await this._initializeWorker();
 
       this.conversationManager = new this._ConversationManager();
       this.styleManager = new this._StyleManager();
@@ -140,7 +140,7 @@ class ChatBot {
   async _initializeWorker() {
     return new Promise((resolve, reject) => {
       try {
-        this.worker = new Worker('./scripts/workers/chat-ml-worker.js');
+        this.worker = new Worker('./scripts/workers/chat-ml-worker.js', { type: 'module' });
 
         const timeout = setTimeout(() => {
           reject(new Error('WORKER_TIMEOUT'));
@@ -151,8 +151,10 @@ class ChatBot {
 
           if (type === 'ready') {
             clearTimeout(timeout);
+
             if (success) {
               this._setupWorkerMessageHandling();
+
               resolve();
             } else {
               reject(new Error(`WORKER_INIT_FAILED: ${error}`));
@@ -166,10 +168,11 @@ class ChatBot {
         };
 
         // Initialize worker with CV data
+        const cvData = this.cvDataService.isDataLoaded() ? this.cvDataService.cvData : null;
         this.worker.postMessage({
           type: 'initialize',
           modelPath: '/models/distilbert',
-          cvData: null // Will be loaded by CVDataService
+          cvData: cvData
         });
 
       } catch (error) {
@@ -384,8 +387,6 @@ class ChatBot {
       }
     }
   }
-
-
 }
 
 export { ChatBot };

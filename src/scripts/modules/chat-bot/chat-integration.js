@@ -1,5 +1,5 @@
 /**
- * Chat Integration - Lazy loading entry point for chat-bot feature
+ * Chat Integration - Lazy loading entry point for chatbot feature
  * This module handles the initial loading and integration with the main portfolio
  */
 
@@ -29,7 +29,7 @@ async function initializeChat() {
 
     // Create and initialize chatbot instance
     chatBotInstance = new ChatBot();
-    debugger
+
     const success = await chatBotInstance.initialize();
 
     if (!success) {
