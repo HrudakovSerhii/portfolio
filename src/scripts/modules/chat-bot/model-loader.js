@@ -12,16 +12,16 @@ class ModelLoader {
       stage: 'idle',
       error: null
     };
-    
+
     this.modelConfig = {
-      modelId: 'Xenova/distilbert-base-uncased',
+      modelId: 'HuggingFaceTB/SmolLM2-135M-Instruct',
       quantized: true,
       progressiveLoading: true,
       cacheEnabled: true,
       maxRetries: 3,
       retryDelay: 2000
     };
-    
+
     this.loadedModel = null;
     this.loadingPromise = null;
     this.progressCallbacks = new Set();
@@ -34,12 +34,12 @@ class ModelLoader {
    */
   async loadModel(options = {}) {
     const config = { ...this.modelConfig, ...options };
-    
+
     // Return existing loading promise if already loading
     if (this.loadingPromise) {
       return this.loadingPromise;
     }
-    
+
     // Check cache first
     const cachedModel = this.performanceManager.getCachedModel(config.modelId);
 
@@ -49,19 +49,19 @@ class ModelLoader {
 
       return cachedModel;
     }
-    
+
     // Start new loading process
     this.loadingPromise = this._performModelLoading(config);
-    
+
     try {
       const model = await this.loadingPromise;
       this.loadedModel = model;
-      
+
       // Cache the loaded model
       if (config.cacheEnabled) {
         this.performanceManager.cacheModel(model, config.modelId);
       }
-      
+
       return model;
     } catch (error) {
       this.loadingPromise = null;
@@ -78,43 +78,43 @@ class ModelLoader {
    */
   async _performModelLoading(config) {
     let lastError = null;
-    
+
     for (let attempt = 1; attempt <= config.maxRetries; attempt++) {
       try {
         this.performanceManager.logPerformanceEvent('model_load_attempt', {
           attempt,
           modelId: config.modelId
         });
-        
+
         const startTime = Date.now();
         const model = await this._loadModelWithProgress(config);
         const loadTime = Date.now() - startTime;
-        
+
         this.performanceManager.metrics.modelLoadTime = loadTime;
         this.performanceManager.logPerformanceEvent('model_load_success', {
           attempt,
           loadTime,
           modelId: config.modelId
         });
-        
+
         return model;
-        
+
       } catch (error) {
         lastError = error;
-        
+
         this.performanceManager.logPerformanceEvent('model_load_failed', {
           attempt,
           error: error.message,
           modelId: config.modelId
         });
-        
+
         if (attempt < config.maxRetries) {
           this.notifyProgress(0, `retry_${attempt}`);
           await this._delay(config.retryDelay * attempt);
         }
       }
     }
-    
+
     throw new Error(`Failed to load model after ${config.maxRetries} attempts: ${lastError?.message}`);
   }
 
@@ -126,19 +126,19 @@ class ModelLoader {
   async _loadModelWithProgress(config) {
     this.loadingState.isLoading = true;
     this.loadingState.error = null;
-    
+
     try {
       // Dynamic import of transformers library
       this.notifyProgress(5, 'loading_library');
       const transformers = await this._loadTransformersLibrary();
-      
+
       // Configure environment
       this.notifyProgress(10, 'configuring_environment');
       this._configureTransformersEnvironment(transformers.env);
-      
+
       // Load model with progressive callbacks
       this.notifyProgress(15, 'loading_model');
-      const model = await transformers.pipeline('feature-extraction', config.modelId, {
+      const model = await transformers.pipeline('text-generation', config.modelId, {
         quantized: config.quantized,
         progress_callback: (progress) => {
           // Map progress from 15% to 95% (leaving 5% for finalization)
@@ -146,16 +146,16 @@ class ModelLoader {
           this.notifyProgress(mappedProgress, 'downloading_model', progress);
         }
       });
-      
+
       // Finalization
       this.notifyProgress(95, 'finalizing');
       await this._validateModel(model);
-      
+
       this.notifyProgress(100, 'complete');
       this.loadingState.isLoading = false;
-      
+
       return model;
-      
+
     } catch (error) {
       this.loadingState.isLoading = false;
       this.loadingState.error = error;
@@ -193,12 +193,12 @@ class ModelLoader {
     // Configure for web worker environment
     env.allowRemoteModels = true;
     env.allowLocalModels = false;
-    
+
     // Set cache directory if supported
     if (env.cacheDir) {
       env.cacheDir = './.cache/transformers';
     }
-    
+
     // Configure for better performance
     if (env.backends) {
       env.backends.onnx = {
@@ -207,7 +207,7 @@ class ModelLoader {
         }
       };
     }
-    
+
     this.performanceManager.logPerformanceEvent('transformers_environment_configured', {
       allowRemoteModels: env.allowRemoteModels,
       allowLocalModels: env.allowLocalModels,
@@ -223,24 +223,24 @@ class ModelLoader {
     if (!model) {
       throw new Error('Model is null or undefined');
     }
-    
+
     // Test model with a simple input
     try {
       const testInput = 'test validation';
-      const testOutput = await model(testInput, { 
-        pooling: 'mean', 
-        normalize: true 
+      const testOutput = await model(testInput, {
+        pooling: 'mean',
+        normalize: true
       });
-      
+
       if (!testOutput || !testOutput.data) {
         throw new Error('Model validation failed: invalid output format');
       }
-      
+
       this.performanceManager.logPerformanceEvent('model_validation_success', {
         testInputLength: testInput.length,
         outputSize: testOutput.data.length
       });
-      
+
     } catch (error) {
       throw new Error(`Model validation failed: ${error.message}`);
     }
@@ -255,14 +255,14 @@ class ModelLoader {
   notifyProgress(progress, stage, details = {}) {
     this.loadingState.progress = Math.min(100, Math.max(0, progress));
     this.loadingState.stage = stage;
-    
+
     const progressData = {
       progress: this.loadingState.progress,
       stage,
       details,
       timestamp: Date.now()
     };
-    
+
     this.progressCallbacks.forEach(callback => {
       try {
         callback(progressData);
@@ -270,7 +270,7 @@ class ModelLoader {
         console.error('Progress callback error:', error);
       }
     });
-    
+
     this.performanceManager.logPerformanceEvent('model_load_progress', progressData);
   }
 
@@ -325,7 +325,7 @@ class ModelLoader {
     if (this.isModelReady() || this.loadingState.isLoading) {
       return;
     }
-    
+
     try {
       await this.loadModel({ ...options, background: true });
       this.performanceManager.logPerformanceEvent('model_preload_success');
@@ -357,7 +357,7 @@ class ModelLoader {
         error: error.message
       });
     }
-    
+
     // Default estimate for DistilBERT
     return 50 * 1024 * 1024; // 50MB
   }
@@ -372,30 +372,30 @@ class ModelLoader {
       issues: [],
       recommendations: []
     };
-    
+
     // Check WebAssembly support
     if (typeof WebAssembly === 'undefined') {
       compatibility.supported = false;
       compatibility.issues.push('WebAssembly not supported');
     }
-    
+
     // Check Worker support
     if (typeof Worker === 'undefined') {
       compatibility.supported = false;
       compatibility.issues.push('Web Workers not supported');
     }
-    
+
     // Check memory availability
     if (typeof performance.memory !== 'undefined') {
       const availableMemory = performance.memory.jsHeapSizeLimit - performance.memory.usedJSHeapSize;
       const requiredMemory = 100 * 1024 * 1024; // 100MB minimum
-      
+
       if (availableMemory < requiredMemory) {
         compatibility.issues.push('Insufficient memory available');
         compatibility.recommendations.push('Close other browser tabs to free memory');
       }
     }
-    
+
     // Check network connection
     if (typeof navigator.connection !== 'undefined') {
       const connection = navigator.connection;
@@ -403,9 +403,9 @@ class ModelLoader {
         compatibility.recommendations.push('Slow network detected - model loading may take longer');
       }
     }
-    
+
     this.performanceManager.logPerformanceEvent('compatibility_check', compatibility);
-    
+
     return compatibility;
   }
 
@@ -416,14 +416,14 @@ class ModelLoader {
     this.loadedModel = null;
     this.loadingPromise = null;
     this.progressCallbacks.clear();
-    
+
     this.loadingState = {
       isLoading: false,
       progress: 0,
       stage: 'idle',
       error: null
     };
-    
+
     this.performanceManager.logPerformanceEvent('model_loader_cleanup');
   }
 
