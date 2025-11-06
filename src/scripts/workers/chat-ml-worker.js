@@ -1,6 +1,6 @@
 /**
- * ML Worker for DistilBERT processing
- * Handles model loading, embedding generation, and semantic similarity computation
+ * ML Worker for SmolLM2-135M-Instruct processing
+ * Handles model loading, text generation, and CV-based question answering
  * Includes performance optimizations, caching, and resource management
  */
 
@@ -13,16 +13,16 @@ class WorkerPerformanceManager {
       memoryUsage: [],
       cacheHits: 0,
       cacheMisses: 0,
-      sessionStartTime: Date.now()
+      sessionStartTime: Date.now(),
     };
-    
+
     this.cache = {
       embeddings: new Map(),
       queryResults: new Map(),
       maxCacheSize: 50, // Smaller cache for worker
-      maxEmbeddingCacheSize: 200
+      maxEmbeddingCacheSize: 200,
     };
-    
+
     this.performanceLog = [];
   }
 
@@ -52,15 +52,19 @@ class WorkerPerformanceManager {
       const firstKey = this.cache.queryResults.keys().next().value;
       this.cache.queryResults.delete(firstKey);
     }
-    this.cache.queryResults.set(key, { result: {...result}, timestamp: Date.now() });
+    this.cache.queryResults.set(key, {
+      result: { ...result },
+      timestamp: Date.now(),
+    });
   }
 
   getCachedQueryResult(query) {
     const key = this.generateCacheKey(query);
     const cached = this.cache.queryResults.get(key);
-    if (cached && (Date.now() - cached.timestamp < 300000)) { // 5 minutes
+    if (cached && Date.now() - cached.timestamp < 300000) {
+      // 5 minutes
       this.metrics.cacheHits++;
-      return {...cached.result};
+      return { ...cached.result };
     }
     if (cached) this.cache.queryResults.delete(key);
     this.metrics.cacheMisses++;
@@ -71,7 +75,7 @@ class WorkerPerformanceManager {
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
       const char = text.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return hash.toString(36);
@@ -88,21 +92,22 @@ class WorkerPerformanceManager {
     performance.measure(timerId, `${timerId}_start`, `${timerId}_end`);
     const measure = performance.getEntriesByName(timerId)[0];
     const duration = measure ? measure.duration : 0;
-    
+
     this.metrics.queryProcessingTimes.push({
       duration,
       timestamp: Date.now(),
-      metadata
+      metadata,
     });
-    
+
     if (this.metrics.queryProcessingTimes.length > 50) {
-      this.metrics.queryProcessingTimes = this.metrics.queryProcessingTimes.slice(-50);
+      this.metrics.queryProcessingTimes =
+        this.metrics.queryProcessingTimes.slice(-50);
     }
-    
+
     performance.clearMarks(`${timerId}_start`);
     performance.clearMarks(`${timerId}_end`);
     performance.clearMeasures(timerId);
-    
+
     return duration;
   }
 
@@ -111,9 +116,9 @@ class WorkerPerformanceManager {
       timestamp: Date.now(),
       event,
       data,
-      sessionTime: Date.now() - this.metrics.sessionStartTime
+      sessionTime: Date.now() - this.metrics.sessionStartTime,
     };
-    
+
     this.performanceLog.push(logEntry);
     if (this.performanceLog.length > 200) {
       this.performanceLog = this.performanceLog.slice(-100);
@@ -126,8 +131,10 @@ class WorkerPerformanceManager {
       cacheStats: {
         embeddingsCacheSize: this.cache.embeddings.size,
         queryResultsCacheSize: this.cache.queryResults.size,
-        hitRate: this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses) || 0
-      }
+        hitRate:
+          this.metrics.cacheHits /
+            (this.metrics.cacheHits + this.metrics.cacheMisses) || 0,
+      },
     };
   }
 
@@ -141,10 +148,40 @@ class WorkerPerformanceManager {
 // Global variables for transformers
 let pipeline, env;
 
+// Check WebGPU availability
+async function checkWebGPUAvailability() {
+  try {
+    if (!navigator.gpu) {
+      console.warn('WebGPU not available in this browser');
+      return false;
+    }
+
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) {
+      console.warn('WebGPU adapter not available');
+      return false;
+    }
+
+    const device = await adapter.requestDevice();
+    if (!device) {
+      console.warn('WebGPU device not available');
+      return false;
+    }
+
+    console.log('WebGPU is available and working');
+    return true;
+  } catch (error) {
+    console.warn('WebGPU check failed:', error);
+    return false;
+  }
+}
+
 // Load transformers library dynamically
 async function loadTransformers() {
   try {
-    const transformers = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers');
+    const transformers = await import(
+      "https://cdn.jsdelivr.net/npm/@huggingface/transformers"
+    );
 
     pipeline = transformers.pipeline;
     env = transformers.env;
@@ -152,30 +189,43 @@ async function loadTransformers() {
     // Configure Transformers.js environment for web worker
     env.allowRemoteModels = true;
     env.allowLocalModels = false;
+    
+    // Set ONNX runtime settings to reduce warnings
+    env.backends.onnx.wasm.numThreads = 1;
+    env.backends.onnx.wasm.simd = true;
 
     return true;
   } catch (error) {
-    console.error('Failed to load transformers:', error);
+    console.error("Failed to load transformers:", error);
     return false;
   }
 }
 
 class MLWorker {
-  constructor() {
+  constructor(
+    modelConfig = {
+      name: "HuggingFaceTB/SmolLM2-135M-Instruct",
+      type: "text-generation",
+      dtype: "q4",
+      device: "webgpu", // Will fallback to 'wasm' if WebGPU unavailable
+    }
+  ) {
     this.model = null;
     this.tokenizer = null;
     this.isInitialized = false;
     this.cvData = null;
     this.cvEmbeddings = new Map();
-    
+
+    this.modelConfig = modelConfig;
+
     // Performance optimization components
     this.performanceManager = new WorkerPerformanceManager();
-    
+
     // Query processing optimization
     this.queryQueue = [];
     this.isProcessingQueue = false;
     this.maxConcurrentQueries = 1; // Process one query at a time for consistency
-    
+
     // Model loading optimization
     this.modelCache = null;
     this.loadingPromise = null;
@@ -186,45 +236,47 @@ class MLWorker {
    */
   async initialize(cvData) {
     const initStartTime = Date.now();
-    
+
     try {
       // Return existing loading promise if already loading
       if (this.loadingPromise) {
         return this.loadingPromise;
       }
-      
+
       // Check if model is already cached
       if (this.modelCache) {
         this.model = this.modelCache;
         this.cvData = cvData;
         await this.precomputeEmbeddingsOptimized();
         this.isInitialized = true;
-        
+
         this.postMessage({
-          type: 'ready',
+          type: "ready",
           success: true,
-          message: 'DistilBERT model loaded from cache',
-          metrics: { cached: true, initTime: Date.now() - initStartTime }
+          message: `${this.modelConfig.name} model loaded from cache`,
+          metrics: { cached: true, initTime: Date.now() - initStartTime },
         });
         return;
       }
-      
+
       this.loadingPromise = this._performInitialization(cvData, initStartTime);
       await this.loadingPromise;
       this.loadingPromise = null;
-
     } catch (error) {
       this.loadingPromise = null;
-      console.error('Failed to initialize ML model:', error);
-      this.performanceManager.logPerformanceEvent('worker_initialization_failed', {
-        error: error.message,
-        initTime: Date.now() - initStartTime
-      });
-      
+      console.error("Failed to initialize ML model:", error);
+      this.performanceManager.logPerformanceEvent(
+        "worker_initialization_failed",
+        {
+          error: error.message,
+          initTime: Date.now() - initStartTime,
+        }
+      );
+
       this.postMessage({
-        type: 'ready',
+        type: "ready",
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -237,24 +289,46 @@ class MLWorker {
     const transformersLoaded = await loadTransformers();
 
     if (!transformersLoaded) {
-      throw new Error('Failed to load transformers library');
+      throw new Error("Failed to load transformers library");
+    }
+
+    // Check WebGPU availability and adjust device if needed
+    let deviceToUse = this.modelConfig.device;
+    if (this.modelConfig.device === 'webgpu') {
+      const webgpuAvailable = await checkWebGPUAvailability();
+      if (!webgpuAvailable) {
+        console.warn('WebGPU not available, falling back to WASM');
+        deviceToUse = 'wasm';
+        this.postMessage({
+          type: "status",
+          message: "WebGPU not available, using WASM backend",
+        });
+      }
     }
 
     this.postMessage({
-      type: 'status',
-      message: 'Loading DistilBERT model...'
+      type: "status",
+      message: `Loading ${this.modelConfig.name} model with ${deviceToUse} backend`,
     });
 
-    // Load the feature extraction pipeline with DistilBERT
-    this.model = await pipeline('feature-extraction', 'Xenova/distilbert-base-uncased', {
-      quantized: true, // Use quantized model for better performance
-      progress_callback: (progress) => {
-        this.postMessage({
-          type: 'progress',
-          progress: progress
-        });
+    // Load the text generation pipeline with SmolLM2-135M-Instruct
+    this.model = await pipeline(
+      this.modelConfig.type,
+      this.modelConfig.name,
+      {
+        dtype: this.modelConfig.dtype,
+        device: deviceToUse,
       },
-    });
+      {
+        quantized: true, // Use quantized model for better performance
+        progress_callback: (progress) => {
+          this.postMessage({
+            type: "progress",
+            progress: progress,
+          });
+        },
+      }
+    );
 
     // Cache the model for future use
     this.modelCache = this.model;
@@ -265,70 +339,71 @@ class MLWorker {
     await this.precomputeEmbeddingsOptimized();
 
     this.isInitialized = true;
-    
+
     const initTime = Date.now() - initStartTime;
-    this.performanceManager.logPerformanceEvent('worker_initialization_complete', {
-      initTime,
-      cvSectionsCount: this.getTotalSectionCount(this.cvData?.sections || {}),
-      embeddingsCacheSize: this.cvEmbeddings.size
-    });
+    this.performanceManager.logPerformanceEvent(
+      "worker_initialization_complete",
+      {
+        initTime,
+        cvSectionsCount: this.getTotalSectionCount(this.cvData?.sections || {}),
+        embeddingsCacheSize: this.cvEmbeddings.size,
+      }
+    );
 
     this.postMessage({
-      type: 'ready',
+      type: "ready",
       success: true,
-      message: 'DistilBERT model loaded successfully',
+      message: `${this.modelConfig.name} model loaded successfully`,
       metrics: {
         initTime,
         cacheEnabled: true,
-        embeddingsPrecomputed: this.cvEmbeddings.size
-      }
+        cvSectionsLoaded: this.getTotalSectionCount(
+          this.cvData?.sections || {}
+        ),
+      },
     });
   }
 
   /**
-   * Pre-compute embeddings for all CV sections with performance optimizations
+   * Prepare CV data for text generation context
    */
   async precomputeEmbeddingsOptimized() {
     if (!this.cvData || !this.cvData.sections) {
-      throw new Error('CV data not available for embedding computation');
+      throw new Error("CV data not available");
     }
 
     this.postMessage({
-      type: 'status',
-      message: 'Computing embeddings for CV sections...'
+      type: "status",
+      message: "Preparing CV data for text generation...",
     });
 
     const sections = this.cvData.sections;
     let processedCount = 0;
     const totalSections = this.getTotalSectionCount(sections);
-    const batchSize = 3; // Process embeddings in small batches
-    const embeddingBatch = [];
 
+    // Store CV sections for text generation context instead of embeddings
     for (const [categoryKey, category] of Object.entries(sections)) {
       for (const [sectionKey, section] of Object.entries(category)) {
-        embeddingBatch.push({ categoryKey, sectionKey, section });
-        
-        // Process batch when it reaches the batch size
-        if (embeddingBatch.length >= batchSize) {
-          await this.processBatchEmbeddings(embeddingBatch, processedCount, totalSections);
-          processedCount += embeddingBatch.length;
-          embeddingBatch.length = 0; // Clear batch
-          
-          // Small delay to prevent blocking
-          await this.delay(10);
-        }
+        const sectionId = section.id || `${categoryKey}_${sectionKey}`;
+        this.cvEmbeddings.set(sectionId, {
+          section: section,
+          category: categoryKey,
+          key: sectionKey,
+          searchText: this.createSearchText(section), // For keyword matching
+        });
+
+        processedCount++;
+        this.postMessage({
+          type: "embedding_progress",
+          processed: processedCount,
+          total: totalSections,
+        });
       }
     }
-    
-    // Process remaining items in batch
-    if (embeddingBatch.length > 0) {
-      await this.processBatchEmbeddings(embeddingBatch, processedCount, totalSections);
-    }
-    
-    this.performanceManager.logPerformanceEvent('embeddings_precomputed', {
+
+    this.performanceManager.logPerformanceEvent("cv_data_prepared", {
       totalSections,
-      cacheSize: this.cvEmbeddings.size,
-      batchSize
+      sectionsLoaded: this.cvEmbeddings.size,
     });
   }
 
@@ -340,10 +415,11 @@ class MLWorker {
       try {
         // Create text for embedding from keywords and responses
         const textForEmbedding = this.createEmbeddingText(section);
-        
+
         // Check cache first
-        let embedding = this.performanceManager.getCachedEmbedding(textForEmbedding);
-        
+        let embedding =
+          this.performanceManager.getCachedEmbedding(textForEmbedding);
+
         if (!embedding) {
           embedding = await this.generateEmbedding(textForEmbedding);
           // Cache the embedding
@@ -356,23 +432,28 @@ class MLWorker {
           embedding: embedding,
           section: section,
           category: categoryKey,
-          key: sectionKey
+          key: sectionKey,
         });
 
         processedCount++;
         this.postMessage({
-          type: 'embedding_progress',
+          type: "embedding_progress",
           processed: processedCount,
-          total: totalSections
+          total: totalSections,
         });
-
       } catch (error) {
-        console.error(`Failed to compute embedding for ${categoryKey}.${sectionKey}:`, error);
-        this.performanceManager.logPerformanceEvent('embedding_computation_failed', {
-          categoryKey,
-          sectionKey,
-          error: error.message
-        });
+        console.error(
+          `Failed to compute embedding for ${categoryKey}.${sectionKey}:`,
+          error
+        );
+        this.performanceManager.logPerformanceEvent(
+          "embedding_computation_failed",
+          {
+            categoryKey,
+            sectionKey,
+            error: error.message,
+          }
+        );
       }
     }
   }
@@ -389,14 +470,14 @@ class MLWorker {
   }
 
   /**
-   * Create text for embedding from section data
+   * Create search text from section data for keyword matching
    */
-  createEmbeddingText(section) {
+  createSearchText(section) {
     const parts = [];
 
     // Add keywords
     if (section.keywords && Array.isArray(section.keywords)) {
-      parts.push(section.keywords.join(' '));
+      parts.push(section.keywords.join(" "));
     }
 
     // Add response text (use developer style as it's most comprehensive)
@@ -407,44 +488,49 @@ class MLWorker {
     // Add details if available
     if (section.details) {
       if (section.details.skills && Array.isArray(section.details.skills)) {
-        parts.push(section.details.skills.join(' '));
+        parts.push(section.details.skills.join(" "));
       }
-      if (section.details.technologies && Array.isArray(section.details.technologies)) {
-        parts.push(section.details.technologies.join(' '));
+      if (
+        section.details.technologies &&
+        Array.isArray(section.details.technologies)
+      ) {
+        parts.push(section.details.technologies.join(" "));
       }
     }
 
-    return parts.join(' ').toLowerCase();
+    return parts.join(" ").toLowerCase();
   }
 
   /**
-   * Generate embedding for given text
+   * Generate text response using SmolLM2
    */
-  async generateEmbedding(text) {
+  async generateTextResponse(prompt) {
     if (!this.model) {
-      throw new Error('Model not initialized');
+      throw new Error("Model not initialized");
     }
 
     try {
-      // Generate embedding using the feature extraction model
-      const output = await this.model(text, { pooling: 'mean', normalize: true });
+      // Generate text using the text generation model
+      const output = await this.model(prompt, {
+        max_new_tokens: 150,
+        temperature: 0.7,
+        do_sample: true,
+        top_p: 0.9,
+        repetition_penalty: 1.1,
+        return_full_text: false,
+      });
 
-      // The output is a tensor, we need to extract the data
-      let embedding;
-      if (output.data) {
-        embedding = Array.from(output.data);
-      } else if (output.tolist) {
-        embedding = output.tolist();
-      } else if (Array.isArray(output)) {
-        embedding = output;
-      } else {
-        // Try to convert tensor to array
-        embedding = Array.from(output);
+      // Extract generated text
+      let generatedText = "";
+      if (Array.isArray(output) && output.length > 0) {
+        generatedText = output[0].generated_text || "";
+      } else if (output.generated_text) {
+        generatedText = output.generated_text;
       }
 
-      return embedding;
+      return generatedText.trim();
     } catch (error) {
-      console.error('Failed to generate embedding:', error);
+      console.error("Failed to generate text:", error);
       throw error;
     }
   }
@@ -452,9 +538,9 @@ class MLWorker {
   /**
    * Process user query with performance optimizations and caching
    */
-  async processQuery(message, context = [], style = 'developer') {
+  async processQuery(message, context = [], style = "developer") {
     if (!this.isInitialized) {
-      throw new Error('Model not initialized');
+      throw new Error("Model not initialized");
     }
 
     // Add to queue for processing
@@ -465,9 +551,9 @@ class MLWorker {
         style,
         resolve,
         reject,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       this.processQueryQueue();
     });
   }
@@ -479,12 +565,12 @@ class MLWorker {
     if (this.isProcessingQueue || this.queryQueue.length === 0) {
       return;
     }
-    
+
     this.isProcessingQueue = true;
-    
+
     while (this.queryQueue.length > 0) {
       const queryItem = this.queryQueue.shift();
-      
+
       try {
         await this.processQueryOptimized(queryItem);
         queryItem.resolve();
@@ -492,30 +578,33 @@ class MLWorker {
         queryItem.reject(error);
       }
     }
-    
+
     this.isProcessingQueue = false;
   }
 
   /**
-   * Process individual query with optimizations
+   * Process individual query with text generation
    */
   async processQueryOptimized(queryItem) {
     const { message, context, style } = queryItem;
-    const queryId = `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+    const queryId = `query_${Date.now()}_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
     // Start performance timing
     const timerId = this.performanceManager.startQueryTimer(queryId);
-    
+
     try {
       // Check cache first
       const cacheKey = `${message}_${style}_${JSON.stringify(context)}`;
-      const cachedResult = this.performanceManager.getCachedQueryResult(cacheKey);
-      
+      const cachedResult =
+        this.performanceManager.getCachedQueryResult(cacheKey);
+
       if (cachedResult) {
         this.performanceManager.stopQueryTimer(timerId, { cached: true });
-        
+
         this.postMessage({
-          type: 'response',
+          type: "response",
           answer: cachedResult.answer,
           confidence: cachedResult.confidence,
           matchedSections: cachedResult.matchedSections,
@@ -523,68 +612,68 @@ class MLWorker {
           processingMetrics: {
             ...cachedResult.metrics,
             cached: true,
-            processingTime: 0
-          }
+            processingTime: 0,
+          },
         });
         return;
       }
 
-      // Preprocess the query
-      const preprocessedQuery = this.preprocessQuery(message, context);
+      // Find relevant sections using keyword matching
+      const relevantSections = this.findRelevantSectionsByKeywords(message);
 
-      // Generate embedding for the preprocessed query (with caching)
-      let queryEmbedding = this.performanceManager.getCachedEmbedding(preprocessedQuery);
-      if (!queryEmbedding) {
-        queryEmbedding = await this.generateEmbedding(preprocessedQuery);
-        this.performanceManager.cacheEmbedding(preprocessedQuery, queryEmbedding);
-      }
+      // Build context from relevant sections
+      const cvContext = this.buildCVContext(relevantSections);
 
-      // Find relevant sections using adaptive similarity thresholds
-      const relevantSections = await this.findRelevantSections(queryEmbedding, this.getAdaptiveThreshold(message));
+      // Create prompt for text generation
+      const prompt = this.createPrompt(message, cvContext, style, context);
 
-      // Generate response with enhanced synthesis and confidence scoring
-      const response = await this.generateEnhancedResponse(relevantSections, message, context, style);
+      // Generate response using SmolLM2
+      const generatedText = await this.generateTextResponse(prompt);
 
-      // Validate response quality
-      const validatedResponse = this.validateResponseQuality(response, message);
-      
+      // Process and validate the generated response
+      const processedResponse = this.processGeneratedResponse(
+        generatedText,
+        relevantSections,
+        message,
+        style
+      );
+
       // Stop timing and add metrics
       const processingTime = this.performanceManager.stopQueryTimer(timerId, {
         queryLength: message.length,
         contextSize: context.length,
         sectionsFound: relevantSections.length,
-        confidence: validatedResponse.confidence
+        confidence: processedResponse.confidence,
       });
-      
-      validatedResponse.metrics.processingTime = processingTime;
-      validatedResponse.metrics.cached = false;
+
+      processedResponse.metrics.processingTime = processingTime;
+      processedResponse.metrics.cached = false;
 
       // Cache the result
-      this.performanceManager.cacheQueryResult(cacheKey, validatedResponse);
+      this.performanceManager.cacheQueryResult(cacheKey, processedResponse);
 
       this.postMessage({
-        type: 'response',
-        answer: validatedResponse.answer,
-        confidence: validatedResponse.confidence,
-        matchedSections: validatedResponse.matchedSections,
+        type: "response",
+        answer: processedResponse.answer,
+        confidence: processedResponse.confidence,
+        matchedSections: processedResponse.matchedSections,
         query: message,
-        processingMetrics: validatedResponse.metrics
+        processingMetrics: processedResponse.metrics,
       });
-
     } catch (error) {
       this.performanceManager.stopQueryTimer(timerId, { error: error.message });
-      
-      console.error('Failed to process query:', error);
-      this.performanceManager.logPerformanceEvent('query_processing_failed', {
+
+      console.error("Failed to process query:", error);
+      this.performanceManager.logPerformanceEvent("query_processing_failed", {
         queryId,
         error: error.message,
-        queryLength: message.length
+        queryLength: message.length,
       });
-      
+
       this.postMessage({
-        type: 'error',
+        type: "error",
         error: error.message,
-        query: message
+        query: message,
       });
     }
   }
@@ -603,7 +692,7 @@ class MLWorker {
 
     // Add context if relevant
     if (contextKeywords.length > 0) {
-      processedQuery += ' ' + contextKeywords.join(' ');
+      processedQuery += " " + contextKeywords.join(" ");
     }
 
     // Clean and normalize
@@ -621,12 +710,14 @@ class MLWorker {
     const keywords = new Set();
     const recentMessages = context.slice(-2); // Last 2 exchanges
 
-    recentMessages.forEach(entry => {
+    recentMessages.forEach((entry) => {
       if (entry.matchedSections) {
-        entry.matchedSections.forEach(sectionId => {
+        entry.matchedSections.forEach((sectionId) => {
           const sectionData = this.cvEmbeddings.get(sectionId);
           if (sectionData && sectionData.section.keywords) {
-            sectionData.section.keywords.forEach(keyword => keywords.add(keyword));
+            sectionData.section.keywords.forEach((keyword) =>
+              keywords.add(keyword)
+            );
           }
         });
       }
@@ -640,17 +731,17 @@ class MLWorker {
    */
   expandQueryWithSynonyms(query) {
     const synonymMap = {
-      'react': ['reactjs', 'jsx', 'hooks', 'components'],
-      'javascript': ['js', 'es6', 'es2020', 'vanilla'],
-      'node': ['nodejs', 'backend', 'server'],
-      'css': ['styling', 'styles', 'scss', 'sass'],
-      'database': ['db', 'sql', 'mongodb', 'postgres'],
-      'api': ['rest', 'endpoint', 'service', 'backend'],
-      'frontend': ['ui', 'interface', 'client', 'browser'],
-      'backend': ['server', 'api', 'service', 'database'],
-      'experience': ['work', 'job', 'career', 'professional'],
-      'skills': ['abilities', 'expertise', 'knowledge', 'competencies'],
-      'projects': ['work', 'portfolio', 'applications', 'development']
+      react: ["reactjs", "jsx", "hooks", "components"],
+      javascript: ["js", "es6", "es2020", "vanilla"],
+      node: ["nodejs", "backend", "server"],
+      css: ["styling", "styles", "scss", "sass"],
+      database: ["db", "sql", "mongodb", "postgres"],
+      api: ["rest", "endpoint", "service", "backend"],
+      frontend: ["ui", "interface", "client", "browser"],
+      backend: ["server", "api", "service", "database"],
+      experience: ["work", "job", "career", "professional"],
+      skills: ["abilities", "expertise", "knowledge", "competencies"],
+      projects: ["work", "portfolio", "applications", "development"],
     };
 
     let expandedQuery = query;
@@ -658,7 +749,7 @@ class MLWorker {
     Object.entries(synonymMap).forEach(([term, synonyms]) => {
       if (query.includes(term)) {
         // Add most relevant synonym
-        expandedQuery += ' ' + synonyms[0];
+        expandedQuery += " " + synonyms[0];
       }
     });
 
@@ -670,8 +761,8 @@ class MLWorker {
    */
   normalizeQuery(query) {
     return query
-      .replace(/[^\w\s]/g, ' ') // Remove special characters
-      .replace(/\s+/g, ' ') // Normalize whitespace
+      .replace(/[^\w\s]/g, " ") // Remove special characters
+      .replace(/\s+/g, " ") // Normalize whitespace
       .trim();
   }
 
@@ -687,13 +778,24 @@ class MLWorker {
     }
 
     // Lower threshold for questions (they might be more exploratory)
-    if (query.includes('?') || query.startsWith('what') || query.startsWith('how') || query.startsWith('do you')) {
+    if (
+      query.includes("?") ||
+      query.startsWith("what") ||
+      query.startsWith("how") ||
+      query.startsWith("do you")
+    ) {
       return baseThreshold - 0.05;
     }
 
     // Higher threshold for very specific technical terms
-    const technicalTerms = ['framework', 'library', 'algorithm', 'architecture', 'implementation'];
-    if (technicalTerms.some(term => query.toLowerCase().includes(term))) {
+    const technicalTerms = [
+      "framework",
+      "library",
+      "algorithm",
+      "architecture",
+      "implementation",
+    ];
+    if (technicalTerms.some((term) => query.toLowerCase().includes(term))) {
       return baseThreshold + 0.05;
     }
 
@@ -701,71 +803,241 @@ class MLWorker {
   }
 
   /**
-   * Find relevant CV sections using enhanced semantic similarity
+   * Find relevant CV sections using improved keyword matching
    */
-  async findRelevantSections(queryEmbedding, threshold = 0.7) {
-    const similarities = [];
+  findRelevantSectionsByKeywords(query) {
+    const queryWords = query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 2);
+    const matches = [];
 
     for (const [sectionId, sectionData] of this.cvEmbeddings.entries()) {
-      const similarity = this.cosineSimilarity(queryEmbedding, sectionData.embedding);
+      const searchText = sectionData.searchText;
+      let score = 0;
+      let matchedKeywords = [];
 
-      // Apply keyword boost for exact matches
-      const keywordBoost = this.calculateKeywordBoost(queryEmbedding, sectionData);
-      const adjustedSimilarity = Math.min(1.0, similarity + keywordBoost);
+      // Check for keyword matches with better scoring
+      queryWords.forEach((word) => {
+        if (searchText.includes(word)) {
+          // Exact word match gets higher score
+          const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+          if (searchText.match(wordRegex)) {
+            score += 2;
+          } else {
+            score += 1;
+          }
+          matchedKeywords.push(word);
+        }
+      });
 
-      if (adjustedSimilarity >= threshold) {
-        similarities.push({
+      // Boost score significantly for exact keyword matches
+      if (sectionData.section.keywords) {
+        sectionData.section.keywords.forEach((keyword) => {
+          if (query.toLowerCase().includes(keyword.toLowerCase())) {
+            score += 3; // Higher boost for exact keyword match
+            matchedKeywords.push(keyword);
+          }
+        });
+      }
+
+      if (score > 0) {
+        matches.push({
           sectionId: sectionId,
-          similarity: adjustedSimilarity,
-          rawSimilarity: similarity,
-          keywordBoost: keywordBoost,
+          similarity: Math.min(1.0, score / (queryWords.length + 2)),
+          score: score,
+          matchedKeywords: [...new Set(matchedKeywords)],
           section: sectionData.section,
           category: sectionData.category,
-          key: sectionData.key
+          key: sectionData.key,
         });
       }
     }
 
-    // Sort by adjusted similarity score (highest first)
-    return similarities.sort((a, b) => b.similarity - a.similarity);
+    // Sort by score (highest first) and return top 3 for focused context
+    return matches.sort((a, b) => b.score - a.score).slice(0, 3);
   }
 
   /**
-   * Calculate keyword boost for sections with exact keyword matches
+   * Build focused CV context from relevant sections
    */
-  calculateKeywordBoost(queryEmbedding, sectionData) {
-    // This is a simplified boost - in a real implementation,
-    // you might analyze the original query text against section keywords
-    // For now, return a small boost for high-confidence sections
-    return 0.02; // Small boost to maintain semantic similarity priority
+  buildCVContext(relevantSections) {
+    if (!relevantSections || relevantSections.length === 0) {
+      return null;
+    }
+
+    // Use only the most relevant section to avoid context confusion
+    const bestMatch = relevantSections[0];
+    const section = bestMatch.section;
+
+    let context = "About Serhii:\n";
+
+    // Add main response (use developer style as most comprehensive)
+    if (section.responses && section.responses.developer) {
+      context += section.responses.developer + "\n";
+    }
+
+    // Add key details concisely
+    if (section.details) {
+      if (section.details.years) {
+        context += `Experience: ${section.details.years} years\n`;
+      }
+      if (section.details.level) {
+        context += `Skill level: ${section.details.level}\n`;
+      }
+      if (section.details.skills && section.details.skills.length > 0) {
+        context += `Key skills: ${section.details.skills.slice(0, 5).join(", ")}\n`;
+      }
+      if (section.details.achievements && section.details.achievements.length > 0) {
+        context += `Notable achievements: ${section.details.achievements.slice(0, 2).join(", ")}\n`;
+      }
+    }
+
+    return context.trim();
   }
 
   /**
-   * Calculate cosine similarity between two vectors
+   * Create optimized prompt for text generation
    */
-  cosineSimilarity(vecA, vecB) {
-    if (vecA.length !== vecB.length) {
-      throw new Error('Vectors must have the same length');
+  createPrompt(question, cvContext, style, conversationContext = []) {
+    const styleInstructions = {
+      hr: "professional and achievement-focused manner. Focus on experience, qualifications, and measurable results",
+      developer: "technical and collaborative manner. Use technical language and share insights about technologies",
+      friend: "casual and enthusiastic manner. Use emojis when appropriate and make concepts accessible"
+    };
+
+    const instruction = styleInstructions[style] || styleInstructions.developer;
+
+    let prompt = `You are Serhii, a software developer. Respond in a ${instruction}.\n\n`;
+
+    if (cvContext) {
+      prompt += `Based on this information:\n${cvContext}\n\n`;
     }
 
-    let dotProduct = 0;
-    let normA = 0;
-    let normB = 0;
+    prompt += `Question: ${question}\n\n`;
+    prompt += `Instructions:
+- Answer as Serhii in first person
+- Only use information provided above
+- If no relevant info is provided, say so honestly
+- Keep response under 100 words
+- Be specific and provide examples when possible
 
-    for (let i = 0; i < vecA.length; i++) {
-      dotProduct += vecA[i] * vecB[i];
-      normA += vecA[i] * vecA[i];
-      normB += vecB[i] * vecB[i];
+Answer:`;
+
+    return prompt;
+  }
+
+  /**
+   * Process and validate generated response
+   */
+  processGeneratedResponse(
+    generatedText,
+    relevantSections,
+    originalQuery,
+    style
+  ) {
+    let answer = generatedText;
+    let confidence = 0.7; // Base confidence for text generation
+
+    // Clean up the response
+    answer = this.cleanGeneratedText(answer);
+
+    // Calculate confidence based on response quality and relevance
+    confidence = this.calculateTextGenerationConfidence(
+      answer,
+      relevantSections,
+      originalQuery
+    );
+
+    // Enhance response if needed
+    answer = this.enhanceGeneratedResponse(answer, style, relevantSections);
+
+    return {
+      answer,
+      confidence,
+      matchedSections: relevantSections.slice(0, 3).map((match) => ({
+        id: match.sectionId,
+        category: match.category,
+        similarity: match.similarity,
+        score: match.score,
+        matchedKeywords: match.matchedKeywords,
+      })),
+      metrics: {
+        sectionsAnalyzed: relevantSections.length,
+        generationMethod: "text-generation",
+      },
+    };
+  }
+
+  /**
+   * Clean generated text
+   */
+  cleanGeneratedText(text) {
+    return text
+      .replace(/^Response:\s*/i, "") // Remove "Response:" prefix
+      .replace(/\n\s*\n/g, "\n") // Remove extra newlines
+      .trim();
+  }
+
+  /**
+   * Calculate confidence for text generation
+   */
+  calculateTextGenerationConfidence(answer, relevantSections, query) {
+    let confidence = 0.6; // Base confidence
+
+    // Boost confidence if we have relevant sections
+    if (relevantSections.length > 0) {
+      confidence += 0.1;
     }
 
-    normA = Math.sqrt(normA);
-    normB = Math.sqrt(normB);
-
-    if (normA === 0 || normB === 0) {
-      return 0;
+    // Boost confidence if response is substantial
+    if (answer.length > 50) {
+      confidence += 0.1;
     }
 
-    return dotProduct / (normA * normB);
+    // Boost confidence if response includes specific details
+    const specificIndicators = [
+      "years",
+      "project",
+      "built",
+      "implemented",
+      "developed",
+      "experience",
+    ];
+    if (
+      specificIndicators.some((indicator) =>
+        answer.toLowerCase().includes(indicator)
+      )
+    ) {
+      confidence += 0.05;
+    }
+
+    // Reduce confidence if response seems too generic
+    if (
+      answer.length < 30 ||
+      answer.includes("I don't have specific information")
+    ) {
+      confidence -= 0.1;
+    }
+
+    return Math.max(0.1, Math.min(0.95, confidence));
+  }
+
+  /**
+   * Enhance generated response based on style
+   */
+  enhanceGeneratedResponse(answer, style, relevantSections) {
+    // Ensure response ends properly
+    if (!answer.match(/[.!?]$/)) {
+      answer += ".";
+    }
+
+    // Style-specific enhancements
+    if (style === "friend" && !answer.includes("😊") && Math.random() > 0.7) {
+      answer += " 😊";
+    }
+
+    return answer;
   }
 
   /**
@@ -777,14 +1049,17 @@ class MLWorker {
         answer: this.getNoMatchResponse(style),
         confidence: 0,
         matchedSections: [],
-        metrics: { processingTime: 0, sectionsAnalyzed: 0 }
+        metrics: { processingTime: 0, sectionsAnalyzed: 0 },
       };
     }
 
     const startTime = Date.now();
 
     // Calculate overall confidence score
-    const overallConfidence = this.calculateOverallConfidence(relevantSections, query);
+    const overallConfidence = this.calculateOverallConfidence(
+      relevantSections,
+      query
+    );
 
     // Synthesize response from multiple sections if applicable
     const synthesizedResponse = await this.synthesizeMultiSectionResponse(
@@ -795,25 +1070,31 @@ class MLWorker {
     );
 
     // Add contextual enhancements
-    const contextualResponse = this.enhanceWithContext(synthesizedResponse, context, style, relevantSections);
+    const contextualResponse = this.enhanceWithContext(
+      synthesizedResponse,
+      context,
+      style,
+      relevantSections
+    );
 
     const processingTime = Date.now() - startTime;
 
     return {
       answer: contextualResponse,
       confidence: overallConfidence,
-      matchedSections: relevantSections.slice(0, 3).map(match => ({
+      matchedSections: relevantSections.slice(0, 3).map((match) => ({
         id: match.sectionId,
         category: match.category,
         similarity: match.similarity,
         rawSimilarity: match.rawSimilarity,
-        keywordBoost: match.keywordBoost
+        keywordBoost: match.keywordBoost,
       })),
       metrics: {
         processingTime,
         sectionsAnalyzed: relevantSections.length,
-        synthesisMethod: relevantSections.length > 1 ? 'multi-section' : 'single-section'
-      }
+        synthesisMethod:
+          relevantSections.length > 1 ? "multi-section" : "single-section",
+      },
     };
   }
 
@@ -848,19 +1129,22 @@ class MLWorker {
     let adjustedConfidence = baseConfidence;
 
     // Higher confidence for specific technical queries
-    const specificTerms = ['react', 'javascript', 'node', 'typescript', 'scss'];
-    if (specificTerms.some(term => query.toLowerCase().includes(term))) {
+    const specificTerms = ["react", "javascript", "node", "typescript", "scss"];
+    if (specificTerms.some((term) => query.toLowerCase().includes(term))) {
       adjustedConfidence += 0.03;
     }
 
     // Lower confidence for very broad queries
-    const broadTerms = ['experience', 'skills', 'background', 'about'];
-    if (broadTerms.some(term => query.toLowerCase().includes(term)) && query.length < 30) {
+    const broadTerms = ["experience", "skills", "background", "about"];
+    if (
+      broadTerms.some((term) => query.toLowerCase().includes(term)) &&
+      query.length < 30
+    ) {
       adjustedConfidence -= 0.05;
     }
 
     // Higher confidence for direct questions about specific projects
-    if (query.toLowerCase().includes('project') && query.includes('?')) {
+    if (query.toLowerCase().includes("project") && query.includes("?")) {
       adjustedConfidence += 0.02;
     }
 
@@ -870,7 +1154,12 @@ class MLWorker {
   /**
    * Synthesize response from multiple relevant sections
    */
-  async synthesizeMultiSectionResponse(relevantSections, query, context, style) {
+  async synthesizeMultiSectionResponse(
+    relevantSections,
+    query,
+    context,
+    style
+  ) {
     if (relevantSections.length === 1) {
       return this.getSingleSectionResponse(relevantSections[0], style);
     }
@@ -879,15 +1168,26 @@ class MLWorker {
     const sectionsByCategory = this.groupSectionsByCategory(relevantSections);
 
     // Determine synthesis strategy based on query type and sections
-    const synthesisStrategy = this.determineSynthesisStrategy(query, sectionsByCategory);
+    const synthesisStrategy = this.determineSynthesisStrategy(
+      query,
+      sectionsByCategory
+    );
 
     switch (synthesisStrategy) {
-      case 'comprehensive':
-        return this.synthesizeComprehensiveResponse(relevantSections, style, query);
-      case 'focused':
+      case "comprehensive":
+        return this.synthesizeComprehensiveResponse(
+          relevantSections,
+          style,
+          query
+        );
+      case "focused":
         return this.synthesizeFocusedResponse(relevantSections, style, query);
-      case 'comparative':
-        return this.synthesizeComparativeResponse(relevantSections, style, query);
+      case "comparative":
+        return this.synthesizeComparativeResponse(
+          relevantSections,
+          style,
+          query
+        );
       default:
         return this.getSingleSectionResponse(relevantSections[0], style);
     }
@@ -898,7 +1198,11 @@ class MLWorker {
    */
   getSingleSectionResponse(sectionMatch, style) {
     const section = sectionMatch.section;
-    return section.responses[style] || section.responses.developer || 'I have experience in this area.';
+    return (
+      section.responses[style] ||
+      section.responses.developer ||
+      "I have experience in this area."
+    );
   }
 
   /**
@@ -906,7 +1210,7 @@ class MLWorker {
    */
   groupSectionsByCategory(sections) {
     const grouped = {};
-    sections.forEach(section => {
+    sections.forEach((section) => {
       if (!grouped[section.category]) {
         grouped[section.category] = [];
       }
@@ -922,21 +1226,28 @@ class MLWorker {
     const categoryCount = Object.keys(sectionsByCategory).length;
 
     // If query asks for comparison or mentions multiple technologies
-    if (query.includes('vs') || query.includes('compare') || query.includes('difference')) {
-      return 'comparative';
+    if (
+      query.includes("vs") ||
+      query.includes("compare") ||
+      query.includes("difference")
+    ) {
+      return "comparative";
     }
 
     // If sections span multiple categories, provide comprehensive view
     if (categoryCount > 1) {
-      return 'comprehensive';
+      return "comprehensive";
     }
 
     // If multiple sections in same category, provide focused view
-    if (categoryCount === 1 && Object.values(sectionsByCategory)[0].length > 1) {
-      return 'focused';
+    if (
+      categoryCount === 1 &&
+      Object.values(sectionsByCategory)[0].length > 1
+    ) {
+      return "focused";
     }
 
-    return 'single';
+    return "single";
   }
 
   /**
@@ -944,7 +1255,9 @@ class MLWorker {
    */
   synthesizeComprehensiveResponse(sections, style, query) {
     const topSections = sections.slice(0, 3);
-    const responses = topSections.map(section => section.section.responses[style]).filter(Boolean);
+    const responses = topSections
+      .map((section) => section.section.responses[style])
+      .filter(Boolean);
 
     if (responses.length === 0) {
       return this.getNoMatchResponse(style);
@@ -954,10 +1267,12 @@ class MLWorker {
     const intro = this.getComprehensiveIntro(style, query);
 
     // Combine responses with appropriate connectors
-    let combinedResponse = intro + ' ' + responses[0];
+    let combinedResponse = intro + " " + responses[0];
 
     if (responses.length > 1) {
-      combinedResponse += ` ${connectors.continuation} ` + responses.slice(1).join(` ${connectors.continuation} `);
+      combinedResponse +=
+        ` ${connectors.continuation} ` +
+        responses.slice(1).join(` ${connectors.continuation} `);
     }
 
     return combinedResponse;
@@ -975,8 +1290,8 @@ class MLWorker {
     if (relatedSections.length > 0) {
       const connectors = this.getStyleConnectors(style);
       const relatedTopics = relatedSections
-        .map(s => s.section.keywords[0])
-        .join(', ');
+        .map((s) => s.section.keywords[0])
+        .join(", ");
 
       response += ` ${connectors.continuation} I also have experience with ${relatedTopics}.`;
     }
@@ -1007,17 +1322,17 @@ class MLWorker {
   getStyleConnectors(style) {
     const connectors = {
       hr: {
-        continuation: 'Additionally,',
-        conclusion: 'These qualifications demonstrate'
+        continuation: "Additionally,",
+        conclusion: "These qualifications demonstrate",
       },
       developer: {
-        continuation: 'Also,',
-        conclusion: 'So yeah,'
+        continuation: "Also,",
+        conclusion: "So yeah,",
       },
       friend: {
-        continuation: 'Oh, and',
-        conclusion: 'Pretty cool stuff, right?'
-      }
+        continuation: "Oh, and",
+        conclusion: "Pretty cool stuff, right?",
+      },
     };
 
     return connectors[style] || connectors.developer;
@@ -1028,9 +1343,9 @@ class MLWorker {
    */
   getComprehensiveIntro(style, query) {
     const intros = {
-      hr: 'Regarding your question about my background,',
-      developer: 'Great question! Let me break that down for you.',
-      friend: 'Oh, that\'s a good one! 😊 Let me tell you about that.'
+      hr: "Regarding your question about my background,",
+      developer: "Great question! Let me break that down for you.",
+      friend: "Oh, that's a good one! 😊 Let me tell you about that.",
     };
 
     return intros[style] || intros.developer;
@@ -1041,9 +1356,9 @@ class MLWorker {
    */
   getComparisonIntro(style) {
     const intros = {
-      hr: 'I have experience with both areas.',
-      developer: 'I\'ve worked with both of those.',
-      friend: 'Oh, I know both of those! 😄'
+      hr: "I have experience with both areas.",
+      developer: "I've worked with both of those.",
+      friend: "Oh, I know both of those! 😄",
     };
 
     return intros[style] || intros.developer;
@@ -1058,13 +1373,16 @@ class MLWorker {
     }
 
     // Check if this continues a previous conversation topic
-    const contextualConnection = this.findContextualConnection(context, relevantSections);
+    const contextualConnection = this.findContextualConnection(
+      context,
+      relevantSections
+    );
 
     if (contextualConnection) {
       const contextualPhrases = {
-        hr: 'Building on our previous discussion, ',
-        developer: 'Following up on that, ',
-        friend: 'Oh, and speaking of what we talked about, '
+        hr: "Building on our previous discussion, ",
+        developer: "Following up on that, ",
+        friend: "Oh, and speaking of what we talked about, ",
       };
 
       const phrase = contextualPhrases[style] || contextualPhrases.developer;
@@ -1088,11 +1406,11 @@ class MLWorker {
     }
 
     // Check if any current sections relate to previous sections
-    const currentSectionIds = relevantSections.map(s => s.sectionId);
-    const previousSectionIds = lastEntry.matchedSections.map(s => s.id || s);
+    const currentSectionIds = relevantSections.map((s) => s.sectionId);
+    const previousSectionIds = lastEntry.matchedSections.map((s) => s.id || s);
 
-    return currentSectionIds.some(id =>
-      previousSectionIds.some(prevId => this.areSectionsRelated(id, prevId))
+    return currentSectionIds.some((id) =>
+      previousSectionIds.some((prevId) => this.areSectionsRelated(id, prevId))
     );
   }
 
@@ -1104,8 +1422,8 @@ class MLWorker {
     if (sectionId1 === sectionId2) return true;
 
     // Check if they're in the same category
-    const category1 = sectionId1.split('_')[0];
-    const category2 = sectionId2.split('_')[0];
+    const category1 = sectionId1.split("_")[0];
+    const category2 = sectionId2.split("_")[0];
 
     return category1 === category2;
   }
@@ -1116,8 +1434,10 @@ class MLWorker {
   getNoMatchResponse(style) {
     const responses = {
       hr: "I don't have specific information about that in my professional background. Could you rephrase your question or ask about my experience, skills, or projects?",
-      developer: "Hmm, I'm not sure I have relevant experience with that specific topic. Could you try rephrasing or ask about something else from my background?",
-      friend: "Oops! 🤔 I'm not sure I can help with that one. Maybe try asking about my projects, skills, or work experience? I'd love to share more about those!"
+      developer:
+        "Hmm, I'm not sure I have relevant experience with that specific topic. Could you try rephrasing or ask about something else from my background?",
+      friend:
+        "Oops! 🤔 I'm not sure I can help with that one. Maybe try asking about my projects, skills, or work experience? I'd love to share more about those!",
     };
 
     return responses[style] || responses.developer;
@@ -1134,7 +1454,7 @@ class MLWorker {
       const contextualPrefixes = {
         hr: "Building on our previous discussion, ",
         developer: "Following up on that, ",
-        friend: "Oh, and speaking of that, "
+        friend: "Oh, and speaking of that, ",
       };
 
       const prefix = contextualPrefixes[style] || "";
@@ -1152,21 +1472,24 @@ class MLWorker {
       answer: response.answer,
       confidence: response.confidence,
       matchedSections: response.matchedSections,
-      metrics: response.metrics || {}
+      metrics: response.metrics || {},
     };
 
     // Check response length (too short might indicate poor matching)
     if (response.answer.length < 20) {
       validation.confidence = Math.max(0, validation.confidence - 0.1);
-      validation.metrics.qualityFlags = ['short_response'];
+      validation.metrics.qualityFlags = ["short_response"];
     }
 
     // Check if response actually addresses the query
-    const queryRelevance = this.assessQueryRelevance(response.answer, originalQuery);
+    const queryRelevance = this.assessQueryRelevance(
+      response.answer,
+      originalQuery
+    );
     if (queryRelevance < 0.5) {
       validation.confidence = Math.max(0, validation.confidence - 0.15);
       validation.metrics.qualityFlags = validation.metrics.qualityFlags || [];
-      validation.metrics.qualityFlags.push('low_relevance');
+      validation.metrics.qualityFlags.push("low_relevance");
     }
 
     // Ensure minimum confidence threshold for quality responses
@@ -1175,7 +1498,7 @@ class MLWorker {
       validation.confidence = 0.2; // Low but not zero to indicate fallback
       validation.matchedSections = [];
       validation.metrics.qualityFlags = validation.metrics.qualityFlags || [];
-      validation.metrics.qualityFlags.push('fallback_triggered');
+      validation.metrics.qualityFlags.push("fallback_triggered");
     }
 
     // Add quality score to metrics
@@ -1189,12 +1512,19 @@ class MLWorker {
    */
   assessQueryRelevance(response, query) {
     // Simple keyword overlap assessment
-    const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+    const queryWords = query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 2);
     const responseWords = response.toLowerCase().split(/\s+/);
 
     let matches = 0;
-    queryWords.forEach(word => {
-      if (responseWords.some(respWord => respWord.includes(word) || word.includes(respWord))) {
+    queryWords.forEach((word) => {
+      if (
+        responseWords.some(
+          (respWord) => respWord.includes(word) || word.includes(respWord)
+        )
+      ) {
         matches++;
       }
     });
@@ -1220,7 +1550,10 @@ class MLWorker {
     score += lengthScore;
 
     // Add points for multiple matched sections (indicates comprehensive knowledge)
-    const sectionScore = Math.min(0.1, validation.matchedSections.length * 0.03);
+    const sectionScore = Math.min(
+      0.1,
+      validation.matchedSections.length * 0.03
+    );
     score += sectionScore;
 
     // Subtract points for quality flags
@@ -1239,13 +1572,13 @@ class MLWorker {
     const connectors = {
       hr: " Additionally, I have experience with ",
       developer: " I've also worked with ",
-      friend: " Oh, and I've also dabbled in "
+      friend: " Oh, and I've also dabbled in ",
     };
 
     const connector = connectors[style] || connectors.developer;
     const relatedTopics = relatedSections
-      .map(match => match.section.keywords?.[0] || 'related technologies')
-      .join(', ');
+      .map((match) => match.section.keywords?.[0] || "related technologies")
+      .join(", ");
 
     return response + connector + relatedTopics + ".";
   }
@@ -1263,28 +1596,28 @@ class MLWorker {
   cleanup() {
     // Clear embeddings cache
     this.cvEmbeddings.clear();
-    
+
     // Clear query queue
     this.queryQueue = [];
     this.isProcessingQueue = false;
-    
+
     // Cleanup performance manager
     this.performanceManager.cleanup();
-    
+
     // Clear model references (but keep cache for reuse)
     this.model = null;
     this.cvData = null;
     this.isInitialized = false;
     this.loadingPromise = null;
-    
-    this.performanceManager.logPerformanceEvent('worker_cleanup_complete');
+
+    this.performanceManager.logPerformanceEvent("worker_cleanup_complete");
   }
 
   /**
    * Utility method to delay execution
    */
   delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -1299,69 +1632,69 @@ class MLWorker {
 const mlWorker = new MLWorker();
 
 // Handle messages from main thread
-self.onmessage = async function(event) {
+self.onmessage = async function (event) {
   const { type, message, context, style, modelPath, cvData } = event.data;
 
   try {
     switch (type) {
-      case 'initialize':
+      case "initialize":
         await mlWorker.initialize(cvData);
         break;
 
-      case 'process_query':
+      case "process_query":
         await mlWorker.processQuery(
           message,
           context || [],
-          style || 'developer'
+          style || "developer"
         );
         break;
 
-      case 'get_performance_metrics':
+      case "get_performance_metrics":
         mlWorker.postMessage({
-          type: 'performance_metrics',
-          metrics: mlWorker.getPerformanceMetrics()
+          type: "performance_metrics",
+          metrics: mlWorker.getPerformanceMetrics(),
         });
         break;
 
-      case 'cleanup':
+      case "cleanup":
         mlWorker.cleanup();
-        mlWorker.postMessage({ type: 'cleanup_complete' });
+        mlWorker.postMessage({ type: "cleanup_complete" });
         break;
 
-      case 'ping':
-        mlWorker.postMessage({ type: 'pong' });
+      case "ping":
+        mlWorker.postMessage({ type: "pong" });
         break;
 
       default:
-        console.warn('Unknown message type:', type);
+        console.warn("Unknown message type:", type);
         mlWorker.postMessage({
-          type: 'error',
-          error: `Unknown message type: ${type}`
+          type: "error",
+          error: `Unknown message type: ${type}`,
         });
     }
   } catch (error) {
-    console.error('Worker error:', error);
+    console.error("Worker error:", error);
     mlWorker.postMessage({
-      type: 'error',
-      error: error.message
+      type: "error",
+      error: error.message,
     });
   }
 };
 
 // Handle worker errors
-self.onerror = function(error) {
-  console.error('Worker error:', error);
+self.onerror = function (error) {
+  console.error("Worker error:", error);
   self.postMessage({
-    type: 'error',
-    error: error.message || 'Unknown worker error'
+    type: "error",
+    error: error.message || "Unknown worker error",
   });
 };
 
 // Handle unhandled promise rejections
-self.onunhandledrejection = function(event) {
-  console.error('Unhandled promise rejection in worker:', event.reason);
+self.onunhandledrejection = function (event) {
+  console.error("Unhandled promise rejection in worker:", event.reason);
   self.postMessage({
-    type: 'error',
-    error: event.reason?.message || 'Unhandled promise rejection'
+    type: "error",
+    error: event.reason?.message || "Unhandled promise rejection",
   });
 };

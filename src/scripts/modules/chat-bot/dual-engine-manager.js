@@ -73,49 +73,28 @@ class DualEngineManager {
       errors: []
     };
 
-    // Initialize DistilBERT (should already be initialized)
+    // Initialize SmolLM2 (should already be initialized)
     try {
       if (distilbertWorker && distilbertWorker.isInitialized) {
         this.availableEngines.add('distilbert');
         initResults.distilbert = true;
+        console.log('✅ SmolLM2-135M-Instruct engine ready and prioritized');
         this.emit('engine_ready', { engine: 'distilbert' });
       }
     } catch (error) {
-      console.error('DistilBERT initialization check failed:', error);
+      console.error('SmolLM2 initialization check failed:', error);
       initResults.errors.push({ engine: 'distilbert', error: error.message });
     }
 
-    // Initialize WebLLM if supported
-    try {
-      if (WebLLMService.isSupported()) {
-        this.webllmService = new WebLLMService();
-        
-        // Setup WebLLM event listeners
-        this.setupWebLLMEventListeners();
-        
-        const cvData = await cvDataService.loadCVData();
-        const webllmInitialized = await this.webllmService.initialize(cvData, {
-          model: this.config.webllmModel || "Llama-2-7b-chat-hf-q4f16_1-MLC"
-        });
-        
-        if (webllmInitialized) {
-          this.availableEngines.add('webllm');
-          initResults.webllm = true;
-          this.emit('engine_ready', { engine: 'webllm' });
-        }
-      } else {
-        initResults.errors.push({ 
-          engine: 'webllm', 
-          error: 'WebLLM not supported in this environment' 
-        });
-      }
-    } catch (error) {
-      console.error('WebLLM initialization failed:', error);
-      initResults.errors.push({ engine: 'webllm', error: error.message });
-    }
+    // WebLLM initialization disabled for now
+    console.log('WebLLM initialization disabled, focusing on DistilBERT');
+    initResults.errors.push({ 
+      engine: 'webllm', 
+      error: 'WebLLM initialization disabled for testing' 
+    });
 
-    // Determine A/B testing assignment if enabled
-    if (this.config.abTestingEnabled && this.availableEngines.size > 1) {
+    // Determine A/B testing assignment if enabled (disabled for WebLLM focus)
+    if (this.config.abTestingEnabled && this.availableEngines.size > 1 && !this.availableEngines.has('webllm')) {
       this.abTestSession.engineAssignment = Math.random() < this.config.abTestingRatio ? 
         'webllm' : 'distilbert';
       this.emit('ab_test_assigned', { 
@@ -228,7 +207,12 @@ class DualEngineManager {
    * Select engine based on configuration and A/B testing
    */
   selectEngine() {
-    // A/B testing takes priority
+    // Prioritize DistilBERT if available
+    if (this.availableEngines.has('distilbert')) {
+      return 'distilbert';
+    }
+
+    // A/B testing takes priority for other engines
     if (this.config.abTestingEnabled && this.abTestSession.engineAssignment) {
       if (this.availableEngines.has(this.abTestSession.engineAssignment)) {
         return this.abTestSession.engineAssignment;
@@ -308,10 +292,20 @@ class DualEngineManager {
       throw new Error('WebLLM service not available');
     }
 
+    console.log('Processing with WebLLM:', { message: message.substring(0, 100) + '...', style });
+
     // Get relevant CV sections for WebLLM context
     const cvSections = await this.findRelevantCVSections(message);
     
-    return this.webllmService.processQuery(message, context, style, cvSections);
+    const result = await this.webllmService.processQuery(message, context, style, cvSections);
+    
+    console.log('WebLLM response:', { 
+      confidence: result.confidence, 
+      answerLength: result.answer?.length,
+      matchedSections: result.matchedSections?.length 
+    });
+    
+    return result;
   }
 
   /**
@@ -649,6 +643,40 @@ class DualEngineManager {
    */
   isEngineAvailable(engine) {
     return this.availableEngines.has(engine);
+  }
+
+  /**
+   * Force WebLLM usage (disable fallback temporarily)
+   */
+  forceWebLLMOnly() {
+    if (!this.availableEngines.has('webllm')) {
+      throw new Error('WebLLM engine is not available');
+    }
+    
+    this.config.primaryEngine = 'webllm';
+    this.config.fallbackEnabled = false;
+    this.config.abTestingEnabled = false;
+    
+    console.log('Dual engine manager configured for WebLLM only');
+    
+    this.emit('engine_mode_changed', { 
+      mode: 'webllm_only',
+      fallbackEnabled: false 
+    });
+  }
+
+  /**
+   * Re-enable fallback and normal engine selection
+   */
+  enableNormalMode() {
+    this.config.fallbackEnabled = true;
+    
+    console.log('Dual engine manager restored to normal mode');
+    
+    this.emit('engine_mode_changed', { 
+      mode: 'normal',
+      fallbackEnabled: true 
+    });
   }
 
   /**

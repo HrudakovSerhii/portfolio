@@ -16,7 +16,7 @@ class WebLLMService {
     // Configuration
     this.config = {
       model: "Llama-2-7b-chat-hf-q4f16_1-MLC",
-      workerTimeout: 30000, // 30 seconds
+      workerTimeout: 60000, // 60 seconds for WebLLM initialization
       maxRetries: 2,
       retryDelay: 1000
     };
@@ -66,17 +66,23 @@ class WebLLMService {
    */
   async _performInitialization(cvData) {
     try {
+      console.log('Creating WebLLM worker...');
+      
       // Create WebLLM worker
-      this.worker = new Worker('/scripts/workers/webllm-worker.js', { type: 'module' });
+      this.worker = new Worker('./src/scripts/workers/webllm-worker.js', { type: 'module' });
       
       // Setup message handling
       this.setupWorkerMessageHandling();
+      
+      console.log('Sending initialization message to WebLLM worker...');
       
       // Initialize worker with CV data
       const initResult = await this.sendMessage('initialize', {
         cvData,
         config: this.config
       });
+
+      console.log('WebLLM worker initialization result:', initResult);
 
       if (initResult.success) {
         this.isInitialized = true;
@@ -86,6 +92,7 @@ class WebLLMService {
         throw new Error(initResult.error || 'WebLLM initialization failed');
       }
     } catch (error) {
+      console.error('WebLLM service initialization error:', error);
       this.cleanup();
       throw new Error(`WebLLM service initialization failed: ${error.message}`);
     }
@@ -273,33 +280,32 @@ class WebLLMService {
    * @returns {boolean} Support status
    */
   static isSupported() {
-    // Check for WebAssembly support
-    if (typeof WebAssembly === 'undefined') {
-      return false;
-    }
-
-    // Check for Worker support
-    if (typeof Worker === 'undefined') {
-      return false;
-    }
+    const checks = {
+      webAssembly: typeof WebAssembly !== 'undefined',
+      workers: typeof Worker !== 'undefined',
+      webGL: false,
+      memory: true
+    };
 
     // Check for WebGL support (required for WebLLM)
     try {
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (!gl) {
-        return false;
-      }
+      checks.webGL = !!gl;
     } catch (e) {
-      return false;
+      checks.webGL = false;
     }
 
     // Check for sufficient memory (rough estimate)
     if (navigator.deviceMemory && navigator.deviceMemory < 4) {
-      return false;
+      checks.memory = false;
     }
 
-    return true;
+    const isSupported = checks.webAssembly && checks.workers && checks.webGL && checks.memory;
+    
+    console.log('WebLLM support check:', checks, 'Overall supported:', isSupported);
+    
+    return isSupported;
   }
 
   /**
