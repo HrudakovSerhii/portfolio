@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot Comparison Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .chat-panel {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            background: #fafafa;
+        }
+        .chat-panel h3 {
+            margin-top: 0;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .chat-area {
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            background: white;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: 20%;
+        }
+        .bot-message {
+            background: #e9ecef;
+            color: #333;
+            margin-right: 20%;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        button {
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .status.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-questions {
+            margin-top: 20px;
+        }
+        .test-question {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid #dee2e6;
+            font-size: 0.9em;
+        }
+        .test-question:hover {
+            background: #e9ecef;
+        }
+        .comparison-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #b3d9ff;
+            margin-bottom: 20px;
+        }
+        .comparison-info h2 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        .approach-description {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat Bot Approach Comparison</h1>
+        
+        <div class="comparison-info">
+            <h2>🔬 Testing Different Approaches</h2>
+            <p>This test compares two approaches to solve the hallucination problem:</p>
+            <ul>
+                <li><strong>Template-Based:</strong> Uses pre-written responses for reliability</li>
+                <li><strong>Hybrid:</strong> Combines templates with constrained text generation</li>
+            </ul>
+            <p>Try the same questions on both systems to see the difference in response quality.</p>
+        </div>
+        
+        <div class="controls">
+            <label for="style-select">Communication Style:</label>
+            <select id="style-select">
+                <option value="developer">Developer</option>
+                <option value="hr">HR/Professional</option>
+                <option value="friend">Friend</option>
+            </select>
+            <button id="clear-all-btn">Clear All Chats</button>
+            <button id="test-all-btn">Test All Questions</button>
+        </div>
+        
+        <div class="comparison-grid">
+            <!-- Template-Based System -->
+            <div class="chat-panel">
+                <h3>📝 Template-Based System</h3>
+                <div class="approach-description">
+                    Uses pre-written responses for common questions. Fast, reliable, but limited coverage.
+                </div>
+                <div id="status-template" class="status ready">Ready</div>
+                <div id="chat-area-template" class="chat-area"></div>
+                <div class="input-area">
+                    <input type="text" id="message-input-template" placeholder="Ask about Serhii...">
+                    <button id="send-btn-template">Send</button>
+                </div>
+            </div>
+
+            <!-- Hybrid System -->
+            <div class="chat-panel">
+                <h3>🤖 Hybrid System</h3>
+                <div class="approach-description">
+                    Templates first, then constrained AI generation. More coverage, but may occasionally fail.
+                </div>
+                <div id="status-hybrid" class="status loading">Initializing...</div>
+                <div id="chat-area-hybrid" class="chat-area"></div>
+                <div class="input-area">
+                    <input type="text" id="message-input-hybrid" placeholder="Ask about Serhii...">
+                    <button id="send-btn-hybrid" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-questions">
+            <h3>Test Questions (Click to test both systems):</h3>
+            <div class="test-question" data-question="Does Serhii have experience with React?">
+                ✅ Does Serhii have experience with React?
+            </div>
+            <div class="test-question" data-question="How many years of JavaScript experience does he have?">
+                ✅ How many years of JavaScript experience does he have?
+            </div>
+            <div class="test-question" data-question="What projects has he built?">
+                ✅ What projects has he built?
+            </div>
+            <div class="test-question" data-question="Tell me about his Node.js experience">
+                ✅ Tell me about his Node.js experience
+            </div>
+            <div class="test-question" data-question="What is his experience with TypeScript?">
+                ✅ What is his experience with TypeScript?
+            </div>
+            <div class="test-question" data-question="Does he know Python?">
+                ❓ Does he know Python? (No template - tests fallback)
+            </div>
+            <div class="test-question" data-question="What's his favorite programming language?">
+                ❓ What's his favorite programming language? (Open-ended question)
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import SimpleChatIntegration from '../src/scripts/modules/chat-bot/simple-chat-integration.js';
+        import HybridChatIntegration from '../src/scripts/modules/chat-bot/hybrid-chat-integration.js';
+
+        class ChatComparisonApp {
+            constructor() {
+                this.templateChat = new SimpleChatIntegration();
+                this.hybridChat = new HybridChatIntegration();
+                this.isTemplateReady = false;
+                this.isHybridReady = false;
+                this.setupEventListeners();
+            }
+
+            async initialize() {
+                try {
+                    // Initialize template system
+                    await this.templateChat.initialize();
+                    this.isTemplateReady = true;
+                    this.showGreeting('template');
+                    
+                    // Initialize hybrid system
+                    try {
+                        await this.hybridChat.initialize();
+                        this.isHybridReady = true;
+                        this.updateStatus('hybrid', 'ready', 'Hybrid system ready');
+                        this.enableControls('hybrid');
+                        this.showGreeting('hybrid');
+                    } catch (error) {
+                        console.error('Hybrid initialization failed:', error);
+                        this.updateStatus('hybrid', 'error', `Hybrid init failed: ${error.message}`);
+                    }
+                    
+                } catch (error) {
+                    console.error('Template initialization failed:', error);
+                    this.updateStatus('template', 'error', `Template init failed: ${error.message}`);
+                }
+            }
+
+            setupEventListeners() {
+                // Send buttons
+                document.getElementById('send-btn-template').addEventListener('click', () => {
+                    this.sendMessage('template');
+                });
+                document.getElementById('send-btn-hybrid').addEventListener('click', () => {
+                    this.sendMessage('hybrid');
+                });
+
+                // Enter key in inputs
+                document.getElementById('message-input-template').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage('template');
+                });
+                document.getElementById('message-input-hybrid').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage('hybrid');
+                });
+
+                // Style selector
+                document.getElementById('style-select').addEventListener('change', (e) => {
+                    this.templateChat.setStyle(e.target.value);
+                    this.hybridChat.setStyle(e.target.value);
+                    this.showGreeting('template');
+                    this.showGreeting('hybrid');
+                });
+
+                // Clear all button
+                document.getElementById('clear-all-btn').addEventListener('click', () => {
+                    this.clearAllChats();
+                });
+
+                // Test all button
+                document.getElementById('test-all-btn').addEventListener('click', () => {
+                    this.testAllQuestions();
+                });
+
+                // Test questions
+                document.querySelectorAll('.test-question').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const question = btn.dataset.question;
+                        this.testQuestion(question);
+                    });
+                });
+            }
+
+            async sendMessage(system) {
+                const input = document.getElementById(`message-input-${system}`);
+                const message = input.value.trim();
+                
+                if (!message) return;
+                if (system === 'template' && !this.isTemplateReady) return;
+                if (system === 'hybrid' && !this.isHybridReady) return;
+
+                // Clear input and disable controls
+                input.value = '';
+                this.disableControls(system);
+
+                // Add user message to chat
+                this.addMessage(message, 'user', system);
+
+                try {
+                    // Get current style
+                    const style = document.getElementById('style-select').value;
+                    
+                    // Process query
+                    const chat = system === 'template' ? this.templateChat : this.hybridChat;
+                    const response = await chat.processQuery(message, style);
+                    
+                    // Add bot response to chat
+                    this.addMessage(response.answer, 'bot', system, response);
+                    
+                } catch (error) {
+                    console.error(`${system} query processing failed:`, error);
+                    this.addMessage('Sorry, I encountered an error. Please try again.', 'bot', system);
+                } finally {
+                    this.enableControls(system);
+                }
+            }
+
+            async testQuestion(question) {
+                // Set the question in both inputs
+                document.getElementById('message-input-template').value = question;
+                document.getElementById('message-input-hybrid').value = question;
+                
+                // Send to both systems
+                if (this.isTemplateReady) {
+                    this.sendMessage('template');
+                }
+                if (this.isHybridReady) {
+                    setTimeout(() => this.sendMessage('hybrid'), 100); // Small delay
+                }
+            }
+
+            async testAllQuestions() {
+                const questions = Array.from(document.querySelectorAll('.test-question'))
+                    .map(btn => btn.dataset.question);
+                
+                for (let i = 0; i < questions.length; i++) {
+                    setTimeout(() => {
+                        this.testQuestion(questions[i]);
+                    }, i * 2000); // 2 second delay between questions
+                }
+            }
+
+            addMessage(text, sender, system, metadata = null) {
+                const chatArea = document.getElementById(`chat-area-${system}`);
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                let content = text;
+                
+                // Add metadata for bot messages
+                if (sender === 'bot' && metadata) {
+                    const sourceEmoji = {
+                        'template': '📝',
+                        'cv_data': '📊',
+                        'generated': '🤖',
+                        'fallback': '🤷',
+                        'error': '❌'
+                    };
+                    
+                    content += `\n\n<small style="opacity: 0.7;">
+                        ${sourceEmoji[metadata.source] || '🤖'} ${metadata.source} | 
+                        ${(metadata.confidence * 100).toFixed(0)}% | 
+                        ${metadata.processingTime}ms
+                    </small>`;
+                }
+                
+                messageDiv.innerHTML = content.replace(/\n/g, '<br>');
+                chatArea.appendChild(messageDiv);
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+
+            showGreeting(system) {
+                if (system === 'template' && !this.isTemplateReady) return;
+                if (system === 'hybrid' && !this.isHybridReady) return;
+                
+                const chat = system === 'template' ? this.templateChat : this.hybridChat;
+                const greeting = chat.getGreeting();
+                this.addMessage(greeting, 'bot', system);
+            }
+
+            clearAllChats() {
+                document.getElementById('chat-area-template').innerHTML = '';
+                document.getElementById('chat-area-hybrid').innerHTML = '';
+                this.templateChat.clearHistory();
+                this.hybridChat.clearHistory();
+                this.showGreeting('template');
+                this.showGreeting('hybrid');
+            }
+
+            updateStatus(system, type, message) {
+                const statusDiv = document.getElementById(`status-${system}`);
+                statusDiv.className = `status ${type}`;
+                statusDiv.textContent = message;
+            }
+
+            enableControls(system) {
+                document.getElementById(`message-input-${system}`).disabled = false;
+                document.getElementById(`send-btn-${system}`).disabled = false;
+            }
+
+            disableControls(system) {
+                document.getElementById(`message-input-${system}`).disabled = true;
+                document.getElementById(`send-btn-${system}`).disabled = true;
+            }
+        }
+
+        // Initialize the app
+        const app = new ChatComparisonApp();
+        app.initialize();
+    </script>
+</body>
+</html>
