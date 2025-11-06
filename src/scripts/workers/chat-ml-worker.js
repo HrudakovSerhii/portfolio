@@ -1,7 +1,142 @@
 /**
  * ML Worker for DistilBERT processing
  * Handles model loading, embedding generation, and semantic similarity computation
+ * Includes performance optimizations, caching, and resource management
  */
+
+// Inline performance management for worker context
+class WorkerPerformanceManager {
+  constructor() {
+    this.metrics = {
+      modelLoadTime: 0,
+      queryProcessingTimes: [],
+      memoryUsage: [],
+      cacheHits: 0,
+      cacheMisses: 0,
+      sessionStartTime: Date.now()
+    };
+    
+    this.cache = {
+      embeddings: new Map(),
+      queryResults: new Map(),
+      maxCacheSize: 50, // Smaller cache for worker
+      maxEmbeddingCacheSize: 200
+    };
+    
+    this.performanceLog = [];
+  }
+
+  cacheEmbedding(text, embedding) {
+    const key = this.generateCacheKey(text);
+    if (this.cache.embeddings.size >= this.cache.maxEmbeddingCacheSize) {
+      const firstKey = this.cache.embeddings.keys().next().value;
+      this.cache.embeddings.delete(firstKey);
+    }
+    this.cache.embeddings.set(key, { embedding, timestamp: Date.now() });
+  }
+
+  getCachedEmbedding(text) {
+    const key = this.generateCacheKey(text);
+    const cached = this.cache.embeddings.get(key);
+    if (cached) {
+      this.metrics.cacheHits++;
+      return cached.embedding;
+    }
+    this.metrics.cacheMisses++;
+    return null;
+  }
+
+  cacheQueryResult(query, result) {
+    const key = this.generateCacheKey(query);
+    if (this.cache.queryResults.size >= this.cache.maxCacheSize) {
+      const firstKey = this.cache.queryResults.keys().next().value;
+      this.cache.queryResults.delete(firstKey);
+    }
+    this.cache.queryResults.set(key, { result: {...result}, timestamp: Date.now() });
+  }
+
+  getCachedQueryResult(query) {
+    const key = this.generateCacheKey(query);
+    const cached = this.cache.queryResults.get(key);
+    if (cached && (Date.now() - cached.timestamp < 300000)) { // 5 minutes
+      this.metrics.cacheHits++;
+      return {...cached.result};
+    }
+    if (cached) this.cache.queryResults.delete(key);
+    this.metrics.cacheMisses++;
+    return null;
+  }
+
+  generateCacheKey(text) {
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      const char = text.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return hash.toString(36);
+  }
+
+  startQueryTimer(queryId) {
+    const timerId = `query_${queryId}_${Date.now()}`;
+    performance.mark(`${timerId}_start`);
+    return timerId;
+  }
+
+  stopQueryTimer(timerId, metadata = {}) {
+    performance.mark(`${timerId}_end`);
+    performance.measure(timerId, `${timerId}_start`, `${timerId}_end`);
+    const measure = performance.getEntriesByName(timerId)[0];
+    const duration = measure ? measure.duration : 0;
+    
+    this.metrics.queryProcessingTimes.push({
+      duration,
+      timestamp: Date.now(),
+      metadata
+    });
+    
+    if (this.metrics.queryProcessingTimes.length > 50) {
+      this.metrics.queryProcessingTimes = this.metrics.queryProcessingTimes.slice(-50);
+    }
+    
+    performance.clearMarks(`${timerId}_start`);
+    performance.clearMarks(`${timerId}_end`);
+    performance.clearMeasures(timerId);
+    
+    return duration;
+  }
+
+  logPerformanceEvent(event, data = {}) {
+    const logEntry = {
+      timestamp: Date.now(),
+      event,
+      data,
+      sessionTime: Date.now() - this.metrics.sessionStartTime
+    };
+    
+    this.performanceLog.push(logEntry);
+    if (this.performanceLog.length > 200) {
+      this.performanceLog = this.performanceLog.slice(-100);
+    }
+  }
+
+  getMetrics() {
+    return {
+      ...this.metrics,
+      cacheStats: {
+        embeddingsCacheSize: this.cache.embeddings.size,
+        queryResultsCacheSize: this.cache.queryResults.size,
+        hitRate: this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses) || 0
+      }
+    };
+  }
+
+  cleanup() {
+    this.cache.embeddings.clear();
+    this.cache.queryResults.clear();
+    this.performanceLog = [];
+  }
+}
 
 // Global variables for transformers
 let pipeline, env;
@@ -32,51 +167,60 @@ class MLWorker {
     this.isInitialized = false;
     this.cvData = null;
     this.cvEmbeddings = new Map();
+    
+    // Performance optimization components
+    this.performanceManager = new WorkerPerformanceManager();
+    
+    // Query processing optimization
+    this.queryQueue = [];
+    this.isProcessingQueue = false;
+    this.maxConcurrentQueries = 1; // Process one query at a time for consistency
+    
+    // Model loading optimization
+    this.modelCache = null;
+    this.loadingPromise = null;
   }
 
   /**
-   * Initialize the DistilBERT model and tokenizer
+   * Initialize the DistilBERT model and tokenizer with performance optimizations
    */
   async initialize(cvData) {
+    const initStartTime = Date.now();
+    
     try {
-      // First load the transformers library
-      const transformersLoaded = await loadTransformers();
-
-      if (!transformersLoaded) {
-        throw new Error('Failed to load transformers library');
+      // Return existing loading promise if already loading
+      if (this.loadingPromise) {
+        return this.loadingPromise;
       }
-
-      this.postMessage({
-        type: 'status',
-        message: 'Loading DistilBERT model...'
-      });
-
-      // Load the feature extraction pipeline with DistilBERT
-      this.model = await pipeline('feature-extraction', 'Xenova/distilbert-base-uncased', {
-        quantized: true, // Use quantized model for better performance
-        progress_callback: (progress) => {
-          this.postMessage({
-            type: 'progress',
-            progress: progress
-          });
-        },
-      });
-
-      this.cvData = cvData;
-
-      // Pre-compute embeddings for CV sections
-      await this.precomputeEmbeddings();
-
-      this.isInitialized = true;
-
-      this.postMessage({
-        type: 'ready',
-        success: true,
-        message: 'DistilBERT model loaded successfully'
-      });
+      
+      // Check if model is already cached
+      if (this.modelCache) {
+        this.model = this.modelCache;
+        this.cvData = cvData;
+        await this.precomputeEmbeddingsOptimized();
+        this.isInitialized = true;
+        
+        this.postMessage({
+          type: 'ready',
+          success: true,
+          message: 'DistilBERT model loaded from cache',
+          metrics: { cached: true, initTime: Date.now() - initStartTime }
+        });
+        return;
+      }
+      
+      this.loadingPromise = this._performInitialization(cvData, initStartTime);
+      await this.loadingPromise;
+      this.loadingPromise = null;
 
     } catch (error) {
+      this.loadingPromise = null;
       console.error('Failed to initialize ML model:', error);
+      this.performanceManager.logPerformanceEvent('worker_initialization_failed', {
+        error: error.message,
+        initTime: Date.now() - initStartTime
+      });
+      
       this.postMessage({
         type: 'ready',
         success: false,
@@ -86,9 +230,65 @@ class MLWorker {
   }
 
   /**
-   * Pre-compute embeddings for all CV sections
+   * Perform the actual initialization
    */
-  async precomputeEmbeddings() {
+  async _performInitialization(cvData, initStartTime) {
+    // First load the transformers library
+    const transformersLoaded = await loadTransformers();
+
+    if (!transformersLoaded) {
+      throw new Error('Failed to load transformers library');
+    }
+
+    this.postMessage({
+      type: 'status',
+      message: 'Loading DistilBERT model...'
+    });
+
+    // Load the feature extraction pipeline with DistilBERT
+    this.model = await pipeline('feature-extraction', 'Xenova/distilbert-base-uncased', {
+      quantized: true, // Use quantized model for better performance
+      progress_callback: (progress) => {
+        this.postMessage({
+          type: 'progress',
+          progress: progress
+        });
+      },
+    });
+
+    // Cache the model for future use
+    this.modelCache = this.model;
+
+    this.cvData = cvData;
+
+    // Pre-compute embeddings for CV sections with caching
+    await this.precomputeEmbeddingsOptimized();
+
+    this.isInitialized = true;
+    
+    const initTime = Date.now() - initStartTime;
+    this.performanceManager.logPerformanceEvent('worker_initialization_complete', {
+      initTime,
+      cvSectionsCount: this.getTotalSectionCount(this.cvData?.sections || {}),
+      embeddingsCacheSize: this.cvEmbeddings.size
+    });
+
+    this.postMessage({
+      type: 'ready',
+      success: true,
+      message: 'DistilBERT model loaded successfully',
+      metrics: {
+        initTime,
+        cacheEnabled: true,
+        embeddingsPrecomputed: this.cvEmbeddings.size
+      }
+    });
+  }
+
+  /**
+   * Pre-compute embeddings for all CV sections with performance optimizations
+   */
+  async precomputeEmbeddingsOptimized() {
     if (!this.cvData || !this.cvData.sections) {
       throw new Error('CV data not available for embedding computation');
     }
@@ -101,33 +301,78 @@ class MLWorker {
     const sections = this.cvData.sections;
     let processedCount = 0;
     const totalSections = this.getTotalSectionCount(sections);
+    const batchSize = 3; // Process embeddings in small batches
+    const embeddingBatch = [];
 
     for (const [categoryKey, category] of Object.entries(sections)) {
       for (const [sectionKey, section] of Object.entries(category)) {
-        try {
-          // Create text for embedding from keywords and responses
-          const textForEmbedding = this.createEmbeddingText(section);
-          const embedding = await this.generateEmbedding(textForEmbedding);
-
-          // Store embedding with section reference
-          const sectionId = section.id || `${categoryKey}_${sectionKey}`;
-          this.cvEmbeddings.set(sectionId, {
-            embedding: embedding,
-            section: section,
-            category: categoryKey,
-            key: sectionKey
-          });
-
-          processedCount++;
-          this.postMessage({
-            type: 'embedding_progress',
-            processed: processedCount,
-            total: totalSections
-          });
-
-        } catch (error) {
-          console.error(`Failed to compute embedding for ${categoryKey}.${sectionKey}:`, error);
+        embeddingBatch.push({ categoryKey, sectionKey, section });
+        
+        // Process batch when it reaches the batch size
+        if (embeddingBatch.length >= batchSize) {
+          await this.processBatchEmbeddings(embeddingBatch, processedCount, totalSections);
+          processedCount += embeddingBatch.length;
+          embeddingBatch.length = 0; // Clear batch
+          
+          // Small delay to prevent blocking
+          await this.delay(10);
         }
+      }
+    }
+    
+    // Process remaining items in batch
+    if (embeddingBatch.length > 0) {
+      await this.processBatchEmbeddings(embeddingBatch, processedCount, totalSections);
+    }
+    
+    this.performanceManager.logPerformanceEvent('embeddings_precomputed', {
+      totalSections,
+      cacheSize: this.cvEmbeddings.size,
+      batchSize
+    });
+  }
+
+  /**
+   * Process a batch of embeddings
+   */
+  async processBatchEmbeddings(batch, processedCount, totalSections) {
+    for (const { categoryKey, sectionKey, section } of batch) {
+      try {
+        // Create text for embedding from keywords and responses
+        const textForEmbedding = this.createEmbeddingText(section);
+        
+        // Check cache first
+        let embedding = this.performanceManager.getCachedEmbedding(textForEmbedding);
+        
+        if (!embedding) {
+          embedding = await this.generateEmbedding(textForEmbedding);
+          // Cache the embedding
+          this.performanceManager.cacheEmbedding(textForEmbedding, embedding);
+        }
+
+        // Store embedding with section reference
+        const sectionId = section.id || `${categoryKey}_${sectionKey}`;
+        this.cvEmbeddings.set(sectionId, {
+          embedding: embedding,
+          section: section,
+          category: categoryKey,
+          key: sectionKey
+        });
+
+        processedCount++;
+        this.postMessage({
+          type: 'embedding_progress',
+          processed: processedCount,
+          total: totalSections
+        });
+
+      } catch (error) {
+        console.error(`Failed to compute embedding for ${categoryKey}.${sectionKey}:`, error);
+        this.performanceManager.logPerformanceEvent('embedding_computation_failed', {
+          categoryKey,
+          sectionKey,
+          error: error.message
+        });
       }
     }
   }
@@ -205,19 +450,94 @@ class MLWorker {
   }
 
   /**
-   * Process user query and find relevant CV sections
+   * Process user query with performance optimizations and caching
    */
   async processQuery(message, context = [], style = 'developer') {
     if (!this.isInitialized) {
       throw new Error('Model not initialized');
     }
 
+    // Add to queue for processing
+    return new Promise((resolve, reject) => {
+      this.queryQueue.push({
+        message,
+        context,
+        style,
+        resolve,
+        reject,
+        timestamp: Date.now()
+      });
+      
+      this.processQueryQueue();
+    });
+  }
+
+  /**
+   * Process query queue to manage concurrent processing
+   */
+  async processQueryQueue() {
+    if (this.isProcessingQueue || this.queryQueue.length === 0) {
+      return;
+    }
+    
+    this.isProcessingQueue = true;
+    
+    while (this.queryQueue.length > 0) {
+      const queryItem = this.queryQueue.shift();
+      
+      try {
+        await this.processQueryOptimized(queryItem);
+        queryItem.resolve();
+      } catch (error) {
+        queryItem.reject(error);
+      }
+    }
+    
+    this.isProcessingQueue = false;
+  }
+
+  /**
+   * Process individual query with optimizations
+   */
+  async processQueryOptimized(queryItem) {
+    const { message, context, style } = queryItem;
+    const queryId = `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Start performance timing
+    const timerId = this.performanceManager.startQueryTimer(queryId);
+    
     try {
+      // Check cache first
+      const cacheKey = `${message}_${style}_${JSON.stringify(context)}`;
+      const cachedResult = this.performanceManager.getCachedQueryResult(cacheKey);
+      
+      if (cachedResult) {
+        this.performanceManager.stopQueryTimer(timerId, { cached: true });
+        
+        this.postMessage({
+          type: 'response',
+          answer: cachedResult.answer,
+          confidence: cachedResult.confidence,
+          matchedSections: cachedResult.matchedSections,
+          query: message,
+          processingMetrics: {
+            ...cachedResult.metrics,
+            cached: true,
+            processingTime: 0
+          }
+        });
+        return;
+      }
+
       // Preprocess the query
       const preprocessedQuery = this.preprocessQuery(message, context);
 
-      // Generate embedding for the preprocessed query
-      const queryEmbedding = await this.generateEmbedding(preprocessedQuery);
+      // Generate embedding for the preprocessed query (with caching)
+      let queryEmbedding = this.performanceManager.getCachedEmbedding(preprocessedQuery);
+      if (!queryEmbedding) {
+        queryEmbedding = await this.generateEmbedding(preprocessedQuery);
+        this.performanceManager.cacheEmbedding(preprocessedQuery, queryEmbedding);
+      }
 
       // Find relevant sections using adaptive similarity thresholds
       const relevantSections = await this.findRelevantSections(queryEmbedding, this.getAdaptiveThreshold(message));
@@ -227,6 +547,20 @@ class MLWorker {
 
       // Validate response quality
       const validatedResponse = this.validateResponseQuality(response, message);
+      
+      // Stop timing and add metrics
+      const processingTime = this.performanceManager.stopQueryTimer(timerId, {
+        queryLength: message.length,
+        contextSize: context.length,
+        sectionsFound: relevantSections.length,
+        confidence: validatedResponse.confidence
+      });
+      
+      validatedResponse.metrics.processingTime = processingTime;
+      validatedResponse.metrics.cached = false;
+
+      // Cache the result
+      this.performanceManager.cacheQueryResult(cacheKey, validatedResponse);
 
       this.postMessage({
         type: 'response',
@@ -238,7 +572,15 @@ class MLWorker {
       });
 
     } catch (error) {
+      this.performanceManager.stopQueryTimer(timerId, { error: error.message });
+      
       console.error('Failed to process query:', error);
+      this.performanceManager.logPerformanceEvent('query_processing_failed', {
+        queryId,
+        error: error.message,
+        queryLength: message.length
+      });
+      
       this.postMessage({
         type: 'error',
         error: error.message,
@@ -909,6 +1251,43 @@ class MLWorker {
   }
 
   /**
+   * Get performance metrics from the worker
+   */
+  getPerformanceMetrics() {
+    return this.performanceManager.getMetrics();
+  }
+
+  /**
+   * Clean up resources and perform memory management
+   */
+  cleanup() {
+    // Clear embeddings cache
+    this.cvEmbeddings.clear();
+    
+    // Clear query queue
+    this.queryQueue = [];
+    this.isProcessingQueue = false;
+    
+    // Cleanup performance manager
+    this.performanceManager.cleanup();
+    
+    // Clear model references (but keep cache for reuse)
+    this.model = null;
+    this.cvData = null;
+    this.isInitialized = false;
+    this.loadingPromise = null;
+    
+    this.performanceManager.logPerformanceEvent('worker_cleanup_complete');
+  }
+
+  /**
+   * Utility method to delay execution
+   */
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
    * Post message to main thread
    */
   postMessage(data) {
@@ -935,6 +1314,18 @@ self.onmessage = async function(event) {
           context || [],
           style || 'developer'
         );
+        break;
+
+      case 'get_performance_metrics':
+        mlWorker.postMessage({
+          type: 'performance_metrics',
+          metrics: mlWorker.getPerformanceMetrics()
+        });
+        break;
+
+      case 'cleanup':
+        mlWorker.cleanup();
+        mlWorker.postMessage({ type: 'cleanup_complete' });
         break;
 
       case 'ping':
