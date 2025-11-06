@@ -120,15 +120,37 @@ class ConversationManager {
   }
 
   /**
-   * Determine if two topics are related (exact match for now)
-   * @param {string} topic1 - First topic identifier (e.g., 'experience.react')
-   * @param {string} topic2 - Second topic identifier (e.g., 'experience.javascript')
+   * Determine if two topics are related (exact match or same category)
+   * @param {string} topic1 - First topic identifier (e.g., 'experience.react' or 'exp_react')
+   * @param {string} topic2 - Second topic identifier (e.g., 'experience.javascript' or 'exp_javascript')
    * @returns {boolean} True if topics are related
    */
   areTopicsRelated(topic1, topic2) {
-    // For now, only exact matches are considered related
-    // This can be enhanced later to include semantic relationships
-    return topic1 === topic2;
+    // Exact match
+    if (topic1 === topic2) {
+      return true;
+    }
+
+    // Check if they're in the same category - handle both dot and underscore formats
+    let category1, category2;
+    
+    if (topic1.includes('.')) {
+      category1 = topic1.split('.')[0];
+    } else if (topic1.includes('_')) {
+      category1 = topic1.split('_')[0];
+    } else {
+      category1 = topic1;
+    }
+    
+    if (topic2.includes('.')) {
+      category2 = topic2.split('.')[0];
+    } else if (topic2.includes('_')) {
+      category2 = topic2.split('_')[0];
+    } else {
+      category2 = topic2;
+    }
+    
+    return category1 === category2;
   }
 
   /**
@@ -320,15 +342,41 @@ class ConversationManager {
    */
   addContextualElements(response, style, currentTopics = null) {
     // Check if this is a follow-up question using topic-aware context
-    const context = this.getContext(currentTopics, 2);
+    const context = this.getContext(currentTopics, 3);
     if (context.length > 0) {
       const lastTopic = this.extractTopicFromHistory(context);
-      if (lastTopic) {
-        response = this.addContextualReference(response, lastTopic, style);
+      if (lastTopic && currentTopics && currentTopics.length > 0) {
+        // Check if current question relates to previous conversation (more inclusive)
+        const isRelated = currentTopics.some(topic => this.areTopicsRelated(topic, lastTopic));
+        if (isRelated) {
+          response = this.addContextualReference(response, lastTopic, style, context);
+        }
       }
     }
 
     return response;
+  }
+
+  /**
+   * Determine if current question is a follow-up to previous conversation
+   * @param {Array} context - Recent conversation history
+   * @param {Array} currentTopics - Current topics being discussed
+   * @returns {boolean} True if this appears to be a follow-up question
+   */
+  isFollowUpQuestion(context, currentTopics) {
+    if (context.length === 0 || !currentTopics || currentTopics.length === 0) {
+      return false;
+    }
+
+    // Check if any current topics match recent conversation topics
+    const recentTopics = new Set();
+    context.forEach(entry => {
+      if (entry.matchedSections) {
+        entry.matchedSections.forEach(section => recentTopics.add(section));
+      }
+    });
+
+    return currentTopics.some(topic => recentTopics.has(topic));
   }
 
   /**
@@ -352,9 +400,10 @@ class ConversationManager {
    * @param {string} response - Base response
    * @param {string} lastTopic - Previous topic discussed
    * @param {string} style - Response style
+   * @param {Array} context - Recent conversation context
    * @returns {string} Response with contextual reference
    */
-  addContextualReference(response, lastTopic, style) {
+  addContextualReference(response, lastTopic, style, context = []) {
     const contextualPhrases = {
       hr: "Building on our previous discussion,",
       developer: "Following up on what we talked about,",
@@ -365,10 +414,60 @@ class ConversationManager {
 
     // Only add contextual reference if it makes sense
     if (this.isRelatedTopic(lastTopic, response)) {
+      // Check if we can add more specific context from recent conversation
+      const specificContext = this.getSpecificContextualPhrase(context, style);
+      if (specificContext) {
+        return `${specificContext} ${response}`;
+      }
       return `${phrase} ${response}`;
     }
 
     return response;
+  }
+
+  /**
+   * Get specific contextual phrase based on recent conversation
+   * @param {Array} context - Recent conversation history
+   * @param {string} style - Response style
+   * @returns {string|null} Specific contextual phrase or null
+   */
+  getSpecificContextualPhrase(context, style) {
+    if (context.length === 0) return null;
+
+    const lastEntry = context[context.length - 1];
+    if (!lastEntry.userMessage) return null;
+
+    // Detect question patterns that suggest follow-up
+    const userMessage = lastEntry.userMessage.toLowerCase();
+    
+    if (userMessage.includes('more about') || userMessage.includes('tell me more')) {
+      const phrases = {
+        hr: "To elaborate further,",
+        developer: "Going deeper into that,",
+        friend: "Oh, you want to know more! 😊"
+      };
+      return phrases[style] || phrases.developer;
+    }
+
+    if (userMessage.includes('how') && (userMessage.includes('work') || userMessage.includes('use'))) {
+      const phrases = {
+        hr: "Regarding the implementation details,",
+        developer: "As for how I work with that,",
+        friend: "Great question about the how-to! 🤔"
+      };
+      return phrases[style] || phrases.developer;
+    }
+
+    if (userMessage.includes('example') || userMessage.includes('show me')) {
+      const phrases = {
+        hr: "To provide a concrete example,",
+        developer: "Here's a practical example:",
+        friend: "Oh, you want to see it in action! 🚀"
+      };
+      return phrases[style] || phrases.developer;
+    }
+
+    return null;
   }
 
   /**
@@ -382,9 +481,27 @@ class ConversationManager {
     const topicKeywords = lastTopic.toLowerCase().split(/[._-]/);
     const responseLower = response.toLowerCase();
 
-    return topicKeywords.some(
+    // Check for direct keyword matches
+    const hasKeywordMatch = topicKeywords.some(
       (keyword) => keyword.length > 2 && responseLower.includes(keyword)
     );
+
+    if (hasKeywordMatch) {
+      return true;
+    }
+
+    // For experience/skills topics, consider them related if they're both technical
+    // This allows for natural conversation flow between related professional topics
+    const isExperienceTopic = lastTopic.toLowerCase().includes('exp') || lastTopic.toLowerCase().includes('experience');
+    const isSkillsTopic = lastTopic.toLowerCase().includes('skill') || lastTopic.toLowerCase().includes('tech');
+    const isTechnicalResponse = responseLower.includes('experience') || 
+                               responseLower.includes('years') || 
+                               responseLower.includes('work') ||
+                               responseLower.includes('develop') ||
+                               responseLower.includes('code') ||
+                               responseLower.includes('build');
+
+    return (isExperienceTopic || isSkillsTopic) && isTechnicalResponse;
   }
 
   /**
@@ -421,6 +538,166 @@ class ConversationManager {
     return `I can ${modifier} discuss ${
       match.id || "this topic"
     } based on my experience.`;
+  }
+
+  /**
+   * Generate context-aware response using conversation history
+   * @param {string} query - User's current query
+   * @param {Array} cvMatches - Matched CV sections
+   * @param {string} style - Response style
+   * @returns {Object} Enhanced response with context information
+   */
+  generateContextAwareResponse(query, cvMatches, style = this.currentStyle) {
+    if (!style) {
+      throw new Error('Conversation style must be set before generating responses');
+    }
+
+    // Get current topics from CV matches
+    const currentTopics = cvMatches.map(match => match.id).filter(id => id);
+    
+    // Get relevant context based on current topics
+    const relevantContext = this.getContext(currentTopics, this.maxContextSize);
+    
+    // Generate base response
+    const baseResponse = this.generateResponse(query, cvMatches, style);
+    
+    // Analyze conversation flow for better context integration
+    const contextAnalysis = this.analyzeConversationFlow(relevantContext, currentTopics, query);
+    
+    return {
+      response: baseResponse,
+      contextUsed: relevantContext.length > 0,
+      contextSize: relevantContext.length,
+      conversationFlow: contextAnalysis.flow,
+      topicContinuity: contextAnalysis.topicContinuity,
+      followUpSuggestions: this.generateFollowUpSuggestions(currentTopics, style)
+    };
+  }
+
+  /**
+   * Analyze conversation flow and topic continuity
+   * @param {Array} context - Recent conversation context
+   * @param {Array} currentTopics - Current topics being discussed
+   * @param {string} query - Current user query
+   * @returns {Object} Analysis of conversation flow
+   */
+  analyzeConversationFlow(context, currentTopics, query) {
+    const analysis = {
+      flow: 'new_topic',
+      topicContinuity: 0,
+      queryType: this.classifyQuery(query)
+    };
+
+    if (context.length === 0) {
+      return analysis;
+    }
+
+    // Calculate topic continuity score
+    const recentTopics = new Set();
+    context.forEach(entry => {
+      if (entry.matchedSections) {
+        entry.matchedSections.forEach(section => recentTopics.add(section));
+      }
+    });
+
+    const continuityScore = currentTopics.filter(topic => recentTopics.has(topic)).length / Math.max(currentTopics.length, 1);
+    analysis.topicContinuity = continuityScore;
+
+    // Determine conversation flow
+    if (continuityScore > 0.5) {
+      analysis.flow = 'topic_continuation';
+    } else if (continuityScore > 0) {
+      analysis.flow = 'topic_expansion';
+    } else {
+      analysis.flow = 'topic_change';
+    }
+
+    return analysis;
+  }
+
+  /**
+   * Classify the type of user query
+   * @param {string} query - User's query
+   * @returns {string} Query classification
+   */
+  classifyQuery(query) {
+    const lowerQuery = query.toLowerCase();
+    
+    // Check for follow-up patterns first (more specific)
+    if (lowerQuery.includes('more') || lowerQuery.includes('detail') || lowerQuery.includes('elaborate')) {
+      return 'follow_up';
+    }
+    
+    // Check for explanation requests
+    if (lowerQuery.includes('tell me') || lowerQuery.includes('show me') || lowerQuery.includes('explain')) {
+      return 'request_explanation';
+    }
+    
+    // Check for example requests
+    if (lowerQuery.includes('example') || lowerQuery.includes('demo') || lowerQuery.includes('sample')) {
+      return 'request_example';
+    }
+    
+    // Check for questions (less specific, so check last)
+    if (lowerQuery.includes('how') || lowerQuery.includes('what') || lowerQuery.includes('why')) {
+      return 'question';
+    }
+    
+    return 'general';
+  }
+
+  /**
+   * Generate follow-up suggestions based on current topics
+   * @param {Array} currentTopics - Current topics being discussed
+   * @param {string} style - Response style
+   * @returns {Array} Array of suggested follow-up questions
+   */
+  generateFollowUpSuggestions(currentTopics, style) {
+    if (!currentTopics || currentTopics.length === 0) {
+      return [];
+    }
+
+    const suggestions = [];
+    const maxSuggestions = 2;
+
+    // Generate topic-specific suggestions
+    currentTopics.slice(0, maxSuggestions).forEach(topic => {
+      const suggestion = this.getTopicFollowUpSuggestion(topic, style);
+      if (suggestion) {
+        suggestions.push(suggestion);
+      }
+    });
+
+    return suggestions;
+  }
+
+  /**
+   * Get follow-up suggestion for a specific topic
+   * @param {string} topic - Topic identifier
+   * @param {string} style - Response style
+   * @returns {string|null} Follow-up suggestion or null
+   */
+  getTopicFollowUpSuggestion(topic, style) {
+    const topicSuggestions = {
+      'experience.react': {
+        hr: 'What specific React projects has Serhii worked on?',
+        developer: 'What React patterns do you prefer?',
+        friend: 'Any cool React tricks you\'ve learned?'
+      },
+      'skills.javascript': {
+        hr: 'How many years of JavaScript experience does Serhii have?',
+        developer: 'What\'s your favorite JavaScript feature?',
+        friend: 'What got you into JavaScript?'
+      }
+    };
+
+    // Extract base topic (e.g., 'experience.react' -> 'react')
+    const baseTopic = topic.split('.').pop();
+    
+    // Try exact match first, then base topic
+    const suggestions = topicSuggestions[topic] || topicSuggestions[baseTopic];
+    
+    return suggestions ? suggestions[style] : null;
   }
 
   /**
