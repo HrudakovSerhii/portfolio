@@ -11,9 +11,9 @@
   height: 80vh;
   max-height: 600px;
   background-color: $light-gray;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid $dark-gray;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
   display: flex;
   flex-direction: column;
   opacity: 0;
@@ -32,31 +32,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
-  border-radius: 12px 12px 0 0;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $dark-gray;
+  background: $white;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
 
   .chat-title {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: $font-size-large;
     font-weight: 600;
-    color: var(--color-text-primary);
+    color: $text-color;
   }
 
   .chat-close {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: var(--color-text-secondary);
+    color: $dark-gray;
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
+    padding: $spacing-xs;
+    border-radius: $border-radius-sm;
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--color-hover);
-      color: var(--color-text-primary);
+      background: $light-gray;
+      color: $text-color;
     }
   }
 }
@@ -75,35 +75,35 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: 2rem;
+  padding: $spacing-xl;
   text-align: center;
 
   .loading-spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--color-border);
-    border-top: 3px solid var(--color-primary);
+    border: 3px solid $light-gray;
+    border-top: 3px solid $secondary-color;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
+    margin-bottom: $spacing-md;
   }
 
   .loading-message {
-    margin: 0 0 1.5rem 0;
-    color: var(--color-text-secondary);
-    font-size: 0.95rem;
+    margin: 0 0 $spacing-lg 0;
+    color: $dark-gray;
+    font-size: $font-size-small;
   }
 
   .loading-progress {
     width: 100%;
     height: 4px;
-    background: var(--color-border);
+    background: $light-gray;
     border-radius: 2px;
     overflow: hidden;
 
     .progress-bar {
       height: 100%;
-      background: var(--color-primary);
+      background: $primary-color;
       border-radius: 2px;
       transition: width 0.3s ease;
     }
@@ -117,53 +117,53 @@
 
 // Style Selection
 .chat-style-selection {
-  padding: 2rem 1.5rem;
+  padding: $spacing-xl $spacing-lg;
 
   h4 {
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 $spacing-lg 0;
     text-align: center;
-    color: var(--color-text-primary);
-    font-size: 1.1rem;
+    color: $text-color;
+    font-size: $font-size-large;
   }
 
   .style-options {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: $spacing-sm;
   }
 
   .style-option {
     display: flex;
     align-items: center;
-    padding: 1rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+    padding: $spacing-md;
+    background: $white;
+    border: 1px solid $dark-gray;
+    border-radius: $border-radius-md;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
 
     &:hover {
-      background: var(--color-hover);
-      border-color: var(--color-primary);
+      background: $light-gray;
+      border-color: $primary-color;
       transform: translateY(-1px);
     }
 
     .style-icon {
-      font-size: 1.5rem;
-      margin-right: 1rem;
+      font-size: $font-size-xl;
+      margin-right: $spacing-md;
     }
 
     .style-title {
       font-weight: 600;
-      color: var(--color-text-primary);
+      color: $text-color;
       display: block;
-      margin-bottom: 0.25rem;
+      margin-bottom: $spacing-xs;
     }
 
     .style-description {
-      font-size: 0.85rem;
-      color: var(--color-text-secondary);
+      font-size: $font-size-small;
+      color: $dark-gray;
       display: block;
     }
   }
@@ -180,21 +180,21 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: $spacing-md;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: $spacing-md;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--color-surface);
+    background: $white;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--color-border);
+    background: $dark-gray;
     border-radius: 3px;
   }
 }
@@ -202,40 +202,40 @@
 .message {
   display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
+  gap: $spacing-sm;
 
   &.user-message {
     flex-direction: row-reverse;
 
     .message-content {
-      background: var(--color-primary);
-      color: white;
+      background: $primary-color;
+      color: $white;
       border-radius: 18px 18px 4px 18px;
     }
   }
 
   &.bot-message {
     .message-content {
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      background: $white;
+      color: $text-color;
+      border: 1px solid $dark-gray;
       border-radius: 18px 18px 18px 4px;
     }
   }
 
   .message-content {
     max-width: 80%;
-    padding: 0.75rem 1rem;
+    padding: $spacing-sm $spacing-md;
 
     .message-text {
-      line-height: 1.4;
+      line-height: $line-height-base;
       word-wrap: break-word;
     }
 
     .message-time {
-      font-size: 0.7rem;
+      font-size: $font-size-extra-small;
       opacity: 0.7;
-      margin-top: 0.25rem;
+      margin-top: $spacing-xs;
     }
   }
 
@@ -243,11 +243,11 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: var(--color-surface);
+    background: $white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: $font-size-base;
     flex-shrink: 0;
   }
 }
@@ -256,8 +256,8 @@
 .typing-indicator {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0 1rem 1rem 1rem;
+  gap: $spacing-sm;
+  padding: 0 $spacing-md $spacing-md $spacing-md;
 
   .typing-dots {
     display: flex;
@@ -266,7 +266,7 @@
     span {
       width: 6px;
       height: 6px;
-      background: var(--color-text-secondary);
+      background: $dark-gray;
       border-radius: 50%;
       animation: typing 1.4s infinite ease-in-out;
 
@@ -276,8 +276,8 @@
   }
 
   .typing-text {
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
+    font-size: $font-size-small;
+    color: $dark-gray;
     font-style: italic;
   }
 }
@@ -295,40 +295,40 @@
 
 // Input Area
 .chat-input {
-  border-top: 1px solid var(--color-border);
-  padding: 1rem;
+  border-top: 1px solid $dark-gray;
+  padding: $spacing-md;
 
   .input-container {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
   }
 
   .message-input {
     flex: 1;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $dark-gray;
     border-radius: 20px;
-    background: var(--color-surface);
-    color: var(--color-text-primary);
-    font-size: 0.95rem;
+    background: $white;
+    color: $text-color;
+    font-size: $font-size-small;
     outline: none;
     transition: border-color 0.2s ease;
 
     &:focus {
-      border-color: var(--color-primary);
+      border-color: $primary-color;
     }
 
     &::placeholder {
-      color: var(--color-text-secondary);
+      color: $dark-gray;
     }
   }
 
   .send-button {
     width: 44px;
     height: 44px;
-    background: var(--color-primary);
-    color: white;
+    background: $primary-color;
+    color: $white;
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -338,12 +338,12 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--color-primary-dark);
+      background: darken($primary-color, 10%);
       transform: scale(1.05);
     }
 
     &:disabled {
-      background: var(--color-border);
+      background: $dark-gray;
       cursor: not-allowed;
       transform: none;
     }
@@ -356,16 +356,16 @@
   .restart-button {
     background: none;
     border: none;
-    color: var(--color-text-secondary);
-    font-size: 0.85rem;
+    color: $dark-gray;
+    font-size: $font-size-small;
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
+    padding: $spacing-sm;
+    border-radius: $border-radius-sm;
     transition: all 0.2s ease;
 
     &:hover {
-      color: var(--color-primary);
-      background: var(--color-hover);
+      color: $primary-color;
+      background: $light-gray;
     }
   }
 }
@@ -377,7 +377,7 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: 2rem;
+  padding: $spacing-xl;
   text-align: center;
 
   .error-content {
@@ -385,104 +385,105 @@
   }
 
   .error-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    font-size: $font-size-xxl;
+    margin-bottom: $spacing-md;
     display: block;
+    color: $accent-color;
   }
 
   .error-message {
-    margin: 0 0 1.5rem 0;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
+    margin: 0 0 $spacing-lg 0;
+    color: $dark-gray;
+    line-height: $line-height-base;
   }
 
   .error-retry {
-    background: var(--color-primary);
-    color: white;
+    background: $primary-color;
+    color: $white;
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-sm;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: $font-size-small;
     transition: background 0.2s ease;
 
     &:hover {
-      background: var(--color-primary-dark);
+      background: darken($primary-color, 10%);
     }
   }
 }
 
 // Fallback Form
 .chat-fallback {
-  padding: 2rem 1.5rem;
+  padding: $spacing-xl $spacing-lg;
 
   .fallback-content {
     text-align: center;
 
     h4 {
-      margin: 0 0 1rem 0;
-      color: var(--color-text-primary);
+      margin: 0 0 $spacing-md 0;
+      color: $text-color;
     }
 
     p {
-      margin: 0 0 1.5rem 0;
-      color: var(--color-text-secondary);
-      line-height: 1.5;
+      margin: 0 0 $spacing-lg 0;
+      color: $dark-gray;
+      line-height: $line-height-base;
     }
   }
 
   .fallback-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: $spacing-md;
 
     input {
-      padding: 0.75rem;
-      border: 1px solid var(--color-border);
-      border-radius: 6px;
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      font-size: 0.95rem;
+      padding: $spacing-sm;
+      border: 1px solid $dark-gray;
+      border-radius: $border-radius-sm;
+      background: $white;
+      color: $text-color;
+      font-size: $font-size-small;
 
       &:focus {
         outline: none;
-        border-color: var(--color-primary);
+        border-color: $primary-color;
       }
 
       &::placeholder {
-        color: var(--color-text-secondary);
+        color: $dark-gray;
       }
     }
 
     .fallback-submit {
-      background: var(--color-primary);
-      color: white;
+      background: $primary-color;
+      color: $white;
       border: none;
-      padding: 0.75rem;
-      border-radius: 6px;
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: $font-size-small;
       font-weight: 500;
       transition: background 0.2s ease;
 
       &:hover {
-        background: var(--color-primary-dark);
+        background: darken($primary-color, 10%);
       }
     }
 
     .fallback-cancel {
       background: none;
-      color: var(--color-text-secondary);
-      border: 1px solid var(--color-border);
-      padding: 0.75rem;
-      border-radius: 6px;
+      color: $dark-gray;
+      border: 1px solid $dark-gray;
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: $font-size-small;
       transition: all 0.2s ease;
 
       &:hover {
-        background: var(--color-hover);
-        color: var(--color-text-primary);
+        background: $light-gray;
+        color: $text-color;
       }
     }
   }
@@ -491,12 +492,12 @@
 // Chat Trigger Button
 .chat-trigger {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
   width: 60px;
   height: 60px;
-  background: var(--color-primary);
-  color: white;
+  background: $primary-color;
+  color: $white;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -504,14 +505,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: $shadow-md;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 999;
 
   &:hover {
-    background: var(--color-primary-dark);
+    background: darken($primary-color, 10%);
     transform: scale(1.1);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: $shadow-lg;
   }
 
   &:active {
@@ -519,12 +520,12 @@
   }
 
   .chat-trigger__icon {
-    font-size: 1.5rem;
+    font-size: $font-size-xl;
     margin-bottom: 2px;
   }
 
   .chat-trigger__text {
-    font-size: 0.7rem;
+    font-size: $font-size-extra-small;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -537,7 +538,7 @@
 }
 
 // Responsive Design
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-md) {
   .chat-container {
     width: 95%;
     height: 85vh;
@@ -545,24 +546,24 @@
   }
 
   .chat-header {
-    padding: 0.75rem 1rem;
+    padding: $spacing-sm $spacing-md;
 
     .chat-title {
-      font-size: 1rem;
+      font-size: $font-size-base;
     }
   }
 
   .messages-container {
-    padding: 0.75rem;
+    padding: $spacing-sm;
   }
 
   .chat-input {
-    padding: 0.75rem;
+    padding: $spacing-sm;
   }
 
   .chat-style-selection,
   .chat-fallback {
-    padding: 1.5rem 1rem;
+    padding: $spacing-lg $spacing-md;
   }
 }
 
@@ -572,11 +573,11 @@
   }
 
   .style-option {
-    padding: 0.75rem;
+    padding: $spacing-sm;
 
     .style-icon {
-      font-size: 1.25rem;
-      margin-right: 0.75rem;
+      font-size: $font-size-large;
+      margin-right: $spacing-sm;
     }
   }
 }
