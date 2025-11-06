@@ -24,6 +24,9 @@ async function initializeChat() {
   try {
     isLoading = true;
 
+    // Show initial loading state immediately
+    showInitialLoadingState();
+
     // Lazy load the ChatBot class
     const { ChatBot } = await import('./chat-bot.js');
 
@@ -76,6 +79,68 @@ function showFallbackError(error) {
 
   // Simple alert as fallback - in production this could be a toast notification
   alert(errorMessage);
+}
+
+/**
+ * Show initial loading state before ChatBot initialization
+ */
+function showInitialLoadingState() {
+  const chatContainer = document.getElementById('chat-container');
+  if (!chatContainer) {
+    console.error('Chat container not found');
+    return;
+  }
+
+  // Show the chat container
+  chatContainer.classList.add('visible');
+
+  // Hide all states first
+  const states = [
+    '.chat-style-selection',
+    '.chat-messages',
+    '.chat-input',
+    '.chat-error',
+    '.chat-fallback'
+  ];
+
+  states.forEach(selector => {
+    const element = chatContainer.querySelector(selector);
+    if (element) {
+      element.classList.add('hidden');
+    }
+  });
+
+  // Show loading state
+  const loadingContainer = chatContainer.querySelector('.chat-loading');
+  if (loadingContainer) {
+    loadingContainer.classList.remove('hidden');
+    
+    // Update loading message
+    const loadingMessage = loadingContainer.querySelector('.loading-message');
+    if (loadingMessage) {
+      loadingMessage.textContent = "Wait, I'm loading as fast as I can!";
+    }
+
+    // Start progress animation
+    const progressBar = loadingContainer.querySelector('.progress-bar');
+    if (progressBar) {
+      progressBar.style.width = '0%';
+      
+      // Animate progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress >= 90) {
+          progress = 90; // Stop at 90% until actual initialization completes
+          clearInterval(interval);
+        }
+        progressBar.style.width = `${progress}%`;
+      }, 300);
+      
+      // Store interval for cleanup
+      chatContainer._progressInterval = interval;
+    }
+  }
 }
 
 /**
@@ -142,3 +207,5 @@ if (document.readyState === "loading") {
 export default {
   initializeChat,
 };
+
+export { initializeChat };

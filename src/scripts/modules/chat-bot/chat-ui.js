@@ -131,6 +131,19 @@ class ChatUI {
       retryBtn.addEventListener('click', () => {
         this.hideError();
         this.showLoadingState();
+        
+        // Trigger re-initialization if callback is available
+        if (this.onRetry) {
+          this.onRetry();
+        }
+      });
+    }
+
+    // Error close
+    const errorCloseBtn = this.chatContainer.querySelector('.error-close');
+    if (errorCloseBtn) {
+      errorCloseBtn.addEventListener('click', () => {
+        this.hide();
       });
     }
 
@@ -535,11 +548,12 @@ ${name}`);
   /**
    * Set event handlers
    */
-  setEventHandlers({ onStyleSelect, onMessageSend, onRestart, onFallbackSubmit }) {
+  setEventHandlers({ onStyleSelect, onMessageSend, onRestart, onFallbackSubmit, onRetry }) {
     this.onStyleSelect = onStyleSelect;
     this.onMessageSend = onMessageSend;
     this.onRestart = onRestart;
     this.onFallbackSubmit = onFallbackSubmit;
+    this.onRetry = onRetry;
   }
 }
 
