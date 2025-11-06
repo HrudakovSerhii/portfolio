@@ -160,6 +160,8 @@ class ChatUI {
    */
   showLoadingState(message = "Wait, I'm loading as fast as I can!") {
     this.hideAllStates();
+    this.show();
+
     this.loadingContainer.classList.remove('hidden');
 
     const loadingMessage = this.loadingContainer.querySelector('.loading-message');
@@ -187,7 +189,7 @@ class ChatUI {
   showStyleSelection() {
     this.hideAllStates();
     this.styleSelection.classList.remove('hidden');
-    
+
     // Focus on first style option for accessibility
     const firstOption = this.styleSelection.querySelector('.style-option');
     if (firstOption) {
@@ -227,7 +229,7 @@ class ChatUI {
 
     this.messagesContainer.appendChild(messageElement);
     this.scrollToBottom();
-    
+
     // Store last user message for fallback handling
     if (isUser) {
       this.lastUserMessage = message;
