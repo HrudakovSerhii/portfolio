@@ -1,5 +1,5 @@
 /**
- * ChatBot - Main entry point for the chat-bot feature
+ * ChatBot - Main entry point for the chatbot feature
  * Handles lazy loading, worker initialization, and browser compatibility
  */
 class ChatBot {
@@ -14,10 +14,11 @@ class ChatBot {
   }
 
   /**
-   * Initialize the chat-bot system with lazy loading
+   * Initialize the chatbot system with lazy loading
    * @returns {Promise<boolean>} Success status
    */
   async initialize() {
+    debugger
     if (this.initializationPromise) {
       return this.initializationPromise;
     }
@@ -66,7 +67,7 @@ class ChatBot {
 
       this.isInitialized = true;
       this.ui.showStyleSelection();
-      
+
       return true;
     } catch (error) {
       this._handleInitializationError(error);
@@ -139,15 +140,15 @@ class ChatBot {
   async _initializeWorker() {
     return new Promise((resolve, reject) => {
       try {
-        this.worker = new Worker('/src/scripts/workers/chat-ml-worker.js');
-        
+        this.worker = new Worker('./scripts/workers/chat-ml-worker.js');
+
         const timeout = setTimeout(() => {
           reject(new Error('WORKER_TIMEOUT'));
         }, 30000); // 30 second timeout
 
         this.worker.onmessage = (event) => {
           const { type, success, error } = event.data;
-          
+
           if (type === 'ready') {
             clearTimeout(timeout);
             if (success) {
@@ -183,7 +184,7 @@ class ChatBot {
   _setupWorkerMessageHandling() {
     this.worker.onmessage = (event) => {
       const { type, answer, confidence, matchedSections, processingMetrics, error } = event.data;
-      
+
       switch (type) {
         case 'response':
           this._handleWorkerResponse(answer, confidence, matchedSections, processingMetrics);
@@ -214,11 +215,11 @@ class ChatBot {
     this.currentStyle = style;
     this.conversationManager.setStyle(style);
     this.styleManager.setStyle(style);
-    
+
     // Clear any existing messages and show chat interface
     this.ui.clearMessages();
     this.ui.showChatInterface();
-    
+
     // Show greeting message based on style
     const greeting = this.styleManager.getGreeting(style);
     this.ui.addMessage(greeting, false, style);
@@ -266,7 +267,7 @@ class ChatBot {
     this.currentStyle = null;
     this.conversationManager.clearHistory();
     this.styleManager.resetStyle();
-    
+
     // Clear UI and show style selection
     this.ui.clearMessages();
     this.ui.showStyleSelection();
@@ -294,12 +295,12 @@ class ChatBot {
    */
   _handleWorkerResponse(answer, confidence, matchedSections, processingMetrics) {
     this.ui.hideTypingIndicator();
-    
+
     // Log processing metrics for debugging
     if (processingMetrics) {
       console.log('Query processing metrics:', processingMetrics);
     }
-    
+
     if (confidence < 0.5) {
       // Low confidence - trigger fallback
       this._handleLowConfidenceResponse();
@@ -310,7 +311,7 @@ class ChatBot {
         confidence,
         metrics: processingMetrics
       });
-      
+
       // Add response to conversation history
       this.conversationManager.addMessage(
         this.ui.getLastUserMessage(),
@@ -318,7 +319,7 @@ class ChatBot {
         matchedSections,
         confidence
       );
-      
+
       // Display response
       this.ui.addMessage(formattedAnswer, false, this.currentStyle);
     }
@@ -330,7 +331,7 @@ class ChatBot {
   _handleWorkerError(error) {
     this.ui.hideTypingIndicator();
     console.error('ChatBot: Worker error:', error);
-    
+
     const errorMessage = this.styleManager.getErrorMessage(this.currentStyle);
     this.ui.addMessage(errorMessage, false, this.currentStyle);
   }
@@ -349,7 +350,7 @@ class ChatBot {
   _handleProcessingError(error) {
     this.ui.hideTypingIndicator();
     console.error('ChatBot: Processing error:', error);
-    
+
     const errorMessage = this.styleManager.getErrorMessage(this.currentStyle);
     this.ui.addMessage(errorMessage, false, this.currentStyle);
   }
@@ -359,7 +360,7 @@ class ChatBot {
    */
   _handleInitializationError(error) {
     console.error('ChatBot: Initialization error:', error);
-    
+
     let errorMessage;
     switch (error.message) {
       case 'BROWSER_UNSUPPORTED':
