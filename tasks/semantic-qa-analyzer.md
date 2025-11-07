@@ -86,7 +86,8 @@ src/scripts/modules/semantic-qa/
 ├── similarity-matcher.js      # Semantic search implementation
 ├── context-fencer.js          # Structured context formatting
 ├── qa-engine.js              # Question answering logic
-└── semantic-qa-manager.js    # Main orchestrator
+├── dual-worker-coordinator.js # Main orchestrator (consolidated)
+└── index.js                  # Module entry point
 
 src/scripts/workers/
 └── embedding-worker.js       # Web Worker for model processing
