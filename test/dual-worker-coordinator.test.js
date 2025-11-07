@@ -160,13 +160,10 @@ describe('Dual Worker Coordinator Integration', () => {
         metrics: { processingTime: 5 }
       });
 
-      // Since coordinator is not initialized, this should still work with cache
-      try {
-        const result = await coordinator.processQuestion('What is React?');
-        // This won't work because coordinator isn't initialized, but we can test the cache logic
-      } catch (error) {
-        expect(error.message).toBe('Coordinator not initialized');
-      }
+      // Since coordinator is not initialized, this should throw an error
+      await expect(
+        coordinator.processQuestion('What is React?')
+      ).rejects.toThrow('Coordinator not initialized');
     });
 
     it('should verify utility function calls in workflow', () => {
