@@ -97,9 +97,10 @@ class SemanticQAManager {
      * Ask a question using semantic search
      * @param {string} question - User question
      * @param {string} context - Optional context (if not pre-indexed)
+     * @param {object} options - Additional options
      * @returns {Promise<object>} - Answer object
      */
-    async askQuestion(question, context = null) {
+    async askQuestion(question, context = null, options = {}) {
         if (!this.isInitialized) {
             await this.initialize();
         }
@@ -124,8 +125,11 @@ class SemanticQAManager {
             // Create fenced context
             const fencedContext = this.contextFencer.createFencedContext(similarChunks, question);
             
-            // Generate answer
-            const answer = await this.qaEngine.generateAnswer(question, fencedContext);
+            // Generate answer with optional LLM service
+            const answer = await this.qaEngine.generateAnswer(question, fencedContext, {
+                llmService: options.llmService,
+                ...options
+            });
             
             // Update performance metrics
             const responseTime = Date.now() - startTime;

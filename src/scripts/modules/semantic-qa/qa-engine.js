@@ -14,15 +14,34 @@ class QAEngine {
      * Generate answer based on fenced context
      * @param {string} question - User question
      * @param {object} fencedContext - Fenced context object
+     * @param {object} options - Generation options
      * @returns {Promise<object>} - Answer object
      */
-    async generateAnswer(question, fencedContext) {
+    async generateAnswer(question, fencedContext, options = {}) {
         // Check if we have sufficient context
         if (!fencedContext.hasContext || fencedContext.confidence < this.confidenceThreshold) {
             return this.createFallbackResponse(question, fencedContext);
         }
 
         try {
+            // Try LLM-based generation first if available
+            if (options.llmService && fencedContext.confidence > 0.6) {
+                const llmAnswer = await this.generateLLMAnswer(question, fencedContext, options.llmService);
+                if (llmAnswer) {
+                    return {
+                        answer: llmAnswer,
+                        confidence: fencedContext.confidence,
+                        method: 'llm-based',
+                        context: fencedContext.context,
+                        facts: fencedContext.facts,
+                        metadata: {
+                            ...fencedContext.metadata,
+                            responseTime: Date.now()
+                        }
+                    };
+                }
+            }
+
             // Use rule-based approach for fast, reliable answers
             const ruleBasedAnswer = this.generateRuleBasedAnswer(question, fencedContext);
             
@@ -341,6 +360,106 @@ class QAEngine {
         }
         
         return factText;
+    }
+
+    /**
+     * Generate LLM-based answer using SmolLM2
+     * @param {string} question - User question
+     * @param {object} fencedContext - Fenced context
+     * @param {object} llmService - LLM service instance
+     * @returns {Promise<string|null>} - Generated answer or null
+     */
+    async generateLLMAnswer(question, fencedContext, llmService) {
+        try {
+            // Create the prompt with system instructions and fenced context
+            const prompt = this.createLLMPrompt(question, fencedContext);
+            
+            // Generate response using SmolLM2
+            const response = await llmService.generateResponse(prompt, {
+                maxTokens: 150,
+                temperature: 0.3, // Low temperature for factual responses
+                stopSequences: ['\n\n', 'Question:', 'Context:']
+            });
+            
+            // Clean and validate the response
+            const cleanAnswer = this.cleanLLMResponse(response);
+            
+            // Validate that the answer is based on the context
+            if (this.validateAnswerAgainstContext(cleanAnswer, fencedContext)) {
+                return cleanAnswer;
+            }
+            
+            return null; // Fall back to rule-based if validation fails
+            
+        } catch (error) {
+            console.error('LLM answer generation failed:', error);
+            return null; // Fall back to rule-based
+        }
+    }
+
+    /**
+     * Create LLM prompt with fenced context
+     * @param {string} question - User question
+     * @param {object} fencedContext - Fenced context
+     * @returns {string} - Formatted prompt
+     */
+    createLLMPrompt(question, fencedContext) {
+        return `${this.systemPrompt}
+
+**Relevant Context:**
+${fencedContext.context}
+
+**Instructions:**
+- Answer based ONLY on the facts provided above
+- Be direct and concise (1-2 sentences maximum)
+- If the answer is not in the context, say "I do not have that information"
+- Do not add speculation or external knowledge
+
+**Answer:**`;
+    }
+
+    /**
+     * Clean LLM response
+     * @param {string} response - Raw LLM response
+     * @returns {string} - Cleaned response
+     */
+    cleanLLMResponse(response) {
+        return response
+            .trim()
+            .replace(/^(Answer:|A:)/i, '') // Remove answer prefixes
+            .replace(/\n+/g, ' ') // Replace newlines with spaces
+            .replace(/\s+/g, ' ') // Normalize whitespace
+            .trim();
+    }
+
+    /**
+     * Validate answer against context
+     * @param {string} answer - Generated answer
+     * @param {object} fencedContext - Fenced context
+     * @returns {boolean} - True if valid
+     */
+    validateAnswerAgainstContext(answer, fencedContext) {
+        // Check if answer contains hallucinated information
+        const answerLower = answer.toLowerCase();
+        
+        // Allow fallback responses
+        if (answerLower.includes('do not have') || answerLower.includes('not available')) {
+            return true;
+        }
+        
+        // Check if key terms in answer exist in context
+        const contextText = fencedContext.facts.map(f => f.text).join(' ').toLowerCase();
+        const answerWords = answerLower.split(/\W+/).filter(w => w.length > 3);
+        
+        // At least 50% of significant words should be in context
+        const contextWords = contextText.split(/\W+/);
+        const matchingWords = answerWords.filter(word => 
+            contextWords.some(contextWord => 
+                contextWord.includes(word) || word.includes(contextWord)
+            )
+        );
+        
+        return matchingWords.length / answerWords.length >= 0.5;
     }
 
     /**
