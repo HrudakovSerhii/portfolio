@@ -44,11 +44,11 @@ class OptimizedChatIntegration {
           reject(new Error('Worker initialization timeout'));
         }, 30000);
 
-        this.worker.addEventListener('message', function initHandler(event) {
+        const initHandler = (event) => {
           if (event.data.type === 'ready') {
             clearTimeout(timeout);
-            this.removeEventListener('message', initHandler);
-            
+            this.worker.removeEventListener('message', initHandler);
+
             if (event.data.success) {
               console.log('✅ ML Worker initialized successfully');
               this.isInitialized = true;
@@ -57,7 +57,9 @@ class OptimizedChatIntegration {
               reject(new Error(event.data.error || 'Worker initialization failed'));
             }
           }
-        });
+        };
+
+        this.worker.addEventListener('message', initHandler);
       });
 
     } catch (error) {
@@ -71,17 +73,17 @@ class OptimizedChatIntegration {
    */
   setupWorkerHandlers() {
     this.worker.addEventListener('message', (event) => {
-      const { type, data } = event.data;
+      const { type, message, progress, error } = event.data;
 
       switch (type) {
         case 'status':
-          console.log('Worker status:', data.message);
+          console.log('Worker status:', message);
           break;
         case 'progress':
-          console.log('Loading progress:', data.progress);
+          console.log('Loading progress:', progress);
           break;
         case 'error':
-          console.error('Worker error:', data.error);
+          console.error('Worker error:', error);
           break;
       }
     });
