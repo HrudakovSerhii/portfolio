@@ -181,7 +181,8 @@ class ContextFencer {
 
         return factualPatterns.some(pattern => pattern.test(sentence)) &&
                sentence.length > 10 && // Minimum length
-               !sentence.includes('?'); // Not a question
+               !sentence.includes('?') && // Not a question
+               !/^(what|how|why|when|where|who)\b/i.test(sentence.trim()); // Not a question
     }
 
     /**
@@ -192,7 +193,7 @@ class ContextFencer {
     classifyFactType(fact) {
         if (/\b(experience|years|worked|working)\b/i.test(fact)) return 'experience';
         if (/\b(role|position|title|manager|developer)\b/i.test(fact)) return 'role';
-        if (/\b(skill|technology|language|framework)\b/i.test(fact)) return 'skill';
+        if (/\b(skill|technology|language|framework|knows|javascript|python|react)\b/i.test(fact)) return 'skill';
         if (/\b(education|degree|university|studied)\b/i.test(fact)) return 'education';
         if (/\b(project|built|created|developed)\b/i.test(fact)) return 'project';
         return 'general';
