@@ -12,7 +12,7 @@ class OptimizedChatIntegration {
     this.isInitialized = false;
     this.conversationHistory = [];
     this.currentStyle = 'developer';
-    
+
     // Performance tracking
     this.metrics = {
       totalQueries: 0,
@@ -101,15 +101,16 @@ class OptimizedChatIntegration {
     try {
       // Find relevant topics using the optimized service
       const relevantTopics = this.cvDataService.findRelevantTopics(userMessage, 2);
-      
+
       // Calculate confidence based on match quality
       const confidence = this.cvDataService.calculateConfidence(relevantTopics, userMessage);
 
       // If confidence is too low, return fallback response
       if (confidence < 0.4) {
         const fallbackResponse = this.cvDataService.getFallbackResponse(style, confidence);
-        
+
         this.updateMetrics(startTime, false);
+
         return {
           answer: fallbackResponse,
           confidence: confidence,
@@ -121,21 +122,21 @@ class OptimizedChatIntegration {
 
       // Build focused context
       const context = this.cvDataService.buildContext(relevantTopics, style);
-      
+
       // Create optimized prompt
       const prompt = this.cvDataService.createPrompt(
-        userMessage, 
-        context, 
-        style, 
+        userMessage,
+        context,
+        style,
         this.conversationHistory.slice(-2)
       );
 
       // Send to worker for text generation
       const response = await this.generateResponse(prompt, userMessage, relevantTopics);
-      
+
       // Update conversation history
       this.updateConversationHistory(userMessage, response.answer, relevantTopics);
-      
+
       // Update metrics
       this.updateMetrics(startTime, true);
 
@@ -149,7 +150,7 @@ class OptimizedChatIntegration {
     } catch (error) {
       console.error('Query processing failed:', error);
       this.updateMetrics(startTime, false);
-      
+
       return {
         answer: "I'm having trouble processing your question right now. Could you try rephrasing it?",
         confidence: 0.1,
@@ -174,7 +175,7 @@ class OptimizedChatIntegration {
         if (event.data.type === 'response' && event.data.query === originalQuery) {
           clearTimeout(timeout);
           this.worker.removeEventListener('message', messageHandler);
-          
+
           resolve({
             answer: event.data.answer,
             matchedTopics: relevantTopics.map(topic => ({
@@ -228,10 +229,10 @@ class OptimizedChatIntegration {
    */
   updateMetrics(startTime, success) {
     this.metrics.totalQueries++;
-    
+
     const responseTime = Date.now() - startTime;
-    this.metrics.averageResponseTime = 
-      (this.metrics.averageResponseTime * (this.metrics.totalQueries - 1) + responseTime) / 
+    this.metrics.averageResponseTime =
+      (this.metrics.averageResponseTime * (this.metrics.totalQueries - 1) + responseTime) /
       this.metrics.totalQueries;
 
     if (success) {
@@ -268,7 +269,7 @@ class OptimizedChatIntegration {
   getMetrics() {
     return {
       ...this.metrics,
-      successRate: this.metrics.totalQueries > 0 ? 
+      successRate: this.metrics.totalQueries > 0 ?
         (this.metrics.successfulResponses / this.metrics.totalQueries) * 100 : 0,
       conversationLength: this.conversationHistory.length
     };
