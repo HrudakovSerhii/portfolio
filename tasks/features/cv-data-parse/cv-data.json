@@ -1,0 +1,563 @@
+{
+  "$schema": "cv-schema-enhanced.json",
+  "metadata": {
+    "version": "2.0",
+    "lastUpdated": "2025-11-07",
+    "totalSections": 32,
+    "embeddingModel": "Xenova/distilbert-base-uncased",
+    "embeddingDimensions": 768
+  },
+  "sections": {
+    "core": {
+      "main_profile": {
+        "id": "main_profile",
+        "keywords": ["Serhii Hrudakov", "Lead Frontend Developer", "software engineer", "10+ years", "computer science", "frontend", "fullstack", "team lead", "collaborative learning", "challenging development"],
+        "embeddingSourceText": "Serhii Hrudakov Lead Frontend Developer result-driven software engineer computer science degree 10+ years experience commercial projects TypeScript React Node.js team leadership collaborative learning environment challenging development tasks Amsterdam Netherlands",
+        "embeddings": null,
+        "responses": {
+          "hr": "Serhii is a Lead Frontend Developer with 10+ years of experience and a computer science degree. He's result-driven, seeks collaborative learning environments, and excels at challenging development tasks.",
+          "developer": "I'm Serhii, a Lead Frontend Developer with 10+ years in commercial projects. I have a computer science background and love working in collaborative teams on challenging technical problems.",
+          "friend": "Hey! I'm Serhii, been coding for over 10 years now and absolutely love it! I'm all about learning together and tackling those tricky development challenges that make you think 🚀"
+        },
+        "details": {
+          "name": "Serhii Hrudakov",
+          "title": "Lead Frontend Developer",
+          "experience_years": "10+",
+          "degree": "Master of Computer Science and Engineering at Institute of Entrepreneurship and Advanced Technologies under Lviv Polytechnic University 2004-2009",
+          "summary": "A result-driven software engineer with a computer science degree and 10+ years of experience in different commercial projects. Interested in finding a team with a collaborative learning environment and opportunities to solve challenging development tasks."
+        },
+        "relatedSections": ["frontend_stack", "leadership_style", "engineering_passion"],
+        "priority": 1,
+        "confidence": 1.0
+      },
+      "contact_info": {
+        "id": "contact_info",
+        "keywords": ["contact", "email", "linkedin", "phone", "amsterdam", "netherlands", "hrudakovserhii", "serhii-hrudakov"],
+        "embeddingSourceText": "Contact Serhii Hrudakov email hrudakovserhii@gmail.com LinkedIn serhii-hrudakov phone +31614848082 Amsterdam Netherlands mobile contact information",
+        "embeddings": null,
+        "responses": {
+          "hr": "You can reach Serhii at hrudakovserhii@gmail.com, connect on LinkedIn at serhii-hrudakov, or call +31614848082. He's based in Amsterdam, Netherlands.",
+          "developer": "Feel free to reach out! Email me at hrudakovserhii@gmail.com or connect on LinkedIn (serhii-hrudakov). I'm based in Amsterdam if you want to chat about tech.",
+          "friend": "Want to get in touch? Drop me an email at hrudakovserhii@gmail.com or find me on LinkedIn as serhii-hrudakov. I'm in Amsterdam, always up for a good tech chat! ☕"
+        },
+        "details": {
+          "email": "hrudakovserhii@gmail.com",
+          "linkedin": "serhii-hrudakov",
+          "phone": "+31614848082",
+          "location": "Amsterdam, Netherlands"
+        },
+        "relatedSections": [],
+        "priority": 2,
+        "confidence": 1.0
+      }
+    },
+    "experience": {
+      "hexaware_chatagent": {
+        "id": "hexaware_chatagent",
+        "keywords": ["ChatAgent", "Hexaware", "AI", "fullstack", "Senior Plus FullStack Engineer", "LLM", "MCP server", "WebSocket", "React", "Python", "AgGrid", "LangChain"],
+        "embeddingSourceText": "ChatAgent project Hexaware Senior Plus FullStack Engineer AI powered tools MCP server WebSocket API React AgGrid Python TypeScript LangChain KeyClock GitLab deployment containerisation fully-customisable system client configuration",
+        "embeddings": null,
+        "responses": {
+          "hr": "Led the ChatAgent project at Hexaware as Senior Plus FullStack Engineer, developing AI-powered tools with MCP servers. Managed full-stack development, WebSocket communication, and GitLab deployment pipelines.",
+          "developer": "Working on ChatAgent - a fully customizable AI system using React, Python, and LangChain. Built WebSocket APIs, integrated MCP servers, and handled the full deployment pipeline with containerization.",
+          "friend": "Currently working on this super cool AI project called ChatAgent! It's like building the future - AI agents that can read user info and help with different tools. The tech stack is amazing! 🤖"
+        },
+        "details": {
+          "company": "Hexaware",
+          "position": "Senior Plus FullStack Engineer",
+          "period": "Jun 2025 - current",
+          "project_name": "ChatAgent",
+          "description": "Development of a fully-customisable system composed by client configuration and intended to integrate AI powered tools on different levels. Agents could read user information and provide assistance using MCP server and tools.",
+          "achievements": [
+            "Led development of FE application in collaboration with UX/UI designer",
+            "Configured client-server communication channel using WebSocket API",
+            "Designed and implemented data format and LLM prompt response to render different chart types",
+            "Configured GitLab deployment pipeline and containerisation flow for QA process"
+          ],
+          "technologies": ["CRA", "React", "AgGrid", "HeadlessUI", "React Testing Library", "Jest", "TypeScript", "Python", "Node.js", "Redis", "LangChain", "KeyClock", "WebSocket API"]
+        },
+        "relatedSections": ["backend_stack", "ai_tools", "problem_solving"],
+        "priority": 1,
+        "confidence": 1.0
+      },
+      "hexaware_bonfire": {
+        "id": "hexaware_bonfire",
+        "keywords": ["Bonfire", "Hexaware", "Frontend Team Lead", "dating app", "NX monorepo", "Jest", "Playwright", "Scrum", "management", "TypeScript", "React", "SonarCloud"],
+        "embeddingSourceText": "Bonfire dating app Hexaware Frontend Team Lead 60% coding 40% management NX monorepo TypeScript React Jest Playwright SonarCloud Scrum team management brand configuration UI library components",
+        "embeddings": null,
+        "responses": {
+          "hr": "Led the Bonfire dating app project as Frontend Team Lead (60% coding/40% management). Built NX monorepo architecture, implemented comprehensive testing with Jest/Playwright, and managed team using Scrum methodology.",
+          "developer": "Built a configurable dating app platform using NX monorepo with TypeScript and React. Set up comprehensive testing pipeline with Jest/Playwright, integrated SonarCloud, and managed the team processes.",
+          "friend": "Led this really interesting dating app project! The cool part was building it as a configurable platform - each brand could customize their own version. Plus I got to balance coding with team leadership! 💕"
+        },
+        "details": {
+          "company": "Hexaware",
+          "position": "Frontend Team Lead",
+          "period": "Aug 2024 - May 2025",
+          "management_split": "60% coding / 40% management",
+          "project_description": "Dating App platform with target to specific audience group. A Web app was built to be configured per brand and use core flow from a matching engine.",
+          "achievements": [
+            "Configured app monorepo using NX where each app represented a module",
+            "Build pre-configuration for unit (Jest) and e2e (Playwright) tests coverage",
+            "Implemented pre-commit hooks to maintain feedback loop between QA and Engineering team",
+            "Implemented custom event based system using Axios interceptors",
+            "Assisted team members during development, MR review and performed ceremonies to follow Scrum framework"
+          ],
+          "technologies": ["TypeScript", "React", "ReactRouter v7", "Axios", "Zod", "RTL", "Playwright", "Gitlab DevOps", "RestAPI", "Scrum"]
+        },
+        "relatedSections": ["frontend_stack", "testing_tools", "leadership_style"],
+        "priority": 1,
+        "confidence": 1.0
+      },
+      "hexaware_notification": {
+        "id": "hexaware_notification",
+        "keywords": ["Notification System", "Hexaware", "Frontend Team Lead", "safety regulations", "AI solutions", "React", "Node.js", "Flutter", "Azure DevOps", "6000 people"],
+        "embeddingSourceText": "Notification System Hexaware Frontend Team Lead 70% coding 30% management safety regulations monitoring AI solutions React Node.js Flutter Azure DevOps national service provider 6000 employees",
+        "embeddings": null,
+        "responses": {
+          "hr": "Led the Notification System project as Frontend Team Lead (70% coding/30% management) for a national service provider with 6000+ employees. Built safety regulation system using React, Node.js, and AI solutions with Azure DevOps.",
+          "developer": "Built a comprehensive safety notification system for a large organization. Assembled and led the FE team, worked with React/Node.js stack, integrated AI helper solutions, and managed Azure DevOps pipelines.",
+          "friend": "This was a really impactful project - helping 6000+ people stay safe at work! I got to build the team from scratch and create a system that actually makes a difference in people's daily safety. 🛡️"
+        },
+        "details": {
+          "company": "Hexaware",
+          "position": "Frontend Team Lead",
+          "period": "Jun 2023 - Jun 2024",
+          "management_split": "70% coding / 30% management",
+          "project_description": "System to help employees and managers with safety regulations and monitoring in facilities using AI solutions and modern technologies for a national level service provider with 6000+ people.",
+          "achievements": [
+            "Assembled FE team and onboarded each member to the project",
+            "Provided all necessary documentation and tools to build application",
+            "Worked with strict deadlines and demanding client presentations",
+            "Responsible for feature design with UI/UX designers and BA",
+            "Assisted BE team to develop API response schemas following BFF approach",
+            "Built and maintained deployment pipelines using Azure DevOps"
+          ],
+          "technologies": ["React", "Node.js", "TypeScript", "Jest", "SCSS", "RestAPI", "Azure DevOps", "Flutter"]
+        },
+        "relatedSections": ["backend_stack", "devops_tools", "leadership_style"],
+        "priority": 1,
+        "confidence": 1.0
+      },
+      "eriksdigital_webshop": {
+        "id": "eriksdigital_webshop",
+        "keywords": ["Eriks WebShop", "EriksDigital", "Frontend Team Lead", "WebSphere", "headless", "React", "Redux", "performance", "SEO", "Localise"],
+        "embeddingSourceText": "Eriks WebShop EriksDigital Frontend Team Lead WebSphere ECommerce headless React Redux performance optimization SEO Google Lighthouse translation Localise monolithic architecture transition",
+        "embeddings": null,
+        "responses": {
+          "hr": "Led WebShop modernization at EriksDigital as Frontend Team Lead, transitioning from WebSphere to headless React architecture. Improved performance, SEO compliance, and implemented automated translation workflows.",
+          "developer": "Modernized a legacy WebSphere e-commerce platform by gradually transitioning to headless React apps. Used Redux for state management, optimized for Google Lighthouse, and automated translation workflows with Localise.",
+          "friend": "This was like digital archaeology! Taking this old WebSphere monster and gradually turning it into a modern React-based system. The performance improvements were incredible to see! 🚀"
+        },
+        "details": {
+          "company": "EriksDigital",
+          "position": "Frontend Team Lead",
+          "period": "Jan 2021 - Jan 2023",
+          "management_split": "70% coding / 30% management",
+          "project_description": "Gradual transition from monolithic WebSphere ECommerce platform to headless front-end using React. Each new feature as separate React App with shared Redux state.",
+          "achievements": [
+            "Led knowledge transfer process and team assembly",
+            "Re-developed various WebShop modules as headless solutions",
+            "Improved performance and SEO to comply with Google Lighthouse requirements",
+            "Automated translation flow and replaced custom tool with Localise",
+            "Created dynamic navigation panel based on client location for EU countries"
+          ],
+          "technologies": ["React", "TypeScript", "Redux", "Redux Saga", "StyledComponents", "CSS", "RestAPI", "JSP", "MySQL", "Localise"]
+        },
+        "relatedSections": ["frontend_stack", "performance_optimization", "leadership_style"],
+        "priority": 2,
+        "confidence": 1.0
+      },
+      "adam_webshop": {
+        "id": "adam_webshop",
+        "keywords": ["A-Dam WebShop", "A-Dam", "Senior Frontend Engineer", "e-commerce", "SPA", "Next.js", "Apollo", "GraphQL", "Saleor", "100% revenue"],
+        "embeddingSourceText": "A-Dam WebShop Senior Frontend Engineer e-commerce SPA Next.js Apollo GraphQL Saleor platform 100% revenue increase US China market B2B bulk orders performance optimization",
+        "embeddings": null,
+        "responses": {
+          "hr": "Built e-commerce SPA at A-Dam that increased yearly revenue by over 100%. Transitioned from React to Next.js, integrated with Saleor platform, and expanded to US and China markets with B2B functionality.",
+          "developer": "Built a complete e-commerce solution using React/Next.js with Apollo/GraphQL. Integrated with Saleor platform, optimized for performance, and created separate B2B version with bulk ordering features.",
+          "friend": "This was such a success story! We literally doubled the company's revenue with this e-commerce site. Plus we got to contribute back to the Saleor platform - that was pretty cool! 💰"
+        },
+        "details": {
+          "company": "A-Dam",
+          "position": "Senior Frontend Engineer",
+          "period": "Jan 2020 - Jan 2021",
+          "project_description": "E-commerce web-shop SPA for Amsterdam-based company, integrating web-shop, warehouse management, and tax reporting tools. Expanded market share in US and China.",
+          "achievements": [
+            "Built and shipped first version increasing yearly revenue by over 100%",
+            "Developed user flow for three-click purchases from social media ads",
+            "Completed transition from React to Next.js for improved UX and render time",
+            "Created B2B fork with bulk ordering and pre-order features",
+            "Developed complex Apollo wrappers for caching and load time optimization",
+            "Contributed platform improvements that were sold to Saleor owners"
+          ],
+          "technologies": ["React", "Next.js", "Python", "TypeScript", "Apollo", "GraphQL", "CSS", "RestAPI", "Redis", "Saleor"]
+        },
+        "relatedSections": ["frontend_stack", "performance_optimization", "problem_solving"],
+        "priority": 2,
+        "confidence": 1.0
+      },
+      "digitalchefs_klm": {
+        "id": "digitalchefs_klm",
+        "keywords": ["KLM Flight Assistant", "DigitalChefs", "Middle Frontend Engineer", "ReactNative", "KLM", "flight crew", "onboard service", "CRM", "Express"],
+        "embeddingSourceText": "KLM Flight Assistant DigitalChefs Middle Frontend Engineer ReactNative application KLM flight crew onboard service passengers catering multimedia shopping CRM Express Node.js aircraft configuration",
+        "embeddings": null,
+        "responses": {
+          "hr": "Developed ReactNative application for KLM flight crew at DigitalChefs, enabling onboard passenger services including catering, multimedia, and shopping. Also built CRM system for aircraft-specific configurations.",
+          "developer": "Built a ReactNative app for KLM flight crew to manage onboard services. Also developed a CRM system using Express and Node.js to configure app settings per aircraft type. Pretty cool aviation tech!",
+          "friend": "Working on something for KLM was amazing! Building an app that flight crews actually use to serve passengers - catering, entertainment, shopping. Plus the CRM to configure it per plane type! ✈️"
+        },
+        "details": {
+          "company": "DigitalChefs",
+          "position": "Middle Frontend Engineer",
+          "period": "May 2019 - Jan 2020",
+          "project_description": "Native ReactNative application to assist KLM flight crew in providing onboard services including catering, multimedia, and shopping experience.",
+          "achievements": [
+            "Developed application UI components and navigation with project designer",
+            "Built CRM system using Express and Node.js for aircraft-specific configuration"
+          ],
+          "technologies": ["React", "ReactNative", "CSS", "Jest", "RestAPI", "Android Studio", "XCode", "MySQL", "Next.js", "Express", "Node.js"]
+        },
+        "relatedSections": ["mobile_development", "backend_stack"],
+        "priority": 3,
+        "confidence": 1.0
+      },
+      "digitalchefs_taxafax": {
+        "id": "digitalchefs_taxafax",
+        "keywords": ["Taxafax", "DigitalChefs", "Middle Frontend Engineer", "ReactNative", "Dutch tax law", "tax reports", "multi-user", "client collaboration"],
+        "embeddingSourceText": "Taxafax DigitalChefs Middle Frontend Engineer ReactNative application Dutch tax law advice tax reports multi-user support login flow client collaboration tight deadlines",
+        "embeddings": null,
+        "responses": {
+          "hr": "Built ReactNative application for Dutch tax law assistance at DigitalChefs. Developed tax reporting functionality and expanded from single-user to multi-user system with authentication.",
+          "developer": "Created a ReactNative app for Dutch tax law advice and report generation. Started as single-user but expanded to multi-user with login flow. Worked closely with client under tight deadlines.",
+          "friend": "Tax law might not sound exciting, but building an app that actually helps people navigate Dutch taxes was pretty rewarding! Plus the challenge of scaling from single to multi-user was fun! 📊"
+        },
+        "details": {
+          "company": "DigitalChefs",
+          "position": "Middle Frontend Engineer",
+          "period": "Sep 2018 - May 2019",
+          "project_description": "Native ReactNative application to assist and advise on Dutch tax law per client type, helping create different tax reports and showcase status.",
+          "achievements": [
+            "Developed application design and structure with UI components",
+            "Worked in tight collaboration with client for optimal results",
+            "Expanded from single-user to multi-user support with login flow"
+          ],
+          "technologies": ["React", "ReactNative", "CSS", "RestAPI", "Android Studio", "XCode"]
+        },
+        "relatedSections": ["mobile_development", "client_collaboration"],
+        "priority": 3,
+        "confidence": 1.0
+      }
+    },
+    "skills": {
+      "frontend_stack": {
+        "id": "frontend_stack",
+        "keywords": ["frontend", "TypeScript", "React", "ReactNative", "Next.js", "JavaScript", "HTML", "CSS", "SCSS", "Redux", "StyledComponents", "Axios"],
+        "embeddingSourceText": "Frontend skills TypeScript JavaScript React ReactNative Next.js Redux Axios HTML CSS SCSS StyledComponents 10+ years experience modern patterns hooks performance optimization component architecture responsive design",
+        "embeddings": null,
+        "responses": {
+          "hr": "Expert in modern frontend technologies including TypeScript, React, Next.js, and React Native with 10+ years of experience. Proven track record in performance optimization, component architecture, and responsive design.",
+          "developer": "I'm deep into the modern frontend stack - TypeScript, React (including Native), Next.js, Redux, and all the usual suspects. Love working with hooks, optimizing performance, and building solid component architectures.",
+          "friend": "Frontend is my jam! Been working with React for years, love TypeScript, and I'm always excited about the latest patterns and optimizations. Building great UIs is what gets me up in the morning! 🎨"
+        },
+        "details": {
+          "primary_technologies": ["TypeScript", "React", "ReactNative", "Next.js", "Redux", "JavaScript", "HTML", "CSS", "SCSS", "StyledComponents", "Axios"],
+          "experience_years": "10+",
+          "specialties": ["Performance optimization", "Component architecture", "Responsive design", "Modern React patterns", "State management"],
+          "recent_projects": ["Bonfire dating app", "ChatAgent AI system", "Eriks WebShop modernization"]
+        },
+        "relatedSections": ["hexaware_bonfire", "hexaware_chatagent", "testing_tools"],
+        "priority": 1,
+        "confidence": 1.0
+      },
+      "backend_stack": {
+        "id": "backend_stack",
+        "keywords": ["backend", "Node.js", "TypeScript", "NestJS", "Express", "API", "GraphQL", "REST", "WebSocket", "Prisma", "Apollo"],
+        "embeddingSourceText": "Backend technologies TypeScript Node.js NestJS Express API development GraphQL RestAPI WebSocket API Prisma ORM Apollo server-side development database integration microservices",
+        "embeddings": null,
+        "responses": {
+          "hr": "Strong backend capabilities with Node.js, TypeScript, and modern frameworks like NestJS. Experienced in API development (GraphQL, REST, WebSocket), database integration with Prisma ORM, and Apollo.",
+          "developer": "I work with Node.js and TypeScript on the backend, using NestJS and Express. Comfortable with different API patterns - GraphQL, REST, WebSocket - and database work with Prisma ORM and Apollo.",
+          "friend": "Backend work is really satisfying too! I love building solid APIs with Node.js and TypeScript. GraphQL, REST, WebSocket - whatever the project needs. Database design with Prisma is pretty sweet! 🔧"
+        },
+        "details": {
+          "technologies": ["TypeScript", "Node.js", "NestJS", "Express", "GraphQL", "RestAPI", "WebSocket API", "Prisma ORM", "Apollo"],
+          "api_experience": ["GraphQL", "REST API", "WebSocket API"],
+          "databases": ["MySQL", "Redis"]
+        },
+        "relatedSections": ["hexaware_chatagent", "testing_tools"],
+        "priority": 2,
+        "confidence": 1.0
+      },
+      "testing_tools": {
+        "id": "testing_tools",
+        "keywords": ["testing", "Jest", "Playwright", "Cypress", "RTL", "React Testing Library", "unit tests", "e2e", "TDD", "quality assurance"],
+        "embeddingSourceText": "Testing expertise Jest Playwright Cypress RTL React Testing Library unit tests e2e testing TDD quality assurance test automation pipeline integration SonarCloud code coverage",
+        "embeddings": null,
+        "responses": {
+          "hr": "Comprehensive testing expertise with Jest, Playwright, Cypress, and React Testing Library. Strong focus on quality assurance, test automation, and maintaining high code coverage standards.",
+          "developer": "I'm big on testing - Jest for unit tests, Playwright and Cypress for e2e, RTL for React components. Love setting up comprehensive test pipelines and integrating with tools like SonarCloud for quality gates.",
+          "friend": "Testing might not be the most glamorous part, but I actually love it! There's something satisfying about building bulletproof test suites. Jest, Playwright, the whole testing ecosystem - it's great! 🧪"
+        },
+        "details": {
+          "tools": ["Jest", "Playwright", "Cypress", "React Testing Library", "SonarCloud"],
+          "methodologies": ["Unit testing", "End-to-end testing", "Test-driven development", "Snapshot testing", "Integration testing"],
+          "experience": ["Test pipeline configuration", "Pre-commit hooks", "Quality gates", "Code coverage analysis", "Automated testing workflows"]
+        },
+        "relatedSections": ["hexaware_bonfire", "quality_focus"],
+        "priority": 2,
+        "confidence": 1.0
+      },
+      "devops_tools": {
+        "id": "devops_tools",
+        "keywords": ["DevOps", "Azure", "GitLab", "GitHub", "Docker", "CI/CD", "deployment", "containerization", "pipelines"],
+        "embeddingSourceText": "DevOps tools Azure GitLab GitHub Docker CI/CD deployment pipelines containerization Azure DevOps GitLab DevOps continuous integration continuous deployment automation",
+        "embeddings": null,
+        "responses": {
+          "hr": "Experienced with modern DevOps tools including Azure, GitLab, GitHub, and Docker. Skilled in CI/CD pipeline configuration, containerization, and deployment automation across multiple projects.",
+          "developer": "I work with the full DevOps stack - Azure, GitLab, GitHub for version control and CI/CD, Docker for containerization. Love setting up automated pipelines and deployment workflows.",
+          "friend": "DevOps is like the magic that makes everything work smoothly! Azure, GitLab, Docker - I love setting up those automated pipelines that just make deployment a breeze! 🚀"
+        },
+        "details": {
+          "tools": ["Azure", "GitLab", "GitHub", "Docker", "Azure DevOps"],
+          "specialties": ["CI/CD pipelines", "Containerization", "Deployment automation", "Version control", "Cloud platforms"],
+          "experience": ["GitLab deployment pipeline configuration", "Azure DevOps pipeline management", "Docker containerization flows", "QA process automation"]
+        },
+        "relatedSections": ["hexaware_chatagent", "hexaware_notification"],
+        "priority": 2,
+        "confidence": 1.0
+      },
+      "languages": {
+        "id": "languages",
+        "keywords": ["languages", "English", "Dutch", "Ukrainian", "fluent", "basic", "native", "multilingual", "communication"],
+        "embeddingSourceText": "Languages English fluent Dutch basic Ukrainian native multilingual communication international teams multicultural work environments Amsterdam Netherlands",
+        "embeddings": null,
+        "responses": {
+          "hr": "Multilingual professional with fluent English, basic Dutch, and native Ukrainian. Excellent communication skills for international teams and multicultural work environments in Amsterdam.",
+          "developer": "I speak English fluently for international dev teams, basic Dutch since I'm in Amsterdam, and Ukrainian is my native language. Great for working with diverse, multicultural teams.",
+          "friend": "I'm pretty multilingual! Ukrainian is my native language, English is fluent from all the international work, and I'm learning Dutch since I live in Amsterdam! 🌍"
+        },
+        "details": {
+          "english": "Fluent",
+          "dutch": "Basic", 
+          "ukrainian": "Native",
+          "context": "International work environments, multicultural teams, Amsterdam-based"
+        },
+        "relatedSections": ["cultural_values", "contact_info"],
+        "priority": 3,
+        "confidence": 1.0
+      },
+      "education": {
+        "id": "education",
+        "keywords": ["education", "Master", "Computer Science", "Engineering", "Lviv Polytechnic", "University", "2004-2009", "degree"],
+        "embeddingSourceText": "Education Master Computer Science Engineering Institute Entrepreneurship Advanced Technologies Lviv Polytechnic University 2004-2009 degree academic background algorithms data structures",
+        "embeddings": null,
+        "responses": {
+          "hr": "Holds a Master's degree in Computer Science and Engineering from the Institute of Entrepreneurship and Advanced Technologies under Lviv Polytechnic University (2004-2009), providing strong academic foundation.",
+          "developer": "I have a Master's in Computer Science and Engineering from Lviv Polytechnic University. The academic background really helped with understanding algorithms, data structures, and system design fundamentals.",
+          "friend": "Got my Master's in Computer Science from Lviv Polytechnic University back in 2009. The theoretical foundation has been super helpful throughout my career, especially for complex problem-solving! 🎓"
+        },
+        "details": {
+          "degree": "Master of Computer Science and Engineering",
+          "institution": "Institute of Entrepreneurship and Advanced Technologies under Lviv Polytechnic University",
+          "period": "2004-2009",
+          "focus": "Computer Science and Engineering fundamentals"
+        },
+        "relatedSections": ["main_profile", "problem_solving"],
+        "priority": 3,
+        "confidence": 1.0
+      }
+    },
+    "themes": {
+      "leadership_style": {
+        "id": "leadership_style",
+        "keywords": ["leadership", "management", "team lead", "mentorship", "Scrum", "happy teams", "teaching", "collaboration", "efficient teams", "multicultural"],
+        "embeddingSourceText": "Leadership style building efficient happy teams mentorship teaching skills Scrum framework Frontend Team Lead experience collaborative learning multicultural backgrounds team assembly onboarding knowledge transfer",
+        "embeddings": null,
+        "responses": {
+          "hr": "Proven leadership approach focused on building efficient and happy teams. Experienced in team assembly, mentorship, knowledge transfer, and Scrum methodology. Strong belief in teaching as a path to mastery.",
+          "developer": "I believe in building teams where people actually want to work. Focus on mentorship, knowledge sharing, and creating environments where everyone can learn and grow. Scrum helps, but culture matters more.",
+          "friend": "I'm really proud of the teams I've built over the years! My philosophy is simple - happy teams are productive teams. I love mentoring people and creating that collaborative vibe where everyone thrives! 🤝"
+        },
+        "details": {
+          "philosophy": "Mastering any skill requires the ability to teach it to others. Building efficient and happy teams through collaborative learning and multicultural understanding.",
+          "experience": ["Frontend Team Lead roles", "Team assembly and onboarding", "Knowledge transfer processes", "Scrum ceremonies", "Mentorship and coaching"],
+          "team_size": "Multiple teams across different projects",
+          "methodologies": ["Scrum framework", "Collaborative learning", "Knowledge transfer", "Mentorship programs"]
+        },
+        "relatedSections": ["hexaware_bonfire", "hexaware_notification", "eriksdigital_webshop", "cultural_values", "learning_approach"],
+        "priority": 2,
+        "confidence": 1.0
+      },
+      "problem_solving": {
+        "id": "problem_solving",
+        "keywords": ["problem solving", "engineering", "architecture", "solutions", "challenges", "innovation", "technical challenges", "system design", "optimization"],
+        "embeddingSourceText": "Problem solving engineering approach architecture solutions technical challenges innovation system design performance optimization complex integrations monolithic to headless transitions AI integration",
+        "embeddings": null,
+        "responses": {
+          "hr": "Strong problem-solving capabilities demonstrated through complex technical challenges like monolithic to headless transitions, AI system integration, and performance optimization. Engineering mindset focused on innovative solutions.",
+          "developer": "I love tackling complex technical problems - whether it's migrating legacy systems, integrating AI tools, or optimizing performance. I approach challenges systematically and enjoy finding elegant solutions to tough problems.",
+          "friend": "Give me a gnarly technical challenge and I'm in my element! Whether it's untangling legacy code, building AI integrations, or optimizing performance - I love the puzzle-solving aspect of engineering! 🧩"
+        },
+        "details": {
+          "approach": "Systematic engineering approach to complex technical challenges",
+          "examples": [
+            "Monolithic to headless architecture transitions",
+            "AI system integration and customization",
+            "Performance optimization for large-scale applications",
+            "Complex state management solutions",
+            "Legacy system modernization"
+          ]
+        },
+        "relatedSections": ["hexaware_chatagent", "eriksdigital_webshop", "adam_webshop", "engineering_passion"],
+        "priority": 3,
+        "confidence": 1.0
+      },
+      "performance_optimization": {
+        "id": "performance_optimization",
+        "keywords": ["performance", "optimization", "Google Lighthouse", "SEO", "caching", "Apollo", "load time", "render time", "UX improvement"],
+        "embeddingSourceText": "Performance optimization Google Lighthouse SEO compliance caching Apollo wrappers load time render time UX improvement Next.js SSR three-click user flow social media advertisements",
+        "embeddings": null,
+        "responses": {
+          "hr": "Proven expertise in performance optimization, achieving Google Lighthouse compliance, SEO improvements, and UX enhancements. Demonstrated ability to optimize load times and user experience across multiple projects.",
+          "developer": "I'm passionate about performance - from Google Lighthouse optimization to complex Apollo caching strategies. Love working on load time improvements, render optimization, and creating smooth user experiences.",
+          "friend": "Performance optimization is like a fun puzzle! Making sites blazingly fast, hitting those Google Lighthouse scores, optimizing every millisecond - there's something really satisfying about it! ⚡"
+        },
+        "details": {
+          "focus_areas": ["Google Lighthouse compliance", "SEO optimization", "Load time reduction", "Render time improvement", "Caching strategies"],
+          "techniques": ["Apollo wrapper optimization", "Next.js SSR implementation", "Three-click user flows", "Cache bottleneck analysis", "Performance monitoring"],
+          "achievements": ["Google Lighthouse compliance for e-commerce", "Complex Apollo caching solutions", "UX render time improvements"]
+        },
+        "relatedSections": ["eriksdigital_webshop", "adam_webshop", "frontend_stack"],
+        "priority": 3,
+        "confidence": 1.0
+      },
+      "learning_approach": {
+        "id": "learning_approach",
+        "keywords": ["learning", "collaborative learning", "teaching", "mastery", "continuous improvement", "knowledge transfer", "documentation", "onboarding"],
+        "embeddingSourceText": "Learning approach collaborative learning teaching mastery continuous improvement knowledge transfer documentation onboarding team members skill development mentorship belief teaching others",
+        "embeddings": null,
+        "responses": {
+          "hr": "Strong advocate for collaborative learning and knowledge transfer. Believes in mastering skills through teaching others, demonstrated through team onboarding, documentation creation, and mentorship activities.",
+          "developer": "I'm all about collaborative learning and knowledge sharing. I believe you truly master something when you can teach it to others. Love creating documentation, onboarding new team members, and sharing knowledge.",
+          "friend": "I'm a huge believer in learning together! My philosophy is that you don't really know something until you can teach it to someone else. I love helping teammates grow and learn new things! 📚"
+        },
+        "details": {
+          "philosophy": "Mastering any skill requires the ability to teach it to others",
+          "practices": ["Collaborative learning environments", "Knowledge transfer processes", "Team onboarding and documentation", "Mentorship and coaching", "Skill sharing sessions"],
+          "experience": ["Team member onboarding", "Documentation creation", "Knowledge transfer leadership", "Mentorship across projects"]
+        },
+        "relatedSections": ["leadership_style", "cultural_values", "hexaware_notification"],
+        "priority": 3,
+        "confidence": 1.0
+      }
+    },
+    "personal": {
+      "engineering_passion": {
+        "id": "engineering_passion",
+        "keywords": ["engineer by heart", "building", "smart home", "LLM", "local AI", "passion", "innovation", "motorcycle", "garage", "Cursor", "30 years"],
+        "embeddingSourceText": "Engineer by heart building smart home solution local LLM Cursor 30 years engineering passion motorcycle garage tools innovation technology family comfort automation",
+        "embeddings": null,
+        "responses": {
+          "hr": "Demonstrates lifelong engineering passion, from childhood motorcycle projects to current smart home automation using local LLM technology. Shows continuous innovation drive and practical application of technical skills.",
+          "developer": "I've been building things for 30 years - started with an old motorcycle in my dad's garage, now I'm building smart home solutions with local LLMs and Cursor. Engineering is just who I am.",
+          "friend": "I'm an engineer by heart! Started tinkering with motorcycles as a kid, and now 30 years later I'm building smart home stuff with AI. The tools change, but the passion for building never does! 🔧"
+        },
+        "details": {
+          "current_projects": "Smart home solution using Cursor and local LLM to make home more comfortable for family",
+          "engineering_journey": "Started with old motorcycle and rusty tools in father's garage, evolved to modern AI and automation projects",
+          "interests": ["Smart home automation", "Local LLM integration", "Family-focused technology solutions", "Practical engineering applications"]
+        },
+        "relatedSections": ["problem_solving", "outdoor_activities"],
+        "priority": 3,
+        "confidence": 1.0
+      },
+      "outdoor_activities": {
+        "id": "outdoor_activities",
+        "keywords": ["hiking", "mountains", "snowboarding", "ice climbing", "diving", "windsurfing", "nature", "adventure", "organizing", "multi-day", "peaks"],
+        "embeddingSourceText": "Outdoor activities hiking mountains snowboarding ice climbing diving windsurfing nature adventure organizing multi-day hiking friends family mountain peaks connection nature bigger than neighborhood",
+        "embeddings": null,
+        "responses": {
+          "hr": "Active outdoor enthusiast with experience in hiking, snowboarding, ice climbing, diving, and windsurfing. Demonstrates leadership through organizing multi-day adventures and shows strong work-life balance.",
+          "developer": "I love getting outdoors - hiking, snowboarding, ice climbing, diving, windsurfing. Growing up near mountains got me hooked. I often organize multi-day trips for friends and family.",
+          "friend": "I'm totally addicted to outdoor adventures! Hiking, snowboarding, ice climbing, diving - you name it! I love organizing trips for friends and family. There's something magical about connecting with nature! 🏔️"
+        },
+        "details": {
+          "activities": ["Hiking", "Snowboarding", "Ice climbing", "Mountaineering", "Diving", "Windsurfing"],
+          "background": "Grew up next to mountains, in love with hikes and reaching mountain peaks",
+          "philosophy": "Sharing the beauty of nature and the feeling of connection with something bigger than your neighborhood"
+        },
+        "relatedSections": ["cultural_values", "engineering_passion"],
+        "priority": 4,
+        "confidence": 1.0
+      },
+      "cultural_values": {
+        "id": "cultural_values",
+        "keywords": ["cultures", "travel", "food", "people", "diversity", "learning", "teaching", "fatherhood", "multicultural", "understanding", "connection"],
+        "embeddingSourceText": "Cultural values meeting new people trying different food understanding other cultures travel diversity multicultural work environments fatherhood teaching skills connecting understanding people immeasurable experience",
+        "embeddings": null,
+        "responses": {
+          "hr": "Strong cultural adaptability and appreciation for diversity. Extensive experience working with multicultural teams, values continuous learning, and brings unique perspective as a father committed to teaching and mentorship.",
+          "developer": "I love working with diverse teams - different cultures, backgrounds, perspectives. My experience across various cultural environments has taught me how to connect with and understand people from all walks of life.",
+          "friend": "I absolutely love meeting new people, trying different foods, and learning about other cultures! Working with diverse teams has been incredible, and becoming a father really opened my eyes to the importance of teaching and connecting with others! 🌍"
+        },
+        "details": {
+          "values": ["Cultural diversity", "Continuous learning", "Teaching and mentorship", "Human connection", "Understanding different perspectives"],
+          "experience": ["Work across diverse environments", "Colleagues from various cultural backgrounds", "International project experience"],
+          "interests": ["Meeting new people", "Trying different food", "Understanding other cultures", "Travel and exploration"]
+        },
+        "relatedSections": ["leadership_style", "outdoor_activities"],
+        "priority": 4,
+        "confidence": 1.0
+      }
+    }
+  },
+  "personality": {
+    "traits": ["Result-driven", "Collaborative", "Engineering-minded", "Adventurous", "Culturally curious", "Teaching-oriented", "Innovation-focused", "Team-building"],
+    "values": ["Collaborative learning", "Quality craftsmanship", "Cultural diversity", "Continuous improvement", "Teaching and mentorship", "Work-life balance", "Innovation", "Team happiness"],
+    "workStyle": ["Collaborative learning environment", "Challenging development tasks", "Team leadership", "Quality-focused development", "Agile/Scrum methodology", "Knowledge sharing", "Mentorship"],
+    "interests": ["Smart home automation", "AI and LLM technology", "Outdoor adventures", "Cultural exploration", "Team building", "Teaching and mentorship", "Engineering challenges"],
+    "communication_style": {
+      "hr": {
+        "tone": "Professional and achievement-focused",
+        "language": "Business-oriented, clear, metrics-driven",
+        "focus": "Impact, results, team leadership, professional growth",
+        "greeting": "Hello! I'm Serhii Hrudakov, a Lead Frontend Developer with 10+ years of experience building efficient teams and delivering impactful technical solutions."
+      },
+      "developer": {
+        "tone": "Technical and collaborative",
+        "language": "Direct, specific, uses technical terminology",
+        "focus": "Architecture, problem-solving, technologies, implementation details",
+        "greeting": "Hey there! I'm Serhii, a Lead Frontend Developer who loves tackling complex technical challenges with modern tech stacks like TypeScript, React, and Node.js."
+      },
+      "friend": {
+        "tone": "Casual and enthusiastic",
+        "language": "Friendly, informal, expressive",
+        "focus": "Passion for technology, personal journey, interesting projects",
+        "greeting": "Hi! I'm Serhii, and I'm absolutely passionate about building cool stuff with code! Been engineering for 30 years and still get excited about every new project! 🚀"
+      }
+    }
+  },
+  "responseTemplates": {
+    "noMatch": {
+      "hr": "I don't have specific information about that topic in Serhii's professional background. However, I can provide details about his related experience in frontend development, team leadership, or technical project management.",
+      "developer": "That's not something I have details about in his experience. Want to ask about specific technologies like React, TypeScript, or projects he's worked on instead?",
+      "friend": "Hmm, that's not something he mentioned in his CV. Maybe try asking about his frontend work, leadership experience, or outdoor adventures? I'd love to help you find what you're looking for!"
+    },
+    "lowConfidence": {
+      "hr": "I may have some relevant information, but could you be more specific about what aspect interests you? This will help me provide more accurate details about Serhii's experience.",
+      "developer": "I might have something related to that, but could you be more specific? The more context you give me about what you're looking for, the better I can help.",
+      "friend": "I think I might know what you're asking about, but could you give me a bit more detail? Want to make sure I give you the right info about Serhii! 🤔"
+    },
+    "fallbackRequest": {
+      "hr": "To ensure I provide the most accurate information about Serhii's experience, could you please rephrase your question or specify what particular aspect you'd like to know about?",
+      "developer": "Let me make sure I understand what you're looking for about Serhii's background. Could you rephrase that or give me a bit more context?",
+      "friend": "I want to make sure I get this right about Serhii! Could you try asking that in a different way? I'm here to help! 🎯"
+    },
+    "emailFallback": {
+      "hr": "For more detailed discussions about Serhii's experience and how he can contribute to your team, I'd be happy to connect you directly. You can reach him at hrudakovserhii@gmail.com.",
+      "developer": "This sounds like something that would benefit from a direct conversation with Serhii. Want to reach out to him directly? You can email him at hrudakovserhii@gmail.com or connect on LinkedIn.",
+      "friend": "You know what? This sounds like something Serhii should chat with you about directly! You can reach him at hrudakovserhii@gmail.com or find him on LinkedIn as serhii-hrudakov! 😊"
+    }
+  }
+}
