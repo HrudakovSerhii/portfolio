@@ -23,7 +23,7 @@ class HybridChatIntegration extends SimpleChatIntegration {
       // Try to initialize ML worker
       if (this.useTextGeneration) {
         try {
-          this.worker = new Worker('/scripts/workers/constrained-ml-worker.js');
+          this.worker = new Worker('/scripts/workers/optimized-ml-worker.js');
           this.setupWorkerHandlers();
 
           // Send initialization message to worker

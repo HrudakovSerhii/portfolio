@@ -149,17 +149,13 @@
   - Ensure accessibility compliance for chat interface
   - _Requirements: 1.1, 2.1, 6.1_
 
-- [x] 18. Implement WebLLM parallel processing system
+- [x] 18. Simplified engine management system
 
-  - Create WebLLM worker with Llama-2-7B model integration
-  - Build WebLLM service wrapper for prompt-based query processing
-  - Implement dual-engine manager for A/B testing between DistilBERT and WebLLM
-  - Add performance monitoring and comparison metrics
-  - Create prompt engineering system for CV-specific responses
-  - Implement graceful fallback between engines
-  - Add memory management and progressive model loading
-  - Write comprehensive tests for WebLLM integration
-  - _Requirements: Enhanced accuracy, reduced hallucination, performance comparison_
+  - Simplified dual-engine manager to focus on single DistilBERT engine
+  - Removed WebLLM integration to reduce complexity
+  - Maintained performance monitoring for DistilBERT engine
+  - Streamlined architecture for better maintainability
+  - _Requirements: Simplified architecture, focused performance_
 
 - [ ] 19. Final integration and testing
   - Integrate all chat-bot components with main application
