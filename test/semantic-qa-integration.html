@@ -486,7 +486,7 @@
                     
                     <h5>Cache Statistics</h5>
                     <p><strong>Embedding Cache Size:</strong> ${status.embeddingService.size}</p>
-                    <p><strong>Indexed Chunks:</strong> ${status.similarityMatcher.indexedChunks}</p>
+                    <p><strong>Cache Stats:</strong> ${JSON.stringify(status.cacheStats)}</p>
                 </div>
             `;
         };
