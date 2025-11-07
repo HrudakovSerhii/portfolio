@@ -191,7 +191,9 @@ describe('Dual Worker Coordinator Integration', () => {
 
     it('should handle missing CV chunks gracefully', async () => {
       // Test that the coordinator can handle empty or missing CV chunks
-      expect(() => coordinator.processQuestion('Test question', [])).not.toThrow();
+      await expect(
+        coordinator.processQuestion('Test question', [])
+      ).rejects.toThrow('Coordinator not initialized');
     });
   });
 
