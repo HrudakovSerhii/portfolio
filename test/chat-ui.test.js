@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import ChatUIBusinessLogic from '../src/scripts/modules/chat-bot/chat-ui-business-logic.js';
 
 /**
- * Test for Chat Business Logic (without DOM dependencies)
+ * Test for Chat UI (placeholder - business logic was removed)
  * 
- * This test focuses on testing the actual business logic implementation
- * by mocking only the DOM connection layer dependency.
+ * The ChatUIBusinessLogic was removed as it was an experimental separation
+ * that wasn't used in the main system.
  */
 
 // Mock DOM Connector - this represents the connection layer you mentioned

@@ -11,7 +11,7 @@ class ChatBot {
     this.cvDataService = null;
     this.currentStyle = null;
     this.initializationPromise = null;
-    this.performanceManager = null;
+
     this.sessionStartTime = Date.now();
     this.queryCount = 0;
     this.engineMode = 'distilbert'; // Single engine mode
@@ -53,9 +53,7 @@ class ChatBot {
       this.ui.initialize();
       this.ui.showLoadingState();
 
-      // Initialize performance manager
-      this.performanceManager = new this._PerformanceManager();
-      this.performanceManager.initialize();
+
 
       // Initialize CV data service first
       this.cvDataService = new this._CVDataService();
@@ -137,15 +135,13 @@ class ChatBot {
         { default: ConversationManager },
         { default: CVDataService },
         { default: StyleManager },
-        { default: FallbackHandler },
-        { default: PerformanceManager }
+        { default: FallbackHandler }
       ] = await Promise.all([
         import('./chat-ui.js'),
         import('./conversation-manager.js'),
         import('./cv-data-service.js'),
         import('./style-manager.js'),
-        import('./fallback-handler.js'),
-        import('./performance-manager.js')
+        import('./fallback-handler.js')
       ]);
 
       // Store classes for this instance
@@ -154,7 +150,6 @@ class ChatBot {
       this._CVDataService = CVDataService;
       this._StyleManager = StyleManager;
       this._FallbackHandler = FallbackHandler;
-      this._PerformanceManager = PerformanceManager;
 
       const moduleLoadTime = performance.now() - moduleLoadStart;
       if (window.isDev) {
@@ -296,13 +291,7 @@ class ChatBot {
       // Get conversation context
       const context = this.conversationManager.getContext();
 
-      // Log performance event
-      this.performanceManager?.logPerformanceEvent('query_started', {
-        queryLength: message.length,
-        contextSize: context.length,
-        style: this.currentStyle,
-        queryNumber: this.queryCount
-      });
+
 
       // Process with direct worker communication
       this.worker.postMessage({
@@ -364,16 +353,7 @@ class ChatBot {
    * Clean up resources with performance cleanup
    */
   async destroy() {
-    // Log session statistics
-    if (this.performanceManager) {
-      const sessionDuration = Date.now() - this.sessionStartTime;
-      this.performanceManager.logPerformanceEvent('session_ended', {
-        sessionDuration,
-        totalQueries: this.queryCount,
-        averageQueryTime: this.performanceManager.getAverageQueryTime(),
-        engineMode: this.engineMode
-      });
-    }
+
 
 
 
@@ -396,9 +376,7 @@ class ChatBot {
       this.conversationManager.clearHistory();
     }
 
-    if (this.performanceManager) {
-      this.performanceManager.cleanup();
-    }
+
 
     // Reset state
     this.isInitialized = false;
@@ -593,15 +571,8 @@ class ChatBot {
    * @returns {Object} Performance metrics
    */
   getPerformanceMetrics() {
-    if (!this.performanceManager) {
-      return { error: 'Performance manager not initialized' };
-    }
-
-    const metrics = this.performanceManager.getMetrics();
-
     // Add session-specific metrics
     return {
-      ...metrics,
       sessionMetrics: {
         sessionDuration: Date.now() - this.sessionStartTime,
         totalQueries: this.queryCount,
@@ -644,13 +615,7 @@ class ChatBot {
   _handleInitializationError(error) {
     console.error('ChatBot: Initialization error:', error);
 
-    // Log performance event
-    if (this.performanceManager) {
-      this.performanceManager.logPerformanceEvent('initialization_error', {
-        error: error.message,
-        sessionDuration: Date.now() - this.sessionStartTime
-      });
-    }
+
 
     let errorMessage;
     switch (error.message) {
