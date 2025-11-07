@@ -36,3 +36,4 @@ inclusion: always
 - User prefers to use their additional IDE for editing and running applications
 - Focus on code implementation and let user handle application execution
 - When running tests, use the correct format: `npm test filename` (not `npm test -- filename --run`)
+- NO integration tests until explicitly requested by the user - focus on unit tests only

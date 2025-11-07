@@ -9,13 +9,13 @@ class PerformanceMonitor {
       modelLoadTime: 0,
       queryProcessingTimes: [],
       memoryUsage: [],
-      sessionStartTime: Date.now()
+      sessionStartTime: Date.now(),
     };
 
     this.resourceMonitor = {
       interval: null,
       memoryThreshold: 200 * 1024 * 1024, // 200MB threshold
-      performanceObserver: null
+      performanceObserver: null,
     };
 
     this.isMonitoring = false;
@@ -28,7 +28,7 @@ class PerformanceMonitor {
   initialize() {
     this.startResourceMonitoring();
     this.setupPerformanceObserver();
-    this.logPerformanceEvent('performance_monitor_initialized');
+    this.logPerformanceEvent("performance_monitor_initialized");
   }
 
   /**
@@ -50,31 +50,33 @@ class PerformanceMonitor {
    * Setup Performance Observer for detailed metrics
    */
   setupPerformanceObserver() {
-    if (typeof PerformanceObserver === 'undefined') {
-      console.warn('PerformanceObserver not supported');
+    if (typeof PerformanceObserver === "undefined") {
+      console.warn("PerformanceObserver not supported");
       return;
     }
 
     try {
-      this.resourceMonitor.performanceObserver = new PerformanceObserver((list) => {
-        const entries = list.getEntries();
+      this.resourceMonitor.performanceObserver = new PerformanceObserver(
+        (list) => {
+          const entries = list.getEntries();
 
-        entries.forEach(entry => {
-          if (entry.name.includes('chat-bot')) {
-            this.logPerformanceEvent('performance_entry', {
-              name: entry.name,
-              duration: entry.duration,
-              startTime: entry.startTime
-            });
-          }
-        });
-      });
+          entries.forEach((entry) => {
+            if (entry.name.includes("chat-bot")) {
+              this.logPerformanceEvent("performance_entry", {
+                name: entry.name,
+                duration: entry.duration,
+                startTime: entry.startTime,
+              });
+            }
+          });
+        }
+      );
 
       this.resourceMonitor.performanceObserver.observe({
-        entryTypes: ['measure', 'navigation', 'resource']
+        entryTypes: ["measure", "navigation", "resource"],
       });
     } catch (error) {
-      console.warn('Failed to setup PerformanceObserver:', error);
+      console.warn("Failed to setup PerformanceObserver:", error);
     }
   }
 
@@ -82,12 +84,12 @@ class PerformanceMonitor {
    * Record current memory usage
    */
   recordMemoryUsage() {
-    if (typeof performance.memory !== 'undefined') {
+    if (typeof performance.memory !== "undefined") {
       const memoryInfo = {
         used: performance.memory.usedJSHeapSize,
         total: performance.memory.totalJSHeapSize,
         limit: performance.memory.jsHeapSizeLimit,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       this.metrics.memoryUsage.push(memoryInfo);
@@ -108,10 +110,13 @@ class PerformanceMonitor {
   checkMemoryThreshold() {
     const currentMemory = this.recordMemoryUsage();
 
-    if (currentMemory && currentMemory.used > this.resourceMonitor.memoryThreshold) {
-      this.logPerformanceEvent('memory_threshold_exceeded', {
+    if (
+      currentMemory &&
+      currentMemory.used > this.resourceMonitor.memoryThreshold
+    ) {
+      this.logPerformanceEvent("memory_threshold_exceeded", {
         used: currentMemory.used,
-        threshold: this.resourceMonitor.memoryThreshold
+        threshold: this.resourceMonitor.memoryThreshold,
       });
 
       // Emit event for other components to handle cleanup
@@ -123,12 +128,12 @@ class PerformanceMonitor {
    * Emit memory pressure event for other components to handle
    */
   emitMemoryPressureEvent(memoryInfo) {
-    const event = new CustomEvent('memoryPressure', {
+    const event = new CustomEvent("memoryPressure", {
       detail: {
         memoryInfo,
         threshold: this.resourceMonitor.memoryThreshold,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
 
     window.dispatchEvent(event);
@@ -152,9 +157,9 @@ class PerformanceMonitor {
     const timerId = `query_${queryId}_${Date.now()}`;
     performance.mark(`${timerId}_start`);
 
-    this.logPerformanceEvent('query_timer_started', {
+    this.logPerformanceEvent("query_timer_started", {
       queryId,
-      timerId
+      timerId,
     });
 
     return timerId;
@@ -175,18 +180,19 @@ class PerformanceMonitor {
     this.metrics.queryProcessingTimes.push({
       duration,
       timestamp: Date.now(),
-      metadata
+      metadata,
     });
 
     // Keep only last 100 query times
     if (this.metrics.queryProcessingTimes.length > 100) {
-      this.metrics.queryProcessingTimes = this.metrics.queryProcessingTimes.slice(-100);
+      this.metrics.queryProcessingTimes =
+        this.metrics.queryProcessingTimes.slice(-100);
     }
 
-    this.logPerformanceEvent('query_timer_stopped', {
+    this.logPerformanceEvent("query_timer_stopped", {
       timerId,
       duration,
-      metadata
+      metadata,
     });
 
     // Clean up performance entries
@@ -205,7 +211,8 @@ class PerformanceMonitor {
     if (this.metrics.queryProcessingTimes.length === 0) return 0;
 
     const total = this.metrics.queryProcessingTimes.reduce(
-      (sum, entry) => sum + entry.duration, 0
+      (sum, entry) => sum + entry.duration,
+      0
     );
 
     return total / this.metrics.queryProcessingTimes.length;
@@ -227,7 +234,7 @@ class PerformanceMonitor {
       meetingTarget: avgQueryTime <= targetTime,
       memoryUsage: currentMemory,
       totalQueries: this.metrics.queryProcessingTimes.length,
-      sessionDuration: Date.now() - this.metrics.sessionStartTime
+      sessionDuration: Date.now() - this.metrics.sessionStartTime,
     };
   }
 
@@ -241,7 +248,7 @@ class PerformanceMonitor {
       timestamp: Date.now(),
       event,
       data,
-      sessionTime: Date.now() - this.metrics.sessionStartTime
+      sessionTime: Date.now() - this.metrics.sessionStartTime,
     };
 
     this.performanceLog.push(logEntry);
@@ -265,7 +272,7 @@ class PerformanceMonitor {
     return {
       ...this.metrics,
       performanceStatus: this.getPerformanceStatus(),
-      memoryStatus: this.getMemoryStatus()
+      memoryStatus: this.getMemoryStatus(),
     };
   }
 
@@ -278,15 +285,17 @@ class PerformanceMonitor {
     if (!currentMemory) return { supported: false };
 
     const usagePercent = (currentMemory.used / currentMemory.limit) * 100;
-    const thresholdPercent = (this.resourceMonitor.memoryThreshold / currentMemory.limit) * 100;
+    const thresholdPercent =
+      (this.resourceMonitor.memoryThreshold / currentMemory.limit) * 100;
 
     return {
       supported: true,
       current: currentMemory,
       usagePercent,
       thresholdPercent,
-      nearThreshold: usagePercent > (thresholdPercent * 0.8),
-      exceedsThreshold: currentMemory.used > this.resourceMonitor.memoryThreshold
+      nearThreshold: usagePercent > thresholdPercent * 0.8,
+      exceedsThreshold:
+        currentMemory.used > this.resourceMonitor.memoryThreshold,
     };
   }
 
@@ -299,7 +308,7 @@ class PerformanceMonitor {
       metrics: this.getMetrics(),
       performanceLog: this.performanceLog.slice(-100), // Last 100 events
       timestamp: Date.now(),
-      sessionId: `session_${this.metrics.sessionStartTime}`
+      sessionId: `session_${this.metrics.sessionStartTime}`,
     };
   }
 
@@ -322,14 +331,14 @@ class PerformanceMonitor {
     }
 
     // Clear performance entries
-    if (typeof performance.clearMarks === 'function') {
+    if (typeof performance.clearMarks === "function") {
       performance.clearMarks();
     }
-    if (typeof performance.clearMeasures === 'function') {
+    if (typeof performance.clearMeasures === "function") {
       performance.clearMeasures();
     }
 
-    this.logPerformanceEvent('performance_monitor_cleanup');
+    this.logPerformanceEvent("performance_monitor_cleanup");
 
     // Clear logs after final event
     setTimeout(() => {

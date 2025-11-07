@@ -78,10 +78,10 @@ class ChatBot {
       }
 
       this.isInitialized = true;
-      
+
       // Complete progress bar animation
       this._completeProgressBar();
-      
+
       // Show style selection after a brief delay
       setTimeout(() => {
         this.ui.showStyleSelection();
@@ -132,7 +132,7 @@ class ChatBot {
     try {
       // Dynamic imports for lazy loading with performance tracking
       const moduleLoadStart = performance.now();
-      
+
       const [
         { default: ChatUI },
         { default: ConversationManager },
@@ -159,12 +159,12 @@ class ChatBot {
       this._FallbackHandler = FallbackHandler;
       this._PerformanceManager = PerformanceManager;
       this._DualEngineManager = DualEngineManager;
-      
+
       const moduleLoadTime = performance.now() - moduleLoadStart;
       if (window.isDev) {
         console.log(`Chat modules loaded in ${moduleLoadTime.toFixed(2)}ms`);
       }
-      
+
     } catch (error) {
       throw new Error(`MODULE_LOAD_FAILED: ${error.message}`);
     }
@@ -180,7 +180,7 @@ class ChatBot {
 
       // Initialize dual-engine manager
       this.dualEngineManager = new this._DualEngineManager();
-      
+
       // Setup dual-engine event listeners
       this._setupDualEngineEventListeners();
 
@@ -380,7 +380,7 @@ class ChatBot {
       // Track query performance
       this.queryCount++;
       const queryStartTime = performance.now();
-      
+
       // Add user message to UI
       this.ui.addMessage(message, true);
       this.ui.showTypingIndicator();
@@ -428,7 +428,7 @@ class ChatBot {
     this.currentStyle = null;
     this.conversationManager.clearHistory();
     this.styleManager.resetStyle();
-    
+
     // Reset fallback handler if it exists
     if (this.fallbackHandler) {
       this.fallbackHandler.resetFallbackAttempts();
@@ -498,7 +498,7 @@ class ChatBot {
     }
 
     this.dualEngineManager.setABTesting(enabled, ratio);
-    
+
     if (window.isDev) {
       console.log(`A/B testing ${enabled ? 'enabled' : 'disabled'}${enabled ? ` with ratio ${ratio}` : ''}`);
     }
@@ -576,8 +576,8 @@ class ChatBot {
     if (this.worker) {
       // Send cleanup message to worker before terminating
       this.worker.postMessage({ type: 'cleanup' });
-      
-      // Give worker time to cleanup, then terminate
+
+      // Give worker time to clean up, then terminate
       setTimeout(() => {
         if (this.worker) {
           this.worker.terminate();
@@ -620,8 +620,8 @@ class ChatBot {
 
     // Check if fallback handling is needed
     const fallbackDecision = this.fallbackHandler.shouldTriggerFallback(
-      result.confidence, 
-      originalMessage, 
+      result.confidence,
+      originalMessage,
       result.matchedSections
     );
 
@@ -670,8 +670,8 @@ class ChatBot {
 
     // Check if fallback handling is needed
     const fallbackDecision = this.fallbackHandler.shouldTriggerFallback(
-      confidence, 
-      lastUserMessage, 
+      confidence,
+      lastUserMessage,
       matchedSections
     );
 
@@ -736,7 +736,7 @@ class ChatBot {
     if (fallbackResponse.uiAction === 'show_email_form') {
       // Store the original query for email generation
       this.currentFallbackQuery = originalQuery;
-      
+
       // Show email form after a brief delay
       setTimeout(() => {
         this.ui.showFallbackForm();
@@ -806,7 +806,7 @@ class ChatBot {
     // Reset state
     this.isInitialized = false;
     this.initializationPromise = null;
-    
+
     // Clean up existing worker if any
     if (this.worker) {
       this.worker.terminate();
@@ -825,7 +825,7 @@ class ChatBot {
       const progressBar = this.ui.chatContainer.querySelector('.progress-bar');
       if (progressBar) {
         progressBar.style.width = '100%';
-        
+
         // Clear any existing progress interval
         if (this.ui.chatContainer._progressInterval) {
           clearInterval(this.ui.chatContainer._progressInterval);
@@ -845,7 +845,7 @@ class ChatBot {
     }
 
     const metrics = this.performanceManager.getMetrics();
-    
+
     // Add session-specific metrics
     return {
       ...metrics,

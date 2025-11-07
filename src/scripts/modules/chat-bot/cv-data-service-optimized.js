@@ -21,11 +21,13 @@ class OptimizedCVDataService {
       }
 
       const response = await fetch('/data/chat-bot/cv-data-optimized.json');
+
       if (!response.ok) {
         throw new Error(`Failed to load CV data: ${response.status}`);
       }
 
       const data = await response.json();
+
       this.cvData = data;
       this.isLoaded = true;
 
@@ -54,9 +56,11 @@ class OptimizedCVDataService {
       if (topic.keywords) {
         topic.keywords.forEach(keyword => {
           const normalizedKeyword = keyword.toLowerCase();
+
           if (!this.keywordIndex.has(normalizedKeyword)) {
             this.keywordIndex.set(normalizedKeyword, []);
           }
+
           this.keywordIndex.get(normalizedKeyword).push({
             topicId,
             topic,
@@ -226,9 +230,9 @@ class OptimizedCVDataService {
    */
   createPrompt(question, context, style = 'developer', conversationHistory = []) {
     const styleConfig = this.cvData.communication_styles[style] || this.cvData.communication_styles.developer;
-    
+
     let systemPrompt = `You are Serhii, a software developer. Respond in a ${styleConfig.tone} manner. `;
-    
+
     // Style-specific instructions
     switch (style) {
       case 'hr':
@@ -265,7 +269,7 @@ class OptimizedCVDataService {
    */
   getFallbackResponse(style = 'developer', confidence = 0) {
     const fallbacks = this.cvData.fallback_responses;
-    
+
     if (confidence < 0.3) {
       return fallbacks.no_match[style];
     } else {
