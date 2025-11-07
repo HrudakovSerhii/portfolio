@@ -4,6 +4,7 @@
  */
 
 import ContextFencer from './context-fencer.js';
+import ContextChunker from './context-chunker.js';
 import * as queryProcessor from './utils/query-processor.js';
 import * as cvContextBuilder from './utils/cv-context-builder.js';
 import * as responseValidator from './utils/response-validator.js';
@@ -16,6 +17,7 @@ class DualWorkerCoordinator {
         this.embeddingWorker = null;
         this.textGenWorker = null;
         this.contextFencer = new ContextFencer(options.contextFencer);
+        this.contextChunker = new ContextChunker(options.chunker);
         
         this.isInitialized = false;
         this.requestCounter = 0;
@@ -72,6 +74,79 @@ class DualWorkerCoordinator {
             console.error('Failed to initialize dual worker coordinator:', error);
             throw error;
         }
+    }
+
+    /**
+     * Index context for semantic search (from SemanticQAManager)
+     * @param {string} context - Large context text to index
+     * @param {object} metadata - Optional metadata
+     * @returns {Promise<object>} - Indexing results
+     */
+    async indexContext(context, metadata = {}) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        try {
+            console.log('Indexing context for semantic search...');
+            const startTime = Date.now();
+
+            // Chunk the context
+            const chunks = this.contextChunker.chunkText(context, metadata);
+            console.log(`Created ${chunks.length} chunks`);
+
+            // Pre-compute embeddings for chunks
+            await this.precomputeChunkEmbeddings(chunks);
+
+            // Store indexed context info
+            this.indexedContext = {
+                originalText: context,
+                chunks,
+                metadata,
+                indexedAt: Date.now()
+            };
+
+            const indexingTime = Date.now() - startTime;
+            console.log(`Context indexed in ${indexingTime}ms`);
+
+            return {
+                success: true,
+                chunkCount: chunks.length,
+                indexingTime,
+                metadata
+            };
+
+        } catch (error) {
+            console.error('Failed to index context:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Ask a question using semantic search (from SemanticQAManager)
+     * @param {string} question - User question
+     * @param {string} context - Optional context (if not pre-indexed)
+     * @param {object} options - Additional options
+     * @returns {Promise<object>} - Answer object
+     */
+    async askQuestion(question, context = null, options = {}) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        // Index context if provided and not already indexed
+        if (context && (!this.indexedContext || this.indexedContext.originalText !== context)) {
+            await this.indexContext(context);
+        }
+
+        // Use indexed context chunks or provided cvChunks
+        const cvChunks = this.indexedContext?.chunks || options.cvChunks || [];
+        
+        if (cvChunks.length === 0) {
+            throw new Error('No context available. Please index context first or provide cvChunks.');
+        }
+
+        return this.processQuestion(question, cvChunks, options);
     }
 
     /**
@@ -166,7 +241,13 @@ class DualWorkerCoordinator {
 
         } catch (error) {
             console.error('Failed to process question:', error);
-            throw error;
+            return {
+                answer: "I encountered an error processing your question.",
+                confidence: 0,
+                method: 'error',
+                error: error.message,
+                responseTime: Date.now() - startTime
+            };
         }
     }
 
