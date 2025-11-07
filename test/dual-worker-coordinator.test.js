@@ -213,6 +213,19 @@ describe('Dual Worker Coordinator Integration', () => {
       expect(typeof coordinator.generateRequestId).toBe('function');
     });
 
+    it('should include new SemanticQAManager features', () => {
+      // Verify consolidated features from SemanticQAManager
+      expect(typeof coordinator.indexContext).toBe('function');
+      expect(typeof coordinator.askQuestion).toBe('function');
+      expect(typeof coordinator.askQuestions).toBe('function');
+      expect(typeof coordinator.semanticSearch).toBe('function');
+      expect(typeof coordinator.getStatus).toBe('function');
+      expect(typeof coordinator.reset).toBe('function');
+      expect(typeof coordinator.exportData).toBe('function');
+      expect(typeof coordinator.importData).toBe('function');
+      expect(typeof coordinator.updatePerformanceMetrics).toBe('function');
+    });
+
     it('should maintain configuration options', () => {
       const customCoordinator = new DualWorkerCoordinator({
         maxContextChunks: 5,
@@ -273,6 +286,37 @@ describe('Dual Worker Coordinator Integration', () => {
     it('should manage pending requests properly', () => {
       expect(coordinator.pendingRequests).toBeDefined();
       expect(coordinator.pendingRequests.size).toBe(0);
+    });
+  });
+
+  describe('Consolidated Features', () => {
+    it('should track performance metrics', () => {
+      expect(coordinator.performanceMetrics).toBeDefined();
+      expect(coordinator.performanceMetrics.totalQueries).toBe(0);
+      expect(coordinator.performanceMetrics.avgResponseTime).toBe(0);
+      expect(coordinator.performanceMetrics.cacheHits).toBe(0);
+    });
+
+    it('should provide system status', () => {
+      const status = coordinator.getStatus();
+      
+      expect(status).toBeDefined();
+      expect(status.isInitialized).toBe(false);
+      expect(status.hasIndexedContext).toBe(false);
+      expect(status.performanceMetrics).toBeDefined();
+    });
+
+    it('should handle data export when no context is indexed', () => {
+      const exportedData = coordinator.exportData();
+      expect(exportedData).toBeNull();
+    });
+
+    it('should reset system state', () => {
+      coordinator.reset();
+      
+      expect(coordinator.performanceMetrics.totalQueries).toBe(0);
+      expect(coordinator.performanceMetrics.avgResponseTime).toBe(0);
+      expect(coordinator.indexedContext).toBeNull();
     });
   });
 });
