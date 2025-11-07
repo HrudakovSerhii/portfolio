@@ -4,6 +4,12 @@
  */
 
 import ContextFencer from './context-fencer.js';
+import * as queryProcessor from './utils/query-processor.js';
+import * as cvContextBuilder from './utils/cv-context-builder.js';
+import * as responseValidator from './utils/response-validator.js';
+import * as similarityCalculator from './utils/similarity-calculator.js';
+import * as promptBuilder from './utils/prompt-builder.js';
+import * as cacheManager from './utils/cache-manager.js';
 
 class DualWorkerCoordinator {
     constructor(options = {}) {
@@ -61,7 +67,7 @@ class DualWorkerCoordinator {
     }
 
     /**
-     * Process a question using both workers
+     * Process a question using both workers with utility modules
      */
     async processQuestion(question, cvChunks = [], options = {}) {
         if (!this.isInitialized) {
@@ -71,41 +77,79 @@ class DualWorkerCoordinator {
         const startTime = Date.now();
         
         try {
-            // Step 1: Generate embedding for the question
-            const questionEmbedding = await this.generateEmbedding(question);
+            // Step 1: Enhance query using query-processor
+            const enhancedQuery = queryProcessor.preprocessQuery(question, options.context || []);
+            
+            // Step 2: Check cache for existing result
+            const cachedResult = cacheManager.getCachedQueryResult(enhancedQuery);
+            if (cachedResult) {
+                return cachedResult;
+            }
 
-            // Step 2: Find similar chunks using embeddings
-            const similarChunks = await this.findSimilarChunks(
+            // Step 3: Generate embedding for the enhanced question
+            const questionEmbedding = await this.generateEmbedding(enhancedQuery);
+
+            // Step 4: Find similar chunks using similarity-calculator
+            const similarChunks = similarityCalculator.findSimilarChunks(
                 questionEmbedding, 
                 cvChunks, 
                 options.maxChunks || this.config.maxContextChunks
             );
 
-            // Step 3: Create fenced context using ContextFencer
-            const fencedContext = this.contextFencer.createFencedContext(similarChunks, question);
+            // Step 5: Apply similarity threshold filtering
+            const threshold = queryProcessor.getAdaptiveThreshold(enhancedQuery);
+            const filteredChunks = similarityCalculator.applySimilarityThreshold(similarChunks, threshold);
 
-            // Step 4: Generate response using text generation worker
+            // Step 6: Build context using cv-context-builder
+            const cvContext = cvContextBuilder.buildCVContext(filteredChunks);
+
+            // Step 7: Create prompt using prompt-builder
+            const prompt = promptBuilder.createPrompt(
+                question, 
+                cvContext, 
+                options.style || 'developer',
+                options.context || []
+            );
+
+            // Step 8: Generate response using text generation worker
             const response = await this.generateContextualResponse(
                 question, 
-                fencedContext, 
+                prompt, 
                 options
+            );
+
+            // Step 9: Validate response using response-validator
+            const validatedResponse = responseValidator.validateResponseQuality(
+                {
+                    answer: response.answer,
+                    confidence: response.confidence || 0.7,
+                    matchedSections: filteredChunks.map(chunk => chunk.sectionId || chunk.id),
+                    metrics: response.metrics || {}
+                },
+                question
             );
 
             const processingTime = Date.now() - startTime;
 
-            return {
-                answer: response.answer,
-                confidence: this.calculateOverallConfidence(fencedContext.confidence, response.confidence),
-                context: fencedContext,
-                similarChunks: similarChunks.slice(0, 3),
+            const result = {
+                answer: validatedResponse.answer,
+                confidence: validatedResponse.confidence,
+                context: cvContext,
+                similarChunks: filteredChunks.slice(0, 3),
                 metrics: {
                     processingTime,
                     embeddingTime: response.embeddingTime || 0,
                     generationTime: response.generationTime || 0,
                     chunksAnalyzed: similarChunks.length,
-                    factsExtracted: fencedContext.facts.length
+                    qualityScore: validatedResponse.metrics.qualityScore || 0,
+                    ...validatedResponse.metrics
                 }
             };
+
+            // Step 10: Cache the result
+            cacheManager.cacheQueryResult(enhancedQuery, result);
+
+            return result;
 
         } catch (error) {
             console.error('Failed to process question:', error);
@@ -114,13 +158,27 @@ class DualWorkerCoordinator {
     }
 
     /**
-     * Generate embedding for text
+     * Generate embedding for text with caching
      */
     async generateEmbedding(text) {
+        // Check cache first
+        const cachedEmbedding = cacheManager.getCachedEmbedding(text);
+        if (cachedEmbedding) {
+            return cachedEmbedding;
+        }
+
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
             
-            this.pendingRequests.set(requestId, { resolve, reject, type: 'embedding' });
+            this.pendingRequests.set(requestId, { 
+                resolve: (embedding) => {
+                    // Cache the result before resolving
+                    cacheManager.cacheEmbedding(text, embedding);
+                    resolve(embedding);
+                }, 
+                reject, 
+                type: 'embedding' 
+            });
             
             this.embeddingWorker.postMessage({
                 type: 'generateEmbedding',
@@ -130,34 +188,7 @@ class DualWorkerCoordinator {
         });
     }
 
-    /**
-     * Find similar chunks using cosine similarity
-     */
-    async findSimilarChunks(questionEmbedding, cvChunks, maxChunks = 3) {
-        const similarities = [];
 
-        for (const chunk of cvChunks) {
-            if (!chunk.embedding) {
-                // Generate embedding for chunk if not available
-                chunk.embedding = await this.generateEmbedding(chunk.text);
-            }
-
-            const similarity = await this.calculateSimilarity(questionEmbedding, chunk.embedding);
-            
-            if (similarity >= this.config.similarityThreshold) {
-                similarities.push({
-                    chunk,
-                    similarity,
-                    score: similarity
-                });
-            }
-        }
-
-        // Sort by similarity and return top matches
-        return similarities
-            .sort((a, b) => b.similarity - a.similarity)
-            .slice(0, maxChunks);
-    }
 
     /**
      * Calculate similarity between embeddings
@@ -179,9 +210,7 @@ class DualWorkerCoordinator {
     /**
      * Generate contextual response using text generation worker
      */
-    async generateContextualResponse(question, fencedContext, options = {}) {
-        const prompt = this.buildEnhancedPrompt(question, fencedContext, options);
-        
+    async generateContextualResponse(question, prompt, options = {}) {
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
             const startTime = Date.now();
@@ -199,85 +228,89 @@ class DualWorkerCoordinator {
                 type: 'generate',
                 prompt,
                 query: question,
-                maxTokens: options.maxTokens || 150,
-                temperature: options.temperature || 0.7,
+                maxTokens: options.maxTokens || 60, // Use constrained generation
+                temperature: options.temperature || 0.3, // Use constrained generation
                 requestId
             });
         });
     }
 
-    /**
-     * Build enhanced prompt with fenced context
-     */
-    buildEnhancedPrompt(question, fencedContext, options = {}) {
-        const style = options.style || 'developer';
-        
-        let prompt = `You are Serhii, a software developer. Answer questions based on the provided facts.\n\n`;
-        
-        if (fencedContext.hasContext) {
-            prompt += `Context:\n${fencedContext.context}\n\n`;
-        }
-        
-        prompt += `Instructions:
-- Answer as Serhii in first person
-- Use only the facts provided above
-- Be specific and provide examples when possible
-- Keep response under 50 words
-- If no relevant facts are provided, say so honestly
 
-Response:`;
-
-        return prompt;
-    }
 
     /**
-     * Pre-compute embeddings for CV chunks
+     * Pre-compute embeddings for CV chunks with caching
      */
     async precomputeChunkEmbeddings(cvChunks) {
-        const textsToEmbed = cvChunks
-            .filter(chunk => !chunk.embedding)
-            .map(chunk => chunk.text);
+        const chunksNeedingEmbeddings = cvChunks.filter(chunk => !chunk.embedding);
+        
+        if (chunksNeedingEmbeddings.length === 0) return;
 
-        if (textsToEmbed.length === 0) return;
+        console.log(`Pre-computing embeddings for ${chunksNeedingEmbeddings.length} chunks...`);
 
-        console.log(`Pre-computing embeddings for ${textsToEmbed.length} chunks...`);
-
+        const textsToEmbed = chunksNeedingEmbeddings.map(chunk => chunk.text);
         const embeddings = await this.generateBatchEmbeddings(textsToEmbed);
         
-        let embeddingIndex = 0;
-        for (const chunk of cvChunks) {
-            if (!chunk.embedding) {
-                chunk.embedding = embeddings[embeddingIndex++];
-            }
-        }
+        // Assign embeddings to chunks
+        chunksNeedingEmbeddings.forEach((chunk, index) => {
+            chunk.embedding = embeddings[index];
+        });
 
         console.log('Chunk embeddings pre-computed successfully');
     }
 
     /**
-     * Generate batch embeddings
+     * Generate batch embeddings with caching
      */
     async generateBatchEmbeddings(texts) {
+        const uncachedTexts = [];
+        const results = [];
+        const textIndexMap = new Map();
+
+        // Check cache for each text
+        texts.forEach((text, index) => {
+            const cachedEmbedding = cacheManager.getCachedEmbedding(text);
+            if (cachedEmbedding) {
+                results[index] = cachedEmbedding;
+            } else {
+                const uncachedIndex = uncachedTexts.length;
+                uncachedTexts.push(text);
+                textIndexMap.set(uncachedIndex, index);
+            }
+        });
+
+        // If all texts are cached, return immediately
+        if (uncachedTexts.length === 0) {
+            return results;
+        }
+
+        // Generate embeddings for uncached texts
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
             
-            this.pendingRequests.set(requestId, { resolve, reject, type: 'batchEmbedding' });
+            this.pendingRequests.set(requestId, { 
+                resolve: (embeddings) => {
+                    // Cache and place results in correct positions
+                    embeddings.forEach((embedding, uncachedIndex) => {
+                        const originalIndex = textIndexMap.get(uncachedIndex);
+                        const text = uncachedTexts[uncachedIndex];
+                        cacheManager.cacheEmbedding(text, embedding);
+                        results[originalIndex] = embedding;
+                    });
+                    resolve(results);
+                }, 
+                reject, 
+                type: 'batchEmbedding' 
+            });
             
             this.embeddingWorker.postMessage({
                 type: 'generateBatchEmbeddings',
-                data: { texts },
+                data: { texts: uncachedTexts },
                 requestId
             });
         });
     }
 
-    /**
-     * Calculate overall confidence score
-     */
-    calculateOverallConfidence(contextConfidence, generationConfidence) {
-        // Weight context confidence more heavily as it indicates factual grounding
-        return (contextConfidence * 0.6) + (generationConfidence * 0.4);
-    }
+
 
     /**
      * Setup embedding worker message handlers
@@ -370,6 +403,20 @@ Response:`;
      */
     generateRequestId() {
         return `req_${++this.requestCounter}_${Date.now()}`;
+    }
+
+    /**
+     * Get cache statistics for monitoring
+     */
+    getCacheStats() {
+        return cacheManager.getCacheStats();
+    }
+
+    /**
+     * Clear all caches
+     */
+    clearCache() {
+        return cacheManager.clearCache();
     }
 
     /**
