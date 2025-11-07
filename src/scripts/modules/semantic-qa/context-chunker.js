@@ -173,7 +173,9 @@ class ContextChunker {
             /\b(specializes|focuses|manages)\b/i
         ];
 
-        return factualIndicators.some(pattern => pattern.test(sentence));
+        return factualIndicators.some(pattern => pattern.test(sentence)) &&
+               !sentence.includes('?') && // Not a question
+               !/^(what|how|why|when|where|who)\b/i.test(sentence.trim()); // Not a question
     }
 
     /**
