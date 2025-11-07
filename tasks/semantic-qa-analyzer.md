@@ -50,7 +50,7 @@ Build a semantic question-answering system that uses a tiny analyzer model to co
 ### Integration Points
 - Extend existing chat-bot system
 - Work with current CV data structure
-- Maintain compatibility with WebLLM fallback
+- Maintain compatibility with existing chat-bot system
 
 ## Implementation Plan
 
@@ -86,7 +86,8 @@ src/scripts/modules/semantic-qa/
 ├── similarity-matcher.js      # Semantic search implementation
 ├── context-fencer.js          # Structured context formatting
 ├── qa-engine.js              # Question answering logic
-└── semantic-qa-manager.js    # Main orchestrator
+├── dual-worker-coordinator.js # Main orchestrator (consolidated)
+└── index.js                  # Module entry point
 
 src/scripts/workers/
 └── embedding-worker.js       # Web Worker for model processing

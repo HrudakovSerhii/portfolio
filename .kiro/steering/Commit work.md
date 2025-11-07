@@ -29,6 +29,7 @@ inclusion: always
 3. **Files**: List all modified files at end
 4. **Scope**: Ensure commit scope matches actual changes
 5. **Atomic**: Each commit should be a complete, independent unit of work
+6. **Efficiency**: Combine `git add` and `git commit` operations in single command to save requests
 
 ## Project-Specific Patterns
 
