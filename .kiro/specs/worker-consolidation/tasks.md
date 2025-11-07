@@ -6,43 +6,43 @@ This implementation plan consolidates four ML workers into a streamlined two-wor
 
 ## Implementation Tasks
 
-- [ ] 1. Create utility modules structure and extract business logic
+- [x] 1. Create utility modules structure and extract business logic
   - Create utils directory structure for semantic-qa module
   - Extract and modularize functions from existing workers
   - Implement pure functions with clear interfaces
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
 
-- [ ] 1.1 Create query-processor utility module
+- [x] 1.1 Create query-processor utility module
   - Extract preprocessQuery, expandQueryWithSynonyms, normalizeQuery functions from chat-ml-worker.js
   - Extract extractContextKeywords and getAdaptiveThreshold functions
   - Implement as pure functions with input validation
   - _Requirements: 2.1, 2.7_
 
-- [ ] 1.2 Create cv-context-builder utility module
+- [x] 1.2 Create cv-context-builder utility module
   - Extract findRelevantSectionsByKeywords and buildCVContext functions from chat-ml-worker.js
   - Extract createSearchText, groupSectionsByCategory, determineSynthesisStrategy functions
   - Implement CV data processing logic as pure functions
   - _Requirements: 2.2, 2.7_
 
-- [ ] 1.3 Create response-validator utility module
+- [x] 1.3 Create response-validator utility module
   - Extract validateResponseQuality, assessQueryRelevance, calculateOverallConfidence functions from chat-ml-worker.js
   - Extract cleanAndValidateText function and invalid patterns from constrained-ml-worker.js
   - Implement hallucination detection and quality scoring
   - _Requirements: 2.3, 2.7, 3.2_
 
-- [ ] 1.4 Create similarity-calculator utility module
+- [x] 1.4 Create similarity-calculator utility module
   - Extract similarity calculation functions from chat-ml-worker.js
   - Implement findSimilarChunks, rankSectionsBySimilarity, applySimilarityThreshold functions
   - Create pure functions for cosine similarity calculations
   - _Requirements: 2.4, 2.7_
 
-- [ ] 1.5 Create prompt-builder utility module
+- [x] 1.5 Create prompt-builder utility module
   - Extract createPrompt, buildEnhancedPrompt, getStyleInstructions functions from chat-ml-worker.js
   - Implement formatContextForPrompt function for LLM optimization
   - Create style-specific prompt templates
   - _Requirements: 2.5, 2.7_
 
-- [ ] 1.6 Create cache-manager utility module
+- [x] 1.6 Create cache-manager utility module
   - Extract caching functions from chat-ml-worker.js performance manager
   - Implement cacheEmbedding, getCachedEmbedding, cacheQueryResult functions
   - Create generateCacheKey and clearCache utility functions
