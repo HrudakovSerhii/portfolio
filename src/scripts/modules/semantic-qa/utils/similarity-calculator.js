@@ -1,7 +1,7 @@
 /**
  * Similarity Calculator Utility Module
  * Handles similarity calculations, ranking, and threshold filtering
- * Extracted from chat-ml-worker.js for modular architecture
+ * Optimized for SmolLM2-135M-Instruct with new CV schema
  */
 
 /**
@@ -44,111 +44,207 @@ export function calculateCosineSimilarity(embedding1, embedding2) {
 }
 
 /**
- * Find similar chunks based on embedding similarity
+ * Find similar CV sections based on embedding similarity with priority weighting
  * @param {Array<number>} questionEmbedding - The question embedding vector
- * @param {Array} cvChunks - Array of CV chunks with embeddings
- * @param {number} maxChunks - Maximum number of chunks to return
- * @returns {Array} - Array of similar chunks sorted by similarity
+ * @param {Object} cvData - CV data with hierarchical sections
+ * @param {number} maxSections - Maximum number of sections to return (optimized for small LLM)
+ * @returns {Array} - Array of similar sections sorted by weighted similarity
  */
-export function findSimilarChunks(questionEmbedding, cvChunks, maxChunks = 5) {
+export function findSimilarSections(questionEmbedding, cvData, maxSections = 3) {
   if (!Array.isArray(questionEmbedding)) {
     throw new Error('Question embedding must be an array');
   }
 
-  if (!Array.isArray(cvChunks)) {
+  if (!cvData || !cvData.sections) {
     return [];
   }
 
-  if (typeof maxChunks !== 'number' || maxChunks <= 0) {
-    maxChunks = 5;
+  if (typeof maxSections !== 'number' || maxSections <= 0) {
+    maxSections = 3; // Smaller default for small LLM context
   }
 
   const similarities = [];
+  const allSections = flattenCVSections(cvData.sections);
 
-  cvChunks.forEach((chunk, index) => {
-    if (chunk.embedding && Array.isArray(chunk.embedding)) {
+  allSections.forEach((sectionData, index) => {
+    const section = sectionData.section;
+    
+    if (section.embeddings && Array.isArray(section.embeddings)) {
       try {
-        const similarity = calculateCosineSimilarity(questionEmbedding, chunk.embedding);
+        const similarity = calculateCosineSimilarity(questionEmbedding, section.embeddings);
+        
+        // Apply priority weighting (1=highest priority, 5=lowest)
+        const priorityWeight = section.priority ? (6 - section.priority) / 5 : 0.6;
+        
+        // Apply confidence weighting
+        const confidenceWeight = section.confidence || 1.0;
+        
+        // Calculate weighted similarity
+        const weightedSimilarity = similarity * priorityWeight * confidenceWeight;
+        
         similarities.push({
-          ...chunk,
+          ...sectionData,
           similarity,
+          weightedSimilarity,
+          priorityWeight,
+          confidenceWeight,
           index
         });
       } catch (error) {
-        console.warn(`Failed to calculate similarity for chunk ${index}:`, error);
+        console.warn(`Failed to calculate similarity for section ${section.id}:`, error);
       }
     }
   });
 
-  // Sort by similarity (highest first) and return top chunks
+  // Sort by weighted similarity (highest first) and return top sections
   return similarities
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, maxChunks);
+    .sort((a, b) => b.weightedSimilarity - a.weightedSimilarity)
+    .slice(0, maxSections);
 }
 
 /**
- * Rank sections by similarity to query embedding
- * @param {Array} sections - Array of sections with embeddings
- * @param {Array<number>} queryEmbedding - Query embedding vector
- * @returns {Array} - Sections ranked by similarity
+ * Flatten hierarchical CV sections for similarity calculation
+ * @param {Object} sections - Hierarchical sections object
+ * @returns {Array} - Flattened array of sections with metadata
  */
-export function rankSectionsBySimilarity(sections, queryEmbedding) {
-  if (!Array.isArray(sections)) {
+function flattenCVSections(sections) {
+  const flattened = [];
+  
+  for (const [category, categoryData] of Object.entries(sections)) {
+    for (const [key, section] of Object.entries(categoryData)) {
+      flattened.push({
+        category,
+        key,
+        section
+      });
+    }
+  }
+  
+  return flattened;
+}
+
+/**
+ * Rank CV sections by weighted similarity optimized for small LLM
+ * @param {Array} sectionMatches - Array of section matches from findSimilarSections
+ * @param {Object} options - Ranking options
+ * @returns {Array} - Sections ranked by weighted similarity with metadata
+ */
+export function rankSectionsByWeightedSimilarity(sectionMatches, options = {}) {
+  if (!Array.isArray(sectionMatches)) {
     return [];
   }
 
-  if (!Array.isArray(queryEmbedding)) {
-    throw new Error('Query embedding must be an array');
-  }
+  const {
+    priorityBoost = 0.2,      // Boost for high priority sections
+    confidenceBoost = 0.1,    // Boost for high confidence sections
+    categoryBoost = 0.05      // Boost for core/experience categories
+  } = options;
 
-  const rankedSections = [];
-
-  sections.forEach((section, index) => {
-    if (section.embedding && Array.isArray(section.embedding)) {
-      try {
-        const similarity = calculateCosineSimilarity(queryEmbedding, section.embedding);
-        rankedSections.push({
-          ...section,
-          similarity,
-          originalIndex: index
-        });
-      } catch (error) {
-        console.warn(`Failed to calculate similarity for section ${index}:`, error);
-      }
-    } else {
-      // If no embedding, add with zero similarity
-      rankedSections.push({
-        ...section,
-        similarity: 0,
-        originalIndex: index
-      });
+  const rankedSections = sectionMatches.map((match, index) => {
+    let finalScore = match.weightedSimilarity || match.similarity || 0;
+    
+    // Apply category boost for important categories
+    if (match.category === 'core' || match.category === 'experience') {
+      finalScore += categoryBoost;
     }
+    
+    // Apply priority boost for high priority sections (priority 1-2)
+    if (match.section.priority && match.section.priority <= 2) {
+      finalScore += priorityBoost;
+    }
+    
+    // Apply confidence boost for high confidence sections (>0.8)
+    if (match.section.confidence && match.section.confidence > 0.8) {
+      finalScore += confidenceBoost;
+    }
+
+    return {
+      ...match,
+      finalScore,
+      originalIndex: index,
+      rankingMetadata: {
+        baseSimilarity: match.similarity || 0,
+        weightedSimilarity: match.weightedSimilarity || match.similarity || 0,
+        priorityBoost: match.section.priority <= 2 ? priorityBoost : 0,
+        confidenceBoost: match.section.confidence > 0.8 ? confidenceBoost : 0,
+        categoryBoost: (match.category === 'core' || match.category === 'experience') ? categoryBoost : 0
+      }
+    };
   });
 
-  // Sort by similarity (highest first)
-  return rankedSections.sort((a, b) => b.similarity - a.similarity);
+  // Sort by final score (highest first)
+  return rankedSections.sort((a, b) => b.finalScore - a.finalScore);
 }
 
 /**
- * Apply similarity threshold filtering to matches
+ * Apply adaptive similarity threshold optimized for small LLM
  * @param {Array} matches - Array of matches with similarity scores
- * @param {number} threshold - Minimum similarity threshold (0-1)
- * @returns {Array} - Filtered matches above threshold
+ * @param {Object} options - Threshold options
+ * @returns {Array} - Filtered matches above adaptive threshold
  */
-export function applySimilarityThreshold(matches, threshold = 0.5) {
+export function applySimilarityThreshold(matches, options = {}) {
   if (!Array.isArray(matches)) {
     return [];
   }
 
-  if (typeof threshold !== 'number') {
-    threshold = 0.5;
+  const {
+    baseThreshold = 0.3,      // Lower threshold for small LLM (more permissive)
+    priorityAdjustment = 0.1, // Lower threshold for high priority sections
+    maxResults = 2            // Limit results for small LLM context
+  } = options;
+
+  const filteredMatches = matches.filter(match => {
+    const similarity = match.finalScore || match.weightedSimilarity || match.similarity || 0;
+    
+    // Adjust threshold based on section priority
+    let adjustedThreshold = baseThreshold;
+    if (match.section && match.section.priority && match.section.priority <= 2) {
+      adjustedThreshold -= priorityAdjustment; // Lower threshold for high priority
+    }
+    
+    // Ensure threshold is within valid range
+    adjustedThreshold = Math.max(0.1, Math.min(1, adjustedThreshold));
+    
+    return similarity >= adjustedThreshold;
+  });
+
+  // Return top results limited for small LLM context
+  return filteredMatches.slice(0, maxResults);
+}
+
+/**
+ * Calculate confidence score for retrieval results
+ * @param {Array} matches - Array of similarity matches
+ * @param {string} query - Original query
+ * @returns {number} - Overall confidence score (0-1)
+ */
+export function calculateRetrievalConfidence(matches, query) {
+  if (!Array.isArray(matches) || matches.length === 0) {
+    return 0;
   }
 
-  // Ensure threshold is within valid range
-  threshold = Math.max(0, Math.min(1, threshold));
+  // Base confidence from similarity scores
+  const avgSimilarity = matches.reduce((sum, match) => {
+    return sum + (match.finalScore || match.weightedSimilarity || match.similarity || 0);
+  }, 0) / matches.length;
 
-  return matches.filter(match => {
-    const similarity = match.similarity || 0;
-    return similarity >= threshold;
-  });
+  // Boost confidence for keyword matches
+  let keywordBoost = 0;
+  if (query && typeof query === 'string') {
+    const queryWords = query.toLowerCase().split(/\s+/);
+    const totalKeywords = matches.reduce((sum, match) => {
+      if (match.matchedKeywords && Array.isArray(match.matchedKeywords)) {
+        return sum + match.matchedKeywords.length;
+      }
+      return sum;
+    }, 0);
+    keywordBoost = Math.min(0.2, totalKeywords / (queryWords.length * matches.length));
+  }
+
+  // Boost confidence for high priority sections
+  const priorityBoost = matches.some(match => 
+    match.section && match.section.priority && match.section.priority <= 2
+  ) ? 0.1 : 0;
+
+  return Math.min(1.0, avgSimilarity + keywordBoost + priorityBoost);
 }
