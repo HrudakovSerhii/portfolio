@@ -20,6 +20,14 @@ class DualWorkerCoordinator {
         this.isInitialized = false;
         this.requestCounter = 0;
         this.pendingRequests = new Map();
+        this.indexedContext = null;
+        
+        // Performance metrics from SemanticQAManager
+        this.performanceMetrics = {
+            totalQueries: 0,
+            avgResponseTime: 0,
+            cacheHits: 0
+        };
         
         // Configuration
         this.config = {
@@ -75,6 +83,7 @@ class DualWorkerCoordinator {
         }
 
         const startTime = Date.now();
+        this.performanceMetrics.totalQueries++;
         
         try {
             // Step 1: Enhance query using query-processor
@@ -130,12 +139,16 @@ class DualWorkerCoordinator {
             );
 
             const processingTime = Date.now() - startTime;
+            this.updatePerformanceMetrics(processingTime);
 
             const result = {
                 answer: validatedResponse.answer,
                 confidence: validatedResponse.confidence,
                 context: cvContext,
                 similarChunks: filteredChunks.slice(0, 3),
+                question,
+                responseTime: processingTime,
+                timestamp: Date.now(),
                 metrics: {
                     processingTime,
                     embeddingTime: response.embeddingTime || 0,
@@ -410,6 +423,136 @@ class DualWorkerCoordinator {
      */
     getCacheStats() {
         return cacheManager.getCacheStats();
+    }
+
+    /**
+     * Ask multiple questions in batch (from SemanticQAManager)
+     * @param {string[]} questions - Array of questions
+     * @param {Array} cvChunks - CV chunks for context
+     * @returns {Promise<Array>} - Array of answers
+     */
+    async askQuestions(questions, cvChunks = []) {
+        const answers = [];
+        
+        // Process questions sequentially to avoid overwhelming the system
+        for (const question of questions) {
+            const answer = await this.processQuestion(question, cvChunks);
+            answers.push(answer);
+        }
+
+        return answers;
+    }
+
+    /**
+     * Get semantic search results without generating an answer (from SemanticQAManager)
+     * @param {string} query - Search query
+     * @param {Array} cvChunks - CV chunks to search
+     * @param {number} topK - Number of results to return
+     * @returns {Promise<Array>} - Similar chunks
+     */
+    async semanticSearch(query, cvChunks = [], topK = 3) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        // Generate embedding for the query
+        const queryEmbedding = await this.generateEmbedding(query);
+
+        // Find similar chunks using similarity-calculator
+        const similarChunks = similarityCalculator.findSimilarChunks(
+            queryEmbedding, 
+            cvChunks, 
+            topK
+        );
+
+        return similarChunks;
+    }
+
+    /**
+     * Update performance metrics (from SemanticQAManager)
+     * @param {number} responseTime - Response time in ms
+     */
+    updatePerformanceMetrics(responseTime) {
+        const totalQueries = this.performanceMetrics.totalQueries;
+        const currentAvg = this.performanceMetrics.avgResponseTime;
+        
+        // Calculate new average response time
+        this.performanceMetrics.avgResponseTime = 
+            ((currentAvg * (totalQueries - 1)) + responseTime) / totalQueries;
+    }
+
+    /**
+     * Get system status and statistics (from SemanticQAManager)
+     * @returns {object} - System status
+     */
+    getStatus() {
+        return {
+            isInitialized: this.isInitialized,
+            hasIndexedContext: !!this.indexedContext,
+            contextInfo: this.indexedContext ? {
+                chunkCount: this.indexedContext.chunks?.length || 0,
+                indexedAt: this.indexedContext.indexedAt,
+                metadata: this.indexedContext.metadata
+            } : null,
+            cacheStats: this.getCacheStats(),
+            performanceMetrics: { ...this.performanceMetrics }
+        };
+    }
+
+    /**
+     * Reset system and clear all data (from SemanticQAManager)
+     */
+    reset() {
+        this.clearCache();
+        this.indexedContext = null;
+        this.performanceMetrics = {
+            totalQueries: 0,
+            avgResponseTime: 0,
+            cacheHits: 0
+        };
+        console.log('Dual Worker Coordinator reset');
+    }
+
+    /**
+     * Export current context and embeddings (from SemanticQAManager)
+     * @returns {object} - Exportable data
+     */
+    exportData() {
+        if (!this.indexedContext) {
+            return null;
+        }
+
+        return {
+            context: this.indexedContext.originalText,
+            chunks: this.indexedContext.chunks,
+            metadata: this.indexedContext.metadata,
+            exportedAt: Date.now()
+        };
+    }
+
+    /**
+     * Import previously exported data (from SemanticQAManager)
+     * @param {object} data - Exported data
+     * @returns {Promise<void>}
+     */
+    async importData(data) {
+        if (!data || !data.context || !data.chunks) {
+            throw new Error('Invalid import data');
+        }
+
+        this.indexedContext = {
+            originalText: data.context,
+            chunks: data.chunks,
+            metadata: data.metadata || {},
+            indexedAt: Date.now()
+        };
+
+        // Pre-compute embeddings for imported chunks if needed
+        if (data.chunks.length > 0) {
+            await this.precomputeChunkEmbeddings(data.chunks);
+        }
+
+        console.log('Data imported successfully');
     }
 
     /**
