@@ -3,21 +3,18 @@
  * for enhanced semantic Q&A with context-aware responses
  */
 
-import ContextFencer from './context-fencer.js';
-import ContextChunker from './context-chunker.js';
 import * as queryProcessor from './utils/query-processor.js';
 import * as cvContextBuilder from './utils/cv-context-builder.js';
 import * as responseValidator from './utils/response-validator.js';
 import * as similarityCalculator from './utils/similarity-calculator.js';
 import * as promptBuilder from './utils/prompt-builder.js';
 import * as cacheManager from './utils/cache-manager.js';
+import * as textChunker from './utils/text-chunker.js';
 
 class DualWorkerCoordinator {
     constructor(options = {}) {
         this.embeddingWorker = null;
         this.textGenWorker = null;
-        this.contextFencer = new ContextFencer(options.contextFencer);
-        this.contextChunker = new ContextChunker(options.chunker);
         
         this.isInitialized = false;
         this.requestCounter = 0;
@@ -37,6 +34,11 @@ class DualWorkerCoordinator {
             textGenWorkerPath: options.textGenWorkerPath || '/src/scripts/workers/optimized-ml-worker.js',
             maxContextChunks: options.maxContextChunks || 3,
             similarityThreshold: options.similarityThreshold || 0.7,
+            chunker: {
+                maxChunkSize: options.maxChunkSize || 200,
+                overlapSize: options.overlapSize || 20,
+                ...options.chunker
+            },
             ...options
         };
     }
@@ -91,8 +93,8 @@ class DualWorkerCoordinator {
             console.log('Indexing context for semantic search...');
             const startTime = Date.now();
 
-            // Chunk the context
-            const chunks = this.contextChunker.chunkText(context, metadata);
+            // Chunk the context using utility
+            const chunks = textChunker.chunkText(context, metadata, this.config.chunker);
             console.log(`Created ${chunks.length} chunks`);
 
             // Pre-compute embeddings for chunks
