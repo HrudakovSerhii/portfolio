@@ -56,26 +56,7 @@ vi.mock('../src/scripts/modules/semantic-qa/utils/cache-manager.js', () => ({
   clearCache: vi.fn()
 }));
 
-vi.mock('../src/scripts/modules/semantic-qa/context-fencer.js', () => {
-  class MockContextFencer {
-    constructor(options = {}) {
-      this.maxFacts = options.maxFacts || 5;
-    }
-    
-    createFencedContext(similarChunks, question) {
-      return {
-        context: 'Mocked fenced context',
-        facts: [],
-        hasContext: true,
-        confidence: 0.8
-      };
-    }
-  }
-  
-  return {
-    default: MockContextFencer
-  };
-});
+
 
 describe('Dual Worker Coordinator Integration', () => {
   let coordinator;
