@@ -137,13 +137,15 @@ class OptimizedMLWorker {
 
     try {
       const output = await this.model(prompt, {
-        max_new_tokens: options.maxTokens || 120,
-        temperature: options.temperature || 0.7,
+        max_new_tokens: Math.min(options.maxTokens || 60, 60), // Cap at 60 tokens for focused responses
+        temperature: Math.min(options.temperature || 0.3, 0.3), // Cap at 0.3 for deterministic output
         do_sample: true,
-        top_p: 0.9,
-        repetition_penalty: 1.1,
+        top_p: 0.8,
+        repetition_penalty: 1.2,
         return_full_text: false,
-        pad_token_id: 50256, // Add explicit pad token
+        pad_token_id: 50256,
+        eos_token_id: 50256,
+        early_stopping: true // Add early stopping for better control
       });
 
       // Extract generated text
@@ -154,7 +156,7 @@ class OptimizedMLWorker {
         generatedText = output.generated_text;
       }
 
-      return this.cleanGeneratedText(generatedText);
+      return this.cleanAndValidateText(generatedText);
     } catch (error) {
       console.error("Failed to generate text:", error);
       throw error;
@@ -162,18 +164,74 @@ class OptimizedMLWorker {
   }
 
   /**
-   * Clean and post-process generated text
+   * Clean and validate generated text with strict filtering
    */
-  cleanGeneratedText(text) {
-    return text
+  cleanAndValidateText(text) {
+    // Clean the text
+    let cleaned = text
       .replace(/^(Response:|Answer:)\s*/i, "") // Remove prefixes
       .replace(/\n\s*\n/g, "\n") // Remove extra newlines
       .replace(/\s+/g, " ") // Normalize whitespace
       .trim();
+
+    // Validate the text doesn't contain hallucinated content
+    const invalidPatterns = [
+      /serdh?ii/i, // Misspelled name variations
+      /serlindo/i,
+      /serdoubust/i,
+      /serdondogs/i,
+      /webpack/i, // Random technical terms not in context
+      /pylons/i,
+      /ejs/i,
+      /\d+\s+guys/i, // Random numbers with "guys"
+      /work out of here/i, // Nonsensical phrases
+      /ain't no joke/i,
+      /made my life so much easier/i
+    ];
+
+    // Check for invalid patterns
+    for (const pattern of invalidPatterns) {
+      if (pattern.test(cleaned)) {
+        console.warn('Generated text contains hallucinated content:', cleaned);
+        return null; // Return null to indicate invalid generation
+      }
+    }
+
+    // Check if text is too short or too generic
+    if (cleaned.length < 10) {
+      return null;
+    }
+
+    // Check if text starts with "I" (first person) as expected
+    if (!cleaned.match(/^(I|Yes|No)/i)) {
+      console.warn('Generated text does not start appropriately:', cleaned);
+      return null;
+    }
+
+    return cleaned;
   }
 
   /**
-   * Process generation request
+   * Validate response format and content
+   */
+  validateResponseFormat(text) {
+    if (!text || typeof text !== 'string') {
+      return { valid: false, reason: 'Empty or invalid text' };
+    }
+
+    if (text.length < 10) {
+      return { valid: false, reason: 'Response too short' };
+    }
+
+    if (!text.match(/^(I|Yes|No)/i)) {
+      return { valid: false, reason: 'Response does not start with first-person indicator' };
+    }
+
+    return { valid: true };
+  }
+
+  /**
+   * Process generation request with validation
    */
   async processGeneration(data) {
     const { prompt, query, maxTokens, temperature } = data;
@@ -181,20 +239,42 @@ class OptimizedMLWorker {
 
     try {
       const generatedText = await this.generateText(prompt, {
-        maxTokens,
-        temperature
+        maxTokens: Math.min(maxTokens || 60, 60), // Cap at 60 tokens
+        temperature: Math.min(temperature || 0.3, 0.3) // Cap temperature
       });
 
       const processingTime = Date.now() - startTime;
 
+      // If generation failed validation, return null and error
+      if (!generatedText) {
+        this.postMessage({
+          type: "error",
+          error: "Generated response failed validation (likely hallucination)",
+          query: query,
+          processingMetrics: {
+            processingTime,
+            promptLength: prompt.length,
+            responseLength: 0,
+            validationPassed: false
+          }
+        });
+        return;
+      }
+
+      // Validate response format
+      const formatValidation = this.validateResponseFormat(generatedText);
+      
       this.postMessage({
         type: "response",
         answer: generatedText,
         query: query,
+        validated: true,
         processingMetrics: {
           processingTime,
           promptLength: prompt.length,
-          responseLength: generatedText.length
+          responseLength: generatedText.length,
+          validationPassed: formatValidation.valid,
+          validationReason: formatValidation.reason || 'Valid response'
         }
       });
 
@@ -203,7 +283,13 @@ class OptimizedMLWorker {
       this.postMessage({
         type: "error",
         error: error.message,
-        query: query
+        query: query,
+        processingMetrics: {
+          processingTime: Date.now() - startTime,
+          promptLength: prompt?.length || 0,
+          responseLength: 0,
+          validationPassed: false
+        }
       });
     }
   }
