@@ -14,7 +14,7 @@ vi.mock('../src/scripts/modules/chat-bot/cv-data-service.js', () => ({
   }
 }));
 
-vi.mock('../src/scripts/workers/chat-ml-worker.js', () => ({}));
+vi.mock('../src/scripts/workers/optimized-ml-worker.js', () => ({}));
 
 describe('Chat Style Integration', () => {
   let StyleManager;

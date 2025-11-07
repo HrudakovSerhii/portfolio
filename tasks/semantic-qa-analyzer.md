@@ -50,7 +50,7 @@ Build a semantic question-answering system that uses a tiny analyzer model to co
 ### Integration Points
 - Extend existing chat-bot system
 - Work with current CV data structure
-- Maintain compatibility with WebLLM fallback
+- Maintain compatibility with existing chat-bot system
 
 ## Implementation Plan
 
