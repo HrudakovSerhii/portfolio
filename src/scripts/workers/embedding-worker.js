@@ -318,6 +318,201 @@ function calculateSimilarity(embedding1, embedding2, requestId) {
 }
 
 /**
+ * Process CV sections for batch embedding generation
+ * @param {Array} cvSections - Array of CV section objects
+ * @param {string} requestId - Request identifier
+ */
+async function processCVSections(cvSections, requestId) {
+    if (!isInitialized) {
+        self.postMessage({
+            type: 'cvSectionsProcessed',
+            requestId,
+            success: false,
+            error: 'Service not initialized'
+        });
+        return;
+    }
+
+    if (!Array.isArray(cvSections) || cvSections.length === 0) {
+        self.postMessage({
+            type: 'cvSectionsProcessed',
+            requestId,
+            success: false,
+            error: 'Invalid CV sections input - must be non-empty array'
+        });
+        return;
+    }
+
+    try {
+        const processedSections = [];
+        
+        for (let i = 0; i < cvSections.length; i++) {
+            const section = cvSections[i];
+            
+            if (!section || typeof section !== 'object') {
+                console.warn(`Skipping invalid section at index ${i}`);
+                continue;
+            }
+            
+            // Extract text content from section for embedding
+            let textContent = '';
+            
+            // Build text from section keywords and responses
+            if (section.keywords && Array.isArray(section.keywords)) {
+                textContent += section.keywords.join(' ') + ' ';
+            }
+            
+            // Add response content (prefer developer style, fallback to others)
+            if (section.responses) {
+                const response = section.responses.developer || 
+                               section.responses.hr || 
+                               section.responses.friend || '';
+                textContent += response;
+            }
+            
+            // Add details if available
+            if (section.details && typeof section.details === 'object') {
+                const detailsText = Object.values(section.details)
+                    .filter(value => typeof value === 'string')
+                    .join(' ');
+                textContent += ' ' + detailsText;
+            }
+            
+            if (!textContent.trim()) {
+                console.warn(`No text content found for section at index ${i}`);
+                continue;
+            }
+            
+            const sanitizedText = sanitizeText(textContent);
+            const cacheKey = hashText(sanitizedText);
+            
+            let embedding;
+            let cached = false;
+            
+            if (embeddingService.cache.has(cacheKey)) {
+                embedding = Array.from(embeddingService.cache.get(cacheKey));
+                cached = true;
+            } else {
+                const output = await embeddingService.model(sanitizedText, { 
+                    pooling: 'mean', 
+                    normalize: true 
+                });
+                
+                // Handle different output formats
+                let embeddingArray;
+                if (output.data) {
+                    embeddingArray = new Float32Array(output.data);
+                } else if (Array.isArray(output)) {
+                    embeddingArray = new Float32Array(output);
+                } else {
+                    embeddingArray = new Float32Array(output);
+                }
+                
+                embeddingService.cache.set(cacheKey, embeddingArray);
+                embedding = Array.from(embeddingArray);
+                cached = false;
+            }
+            
+            processedSections.push({
+                id: section.id || `section_${i}`,
+                embedding,
+                cached,
+                textLength: sanitizedText.length,
+                originalSection: section
+            });
+            
+            // Send progress update for large batches
+            if (cvSections.length > 10 && (i + 1) % 5 === 0) {
+                self.postMessage({
+                    type: 'cvProcessingProgress',
+                    requestId,
+                    progress: (i + 1) / cvSections.length,
+                    completed: i + 1,
+                    total: cvSections.length
+                });
+            }
+        }
+        
+        self.postMessage({
+            type: 'cvSectionsProcessed',
+            requestId,
+            success: true,
+            processedSections,
+            totalProcessed: processedSections.length,
+            totalInput: cvSections.length
+        });
+        
+    } catch (error) {
+        console.error('Failed to process CV sections:', error);
+        
+        self.postMessage({
+            type: 'cvSectionsProcessed',
+            requestId,
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+/**
+ * Filter similarities by threshold
+ * @param {Array} similarities - Array of similarity objects with score property
+ * @param {number} threshold - Minimum similarity threshold (0-1)
+ * @param {string} requestId - Request identifier
+ */
+function filterBySimilarityThreshold(similarities, threshold, requestId) {
+    try {
+        if (!Array.isArray(similarities)) {
+            throw new Error('Similarities must be an array');
+        }
+        
+        if (typeof threshold !== 'number' || threshold < 0 || threshold > 1) {
+            throw new Error('Threshold must be a number between 0 and 1');
+        }
+        
+        const filteredSimilarities = similarities.filter(item => {
+            if (typeof item !== 'object' || item === null) {
+                return false;
+            }
+            
+            // Support different property names for similarity score
+            const score = item.similarity || item.score || item.similarityScore;
+            
+            if (typeof score !== 'number') {
+                return false;
+            }
+            
+            return score >= threshold;
+        });
+        
+        // Sort by similarity score in descending order
+        filteredSimilarities.sort((a, b) => {
+            const scoreA = a.similarity || a.score || a.similarityScore || 0;
+            const scoreB = b.similarity || b.score || b.similarityScore || 0;
+            return scoreB - scoreA;
+        });
+        
+        self.postMessage({
+            type: 'similaritiesFiltered',
+            requestId,
+            success: true,
+            filteredSimilarities,
+            originalCount: similarities.length,
+            filteredCount: filteredSimilarities.length,
+            threshold
+        });
+        
+    } catch (error) {
+        self.postMessage({
+            type: 'similaritiesFiltered',
+            requestId,
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+/**
  * Clear the embedding cache
  */
 function clearCache(requestId) {
@@ -340,7 +535,7 @@ function getCacheStats(requestId) {
     const stats = {
         size: embeddingService ? embeddingService.cache.size : 0,
         isInitialized,
-        modelName: MODEL_NAME,
+        modelName: initializationConfig ? initializationConfig.modelName : DEFAULT_CONFIG.modelName,
         memoryUsage: embeddingService ? getApproximateMemoryUsage() : 0
     };
     
@@ -437,6 +632,20 @@ self.onmessage = async function(event) {
                     throw new Error('Missing embedding data for similarity calculation');
                 }
                 calculateSimilarity(data.embedding1, data.embedding2, requestId);
+                break;
+                
+            case 'processCVSections':
+                if (!data || !data.cvSections) {
+                    throw new Error('Missing CV sections data for processing');
+                }
+                await processCVSections(data.cvSections, requestId);
+                break;
+                
+            case 'filterBySimilarityThreshold':
+                if (!data || !data.similarities || typeof data.threshold !== 'number') {
+                    throw new Error('Missing similarities data or threshold for filtering');
+                }
+                filterBySimilarityThreshold(data.similarities, data.threshold, requestId);
                 break;
                 
             case 'clearCache':
