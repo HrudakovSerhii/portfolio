@@ -151,13 +151,112 @@
                 </a>
                 <span>Or</span>
                 <div class="hero__chat">
-                    <form id="chat-form" autocomplete="off">
-                        <label for="hero-chat-input" class="screen-reader-text" />
-                        <input class="hero__chat-input" id="hero-chat-input">
-                    </form>
+                    <button class="hero__chat-trigger" id="hero-chat-trigger" type="button" aria-label="Start chat with Serhii AI">
+                        <span class="hero__chat-icon">💬</span>
+                        <span class="hero__chat-text" data-translate="home.hero.chat.text">Chat with Serhii AI</span>
+                    </button>
                 </div>
             </div>
+            <!-- Chat Interface -->
+            <div id="chat-container" class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <h3 class="chat-title" data-translate="chat.header.title.text">Chat with Serhii AI</h3>
+                    <button class="chat-close" type="button" aria-label="Close chat">×</button>
+                </div>
 
+                <!-- Chat Content -->
+                <div class="chat-content">
+                    <!-- Loading State -->
+                    <div class="chat-loading hidden">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-message" data-translate="chat.loading.message.text">Wait, I'm loading as fast as I can!</p>
+                        <div class="loading-progress">
+                            <div class="progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Style Selection -->
+                    <div class="chat-style-selection hidden">
+                        <h4 data-translate="chat.styleSelection.title.text">How would you like to chat with Serhii?</h4>
+                        <div class="style-options">
+                            <button class="style-option" data-style="hr" type="button">
+                                <span class="style-icon">👔</span>
+                                <div>
+                                    <span class="style-title" data-translate="chat.styleSelection.hr.title.text">Professional (HR)</span>
+                                    <span class="style-description" data-translate="chat.styleSelection.hr.description.text">Formal, structured responses about experience and achievements</span>
+                                </div>
+                            </button>
+                            <button class="style-option" data-style="developer" type="button">
+                                <span class="style-icon">💻</span>
+                                <div>
+                                    <span class="style-title" data-translate="chat.styleSelection.developer.title.text">Technical (Developer)</span>
+                                    <span class="style-description" data-translate="chat.styleSelection.developer.description.text">Conversational, technical discussion about projects and skills</span>
+                                </div>
+                            </button>
+                            <button class="style-option" data-style="friend" type="button">
+                                <span class="style-icon">😊</span>
+                                <div>
+                                    <span class="style-title" data-translate="chat.styleSelection.friend.title.text">Casual (Friend)</span>
+                                    <span class="style-description" data-translate="chat.styleSelection.friend.description.text">Friendly, enthusiastic chat with personality and emojis</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages -->
+                    <div class="chat-messages hidden">
+                        <div class="messages-container"></div>
+                        <div class="typing-indicator hidden">
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="typing-text" data-translate="chat.typing.text">Serhii is thinking...</span>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div class="chat-error hidden">
+                        <div class="error-content">
+                            <span class="error-icon">😕</span>
+                            <p class="error-message" data-translate="chat.error.message.text">Something went wrong. Please try again.</p>
+                            <div class="error-actions">
+                                <button class="error-retry" type="button" data-translate="chat.error.retry.text">Try Again</button>
+                                <button class="error-close" type="button">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fallback Form -->
+                    <div class="chat-fallback hidden">
+                        <div class="fallback-content">
+                            <h4 data-translate="chat.fallback.title.text">Let's get in touch!</h4>
+                            <p data-translate="chat.fallback.description.text">I couldn't find the right answer. Let me connect you directly with Serhii via email.</p>
+                        </div>
+                        <form class="fallback-form">
+                            <input type="text" class="fallback-name" placeholder="Your name" data-translate-placeholder="chat.fallback.name.placeholder" required>
+                            <input type="email" class="fallback-email" placeholder="Your email" data-translate-placeholder="chat.fallback.email.placeholder" required>
+                            <button type="submit" class="fallback-submit" data-translate="chat.fallback.submit.text">Send Email</button>
+                            <button type="button" class="fallback-cancel" data-translate="chat.fallback.cancel.text">Continue Chatting</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input hidden">
+                    <div class="input-container">
+                        <input type="text" class="message-input" placeholder="Ask me anything about Serhii..." data-translate-placeholder="chat.input.placeholder.text">
+                        <button class="send-button" type="button" aria-label="Send message">
+                            <span>→</span>
+                        </button>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="restart-button" type="button" data-translate="chat.restart.text">Would you like to chat with different Serhii AI?</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
 <!--        &lt;!&ndash; Skills Section &ndash;&gt;-->
@@ -307,7 +406,9 @@
         </div>
     </footer>
 
+
+
     <!-- Scripts -->
-    <script type="module" src="../scripts/app.cjs"></script>
+    <script type="module" src="../scripts/app.js"></script>
 </body>
 </html>

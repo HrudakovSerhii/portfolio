@@ -19,7 +19,8 @@
     "hero": {
       "title": { "text": "Full Stack Developer" },
       "subtitle": { "text": "I am frontend developer, full stack engineer, AI enthusiast, optimisation researcher, ecommerce specialist, storyteller, process builder, task owner and team leader" },
-      "cta": { "text": "View My Work" }
+      "cta": { "text": "View My Work" },
+      "chat": { "text": "Chat with Serhii AI" }
     },
     "skills": {
       "title": { "text": "Skills & Technologies" },
@@ -87,6 +88,53 @@
       "email": { "text": "Email" },
       "location": { "text": "Location" },
       "availability": { "text": "Available for freelance work" }
+    }
+  },
+  "chat": {
+    "header": {
+      "title": { "text": "Chat with Serhii AI" }
+    },
+    "loading": {
+      "message": { "text": "Wait, I'm loading as fast as I can!" }
+    },
+    "styleSelection": {
+      "title": { "text": "How would you like to chat with Serhii?" },
+      "hr": {
+        "title": { "text": "Professional (HR)" },
+        "description": { "text": "Formal, structured responses about experience and achievements" }
+      },
+      "developer": {
+        "title": { "text": "Technical (Developer)" },
+        "description": { "text": "Conversational, technical discussion about projects and skills" }
+      },
+      "friend": {
+        "title": { "text": "Casual (Friend)" },
+        "description": { "text": "Friendly, enthusiastic chat with personality and emojis" }
+      }
+    },
+    "typing": {
+      "text": { "text": "Serhii is thinking..." }
+    },
+    "input": {
+      "placeholder": { "text": "Ask me anything about Serhii..." }
+    },
+    "restart": {
+      "text": { "text": "Would you like to chat with different Serhii AI?" }
+    },
+    "error": {
+      "message": { "text": "Something went wrong. Please try again." },
+      "retry": { "text": "Try Again" },
+      "browserUnsupported": { "text": "Oops, sorry, we couldn't load Serhii to your browser :(" },
+      "networkError": { "text": "Having trouble downloading my brain 🧠 Check your connection?" },
+      "loadingError": { "text": "Having trouble starting my brain 🧠 Please try again." }
+    },
+    "fallback": {
+      "title": { "text": "Let's get in touch!" },
+      "description": { "text": "I couldn't find the right answer. Let me connect you directly with Serhii via email." },
+      "name": { "placeholder": { "text": "Your name" } },
+      "email": { "placeholder": { "text": "Your email" } },
+      "submit": { "text": "Send Email" },
+      "cancel": { "text": "Continue Chatting" }
     }
   },
   "meta": {

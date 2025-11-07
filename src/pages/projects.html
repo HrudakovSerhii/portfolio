@@ -153,7 +153,7 @@
                 </p>
             </div>
         </section>
-        
+
         <!-- Filter Section -->
         <section class="project-filters" aria-labelledby="filter-title">
             <div class="project-filters__container">
@@ -161,7 +161,7 @@
                     Filter Projects
                 </h2>
                 <div class="filter-buttons" role="tablist" aria-label="Project categories">
-                    <button class="filter-button filter-button--active" 
+                    <button class="filter-button filter-button--active"
                             type="button"
                             role="tab"
                             aria-selected="true"
@@ -170,7 +170,7 @@
                             data-translate="projects.filter.all.text">
                         All Projects
                     </button>
-                    <button class="filter-button" 
+                    <button class="filter-button"
                             type="button"
                             role="tab"
                             aria-selected="false"
@@ -179,7 +179,7 @@
                             data-translate="projects.filter.web.text">
                         Web Applications
                     </button>
-                    <button class="filter-button" 
+                    <button class="filter-button"
                             type="button"
                             role="tab"
                             aria-selected="false"
@@ -188,7 +188,7 @@
                             data-translate="projects.filter.mobile.text">
                         Mobile Apps
                     </button>
-                    <button class="filter-button" 
+                    <button class="filter-button"
                             type="button"
                             role="tab"
                             aria-selected="false"
@@ -200,26 +200,26 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- Projects Grid -->
         <section class="projects" aria-labelledby="projects-title">
             <div class="projects__container">
                 <h2 class="projects__title visually-hidden" id="projects-title">
                     Project Showcase
                 </h2>
-                <div class="projects-grid" 
-                     id="projects-grid" 
+                <div class="projects-grid"
+                     id="projects-grid"
                      role="tabpanel"
                      aria-labelledby="filter-title"
                      data-projects-container>
                     <!-- Projects will be populated by JavaScript from projects.json -->
                 </div>
-                
+
                 <!-- Loading state -->
                 <div class="projects__loading" data-loading-state>
                     <p>Loading projects...</p>
                 </div>
-                
+
                 <!-- Empty state -->
                 <div class="projects__empty" data-empty-state style="display: none;">
                     <p>No projects found for the selected filter.</p>
@@ -278,6 +278,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script type="module" src="../scripts/app.cjs"></script>
+    <script type="module" src="../scripts/app.js"></script>
 </body>
 </html>

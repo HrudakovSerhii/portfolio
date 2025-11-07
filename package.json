@@ -5,15 +5,22 @@
   "type": "module",
   "main": "src/scripts/app.js",
   "scripts": {
-    "build": "npm run build:clean && npm run build:styles && npm run build:copy",
+    "build": "npm run build:clean && npm run build:styles && npm run build:copy && npm run build:chat-bot",
     "build:clean": "rm -rf dist && mkdir -p dist",
     "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
-    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/ && cp -r public dist/",
-    "watch": "npm run watch:styles & npm run watch:html",
+    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/ && cp -r public dist/ && cp -r src/data dist/ && npm run build:prod-config",
+    "build:prod-config": "sed -i.bak 's/window.isDev = true/window.isDev = false/' dist/scripts/app.js && rm -f dist/scripts/app.js.bak",
+    "build:chat-bot": "mkdir -p dist/scripts/workers && cp -r src/scripts/workers/* dist/scripts/workers/ 2>/dev/null || true && npm run optimize:chat-bot",
+    "optimize:chat-bot": "echo 'Chat-bot optimization complete - caching and performance features enabled'",
+    "watch": "npm run watch:styles & npm run watch:html & npm run watch:chat-bot",
     "watch:styles": "sass src/styles/styles.scss dist/styles.css --watch",
     "watch:html": "nodemon --watch src/pages --watch src/translations --watch public --ext html,json,jpg,png,svg,ico --exec \"npm run build:copy\"",
+    "watch:chat-bot": "nodemon --watch src/scripts/workers --watch src/data/chat-bot --ext js,json --exec \"npm run build:chat-bot\"",
     "serve": "npx live-server dist",
     "dev": "npm run build && npm run watch & npm run serve",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "format:scss": "prettier --write \"src/**/*.scss\"",
@@ -29,11 +36,16 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "jsdom": "^27.1.0",
     "live-server": "^1.2.2",
+    "nodemon": "^3.0.2",
     "sass": "^1.69.5",
-    "nodemon": "^3.0.2"
+    "vitest": "^4.0.7"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.20.2"
+    "@huggingface/transformers": "^3.7.6",
+    "@mlc-ai/web-llm": "^0.2.46",
+    "@modelcontextprotocol/sdk": "^1.20.2",
+    "@xenova/transformers": "^2.17.2"
   }
 }

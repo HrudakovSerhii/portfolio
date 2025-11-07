@@ -28,3 +28,12 @@ inclusion: always
 - User is exploring ideas or asking for opinions - engage in discussion only
 - Simple questions about existing code or architecture - explain without modifying
 - Requests for recommendations or best practices - provide guidance without implementation
+
+### Testing and Running Applications
+
+- NEVER run npm serve, npm start, or similar commands automatically
+- Always ask the user to run the application in their IDE instead of generating npm commands
+- User prefers to use their additional IDE for editing and running applications
+- Focus on code implementation and let user handle application execution
+- When running tests, use the correct format: `npm test filename` (not `npm test -- filename --run`)
+- NO integration tests until explicitly requested by the user - focus on unit tests only
