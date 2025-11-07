@@ -1,29 +1,67 @@
 /**
  * Embedding Worker - Handle embedding generation in a separate thread
+ * Provides consistent interface with the main thread embedding service
  */
 
 let embeddingService = null;
 let isInitialized = false;
+let initializationConfig = null;
 
-// Import the embedding service
-self.importScripts = self.importScripts || (() => {});
+// Default configuration
+const DEFAULT_CONFIG = {
+    modelName: 'Xenova/distilbert-base-uncased',
+    quantized: true,
+    device: 'auto',
+    dtype: 'fp32',
+    pooling: 'mean',
+    normalize: true
+};
 
 /**
- * Initialize the embedding service
+ * Initialize the embedding service with configuration
+ * @param {Object} config - Configuration parameters for the pipeline
  */
-async function initializeEmbeddingService() {
+async function initializeEmbeddingService(config = {}) {
     if (isInitialized) return;
+
+    // Merge with default config
+    initializationConfig = { ...DEFAULT_CONFIG, ...config };
 
     try {
         // Dynamic import for Xenova transformers
         const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0/dist/transformers.min.js');
         
-        // Initialize the pipeline
-        const model = await pipeline('feature-extraction', 'Xenova/distilbert-base-uncased');
+        // Prepare pipeline options
+        const pipelineOptions = {
+            quantized: initializationConfig.quantized,
+            device: initializationConfig.device,
+            dtype: initializationConfig.dtype,
+            progress_callback: (progress) => {
+                if (progress.status === 'downloading') {
+                    self.postMessage({
+                        type: 'downloadProgress',
+                        progress: progress.progress || 0,
+                        status: progress.status,
+                        file: progress.file
+                    });
+                }
+            }
+        };
+
+        // Remove undefined values
+        Object.keys(pipelineOptions).forEach(key => {
+            if (pipelineOptions[key] === undefined) {
+                delete pipelineOptions[key];
+            }
+        });
+        
+        // Initialize feature extraction pipeline with custom config
+        const model = await pipeline('feature-extraction', initializationConfig.modelName, pipelineOptions);
         
         embeddingService = {
             model,
-            cache: new Map()
+            cache: new Map(),
+            config: initializationConfig
         };
         
         isInitialized = true;
@@ -31,7 +69,8 @@ async function initializeEmbeddingService() {
         self.postMessage({
             type: 'initialized',
             success: true,
-            message: 'Embedding service initialized successfully'
+            message: 'Embedding service initialized successfully',
+            config: initializationConfig
         });
         
     } catch (error) {
@@ -40,13 +79,16 @@ async function initializeEmbeddingService() {
         self.postMessage({
             type: 'initialized',
             success: false,
-            error: error.message
+            error: error.message,
+            config: initializationConfig
         });
     }
 }
 
 /**
  * Generate embedding for text
+ * @param {string} text - Input text to embed
+ * @param {string} requestId - Request identifier
  */
 async function generateEmbedding(text, requestId) {
     if (!isInitialized) {
@@ -55,6 +97,16 @@ async function generateEmbedding(text, requestId) {
             requestId,
             success: false,
             error: 'Service not initialized'
+        });
+        return;
+    }
+
+    if (!text || typeof text !== 'string') {
+        self.postMessage({
+            type: 'embedding',
+            requestId,
+            success: false,
+            error: 'Invalid text input'
         });
         return;
     }
@@ -81,7 +133,15 @@ async function generateEmbedding(text, requestId) {
             normalize: true 
         });
         
-        const embedding = new Float32Array(output.data);
+        // Handle different output formats (consistent with embedding service)
+        let embedding;
+        if (output.data) {
+            embedding = new Float32Array(output.data);
+        } else if (Array.isArray(output)) {
+            embedding = new Float32Array(output);
+        } else {
+            embedding = new Float32Array(output);
+        }
         
         // Cache the result
         embeddingService.cache.set(cacheKey, embedding);
@@ -108,6 +168,8 @@ async function generateEmbedding(text, requestId) {
 
 /**
  * Generate batch embeddings
+ * @param {string[]} texts - Array of texts to embed
+ * @param {string} requestId - Request identifier
  */
 async function generateBatchEmbeddings(texts, requestId) {
     if (!isInitialized) {
@@ -120,12 +182,28 @@ async function generateBatchEmbeddings(texts, requestId) {
         return;
     }
 
+    if (!Array.isArray(texts) || texts.length === 0) {
+        self.postMessage({
+            type: 'batchEmbedding',
+            requestId,
+            success: false,
+            error: 'Invalid texts input - must be non-empty array'
+        });
+        return;
+    }
+
     try {
         const embeddings = [];
         const cacheHits = [];
         
         for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
+            
+            if (!text || typeof text !== 'string') {
+                console.warn(`Skipping invalid text at index ${i}`);
+                continue;
+            }
+            
             const cacheKey = hashText(text);
             
             if (embeddingService.cache.has(cacheKey)) {
@@ -138,7 +216,16 @@ async function generateBatchEmbeddings(texts, requestId) {
                     normalize: true 
                 });
                 
-                const embedding = new Float32Array(output.data);
+                // Handle different output formats (consistent with embedding service)
+                let embedding;
+                if (output.data) {
+                    embedding = new Float32Array(output.data);
+                } else if (Array.isArray(output)) {
+                    embedding = new Float32Array(output);
+                } else {
+                    embedding = new Float32Array(output);
+                }
+                
                 embeddingService.cache.set(cacheKey, embedding);
                 
                 embeddings.push(Array.from(embedding));
@@ -162,7 +249,9 @@ async function generateBatchEmbeddings(texts, requestId) {
             requestId,
             success: true,
             embeddings,
-            cacheHits
+            cacheHits,
+            processed: embeddings.length,
+            total: texts.length
         });
         
     } catch (error) {
@@ -179,11 +268,22 @@ async function generateBatchEmbeddings(texts, requestId) {
 
 /**
  * Calculate cosine similarity between embeddings
+ * @param {number[]} embedding1 - First embedding vector
+ * @param {number[]} embedding2 - Second embedding vector
+ * @param {string} requestId - Request identifier
  */
 function calculateSimilarity(embedding1, embedding2, requestId) {
     try {
+        if (!Array.isArray(embedding1) || !Array.isArray(embedding2)) {
+            throw new Error('Embeddings must be arrays');
+        }
+        
         if (embedding1.length !== embedding2.length) {
             throw new Error('Embeddings must have the same dimension');
+        }
+        
+        if (embedding1.length === 0) {
+            throw new Error('Embeddings cannot be empty');
         }
 
         let dotProduct = 0;
@@ -203,7 +303,8 @@ function calculateSimilarity(embedding1, embedding2, requestId) {
             type: 'similarity',
             requestId,
             success: true,
-            similarity
+            similarity,
+            dimensions: embedding1.length
         });
         
     } catch (error) {
@@ -233,12 +334,14 @@ function clearCache(requestId) {
 
 /**
  * Get cache statistics
+ * @param {string} requestId - Request identifier
  */
 function getCacheStats(requestId) {
     const stats = {
         size: embeddingService ? embeddingService.cache.size : 0,
         isInitialized,
-        modelName: 'Xenova/distilbert-base-uncased'
+        modelName: MODEL_NAME,
+        memoryUsage: embeddingService ? getApproximateMemoryUsage() : 0
     };
     
     self.postMessage({
@@ -250,7 +353,22 @@ function getCacheStats(requestId) {
 }
 
 /**
- * Simple hash function for caching
+ * Get approximate memory usage of cache
+ * @returns {number} - Approximate memory usage in bytes
+ */
+function getApproximateMemoryUsage() {
+    if (!embeddingService || !embeddingService.cache) return 0;
+    
+    // Estimate: each Float32Array element is 4 bytes
+    // Assume average embedding dimension of 768 (DistilBERT)
+    const avgEmbeddingSize = 768 * 4; // 4 bytes per float32
+    return embeddingService.cache.size * avgEmbeddingSize;
+}
+
+/**
+ * Simple hash function for caching (consistent with embedding service)
+ * @param {string} text - Text to hash
+ * @returns {string} - Hash string
  */
 function hashText(text) {
     let hash = 0;
@@ -263,53 +381,128 @@ function hashText(text) {
 }
 
 /**
+ * Validate and sanitize text input
+ * @param {string} text - Input text
+ * @returns {string} - Sanitized text
+ */
+function sanitizeText(text) {
+    if (typeof text !== 'string') {
+        throw new Error('Text must be a string');
+    }
+    
+    // Trim whitespace and normalize
+    text = text.trim();
+    
+    if (text.length === 0) {
+        throw new Error('Text cannot be empty');
+    }
+    
+    if (text.length > 10000) {
+        console.warn('Text is very long, truncating to 10000 characters');
+        text = text.substring(0, 10000);
+    }
+    
+    return text;
+}
+
+/**
  * Message handler
  */
 self.onmessage = async function(event) {
     const { type, data, requestId } = event.data;
     
-    switch (type) {
-        case 'initialize':
-            await initializeEmbeddingService();
-            break;
-            
-        case 'generateEmbedding':
-            await generateEmbedding(data.text, requestId);
-            break;
-            
-        case 'generateBatchEmbeddings':
-            await generateBatchEmbeddings(data.texts, requestId);
-            break;
-            
-        case 'calculateSimilarity':
-            calculateSimilarity(data.embedding1, data.embedding2, requestId);
-            break;
-            
-        case 'clearCache':
-            clearCache(requestId);
-            break;
-            
-        case 'getCacheStats':
-            getCacheStats(requestId);
-            break;
-            
-        default:
-            self.postMessage({
-                type: 'error',
-                requestId,
-                error: `Unknown message type: ${type}`
-            });
+    try {
+        switch (type) {
+            case 'initialize':
+                await initializeEmbeddingService();
+                break;
+                
+            case 'generateEmbedding':
+                if (!data || !data.text) {
+                    throw new Error('Missing text data for embedding generation');
+                }
+                const sanitizedText = sanitizeText(data.text);
+                await generateEmbedding(sanitizedText, requestId);
+                break;
+                
+            case 'generateBatchEmbeddings':
+                if (!data || !data.texts) {
+                    throw new Error('Missing texts data for batch embedding generation');
+                }
+                await generateBatchEmbeddings(data.texts, requestId);
+                break;
+                
+            case 'calculateSimilarity':
+                if (!data || !data.embedding1 || !data.embedding2) {
+                    throw new Error('Missing embedding data for similarity calculation');
+                }
+                calculateSimilarity(data.embedding1, data.embedding2, requestId);
+                break;
+                
+            case 'clearCache':
+                clearCache(requestId);
+                break;
+                
+            case 'getCacheStats':
+                getCacheStats(requestId);
+                break;
+                
+            case 'ping':
+                self.postMessage({
+                    type: 'pong',
+                    requestId,
+                    success: true,
+                    timestamp: Date.now()
+                });
+                break;
+                
+            default:
+                throw new Error(`Unknown message type: ${type}`);
+        }
+    } catch (error) {
+        self.postMessage({
+            type: 'error',
+            requestId,
+            success: false,
+            error: error.message
+        });
     }
 };
 
-// Handle worker errors
+/**
+ * Handle worker errors
+ */
 self.onerror = function(error) {
     console.error('Worker error:', error);
     self.postMessage({
-        type: 'error',
-        error: error.message
+        type: 'workerError',
+        success: false,
+        error: error.message || 'Unknown worker error',
+        filename: error.filename,
+        lineno: error.lineno,
+        colno: error.colno
     });
 };
+
+/**
+ * Handle unhandled promise rejections
+ */
+self.onunhandledrejection = function(event) {
+    console.error('Unhandled promise rejection in worker:', event.reason);
+    self.postMessage({
+        type: 'workerError',
+        success: false,
+        error: `Unhandled promise rejection: ${event.reason}`,
+        source: 'unhandledrejection'
+    });
+};
+
+// Send ready signal when worker loads
+self.postMessage({
+    type: 'workerReady',
+    success: true,
+    timestamp: Date.now()
+});
 
 // Auto-initialize when worker starts
 initializeEmbeddingService();
