@@ -306,7 +306,7 @@ class BundleOptimizer {
       },
       {
         name: 'ml-processing',
-        modules: ['chat-ml-worker.js'],
+        modules: ['optimized-ml-worker.js'],
         priority: 'medium',
         loadStrategy: 'lazy'
       },
