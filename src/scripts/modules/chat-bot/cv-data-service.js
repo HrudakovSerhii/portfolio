@@ -45,13 +45,13 @@ class CVDataService {
   }
 
   /**
-   * Validate CV data structure against schema requirements
+   * Validate CV data structure against knowledge_base format
    * @param {Object} data - CV data to validate
    * @throws {Error} If validation fails
    */
   validateCVData(data) {
-    // Check required top-level properties
-    const requiredProps = ['metadata', 'sections', 'personality', 'responseTemplates'];
+    // Check required top-level properties for knowledge_base format
+    const requiredProps = ['metadata', 'knowledge_base', 'communication_styles', 'fallback_responses'];
 
     for (const prop of requiredProps) {
       if (!data[prop]) {
@@ -62,110 +62,75 @@ class CVDataService {
     // Validate metadata
     const metadata = data.metadata;
 
-    if (!metadata.version || !metadata.lastUpdated || !metadata.totalSections) {
+    if (!metadata.version || !metadata.lastUpdated) {
       throw new Error('Invalid metadata structure');
     }
 
-    if (typeof metadata.totalSections !== 'number' || metadata.totalSections < 1) {
-      throw new Error('Invalid totalSections in metadata');
-    }
-
-    // Validate sections structure
-    if (typeof data.sections !== 'object') {
-      throw new Error('Sections must be an object');
+    // Validate knowledge_base structure
+    if (typeof data.knowledge_base !== 'object') {
+      throw new Error('knowledge_base must be an object');
     }
 
     let sectionCount = 0;
-    for (const [categoryName, category] of Object.entries(data.sections)) {
-      if (typeof category !== 'object') {
-        throw new Error(`Category ${categoryName} must be an object`);
-      }
-
-      for (const [sectionName, section] of Object.entries(category)) {
-        this.validateSection(section, `${categoryName}.${sectionName}`);
-        sectionCount++;
-      }
-    }
-
-    // Validate section count matches metadata
-    if (sectionCount !== metadata.totalSections) {
-      // Section count mismatch - metadata may be outdated
-    }
-
-    // Validate personality structure
-    const personality = data.personality;
-    const requiredPersonalityProps = ['traits', 'values', 'workStyle', 'interests', 'communication_style'];
-    for (const prop of requiredPersonalityProps) {
-      if (!personality[prop]) {
-        throw new Error(`Missing personality property: ${prop}`);
-      }
+    for (const [sectionName, section] of Object.entries(data.knowledge_base)) {
+      this.validateKnowledgeBaseSection(section, sectionName);
+      sectionCount++;
     }
 
     // Validate communication styles
+    const communicationStyles = data.communication_styles;
     const styles = ['hr', 'developer', 'friend'];
     for (const style of styles) {
-      if (!personality.communication_style[style]) {
+      if (!communicationStyles[style]) {
         throw new Error(`Missing communication style: ${style}`);
+      }
+      if (!communicationStyles[style].tone || !communicationStyles[style].greeting) {
+        throw new Error(`Invalid communication style structure for: ${style}`);
       }
     }
 
-    // Validate response templates
-    const templates = data.responseTemplates;
-    const requiredTemplates = ['noMatch', 'lowConfidence', 'fallbackRequest', 'emailFallback'];
-    for (const template of requiredTemplates) {
-      if (!templates[template]) {
-        throw new Error(`Missing response template: ${template}`);
+    // Validate fallback responses
+    const fallbackResponses = data.fallback_responses;
+    const requiredFallbacks = ['no_match', 'low_confidence'];
+    for (const fallback of requiredFallbacks) {
+      if (!fallbackResponses[fallback]) {
+        throw new Error(`Missing fallback response: ${fallback}`);
       }
 
       for (const style of styles) {
-        if (!templates[template][style]) {
-          throw new Error(`Missing ${style} response for template: ${template}`);
+        if (!fallbackResponses[fallback][style]) {
+          throw new Error(`Missing ${style} response for fallback: ${fallback}`);
         }
       }
     }
   }
 
   /**
-   * Validate individual CV section
+   * Validate individual knowledge base section
    * @param {Object} section - Section to validate
-   * @param {string} path - Section path for error reporting
+   * @param {string} sectionName - Section name for error reporting
    */
-  validateSection(section, path) {
-    const requiredProps = ['id', 'keywords', 'embeddings', 'responses', 'details'];
+  validateKnowledgeBaseSection(section, sectionName) {
+    const requiredProps = ['keywords', 'content', 'details'];
     for (const prop of requiredProps) {
       if (section[prop] === undefined) {
-        throw new Error(`Missing property ${prop} in section: ${path}`);
+        throw new Error(`Missing property ${prop} in knowledge_base section: ${sectionName}`);
       }
-    }
-
-    // Validate ID format
-    if (typeof section.id !== 'string' || !/^[a-zA-Z0-9_]+$/.test(section.id)) {
-      throw new Error(`Invalid ID format in section: ${path}`);
     }
 
     // Validate keywords
     if (!Array.isArray(section.keywords) || section.keywords.length === 0) {
-      throw new Error(`Invalid keywords in section: ${path}`);
+      throw new Error(`Invalid keywords in knowledge_base section: ${sectionName}`);
     }
 
-    // Validate embeddings (can be null or array of numbers)
-    if (section.embeddings !== null && (!Array.isArray(section.embeddings) ||
-        !section.embeddings.every(e => typeof e === 'number'))) {
-      throw new Error(`Invalid embeddings in section: ${path}`);
-    }
-
-    // Validate responses
-    const styles = ['hr', 'developer', 'friend'];
-    for (const style of styles) {
-      if (!section.responses[style] || typeof section.responses[style] !== 'string' ||
-          section.responses[style].length < 10) {
-        throw new Error(`Invalid ${style} response in section: ${path}`);
-      }
+    // Validate content
+    if (typeof section.content !== 'string' || section.content.length < 10) {
+      throw new Error(`Invalid content in knowledge_base section: ${sectionName}`);
     }
 
     // Validate details (must be object)
     if (typeof section.details !== 'object') {
-      throw new Error(`Invalid details in section: ${path}`);
+      throw new Error(`Invalid details in knowledge_base section: ${sectionName}`);
     }
   }
 
@@ -175,32 +140,29 @@ class CVDataService {
   buildSectionsIndex() {
     this.sectionsIndex.clear();
 
-    if (!this.cvData || !this.cvData.sections) {
+    if (!this.cvData || !this.cvData.knowledge_base) {
       return;
     }
 
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        const fullPath = `${categoryName}.${sectionName}`;
-        this.sectionsIndex.set(section.id, {
-          path: fullPath,
-          category: categoryName,
-          name: sectionName,
+    for (const [sectionName, section] of Object.entries(this.cvData.knowledge_base)) {
+      this.sectionsIndex.set(sectionName, {
+        path: `knowledge_base.${sectionName}`,
+        category: 'knowledge_base',
+        name: sectionName,
+        section: section
+      });
+
+      // Also index by keywords for faster searching
+      section.keywords.forEach(keyword => {
+        const normalizedKeyword = keyword.toLowerCase();
+        if (!this.sectionsIndex.has(`keyword:${normalizedKeyword}`)) {
+          this.sectionsIndex.set(`keyword:${normalizedKeyword}`, []);
+        }
+        this.sectionsIndex.get(`keyword:${normalizedKeyword}`).push({
+          path: `knowledge_base.${sectionName}`,
           section: section
         });
-
-        // Also index by keywords for faster searching
-        section.keywords.forEach(keyword => {
-          const normalizedKeyword = keyword.toLowerCase();
-          if (!this.sectionsIndex.has(`keyword:${normalizedKeyword}`)) {
-            this.sectionsIndex.set(`keyword:${normalizedKeyword}`, []);
-          }
-          this.sectionsIndex.get(`keyword:${normalizedKeyword}`).push({
-            path: fullPath,
-            section: section
-          });
-        });
-      }
+      });
     }
   }
 
@@ -219,20 +181,17 @@ class CVDataService {
   }
 
   /**
-   * Get sections by category
-   * @param {string} category - Category name (e.g., 'experience', 'skills')
-   * @returns {Array} Array of sections in the category
+   * Get sections by category (for knowledge_base format, returns all sections)
+   * @param {string} category - Category name (ignored for knowledge_base format)
+   * @returns {Array} Array of sections in the knowledge base
    */
   getSectionsByCategory(category) {
     if (!this.isLoaded) {
       throw new Error('CV data not loaded. Call loadCVData() first.');
     }
 
-    if (!this.cvData.sections[category]) {
-      return [];
-    }
-
-    return Object.entries(this.cvData.sections[category]).map(([name, section]) => ({
+    // For knowledge_base format, return all sections regardless of category
+    return Object.entries(this.cvData.knowledge_base).map(([name, section]) => ({
       name,
       ...section
     }));
@@ -322,25 +281,25 @@ class CVDataService {
   }
 
   /**
-   * Get personality data
-   * @returns {Object} Personality configuration
+   * Get communication styles data
+   * @returns {Object} Communication styles configuration
    */
-  getPersonality() {
+  getCommunicationStyles() {
     if (!this.isLoaded) {
       throw new Error('CV data not loaded. Call loadCVData() first.');
     }
-    return this.cvData.personality;
+    return this.cvData.communication_styles;
   }
 
   /**
-   * Get response templates
-   * @returns {Object} Response templates for different scenarios
+   * Get fallback response templates
+   * @returns {Object} Fallback response templates for different scenarios
    */
-  getResponseTemplates() {
+  getFallbackResponses() {
     if (!this.isLoaded) {
       throw new Error('CV data not loaded. Call loadCVData() first.');
     }
-    return this.cvData.responseTemplates;
+    return this.cvData.fallback_responses;
   }
 
   /**
@@ -349,11 +308,11 @@ class CVDataService {
    * @returns {Object} Communication style configuration
    */
   getCommunicationStyle(style) {
-    const personality = this.getPersonality();
-    if (!personality.communication_style[style]) {
+    const communicationStyles = this.getCommunicationStyles();
+    if (!communicationStyles[style]) {
       throw new Error(`Invalid communication style: ${style}`);
     }
-    return personality.communication_style[style];
+    return communicationStyles[style];
   }
 
   /**
@@ -366,16 +325,14 @@ class CVDataService {
     }
 
     const sections = [];
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        sections.push({
-          id: section.id,
-          category: categoryName,
-          name: sectionName,
-          path: `${categoryName}.${sectionName}`,
-          ...section
-        });
-      }
+    for (const [sectionName, section] of Object.entries(this.cvData.knowledge_base)) {
+      sections.push({
+        id: sectionName,
+        category: 'knowledge_base',
+        name: sectionName,
+        path: `knowledge_base.${sectionName}`,
+        ...section
+      });
     }
     return sections;
   }
@@ -393,7 +350,7 @@ class CVDataService {
 
   /**
    * Prepare CV data chunks for semantic processing
-   * Transforms CV sections into standardized chunks for embedding and search
+   * Transforms knowledge_base sections into standardized chunks for embedding and search
    * @returns {Array} Array of CV chunks ready for semantic processing
    */
   prepareCVChunks() {
@@ -403,31 +360,28 @@ class CVDataService {
 
     const chunks = [];
 
-    // Process all sections from all categories
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        // Use embeddingSourceText as the primary text content for chunks
-        const text = section.embeddingSourceText || section.details?.summary || '';
-        
-        if (text.trim()) {
-          chunks.push({
-            id: section.id,
-            text: text,
-            keywords: section.keywords || [],
-            metadata: {
-              type: 'cv_section',
-              category: categoryName,
-              sectionName: sectionName,
-              path: `${categoryName}.${sectionName}`,
-              priority: section.priority || 0,
-              confidence: section.confidence || 0.5,
-              details: section.details || {},
-              relatedSections: section.relatedSections || []
-            },
-            // Include existing embeddings if available
-            embedding: section.embeddings || null
-          });
-        }
+    // Process all sections from knowledge_base
+    for (const [sectionName, section] of Object.entries(this.cvData.knowledge_base)) {
+      // Use content as the primary text content for chunks
+      const text = section.content || '';
+      
+      if (text.trim()) {
+        chunks.push({
+          id: sectionName,
+          text: text,
+          keywords: section.keywords || [],
+          metadata: {
+            type: 'knowledge_base',
+            category: 'knowledge_base',
+            sectionName: sectionName,
+            path: `knowledge_base.${sectionName}`,
+            priority: 1, // Default priority for knowledge_base items
+            confidence: 1.0, // Default confidence for knowledge_base items
+            details: section.details || {}
+          },
+          // Include existing embeddings if available (null for knowledge_base format)
+          embedding: null
+        });
       }
     }
 
@@ -435,7 +389,7 @@ class CVDataService {
       totalChunks: chunks.length,
       chunkIds: chunks.map(c => c.id),
       avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length,
-      categories: Object.keys(this.cvData.sections)
+      knowledgeBaseKeys: Object.keys(this.cvData.knowledge_base)
     });
 
     return chunks;
