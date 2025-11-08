@@ -180,25 +180,25 @@ class ChatBot {
    */
   async _initializeDistilBERTWorker() {
     console.log('🔧 CHAT-BOT: Initializing with semantic-qa system...');
-    
+
     // Import the semantic-qa system
     const { default: DualWorkerCoordinator } = await import('../semantic-qa/index.js');
-    
+
     // Load CV data
-    const cvDataResponse = await fetch('./data/chat-bot/cv-data-optimized.json');
-    
+    const cvDataResponse = await fetch('./cv/cv-data.json');
+
     if (!cvDataResponse.ok) {
       throw new Error(`Failed to load CV data: ${cvDataResponse.status} ${cvDataResponse.statusText}`);
     }
-    
+
     const cvData = await cvDataResponse.json();
-    
+
     console.log('📊 CHAT-BOT: Loaded CV data:', {
       knowledgeBaseKeys: Object.keys(cvData.knowledge_base || {}),
       profileName: cvData.profile?.name,
       version: cvData.metadata?.version
     });
-    
+
     // Initialize the dual worker coordinator
     this.semanticQA = new DualWorkerCoordinator({
       embeddingWorkerPath: './scripts/workers/embedding-worker.js',
@@ -206,16 +206,16 @@ class ChatBot {
       maxContextChunks: 3,
       similarityThreshold: 0.7
     });
-    
+
     // Prepare CV chunks for embedding
     const cvChunks = this._prepareCVChunks(cvData);
     console.log('📝 CHAT-BOT: Prepared CV chunks:', cvChunks.length);
-    
+
     // Initialize the semantic-qa system
     await this.semanticQA.initialize(cvChunks);
-    
+
     console.log('✅ CHAT-BOT: Semantic-qa system initialized successfully');
-    
+
     // Store CV data for reference
     this.cvData = cvData;
   }
@@ -225,7 +225,7 @@ class ChatBot {
    */
   _prepareCVChunks(cvData) {
     const chunks = [];
-    
+
     if (cvData.knowledge_base) {
       Object.entries(cvData.knowledge_base).forEach(([key, data]) => {
         if (data.content) {
@@ -242,13 +242,13 @@ class ChatBot {
         }
       });
     }
-    
+
     console.log('🔍 CHAT-BOT: CV chunks prepared:', {
       totalChunks: chunks.length,
       chunkIds: chunks.map(c => c.id),
       avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length
     });
-    
+
     return chunks;
   }
 
@@ -258,24 +258,24 @@ class ChatBot {
   async _processWithSemanticQA(message, conversationContext) {
     try {
       console.log('🔍 CHAT-BOT: Starting semantic-qa processing...');
-      
+
       // Query the semantic-qa system
       const result = await this.semanticQA.processQuestion(message, [], {
         style: this.currentStyle,
         context: conversationContext,
         maxContextChunks: 3
       });
-      
+
       console.log('📊 CHAT-BOT: Semantic-qa result:', {
         hasAnswer: !!result.answer,
         confidence: result.confidence,
         matchedChunks: result.matchedSections?.length || 0,
         processingTime: result.processingMetrics?.processingTime
       });
-      
+
       // Log the context that was selected
       if (result.matchedSections && result.matchedSections.length > 0) {
-        console.log('🎯 CHAT-BOT: Selected CV context:', 
+        console.log('🎯 CHAT-BOT: Selected CV context:',
           result.matchedSections.map(section => ({
             id: section.id,
             similarity: section.similarity,
@@ -283,10 +283,10 @@ class ChatBot {
           }))
         );
       }
-      
+
       // Handle the response
       this._handleSemanticQAResponse(result, message);
-      
+
     } catch (error) {
       console.error('❌ CHAT-BOT: Semantic-qa processing failed:', error);
       this._handleWorkerError(error.message);

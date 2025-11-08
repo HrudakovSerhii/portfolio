@@ -132,7 +132,7 @@ describe('CVDataService', () => {
 
       const result = await service.loadCVData();
 
-      expect(global.fetch).toHaveBeenCalledWith('/src/data/chat-bot/cv-data.json');
+      expect(global.fetch).toHaveBeenCalledWith('./cv/cv-data.json');
       expect(result).toEqual(mockCVData);
       expect(service.isLoaded).toBe(true);
       expect(service.cvData).toEqual(mockCVData);
