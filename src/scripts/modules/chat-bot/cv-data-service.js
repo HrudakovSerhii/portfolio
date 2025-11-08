@@ -21,7 +21,7 @@ class CVDataService {
         return this.cvData;
       }
 
-      const response = await fetch('/data/chat-bot/cv-data.json');
+      const response = await fetch('./cv/cv-data.json');
 
       if (!response.ok) {
         throw new Error(`Failed to load CV data: ${response.status} ${response.statusText}`);
