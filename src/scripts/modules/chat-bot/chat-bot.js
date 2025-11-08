@@ -60,7 +60,7 @@ class ChatBot {
       await this.cvDataService.loadCVData();
 
       // Initialize dual-engine system
-      await this._initializeDualEngineSystem();
+      await this.initializeChat();
 
       this.conversationManager = new this._ConversationManager();
       this.styleManager = new this._StyleManager();
@@ -162,41 +162,22 @@ class ChatBot {
   }
 
   /**
-   * Initialize the engine system (DistilBERT)
+   * Initialize the Semantic-QA System
    */
-  async _initializeDualEngineSystem() {
-    try {
-      // Initialize DistilBERT worker first
-      await this._initializeDistilBERTWorker();
-
-    } catch (error) {
-      console.error('Chat system initialization failed:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Initialize the DistilBERT Worker with Semantic-QA System
-   */
-  async _initializeDistilBERTWorker() {
+  async initializeChat() {
     console.log('🔧 CHAT-BOT: Initializing with semantic-qa system...');
 
     // Import the semantic-qa system
     const { default: DualWorkerCoordinator } = await import('../semantic-qa/index.js');
 
-    // Load CV data
-    const cvDataResponse = await fetch('./cv/cv-data.json');
+    // Use cv-data-service to load and prepare CV data
+    await this.cvDataService.loadCVData();
+    const cvChunks = this.cvDataService.prepareCVChunks();
 
-    if (!cvDataResponse.ok) {
-      throw new Error(`Failed to load CV data: ${cvDataResponse.status} ${cvDataResponse.statusText}`);
-    }
-
-    const cvData = await cvDataResponse.json();
-
-    console.log('📊 CHAT-BOT: Loaded CV data:', {
-      knowledgeBaseKeys: Object.keys(cvData.knowledge_base || {}),
-      profileName: cvData.profile?.name,
-      version: cvData.metadata?.version
+    console.log('📊 CHAT-BOT: CV data loaded via cv-data-service:', {
+      totalChunks: cvChunks.length,
+      categories: [...new Set(cvChunks.map(chunk => chunk.metadata.category))],
+      version: this.cvDataService.getMetadata().version
     });
 
     // Initialize the dual worker coordinator
@@ -207,50 +188,13 @@ class ChatBot {
       similarityThreshold: 0.7
     });
 
-    // Prepare CV chunks for embedding
-    const cvChunks = this._prepareCVChunks(cvData);
-    console.log('📝 CHAT-BOT: Prepared CV chunks:', cvChunks.length);
-
-    // Initialize the semantic-qa system
+    // Initialize the semantic-qa system with prepared chunks
     await this.semanticQA.initialize(cvChunks);
 
     console.log('✅ CHAT-BOT: Semantic-qa system initialized successfully');
-
-    // Store CV data for reference
-    this.cvData = cvData;
   }
 
-  /**
-   * Prepare CV data chunks for embedding
-   */
-  _prepareCVChunks(cvData) {
-    const chunks = [];
 
-    if (cvData.knowledge_base) {
-      Object.entries(cvData.knowledge_base).forEach(([key, data]) => {
-        if (data.content) {
-          chunks.push({
-            id: key,
-            text: data.content,
-            keywords: data.keywords || [],
-            metadata: {
-              type: 'knowledge_base',
-              key: key,
-              details: data.details || {}
-            }
-          });
-        }
-      });
-    }
-
-    console.log('🔍 CHAT-BOT: CV chunks prepared:', {
-      totalChunks: chunks.length,
-      chunkIds: chunks.map(c => c.id),
-      avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length
-    });
-
-    return chunks;
-  }
 
   /**
    * Process message using semantic-qa system
