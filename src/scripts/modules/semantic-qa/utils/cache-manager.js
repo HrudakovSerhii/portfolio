@@ -22,19 +22,25 @@ const CACHE_CONFIG = {
  * @returns {boolean} - True if cached successfully
  */
 export function cacheEmbedding(text, embedding) {
+  console.log('[CacheManager] cacheEmbedding called with text length:', text?.length, 'embedding type:', typeof embedding, 'embedding length:', embedding?.length);
+  
   if (!text || typeof text !== 'string') {
+    console.error('[CacheManager] Invalid text input:', typeof text, text);
     throw new Error('Text must be a non-empty string');
   }
 
   if (!Array.isArray(embedding)) {
+    console.error('[CacheManager] Invalid embedding input:', typeof embedding, 'isArray:', Array.isArray(embedding));
     throw new Error('Embedding must be an array');
   }
 
   const key = generateCacheKey(text);
+  console.log('[CacheManager] Generated cache key:', key);
   
   // Implement LRU eviction if cache is full
   if (embeddingCache.size >= CACHE_CONFIG.maxEmbeddingCacheSize) {
     const firstKey = embeddingCache.keys().next().value;
+    console.log('[CacheManager] Cache full, evicting key:', firstKey);
     embeddingCache.delete(firstKey);
   }
 
@@ -44,6 +50,7 @@ export function cacheEmbedding(text, embedding) {
     text: text
   });
 
+  console.log('[CacheManager] Successfully cached embedding. Cache size now:', embeddingCache.size);
   return true;
 }
 
@@ -53,17 +60,24 @@ export function cacheEmbedding(text, embedding) {
  * @returns {Array<number>|null} - The cached embedding or null if not found
  */
 export function getCachedEmbedding(text) {
+  console.log('[CacheManager] getCachedEmbedding called with text length:', text?.length);
+  
   if (!text || typeof text !== 'string') {
+    console.log('[CacheManager] Invalid text input for cache lookup:', typeof text);
     return null;
   }
 
   const key = generateCacheKey(text);
+  console.log('[CacheManager] Generated lookup key:', key, 'Cache size:', embeddingCache.size);
+  
   const cached = embeddingCache.get(key);
   
   if (cached) {
+    console.log('[CacheManager] Cache HIT! Returning embedding of length:', cached.embedding.length);
     return [...cached.embedding]; // Return a copy to avoid reference issues
   }
   
+  console.log('[CacheManager] Cache MISS for key:', key);
   return null;
 }
 
