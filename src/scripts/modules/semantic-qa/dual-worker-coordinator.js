@@ -189,13 +189,22 @@ class DualWorkerCoordinator {
                 cvChunks,
                 options.maxChunks || this.config.maxContextChunks
             );
+            console.log('[DualWorkerCoordinator] Step 4 - Similar chunks found:', similarChunks.length);
 
             // Step 5: Apply similarity threshold filtering
             const threshold = queryProcessor.getAdaptiveThreshold(enhancedQuery);
             const filteredChunks = similarityCalculator.applySimilarityThreshold(similarChunks, threshold);
+            console.log('[DualWorkerCoordinator] Step 5 - Filtered chunks:', filteredChunks.length, 'threshold:', threshold);
+            console.log('[DualWorkerCoordinator] Step 5 - Top chunks:', filteredChunks.slice(0, 3).map(c => ({
+                id: c.id,
+                similarity: c.similarity,
+                text: c.text?.substring(0, 100) + '...'
+            })));
 
             // Step 6: Build context using cv-context-builder
             const cvContext = cvContextBuilder.buildCVContext(filteredChunks);
+            console.log('[DualWorkerCoordinator] Step 6 - CV context built:', typeof cvContext, cvContext?.length || 'N/A');
+            console.log('[DualWorkerCoordinator] Step 6 - CV context preview:', cvContext?.substring(0, 200) + '...');
 
             // Step 7: Create prompt using prompt-builder
             const prompt = promptBuilder.createPrompt(
@@ -204,6 +213,8 @@ class DualWorkerCoordinator {
                 options.style || 'developer',
                 options.context || []
             );
+            console.log('[DualWorkerCoordinator] Step 7 - Prompt created, length:', prompt.length);
+            console.log('[DualWorkerCoordinator] Step 7 - Prompt preview:', prompt.substring(0, 300) + '...');
 
             // Step 8: Generate response using text generation worker
             const response = await this.generateContextualResponse(
