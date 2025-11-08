@@ -127,9 +127,12 @@ async function generateEmbedding(text, requestId) {
             return;
         }
 
-        // Generate new embedding
+        // Generate new embedding with proper pooling
         console.log('[EmbeddingWorker] Calling model for text:', text.substring(0, 100) + '...');
-        const output = await embeddingService.model(text);
+        const output = await embeddingService.model(text, { 
+            pooling: 'mean', 
+            normalize: true 
+        });
         
         console.log('[EmbeddingWorker] Raw model output:', {
             type: typeof output,
@@ -224,7 +227,11 @@ async function generateBatchEmbeddings(texts, requestId) {
                 embeddings.push(Array.from(cachedEmbedding));
                 cacheHits.push(true);
             } else {
-                const output = await embeddingService.model(text);
+                console.log(`[EmbeddingWorker] Batch processing text ${i+1}/${texts.length}:`, text.substring(0, 50) + '...');
+                const output = await embeddingService.model(text, { 
+                    pooling: 'mean', 
+                    normalize: true 
+                });
 
                 // Handle different output formats (consistent with embedding service)
                 let embedding;
@@ -235,6 +242,8 @@ async function generateBatchEmbeddings(texts, requestId) {
                 } else {
                     embedding = new Float32Array(output);
                 }
+                
+                console.log(`[EmbeddingWorker] Batch embedding ${i+1} dimensions:`, embedding.length);
 
                 embeddingService.cache.set(cacheKey, embedding);
 
@@ -403,7 +412,11 @@ async function processCVSections(cvSections, requestId) {
                 embedding = Array.from(embeddingService.cache.get(cacheKey));
                 cached = true;
             } else {
-                const output = await embeddingService.model(sanitizedText);
+                console.log(`[EmbeddingWorker] Processing CV section ${section.id || i}:`, sanitizedText.substring(0, 100) + '...');
+                const output = await embeddingService.model(sanitizedText, { 
+                    pooling: 'mean', 
+                    normalize: true 
+                });
 
                 // Handle different output formats
                 let embeddingArray;
@@ -414,6 +427,8 @@ async function processCVSections(cvSections, requestId) {
                 } else {
                     embeddingArray = new Float32Array(output);
                 }
+                
+                console.log(`[EmbeddingWorker] CV section ${section.id || i} embedding dimensions:`, embeddingArray.length);
 
                 embeddingService.cache.set(cacheKey, embeddingArray);
                 embedding = Array.from(embeddingArray);

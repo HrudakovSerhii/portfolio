@@ -47,7 +47,6 @@ class DualWorkerCoordinator {
      * Initialize both workers
      */
     async initialize(cvChunks = []) {
-        debugger
         if (this.isInitialized) return;
 
         try {
@@ -59,11 +58,19 @@ class DualWorkerCoordinator {
             this.textGenWorker = new Worker(this.config.textGenWorkerPath);
             this.setupTextGenWorkerHandlers();
 
-            // Wait for both workers to be ready
+            // Wait for both workers to be ready (script loaded)
             await Promise.all([
                 this.waitForWorkerReady(this.embeddingWorker, 'embedding'),
                 this.waitForWorkerReady(this.textGenWorker, 'textgen')
             ]);
+
+            // Now initialize the text generation worker (load the model)
+            console.log('[DualWorkerCoordinator] Sending initialize message to text generation worker...');
+            this.textGenWorker.postMessage({ type: 'initialize' });
+
+            // Wait for text generation worker to finish model loading
+            console.log('[DualWorkerCoordinator] Waiting for text generation worker model initialization...');
+            await this.waitForWorkerInitialization(this.textGenWorker, 'textgen');
 
             // Pre-compute embeddings for CV chunks if provided
             if (cvChunks.length > 0) {
@@ -359,9 +366,23 @@ class DualWorkerCoordinator {
      * Pre-compute embeddings for CV chunks with caching
      */
     async precomputeChunkEmbeddings(cvChunks) {
-        const chunksNeedingEmbeddings = cvChunks.filter(chunk => !chunk.embedding);
+        // Force regeneration of all embeddings to ensure consistency with current model
+        const chunksNeedingEmbeddings = cvChunks.filter(chunk => {
+            const hasValidEmbedding = chunk.embedding && 
+                                    Array.isArray(chunk.embedding) && 
+                                    chunk.embedding.length === 384; // Expected dimension for all-MiniLM-L6-v2
+            
+            if (!hasValidEmbedding && chunk.embedding) {
+                console.log(`[DualWorkerCoordinator] Chunk ${chunk.id} has invalid embedding dimensions: ${chunk.embedding?.length}, regenerating...`);
+            }
+            
+            return !hasValidEmbedding;
+        });
 
-        if (chunksNeedingEmbeddings.length === 0) return;
+        if (chunksNeedingEmbeddings.length === 0) {
+            console.log('All chunks already have valid embeddings');
+            return;
+        }
 
         console.log(`Pre-computing embeddings for ${chunksNeedingEmbeddings.length} chunks...`);
 
@@ -506,19 +527,42 @@ class DualWorkerCoordinator {
      */
     setupTextGenWorkerHandlers() {
         this.textGenWorker.onmessage = (event) => {
-            const { type, requestId, answer, error } = event.data;
+            console.log('[DualWorkerCoordinator] Received message from text generation worker:', event.data.type, 'requestId:', event.data.requestId);
+            
+            const { type, requestId, answer, error, success } = event.data;
 
+            // Handle messages that don't require pending requests
+            switch (type) {
+                case 'workerReady':
+                case 'ready':
+                case 'status':
+                case 'progress':
+                    console.log('[DualWorkerCoordinator] Text generation worker status message:', type, event.data);
+                    return;
+                
+                case 'error':
+                    console.error('[DualWorkerCoordinator] Text generation worker error message:', error);
+                    return;
+            }
+
+            // Handle messages that require pending requests
             const request = this.pendingRequests.get(requestId);
-            if (!request) return;
+            if (!request) {
+                console.warn('[DualWorkerCoordinator] No pending request found for text generation requestId:', requestId, 'type:', type);
+                return;
+            }
 
+            console.log('[DualWorkerCoordinator] Found pending text generation request, type:', request.type);
             this.pendingRequests.delete(requestId);
 
             if (error) {
+                console.error('[DualWorkerCoordinator] Text generation worker reported failure:', error);
                 request.reject(new Error(error));
                 return;
             }
 
             if (type === 'response') {
+                console.log('[DualWorkerCoordinator] Resolving text generation request with answer length:', answer?.length);
                 request.resolve({
                     answer,
                     confidence: 0.7 // Base confidence for generated responses
@@ -527,7 +571,7 @@ class DualWorkerCoordinator {
         };
 
         this.textGenWorker.onerror = (error) => {
-            console.error('Text generation worker error:', error);
+            console.error('[DualWorkerCoordinator] Text generation worker error:', error);
         };
     }
 
@@ -535,16 +579,61 @@ class DualWorkerCoordinator {
      * Wait for worker to be ready
      */
     async waitForWorkerReady(worker, workerType) {
+        console.log(`[DualWorkerCoordinator] Waiting for ${workerType} worker to be ready...`);
+
         return new Promise((resolve, reject) => {
+            // Increase timeout for ML workers that need to download models
+            const timeoutDuration = workerType === 'textgen' ? 300000 : 50000; // 5 minutes for text generation, 50s for others
+
             const timeout = setTimeout(() => {
-                reject(new Error(`${workerType} worker initialization timeout`));
-            }, 50000);
+                console.error(`[DualWorkerCoordinator] ${workerType} worker initialization timeout after ${timeoutDuration}ms`);
+                reject(new Error(`${workerType} worker initialization timeout after ${timeoutDuration}ms`));
+            }, timeoutDuration);
 
             const handler = (event) => {
+                console.log(`[DualWorkerCoordinator] Received message from ${workerType} worker:`, event.data.type);
+
                 if (event.data.type === 'workerReady' || event.data.type === 'ready') {
+                    console.log(`[DualWorkerCoordinator] ${workerType} worker is ready!`);
                     clearTimeout(timeout);
                     worker.removeEventListener('message', handler);
                     resolve();
+                }
+            };
+
+            worker.addEventListener('message', handler);
+        });
+    }
+
+    /**
+     * Wait for worker to complete model initialization
+     */
+    async waitForWorkerInitialization(worker, workerType) {
+        console.log(`[DualWorkerCoordinator] Waiting for ${workerType} worker model initialization...`);
+        
+        return new Promise((resolve, reject) => {
+            // Extended timeout for model loading (10 minutes)
+            const timeoutDuration = 600000;
+            
+            const timeout = setTimeout(() => {
+                console.error(`[DualWorkerCoordinator] ${workerType} worker model initialization timeout after ${timeoutDuration}ms`);
+                reject(new Error(`${workerType} worker model initialization timeout after ${timeoutDuration}ms`));
+            }, timeoutDuration);
+
+            const handler = (event) => {
+                console.log(`[DualWorkerCoordinator] Received initialization message from ${workerType} worker:`, event.data.type, 'success:', event.data.success);
+                
+                if (event.data.type === 'ready') {
+                    clearTimeout(timeout);
+                    worker.removeEventListener('message', handler);
+                    
+                    if (event.data.success) {
+                        console.log(`[DualWorkerCoordinator] ${workerType} worker model initialized successfully!`);
+                        resolve();
+                    } else {
+                        console.error(`[DualWorkerCoordinator] ${workerType} worker model initialization failed:`, event.data.error);
+                        reject(new Error(`${workerType} worker model initialization failed: ${event.data.error}`));
+                    }
                 }
             };
 
