@@ -1,5 +1,5 @@
 {
-  "$schema": "cv-schema-enhanced.json",
+  "$schema": "cv-schema.json",
   "metadata": {
     "version": "2.0",
     "lastUpdated": "2025-11-07",
@@ -339,7 +339,7 @@
         },
         "details": {
           "english": "Fluent",
-          "dutch": "Basic", 
+          "dutch": "Basic",
           "ukrainian": "Native",
           "context": "International work environments, multicultural teams, Amsterdam-based"
         },
