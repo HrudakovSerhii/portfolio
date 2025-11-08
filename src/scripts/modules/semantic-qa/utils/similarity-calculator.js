@@ -177,6 +177,64 @@ export function rankSectionsByWeightedSimilarity(sectionMatches, options = {}) {
 }
 
 /**
+ * Find similar chunks based on embedding similarity (for chunk-based processing)
+ * @param {Array<number>} questionEmbedding - The question embedding vector
+ * @param {Array} chunks - Array of CV chunks with embeddings
+ * @param {number} maxChunks - Maximum number of chunks to return
+ * @returns {Array} - Array of similar chunks sorted by weighted similarity
+ */
+export function findSimilarChunks(questionEmbedding, chunks, maxChunks = 3) {
+  if (!Array.isArray(questionEmbedding)) {
+    throw new Error('Question embedding must be an array');
+  }
+
+  if (!Array.isArray(chunks)) {
+    return [];
+  }
+
+  if (typeof maxChunks !== 'number' || maxChunks <= 0) {
+    maxChunks = 3;
+  }
+
+  const similarities = [];
+
+  chunks.forEach((chunk, index) => {
+    if (chunk.embedding && Array.isArray(chunk.embedding)) {
+      try {
+        const similarity = calculateCosineSimilarity(questionEmbedding, chunk.embedding);
+        
+        // Apply priority weighting from metadata
+        const priority = chunk.metadata?.priority || 0;
+        const priorityWeight = priority ? (6 - priority) / 5 : 0.6;
+        
+        // Apply confidence weighting from metadata
+        const confidence = chunk.metadata?.confidence || 1.0;
+        
+        // Calculate weighted similarity
+        const weightedSimilarity = similarity * priorityWeight * confidence;
+        
+        similarities.push({
+          ...chunk,
+          similarity,
+          weightedSimilarity,
+          priorityWeight,
+          confidenceWeight: confidence,
+          index,
+          sectionId: chunk.id // For compatibility with existing code
+        });
+      } catch (error) {
+        console.warn(`Failed to calculate similarity for chunk ${chunk.id}:`, error);
+      }
+    }
+  });
+
+  // Sort by weighted similarity (highest first) and return top chunks
+  return similarities
+    .sort((a, b) => b.weightedSimilarity - a.weightedSimilarity)
+    .slice(0, maxChunks);
+}
+
+/**
  * Apply adaptive similarity threshold optimized for small LLM
  * @param {Array} matches - Array of matches with similarity scores
  * @param {Object} options - Threshold options
