@@ -201,6 +201,8 @@ export function findSimilarChunks(questionEmbedding, chunks, maxChunks = 3) {
   chunks.forEach((chunk, index) => {
     if (chunk.embedding && Array.isArray(chunk.embedding)) {
       try {
+        console.log(`[SimilarityCalculator] Comparing embeddings - Question: ${questionEmbedding.length}D, Chunk ${chunk.id}: ${chunk.embedding.length}D`);
+        
         const similarity = calculateCosineSimilarity(questionEmbedding, chunk.embedding);
         
         // Apply priority weighting from metadata
@@ -223,8 +225,15 @@ export function findSimilarChunks(questionEmbedding, chunks, maxChunks = 3) {
           sectionId: chunk.id // For compatibility with existing code
         });
       } catch (error) {
-        console.warn(`Failed to calculate similarity for chunk ${chunk.id}:`, error);
+        console.warn(`[SimilarityCalculator] Failed to calculate similarity for chunk ${chunk.id}:`, error);
+        console.warn(`[SimilarityCalculator] Question embedding dimensions: ${questionEmbedding.length}, Chunk embedding dimensions: ${chunk.embedding?.length}`);
       }
+    } else {
+      console.warn(`[SimilarityCalculator] Chunk ${chunk.id} has no valid embedding:`, {
+        hasEmbedding: !!chunk.embedding,
+        isArray: Array.isArray(chunk.embedding),
+        type: typeof chunk.embedding
+      });
     }
   });
 
