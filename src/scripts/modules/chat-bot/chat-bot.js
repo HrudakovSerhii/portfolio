@@ -9,6 +9,7 @@ class ChatBot {
     this.ui = null;
     this.conversationManager = null;
     this.cvDataService = null;
+    this.cvChunks = null;
     this.currentStyle = null;
     this.initializationPromise = null;
 
@@ -172,11 +173,11 @@ class ChatBot {
 
     // Use cv-data-service to load and prepare CV data
     await this.cvDataService.loadCVData();
-    const cvChunks = this.cvDataService.prepareCVChunks();
+    this.cvChunks = this.cvDataService.prepareCVChunks();
 
     console.log('📊 CHAT-BOT: CV data loaded via cv-data-service:', {
-      totalChunks: cvChunks.length,
-      categories: [...new Set(cvChunks.map(chunk => chunk.metadata.category))],
+      totalChunks: this.cvChunks.length,
+      categories: [...new Set(this.cvChunks.map(chunk => chunk.metadata.category))],
       version: this.cvDataService.getMetadata().version
     });
 
@@ -203,8 +204,9 @@ class ChatBot {
     try {
       console.log('🔍 CHAT-BOT: Starting semantic-qa processing...');
 
-      // Query the semantic-qa system
-      const result = await this.semanticQA.processQuestion(message, [], {
+      // Query the semantic-qa system with CV chunks
+      console.log('🔍 CHAT-BOT: Passing CV chunks to semantic-qa:', this.cvChunks?.length || 0);
+      const result = await this.semanticQA.processQuestion(message, this.cvChunks || [], {
         style: this.currentStyle,
         context: conversationContext,
         maxContextChunks: 3
