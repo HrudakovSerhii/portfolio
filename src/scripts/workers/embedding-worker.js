@@ -7,12 +7,10 @@ let embeddingService = null;
 let isInitialized = false;
 let initializationConfig = null;
 
-// Default configuration
+// Default configuration - simplified for better compatibility
 const DEFAULT_CONFIG = {
-    modelName: 'Xenova/distilbert-base-uncased',
+    modelName: 'Xenova/all-MiniLM-L6-v2',
     quantized: true,
-    device: 'auto',
-    dtype: 'fp32',
     pooling: 'mean',
     normalize: true
 };
@@ -28,54 +26,56 @@ async function initializeEmbeddingService(config = {}) {
     initializationConfig = { ...DEFAULT_CONFIG, ...config };
 
     try {
-        // Dynamic import for Xenova transformers
-        const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0/dist/transformers.min.js');
+        // Dynamic import for Xenova transformers - use latest stable version
+        const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
         
-        // Prepare pipeline options
+        // Configure environment for web worker
+        env.allowRemoteModels = true;
+        env.allowLocalModels = false;
+
+        // Prepare pipeline options - simplified for better compatibility
         const pipelineOptions = {
             quantized: initializationConfig.quantized,
-            device: initializationConfig.device,
-            dtype: initializationConfig.dtype,
             progress_callback: (progress) => {
-                if (progress.status === 'downloading') {
+                if (progress.status === 'downloading' || progress.status === 'loading') {
                     self.postMessage({
                         type: 'downloadProgress',
                         progress: progress.progress || 0,
                         status: progress.status,
-                        file: progress.file
+                        file: progress.file || progress.name
                     });
                 }
             }
         };
 
-        // Remove undefined values
+        // Remove undefined values and device/dtype for better compatibility
         Object.keys(pipelineOptions).forEach(key => {
             if (pipelineOptions[key] === undefined) {
                 delete pipelineOptions[key];
             }
         });
-        
-        // Initialize feature extraction pipeline with custom config
+
+        // Initialize feature extraction pipeline with simplified config
         const model = await pipeline('feature-extraction', initializationConfig.modelName, pipelineOptions);
-        
+
         embeddingService = {
             model,
             cache: new Map(),
             config: initializationConfig
         };
-        
+
         isInitialized = true;
-        
+
         self.postMessage({
             type: 'initialized',
             success: true,
             message: 'Embedding service initialized successfully',
             config: initializationConfig
         });
-        
+
     } catch (error) {
         console.error('Failed to initialize embedding service:', error);
-        
+
         self.postMessage({
             type: 'initialized',
             success: false,
@@ -116,7 +116,7 @@ async function generateEmbedding(text, requestId) {
         const cacheKey = hashText(text);
         if (embeddingService.cache.has(cacheKey)) {
             const cachedEmbedding = embeddingService.cache.get(cacheKey);
-            
+
             self.postMessage({
                 type: 'embedding',
                 requestId,
@@ -128,24 +128,37 @@ async function generateEmbedding(text, requestId) {
         }
 
         // Generate new embedding
-        const output = await embeddingService.model(text, { 
-            pooling: 'mean', 
-            normalize: true 
-        });
+        console.log('[EmbeddingWorker] Calling model for text:', text.substring(0, 100) + '...');
+        const output = await embeddingService.model(text);
         
+        console.log('[EmbeddingWorker] Raw model output:', {
+            type: typeof output,
+            isArray: Array.isArray(output),
+            hasData: !!output.data,
+            dataType: typeof output.data,
+            dataLength: output.data?.length,
+            outputLength: Array.isArray(output) ? output.length : 'not array',
+            shape: output.dims || output.shape || 'no shape info'
+        });
+
         // Handle different output formats (consistent with embedding service)
         let embedding;
         if (output.data) {
+            console.log('[EmbeddingWorker] Using output.data, length:', output.data.length);
             embedding = new Float32Array(output.data);
         } else if (Array.isArray(output)) {
+            console.log('[EmbeddingWorker] Using array output, length:', output.length);
             embedding = new Float32Array(output);
         } else {
+            console.log('[EmbeddingWorker] Using direct output, type:', typeof output);
             embedding = new Float32Array(output);
         }
         
+        console.log('[EmbeddingWorker] Final embedding dimensions:', embedding.length);
+
         // Cache the result
         embeddingService.cache.set(cacheKey, embedding);
-        
+
         self.postMessage({
             type: 'embedding',
             requestId,
@@ -153,10 +166,10 @@ async function generateEmbedding(text, requestId) {
             embedding: Array.from(embedding),
             cached: false
         });
-        
+
     } catch (error) {
         console.error('Failed to generate embedding:', error);
-        
+
         self.postMessage({
             type: 'embedding',
             requestId,
@@ -195,27 +208,24 @@ async function generateBatchEmbeddings(texts, requestId) {
     try {
         const embeddings = [];
         const cacheHits = [];
-        
+
         for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
-            
+
             if (!text || typeof text !== 'string') {
                 console.warn(`Skipping invalid text at index ${i}`);
                 continue;
             }
-            
+
             const cacheKey = hashText(text);
-            
+
             if (embeddingService.cache.has(cacheKey)) {
                 const cachedEmbedding = embeddingService.cache.get(cacheKey);
                 embeddings.push(Array.from(cachedEmbedding));
                 cacheHits.push(true);
             } else {
-                const output = await embeddingService.model(text, { 
-                    pooling: 'mean', 
-                    normalize: true 
-                });
-                
+                const output = await embeddingService.model(text);
+
                 // Handle different output formats (consistent with embedding service)
                 let embedding;
                 if (output.data) {
@@ -225,13 +235,13 @@ async function generateBatchEmbeddings(texts, requestId) {
                 } else {
                     embedding = new Float32Array(output);
                 }
-                
+
                 embeddingService.cache.set(cacheKey, embedding);
-                
+
                 embeddings.push(Array.from(embedding));
                 cacheHits.push(false);
             }
-            
+
             // Send progress update for large batches
             if (texts.length > 10 && (i + 1) % 5 === 0) {
                 self.postMessage({
@@ -243,7 +253,7 @@ async function generateBatchEmbeddings(texts, requestId) {
                 });
             }
         }
-        
+
         self.postMessage({
             type: 'batchEmbedding',
             requestId,
@@ -253,10 +263,10 @@ async function generateBatchEmbeddings(texts, requestId) {
             processed: embeddings.length,
             total: texts.length
         });
-        
+
     } catch (error) {
         console.error('Failed to generate batch embeddings:', error);
-        
+
         self.postMessage({
             type: 'batchEmbedding',
             requestId,
@@ -277,11 +287,11 @@ function calculateSimilarity(embedding1, embedding2, requestId) {
         if (!Array.isArray(embedding1) || !Array.isArray(embedding2)) {
             throw new Error('Embeddings must be arrays');
         }
-        
+
         if (embedding1.length !== embedding2.length) {
             throw new Error('Embeddings must have the same dimension');
         }
-        
+
         if (embedding1.length === 0) {
             throw new Error('Embeddings cannot be empty');
         }
@@ -306,7 +316,7 @@ function calculateSimilarity(embedding1, embedding2, requestId) {
             similarity,
             dimensions: embedding1.length
         });
-        
+
     } catch (error) {
         self.postMessage({
             type: 'similarity',
@@ -345,31 +355,31 @@ async function processCVSections(cvSections, requestId) {
 
     try {
         const processedSections = [];
-        
+
         for (let i = 0; i < cvSections.length; i++) {
             const section = cvSections[i];
-            
+
             if (!section || typeof section !== 'object') {
                 console.warn(`Skipping invalid section at index ${i}`);
                 continue;
             }
-            
+
             // Extract text content from section for embedding
             let textContent = '';
-            
+
             // Build text from section keywords and responses
             if (section.keywords && Array.isArray(section.keywords)) {
                 textContent += section.keywords.join(' ') + ' ';
             }
-            
+
             // Add response content (prefer developer style, fallback to others)
             if (section.responses) {
-                const response = section.responses.developer || 
-                               section.responses.hr || 
+                const response = section.responses.developer ||
+                               section.responses.hr ||
                                section.responses.friend || '';
                 textContent += response;
             }
-            
+
             // Add details if available
             if (section.details && typeof section.details === 'object') {
                 const detailsText = Object.values(section.details)
@@ -377,27 +387,24 @@ async function processCVSections(cvSections, requestId) {
                     .join(' ');
                 textContent += ' ' + detailsText;
             }
-            
+
             if (!textContent.trim()) {
                 console.warn(`No text content found for section at index ${i}`);
                 continue;
             }
-            
+
             const sanitizedText = sanitizeText(textContent);
             const cacheKey = hashText(sanitizedText);
-            
+
             let embedding;
             let cached = false;
-            
+
             if (embeddingService.cache.has(cacheKey)) {
                 embedding = Array.from(embeddingService.cache.get(cacheKey));
                 cached = true;
             } else {
-                const output = await embeddingService.model(sanitizedText, { 
-                    pooling: 'mean', 
-                    normalize: true 
-                });
-                
+                const output = await embeddingService.model(sanitizedText);
+
                 // Handle different output formats
                 let embeddingArray;
                 if (output.data) {
@@ -407,12 +414,12 @@ async function processCVSections(cvSections, requestId) {
                 } else {
                     embeddingArray = new Float32Array(output);
                 }
-                
+
                 embeddingService.cache.set(cacheKey, embeddingArray);
                 embedding = Array.from(embeddingArray);
                 cached = false;
             }
-            
+
             processedSections.push({
                 id: section.id || `section_${i}`,
                 embedding,
@@ -420,7 +427,7 @@ async function processCVSections(cvSections, requestId) {
                 textLength: sanitizedText.length,
                 originalSection: section
             });
-            
+
             // Send progress update for large batches
             if (cvSections.length > 10 && (i + 1) % 5 === 0) {
                 self.postMessage({
@@ -432,7 +439,7 @@ async function processCVSections(cvSections, requestId) {
                 });
             }
         }
-        
+
         self.postMessage({
             type: 'cvSectionsProcessed',
             requestId,
@@ -441,10 +448,10 @@ async function processCVSections(cvSections, requestId) {
             totalProcessed: processedSections.length,
             totalInput: cvSections.length
         });
-        
+
     } catch (error) {
         console.error('Failed to process CV sections:', error);
-        
+
         self.postMessage({
             type: 'cvSectionsProcessed',
             requestId,
@@ -465,33 +472,33 @@ function filterBySimilarityThreshold(similarities, threshold, requestId) {
         if (!Array.isArray(similarities)) {
             throw new Error('Similarities must be an array');
         }
-        
+
         if (typeof threshold !== 'number' || threshold < 0 || threshold > 1) {
             throw new Error('Threshold must be a number between 0 and 1');
         }
-        
+
         const filteredSimilarities = similarities.filter(item => {
             if (typeof item !== 'object' || item === null) {
                 return false;
             }
-            
+
             // Support different property names for similarity score
             const score = item.similarity || item.score || item.similarityScore;
-            
+
             if (typeof score !== 'number') {
                 return false;
             }
-            
+
             return score >= threshold;
         });
-        
+
         // Sort by similarity score in descending order
         filteredSimilarities.sort((a, b) => {
             const scoreA = a.similarity || a.score || a.similarityScore || 0;
             const scoreB = b.similarity || b.score || b.similarityScore || 0;
             return scoreB - scoreA;
         });
-        
+
         self.postMessage({
             type: 'similaritiesFiltered',
             requestId,
@@ -501,7 +508,7 @@ function filterBySimilarityThreshold(similarities, threshold, requestId) {
             filteredCount: filteredSimilarities.length,
             threshold
         });
-        
+
     } catch (error) {
         self.postMessage({
             type: 'similaritiesFiltered',
@@ -519,7 +526,7 @@ function clearCache(requestId) {
     if (embeddingService && embeddingService.cache) {
         embeddingService.cache.clear();
     }
-    
+
     self.postMessage({
         type: 'cacheCleared',
         requestId,
@@ -538,7 +545,7 @@ function getCacheStats(requestId) {
         modelName: initializationConfig ? initializationConfig.modelName : DEFAULT_CONFIG.modelName,
         memoryUsage: embeddingService ? getApproximateMemoryUsage() : 0
     };
-    
+
     self.postMessage({
         type: 'cacheStats',
         requestId,
@@ -553,7 +560,7 @@ function getCacheStats(requestId) {
  */
 function getApproximateMemoryUsage() {
     if (!embeddingService || !embeddingService.cache) return 0;
-    
+
     // Estimate: each Float32Array element is 4 bytes
     // Assume average embedding dimension of 768 (DistilBERT)
     const avgEmbeddingSize = 768 * 4; // 4 bytes per float32
@@ -584,19 +591,19 @@ function sanitizeText(text) {
     if (typeof text !== 'string') {
         throw new Error('Text must be a string');
     }
-    
+
     // Trim whitespace and normalize
     text = text.trim();
-    
+
     if (text.length === 0) {
         throw new Error('Text cannot be empty');
     }
-    
+
     if (text.length > 10000) {
         console.warn('Text is very long, truncating to 10000 characters');
         text = text.substring(0, 10000);
     }
-    
+
     return text;
 }
 
@@ -605,13 +612,13 @@ function sanitizeText(text) {
  */
 self.onmessage = async function(event) {
     const { type, data, requestId } = event.data;
-    
+
     try {
         switch (type) {
             case 'initialize':
                 await initializeEmbeddingService();
                 break;
-                
+
             case 'generateEmbedding':
                 if (!data || !data.text) {
                     throw new Error('Missing text data for embedding generation');
@@ -619,43 +626,43 @@ self.onmessage = async function(event) {
                 const sanitizedText = sanitizeText(data.text);
                 await generateEmbedding(sanitizedText, requestId);
                 break;
-                
+
             case 'generateBatchEmbeddings':
                 if (!data || !data.texts) {
                     throw new Error('Missing texts data for batch embedding generation');
                 }
                 await generateBatchEmbeddings(data.texts, requestId);
                 break;
-                
+
             case 'calculateSimilarity':
                 if (!data || !data.embedding1 || !data.embedding2) {
                     throw new Error('Missing embedding data for similarity calculation');
                 }
                 calculateSimilarity(data.embedding1, data.embedding2, requestId);
                 break;
-                
+
             case 'processCVSections':
                 if (!data || !data.cvSections) {
                     throw new Error('Missing CV sections data for processing');
                 }
                 await processCVSections(data.cvSections, requestId);
                 break;
-                
+
             case 'filterBySimilarityThreshold':
                 if (!data || !data.similarities || typeof data.threshold !== 'number') {
                     throw new Error('Missing similarities data or threshold for filtering');
                 }
                 filterBySimilarityThreshold(data.similarities, data.threshold, requestId);
                 break;
-                
+
             case 'clearCache':
                 clearCache(requestId);
                 break;
-                
+
             case 'getCacheStats':
                 getCacheStats(requestId);
                 break;
-                
+
             case 'ping':
                 self.postMessage({
                     type: 'pong',
@@ -664,7 +671,7 @@ self.onmessage = async function(event) {
                     timestamp: Date.now()
                 });
                 break;
-                
+
             default:
                 throw new Error(`Unknown message type: ${type}`);
         }

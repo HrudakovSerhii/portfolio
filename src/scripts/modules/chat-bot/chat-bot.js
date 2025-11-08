@@ -178,10 +178,16 @@ class ChatBot {
     console.log('📊 CHAT-BOT: CV data loaded via cv-data-service:', {
       totalChunks: this.cvChunks.length,
       categories: [...new Set(this.cvChunks.map(chunk => chunk.metadata.category))],
-      version: this.cvDataService.getMetadata().version
+      version: this.cvDataService.getMetadata().version,
+      sampleChunk: this.cvChunks[0] ? {
+        id: this.cvChunks[0].id,
+        hasEmbedding: !!this.cvChunks[0].embedding,
+        embeddingDimensions: this.cvChunks[0].embedding?.length,
+        textPreview: this.cvChunks[0].text?.substring(0, 100) + '...'
+      } : null
     });
 
-    // Initialize the dual worker coordinator
+    // Initialize the dual worker coordinator with CV chunks for embedding precomputation
     this.semanticQA = new DualWorkerCoordinator({
       embeddingWorkerPath: './scripts/workers/embedding-worker.js',
       textGenWorkerPath: './scripts/workers/optimized-ml-worker.js',
@@ -190,7 +196,7 @@ class ChatBot {
     });
 
     // Initialize the semantic-qa system with prepared chunks
-    await this.semanticQA.initialize(cvChunks);
+    await this.semanticQA.initialize(this.cvChunks);
 
     console.log('✅ CHAT-BOT: Semantic-qa system initialized successfully');
   }
