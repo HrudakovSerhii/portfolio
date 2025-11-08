@@ -96,7 +96,10 @@ export function findRelevantSectionsByKeywords(query, cvData, communicationStyle
  * @returns {string|null} - Built context string or null if no sections
  */
 export function buildCVContext(relevantSections, communicationStyle = 'developer', cvData = null) {
+  console.log('[CVContextBuilder] buildCVContext called with:', relevantSections.length, 'sections, style:', communicationStyle);
+  
   if (!Array.isArray(relevantSections) || relevantSections.length === 0) {
+    console.log('[CVContextBuilder] No relevant sections provided');
     return null;
   }
 
@@ -104,17 +107,22 @@ export function buildCVContext(relevantSections, communicationStyle = 'developer
   
   // Process up to 2 sections for small LLM context window
   const sectionsToProcess = relevantSections.slice(0, 2);
+  console.log('[CVContextBuilder] Processing sections:', sectionsToProcess.map(s => s.id));
   
-  for (const match of sectionsToProcess) {
-    const section = match.section;
+  for (const chunk of sectionsToProcess) {
+    console.log('[CVContextBuilder] Processing chunk:', chunk.id, 'has responses:', !!chunk.responses);
+    
+    // Handle both old structure (match.section) and new structure (direct chunk)
+    const section = chunk.section || chunk;
     if (!section) continue;
 
     // Use appropriate communication style response
     const response = section.responses && section.responses[communicationStyle] 
       ? section.responses[communicationStyle]
-      : section.responses?.developer || section.embeddingSourceText;
+      : section.responses?.developer || section.embeddingSourceText || section.text;
 
     if (response) {
+      console.log('[CVContextBuilder] Adding response for', section.id, 'length:', response.length);
       contextParts.push(response);
     }
 
@@ -122,6 +130,7 @@ export function buildCVContext(relevantSections, communicationStyle = 'developer
     if (section.details) {
       const details = extractKeyDetails(section.details, communicationStyle);
       if (details) {
+        console.log('[CVContextBuilder] Adding details for', section.id, 'length:', details.length);
         contextParts.push(details);
       }
     }
@@ -139,7 +148,10 @@ export function buildCVContext(relevantSections, communicationStyle = 'developer
     }
   }
 
-  return contextParts.length > 0 ? contextParts.join('\n\n') : null;
+  const result = contextParts.length > 0 ? contextParts.join('\n\n') : null;
+  console.log('[CVContextBuilder] Returning context:', result ? `${result.length} chars` : 'null');
+  console.log('[CVContextBuilder] Context preview:', result?.substring(0, 200) + '...');
+  return result;
 }
 
 /**
