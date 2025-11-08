@@ -113,16 +113,40 @@ class OptimizedMLWorker {
   }
 
   /**
-   * Check WebGPU availability
+   * Check WebGPU availability with detailed diagnostics
    */
   async checkWebGPUAvailability() {
     try {
-      if (!navigator.gpu) return false;
+      // Check if WebGPU is supported
+      if (!navigator.gpu) {
+        console.warn('WebGPU not supported: navigator.gpu not available');
+        return false;
+      }
+
+      // Check Cross-Origin Isolation (required for WebGPU)
+      if (!crossOriginIsolated) {
+        console.warn('WebGPU requires Cross-Origin Isolation. Server headers needed.');
+        return false;
+      }
+
+      // Request adapter
       const adapter = await navigator.gpu.requestAdapter();
-      if (!adapter) return false;
+      if (!adapter) {
+        console.warn('WebGPU adapter not available');
+        return false;
+      }
+
+      // Request device
       const device = await adapter.requestDevice();
-      return !!device;
+      if (!device) {
+        console.warn('WebGPU device not available');
+        return false;
+      }
+
+      console.log('WebGPU successfully initialized');
+      return true;
     } catch (error) {
+      console.warn('WebGPU initialization failed:', error.message);
       return false;
     }
   }
@@ -295,6 +319,179 @@ class OptimizedMLWorker {
   }
 
   /**
+   * Process chat-bot query (handles process_query message type)
+   */
+  async processQuery(data) {
+    const { message, context = [], style = 'developer', cvData } = data;
+    
+    console.log('🔍 WORKER: Processing query:', {
+      message,
+      contextLength: context.length,
+      context: context.slice(0, 2), // Log first 2 context items
+      style,
+      hasCvData: !!cvData
+    });
+    
+    if (!message) {
+      this.postMessage({
+        type: "error",
+        error: "No message provided in query"
+      });
+      return;
+    }
+
+    // Find relevant CV context if CV data is available
+    let cvContext = null;
+    if (cvData) {
+      cvContext = this.findRelevantCVContext(message, cvData);
+      console.log('🎯 WORKER: Found CV context:', {
+        contextSections: cvContext ? cvContext.length : 0,
+        sectionKeys: cvContext ? cvContext.map(s => s.key) : []
+      });
+    }
+
+    // Build prompt from message, context, and CV data
+    const prompt = this.buildChatPrompt(message, context, style, cvContext);
+    
+    console.log('📝 WORKER: Built prompt:', {
+      promptLength: prompt.length,
+      prompt: prompt.substring(0, 300) + '...' // Log first 300 chars
+    });
+    
+    // Process using existing generation logic
+    await this.processGeneration({
+      prompt: prompt,
+      query: message,
+      maxTokens: 60,
+      temperature: 0.3
+    });
+  }
+
+  /**
+   * Find relevant CV context based on the message
+   */
+  findRelevantCVContext(message, cvData) {
+    if (!cvData || !cvData.knowledge_base) {
+      return null;
+    }
+
+    const messageLower = message.toLowerCase();
+    const relevantSections = [];
+
+    // Search through knowledge base for relevant content
+    Object.entries(cvData.knowledge_base).forEach(([key, data]) => {
+      if (data.keywords && data.content) {
+        // Check if any keywords match the message
+        const hasMatch = data.keywords.some(keyword => 
+          messageLower.includes(keyword.toLowerCase())
+        );
+        
+        if (hasMatch) {
+          relevantSections.push({
+            key,
+            content: data.content,
+            keywords: data.keywords
+          });
+        }
+      }
+    });
+
+    console.log('🔍 WORKER: CV context search:', {
+      searchTerms: messageLower,
+      foundSections: relevantSections.map(s => s.key),
+      totalSections: Object.keys(cvData.knowledge_base).length
+    });
+
+    return relevantSections.length > 0 ? relevantSections : null;
+  }
+
+  /**
+   * Build chat prompt for the model
+   */
+  buildChatPrompt(message, context = [], style = 'developer', cvContext = null) {
+    console.log('🏗️ WORKER: Building prompt with:', {
+      message,
+      contextItems: context.length,
+      style,
+      hasCvContext: !!cvContext,
+      cvSections: cvContext ? cvContext.map(s => s.key) : []
+    });
+    
+    // Create a focused prompt for the small model
+    let prompt = "You are Serhii, a professional developer. Answer briefly in first person.\n\n";
+    
+    // Add CV context if available (this is the key part!)
+    if (cvContext && cvContext.length > 0) {
+      prompt += "Based on this information about Serhii:\n";
+      cvContext.forEach(section => {
+        prompt += `${section.content}\n\n`;
+      });
+    }
+    
+    // Add conversation context if available (keep it minimal for small model)
+    if (context.length > 0) {
+      const recentContext = context.slice(-2); // Only use last 2 context items
+      prompt += "Recent conversation:\n";
+      recentContext.forEach(item => {
+        prompt += `- ${item}\n`;
+      });
+      prompt += "\n";
+    }
+    
+    prompt += `Question: ${message}\n`;
+    prompt += "Answer: I";
+    
+    console.log('✅ WORKER: Final prompt built:', {
+      length: prompt.length,
+      preview: prompt.substring(0, 200) + '...',
+      hasCvData: !!cvContext
+    });
+    
+    return prompt;
+  }
+
+  /**
+   * Cleanup resources
+   */
+  cleanup() {
+    // Clean up model resources if needed
+    if (this.model) {
+      // Note: Transformers.js doesn't have explicit cleanup methods
+      // but we can clear the reference
+      this.model = null;
+    }
+    
+    this.isInitialized = false;
+    
+    this.postMessage({
+      type: "cleanup_complete",
+      message: "Worker cleanup completed"
+    });
+  }
+
+  /**
+   * Get performance metrics
+   */
+  getPerformanceMetrics() {
+    const metrics = {
+      isInitialized: this.isInitialized,
+      modelName: this.modelConfig.name,
+      device: this.modelConfig.device,
+      memoryUsage: performance.memory ? {
+        used: performance.memory.usedJSHeapSize,
+        total: performance.memory.totalJSHeapSize,
+        limit: performance.memory.jsHeapSizeLimit
+      } : null,
+      timestamp: Date.now()
+    };
+
+    this.postMessage({
+      type: "performance_metrics",
+      metrics: metrics
+    });
+  }
+
+  /**
    * Post message to main thread
    */
   postMessage(data) {
@@ -316,6 +513,21 @@ self.addEventListener('message', async (event) => {
     
     case 'generate':
       await worker.processGeneration(data);
+      break;
+    
+    case 'process_query':
+      // Handle chat-bot query processing
+      await worker.processQuery(data);
+      break;
+    
+    case 'cleanup':
+      // Handle cleanup request
+      worker.cleanup();
+      break;
+    
+    case 'get_performance_metrics':
+      // Handle performance metrics request
+      worker.getPerformanceMetrics();
       break;
     
     default:
