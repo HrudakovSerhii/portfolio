@@ -5,7 +5,7 @@
 class ChatBot {
   constructor() {
     this.isInitialized = false;
-    this.worker = null;
+    this.semanticQA = null;
     this.ui = null;
     this.conversationManager = null;
     this.cvDataService = null;
@@ -14,7 +14,7 @@ class ChatBot {
 
     this.sessionStartTime = Date.now();
     this.queryCount = 0;
-    this.engineMode = 'distilbert'; // Single engine mode
+    this.engineMode = 'semantic-qa'; // Semantic QA mode only
   }
 
   /**
@@ -176,72 +176,171 @@ class ChatBot {
   }
 
   /**
-   * Initialize the DistilBERT Worker
+   * Initialize the DistilBERT Worker with Semantic-QA System
    */
   async _initializeDistilBERTWorker() {
-    return new Promise((resolve, reject) => {
-      try {
-        this.worker = new Worker('./scripts/workers/optimized-ml-worker.js', { type: 'module' });
-
-        const timeout = setTimeout(() => {
-          reject(new Error('WORKER_TIMEOUT'));
-        }, 30000); // 30 second timeout
-
-        this.worker.onmessage = (event) => {
-          const { type, success, error } = event.data;
-
-          if (type === 'ready') {
-            clearTimeout(timeout);
-
-            if (success) {
-              this.worker.isInitialized = true;
-              resolve();
-            } else {
-              reject(new Error(`WORKER_INIT_FAILED: ${error}`));
-            }
-          }
-        };
-
-        this.worker.onerror = (error) => {
-          clearTimeout(timeout);
-          reject(new Error(`WORKER_ERROR: ${error.message}`));
-        };
-
-        // Initialize worker with CV data
-        const cvData = this.cvDataService.isDataLoaded() ? this.cvDataService.cvData : null;
-        this.worker.postMessage({
-          type: 'initialize',
-          modelPath: '/models/distilbert',
-          cvData: cvData
-        });
-
-      } catch (error) {
-        reject(new Error(`WORKER_CREATE_FAILED: ${error.message}`));
-      }
+    console.log('🔧 CHAT-BOT: Initializing with semantic-qa system...');
+    
+    // Import the semantic-qa system
+    const { default: DualWorkerCoordinator } = await import('../semantic-qa/index.js');
+    
+    // Load CV data
+    const cvDataResponse = await fetch('./data/chat-bot/cv-data-optimized.json');
+    
+    if (!cvDataResponse.ok) {
+      throw new Error(`Failed to load CV data: ${cvDataResponse.status} ${cvDataResponse.statusText}`);
+    }
+    
+    const cvData = await cvDataResponse.json();
+    
+    console.log('📊 CHAT-BOT: Loaded CV data:', {
+      knowledgeBaseKeys: Object.keys(cvData.knowledge_base || {}),
+      profileName: cvData.profile?.name,
+      version: cvData.metadata?.version
     });
+    
+    // Initialize the dual worker coordinator
+    this.semanticQA = new DualWorkerCoordinator({
+      embeddingWorkerPath: './scripts/workers/embedding-worker.js',
+      textGenWorkerPath: './scripts/workers/optimized-ml-worker.js',
+      maxContextChunks: 3,
+      similarityThreshold: 0.7
+    });
+    
+    // Prepare CV chunks for embedding
+    const cvChunks = this._prepareCVChunks(cvData);
+    console.log('📝 CHAT-BOT: Prepared CV chunks:', cvChunks.length);
+    
+    // Initialize the semantic-qa system
+    await this.semanticQA.initialize(cvChunks);
+    
+    console.log('✅ CHAT-BOT: Semantic-qa system initialized successfully');
+    
+    // Store CV data for reference
+    this.cvData = cvData;
   }
-
-
 
   /**
-   * Setup ongoing worker message handling (legacy for direct worker communication)
+   * Prepare CV data chunks for embedding
    */
-  _setupWorkerMessageHandling() {
-    this.worker.onmessage = (event) => {
-      const { type, answer, confidence, matchedSections, processingMetrics, error } = event.data;
-
-      switch (type) {
-        case 'response':
-          this._handleWorkerResponse(answer, confidence, matchedSections, processingMetrics);
-          break;
-        case 'error':
-          this._handleWorkerError(error);
-          break;
-        default:
-          console.warn('ChatBot: Unknown worker message type:', type);
-      }
-    };
+  _prepareCVChunks(cvData) {
+    const chunks = [];
+    
+    if (cvData.knowledge_base) {
+      Object.entries(cvData.knowledge_base).forEach(([key, data]) => {
+        if (data.content) {
+          chunks.push({
+            id: key,
+            text: data.content,
+            keywords: data.keywords || [],
+            metadata: {
+              type: 'knowledge_base',
+              key: key,
+              details: data.details || {}
+            }
+          });
+        }
+      });
+    }
+    
+    console.log('🔍 CHAT-BOT: CV chunks prepared:', {
+      totalChunks: chunks.length,
+      chunkIds: chunks.map(c => c.id),
+      avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length
+    });
+    
+    return chunks;
   }
+
+  /**
+   * Process message using semantic-qa system
+   */
+  async _processWithSemanticQA(message, conversationContext) {
+    try {
+      console.log('🔍 CHAT-BOT: Starting semantic-qa processing...');
+      
+      // Query the semantic-qa system
+      const result = await this.semanticQA.processQuestion(message, [], {
+        style: this.currentStyle,
+        context: conversationContext,
+        maxContextChunks: 3
+      });
+      
+      console.log('📊 CHAT-BOT: Semantic-qa result:', {
+        hasAnswer: !!result.answer,
+        confidence: result.confidence,
+        matchedChunks: result.matchedSections?.length || 0,
+        processingTime: result.processingMetrics?.processingTime
+      });
+      
+      // Log the context that was selected
+      if (result.matchedSections && result.matchedSections.length > 0) {
+        console.log('🎯 CHAT-BOT: Selected CV context:', 
+          result.matchedSections.map(section => ({
+            id: section.id,
+            similarity: section.similarity,
+            preview: section.text.substring(0, 100) + '...'
+          }))
+        );
+      }
+      
+      // Handle the response
+      this._handleSemanticQAResponse(result, message);
+      
+    } catch (error) {
+      console.error('❌ CHAT-BOT: Semantic-qa processing failed:', error);
+      this._handleWorkerError(error.message);
+    }
+  }
+
+  /**
+   * Handle semantic-qa response
+   */
+  _handleSemanticQAResponse(result, originalMessage) {
+    this.ui.hideTypingIndicator();
+
+    if (result.error) {
+      console.error('❌ CHAT-BOT: Semantic-qa error:', result.error);
+      this._handleWorkerError(result.error);
+      return;
+    }
+
+    // Log processing metrics for debugging
+    if (result.processingMetrics && window.isDev) {
+      console.log('📈 CHAT-BOT: Processing metrics:', result.processingMetrics);
+    }
+
+    // Check if fallback handling is needed
+    const fallbackDecision = this.fallbackHandler.shouldTriggerFallback(
+      result.confidence,
+      originalMessage,
+      result.matchedSections
+    );
+
+    if (fallbackDecision.shouldFallback) {
+      this._handleFallbackResponse(fallbackDecision, originalMessage);
+    } else {
+      // Format response based on current style
+      const formattedAnswer = this.styleManager.formatResponse(result.answer, {
+        matchedSections: result.matchedSections,
+        confidence: result.confidence,
+        metrics: result.processingMetrics
+      });
+
+      // Add response to conversation history
+      this.conversationManager.addMessage(
+        originalMessage,
+        formattedAnswer,
+        result.matchedSections,
+        result.confidence
+      );
+
+      // Display response
+      this.ui.addMessage(formattedAnswer, false, this.currentStyle);
+    }
+  }
+
+
 
   /**
    * Select conversation style and start chat
@@ -291,16 +390,17 @@ class ChatBot {
       // Get conversation context
       const context = this.conversationManager.getContext();
 
-
-
-      // Process with direct worker communication
-      this.worker.postMessage({
-        type: 'process_query',
-        message: message,
-        context: context,
+      console.log('🚀 CHAT-BOT: Processing message:', {
+        message,
+        contextLength: context.length,
+        contextPreview: context.slice(0, 2),
         style: this.currentStyle,
-        queryId: `query_${this.queryCount}_${Date.now()}`
+        queryCount: this.queryCount
       });
+
+      // Always use semantic-qa system
+      console.log('🧠 CHAT-BOT: Using semantic-qa system...');
+      await this._processWithSemanticQA(message, context);
 
     } catch (error) {
       this._handleProcessingError(error);
@@ -346,37 +446,23 @@ class ChatBot {
    * Get available engines
    */
   getAvailableEngines() {
-    return ['distilbert']; // Single engine mode
+    return ['semantic-qa']; // Semantic QA system only
   }
 
   /**
-   * Clean up resources with performance cleanup
+   * Clean up resources
    */
   async destroy() {
-
-
-
-
-    // Clean up worker
-    if (this.worker) {
-      // Send cleanup message to worker before terminating
-      this.worker.postMessage({ type: 'cleanup' });
-
-      // Give worker time to clean up, then terminate
-      setTimeout(() => {
-        if (this.worker) {
-          this.worker.terminate();
-          this.worker = null;
-        }
-      }, 100);
+    // Clean up semantic-qa system
+    if (this.semanticQA) {
+      // The DualWorkerCoordinator should handle its own cleanup
+      this.semanticQA = null;
     }
 
     // Clean up managers
     if (this.conversationManager) {
       this.conversationManager.clearHistory();
     }
-
-
 
     // Reset state
     this.isInitialized = false;
@@ -538,10 +624,9 @@ class ChatBot {
     this.isInitialized = false;
     this.initializationPromise = null;
 
-    // Clean up existing worker if any
-    if (this.worker) {
-      this.worker.terminate();
-      this.worker = null;
+    // Clean up existing semantic-qa if any
+    if (this.semanticQA) {
+      this.semanticQA = null;
     }
 
     // Retry initialization
@@ -581,32 +666,6 @@ class ChatBot {
         currentStyle: this.currentStyle
       }
     };
-  }
-
-  /**
-   * Request performance metrics from worker
-   */
-  async getWorkerPerformanceMetrics() {
-    if (!this.worker) {
-      return { error: 'Worker not available' };
-    }
-
-    return new Promise((resolve) => {
-      const timeout = setTimeout(() => {
-        resolve({ error: 'Worker metrics request timeout' });
-      }, 5000);
-
-      const messageHandler = (event) => {
-        if (event.data.type === 'performance_metrics') {
-          clearTimeout(timeout);
-          this.worker.removeEventListener('message', messageHandler);
-          resolve(event.data.metrics);
-        }
-      };
-
-      this.worker.addEventListener('message', messageHandler);
-      this.worker.postMessage({ type: 'get_performance_metrics' });
-    });
   }
 
   /**
