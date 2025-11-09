@@ -424,8 +424,8 @@ class CVDataService {
               details: section.details || {},
               relatedSections: section.relatedSections || []
             },
-            // Include existing embeddings if available
-            embedding: section.embeddings || null
+            // Include existing embeddings if available (only if valid array)
+            embedding: (section.embeddings && Array.isArray(section.embeddings) && section.embeddings.length > 0) ? section.embeddings : null
           });
         }
       }
