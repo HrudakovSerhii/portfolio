@@ -60,10 +60,11 @@ export class WorkerCommunicator {
       });
 
       // Send message to worker
+      // Wrap data in 'data' property for workers that expect it
       this.worker.postMessage({
         type,
         requestId,
-        ...data
+        data
       });
     });
   }
