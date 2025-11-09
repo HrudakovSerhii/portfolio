@@ -295,7 +295,7 @@ export class ChatBotQARouter {
     
     // Batch embed chunks
     const texts = chunksNeedingEmbeddings.map(chunk => chunk.text);
-    const response = await this.embeddingCommunicator.sendMessage('embed', { texts });
+    const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', { texts });
     
     if (response.embeddings) {
       // Assign embeddings to chunks
@@ -315,7 +315,7 @@ export class ChatBotQARouter {
     console.log('[ChatBotQARouter] Generating embedding for query');
     
     try {
-      const response = await this.embeddingCommunicator.sendMessage('embed', { 
+      const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', { 
         texts: [text] 
       });
       
