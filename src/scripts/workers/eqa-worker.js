@@ -263,3 +263,14 @@ self.postMessage({
     success: true,
     timestamp: Date.now()
 });
+
+// Auto-initialize when worker starts (like embedding worker)
+console.log('[EQAWorker] Auto-initializing worker...');
+initializeEQAModel().catch(error => {
+    console.error('[EQAWorker] Auto-initialization failed:', error);
+    self.postMessage({
+        type: 'initialized',
+        success: false,
+        error: error.message
+    });
+});

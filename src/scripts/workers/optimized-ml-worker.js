@@ -661,3 +661,14 @@ self.postMessage({
   message: 'OptimizedMLWorker script loaded and ready to receive messages',
   timestamp: Date.now()
 });
+
+// Auto-initialize when worker starts (like embedding worker)
+console.log('[OptimizedMLWorker] Auto-initializing worker...');
+worker.initialize().catch(error => {
+  console.error('[OptimizedMLWorker] Auto-initialization failed:', error);
+  self.postMessage({
+    type: 'ready',
+    success: false,
+    error: error.message
+  });
+});
