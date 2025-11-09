@@ -5,7 +5,7 @@
 class ChatBot {
   constructor() {
     this.isInitialized = false;
-    this.semanticQA = null;
+    this.chatbotQARouter = null;
     this.ui = null;
     this.conversationManager = null;
     this.cvDataService = null;
@@ -163,110 +163,122 @@ class ChatBot {
   }
 
   /**
-   * Initialize the Semantic-QA System
+   * Initialize the Chat Bot QA Router
    */
   async initializeChat() {
-    console.log('🔧 CHAT-BOT: Initializing with semantic-qa system...');
+    try {
+      console.log('🔧 CHAT-BOT: Initializing chat bot QA router...');
 
-    // Import the semantic-qa system
-    const { default: DualWorkerCoordinator } = await import('../semantic-qa/index.js');
+      // Import the chatbot QA router
+      const { default: ChatBotQARouter } = await import('./chat-bot-qa-router.js');
 
-    // Use cv-data-service to load and prepare CV data
-    await this.cvDataService.loadCVData();
-    this.cvChunks = this.cvDataService.prepareCVChunks();
+      // Use cv-data-service to load and prepare CV data
+      await this.cvDataService.loadCVData();
+      this.cvChunks = this.cvDataService.prepareCVChunks();
 
-    console.log('📊 CHAT-BOT: CV data loaded via cv-data-service:', {
-      totalChunks: this.cvChunks.length,
-      categories: [...new Set(this.cvChunks.map(chunk => chunk.metadata.category))],
-      version: this.cvDataService.getMetadata().version,
-      sampleChunk: this.cvChunks[0] ? {
-        id: this.cvChunks[0].id,
-        hasEmbedding: !!this.cvChunks[0].embedding,
-        embeddingDimensions: this.cvChunks[0].embedding?.length,
-        textPreview: this.cvChunks[0].text?.substring(0, 100) + '...'
-      } : null
-    });
+      console.log('📊 CHAT-BOT: CV data loaded via cv-data-service:', {
+        totalChunks: this.cvChunks.length,
+        categories: [...new Set(this.cvChunks.map(chunk => chunk.metadata.category))],
+        version: this.cvDataService.getMetadata().version,
+        sampleChunk: this.cvChunks[0] ? {
+          id: this.cvChunks[0].id,
+          hasEmbedding: !!this.cvChunks[0].embedding,
+          embeddingDimensions: this.cvChunks[0].embedding?.length,
+          textPreview: this.cvChunks[0].text?.substring(0, 100) + '...'
+        } : null
+      });
 
-    // Initialize the dual worker coordinator with CV chunks for embedding precomputation
-    this.semanticQA = new DualWorkerCoordinator({
-      embeddingWorkerPath: './scripts/workers/embedding-worker.js',
-      textGenWorkerPath: './scripts/workers/optimized-ml-worker.js',
-      maxContextChunks: 3,
-      similarityThreshold: 0.7
-    });
+      // Initialize the chatbot QA router with CV chunks for embedding pre-computation
+      this.chatbotQARouter = new ChatBotQARouter({
+        embeddingWorkerPath: './scripts/workers/embedding-worker.js',
+        textGenWorkerPath: './scripts/workers/optimized-ml-worker.js',
+        eqaWorkerPath: './scripts/workers/eqa-worker.js',
+        maxContextChunks: 5,
+        similarityThreshold: 0.3,
+        eqaConfidenceThreshold: 0.3,
+        timeout: 5000
+      });
 
-    // Initialize the semantic-qa system with prepared chunks
-    await this.semanticQA.initialize(this.cvChunks);
+      console.log('🚀 CHAT-BOT: Starting router initialization with CV chunks:', this.cvChunks.length);
 
-    console.log('✅ CHAT-BOT: Semantic-qa system initialized successfully');
+      // Initialize the router with prepared chunks
+      await this.chatbotQARouter.initialize(this.cvChunks);
+
+      console.log('✅ CHAT-BOT: Chat bot QA router initialized successfully, router ready state:', this.chatbotQARouter.getStatus());
+    } catch (error) {
+      console.error('❌ CHAT-BOT: Router initialization failed:', error);
+      throw error;
+    }
   }
 
 
 
   /**
-   * Process message using semantic-qa system
+   * Process message using chatbot QA router
    */
-  async _processWithSemanticQA(message, conversationContext) {
+  async _processMessageWithRouter(message, conversationContext) {
     try {
-      console.log('🔍 CHAT-BOT: Starting semantic-qa processing...');
+      console.log('🔍 CHAT-BOT: Starting router processing...');
+      console.log('📝 CHAT-BOT: User message:', message);
+      console.log('🎨 CHAT-BOT: Conversation style:', this.currentStyle);
 
-      // Query the semantic-qa system with CV chunks
-      console.log('🔍 CHAT-BOT: Passing CV chunks to semantic-qa:', this.cvChunks?.length || 0);
-      const result = await this.semanticQA.processQuestion(message, this.cvChunks || [], {
+      // Query the router with conversation style and context
+      const result = await this.chatbotQARouter.processQuery(message, {
         style: this.currentStyle,
-        context: conversationContext,
-        maxContextChunks: 3
+        context: conversationContext
       });
 
-      console.log('📊 CHAT-BOT: Semantic-qa result:', {
+      console.log('📊 CHAT-BOT: Router result:', {
         hasAnswer: !!result.answer,
         confidence: result.confidence,
-        matchedChunks: result.matchedSections?.length || 0,
-        processingTime: result.processingMetrics?.processingTime
+        intent: result.intent,
+        method: result.method,
+        matchedChunks: result.matchedChunks?.length || 0,
+        processingTime: result.processingTime
       });
 
       // Log the context that was selected
-      if (result.matchedSections && result.matchedSections.length > 0) {
+      if (result.matchedChunks && result.matchedChunks.length > 0) {
         console.log('🎯 CHAT-BOT: Selected CV context:',
-          result.matchedSections.map(section => ({
-            id: section.id,
-            similarity: section.similarity,
-            preview: section.text.substring(0, 100) + '...'
+          result.matchedChunks.map(chunk => ({
+            id: chunk.id,
+            similarity: chunk.similarity,
+            preview: chunk.text.substring(0, 100) + '...'
           }))
         );
       }
 
       // Handle the response
-      this._handleSemanticQAResponse(result, message);
+      this._handleRouterResponse(result, message);
 
     } catch (error) {
-      console.error('❌ CHAT-BOT: Semantic-qa processing failed:', error);
+      console.error('❌ CHAT-BOT: Router processing failed:', error);
       this._handleWorkerError(error.message);
     }
   }
 
   /**
-   * Handle semantic-qa response
+   * Handle router response
    */
-  _handleSemanticQAResponse(result, originalMessage) {
+  _handleRouterResponse(result, originalMessage) {
     this.ui.hideTypingIndicator();
 
     if (result.error) {
-      console.error('❌ CHAT-BOT: Semantic-qa error:', result.error);
+      console.error('❌ CHAT-BOT: Router error:', result.error);
       this._handleWorkerError(result.error);
       return;
     }
 
     // Log processing metrics for debugging
-    if (result.processingMetrics && window.isDev) {
-      console.log('📈 CHAT-BOT: Processing metrics:', result.processingMetrics);
+    if (result.metrics && window.isDev) {
+      console.log('📈 CHAT-BOT: Processing metrics:', result.metrics);
     }
 
     // Check if fallback handling is needed
     const fallbackDecision = this.fallbackHandler.shouldTriggerFallback(
       result.confidence,
       originalMessage,
-      result.matchedSections
+      result.matchedChunks
     );
 
     if (fallbackDecision.shouldFallback) {
@@ -274,16 +286,16 @@ class ChatBot {
     } else {
       // Format response based on current style
       const formattedAnswer = this.styleManager.formatResponse(result.answer, {
-        matchedSections: result.matchedSections,
+        matchedSections: result.matchedChunks,
         confidence: result.confidence,
-        metrics: result.processingMetrics
+        metrics: result.metrics
       });
 
       // Add response to conversation history
       this.conversationManager.addMessage(
         originalMessage,
         formattedAnswer,
-        result.matchedSections,
+        result.matchedChunks,
         result.confidence
       );
 
@@ -292,7 +304,13 @@ class ChatBot {
     }
   }
 
-
+  /**
+   * Handle semantic-qa response (legacy compatibility)
+   */
+  _handleSemanticQAResponse(result, originalMessage) {
+    // Redirect to router response handler
+    this._handleRouterResponse(result, originalMessage);
+  }
 
   /**
    * Select conversation style and start chat
@@ -352,7 +370,7 @@ class ChatBot {
 
       // Always use semantic-qa system
       console.log('🧠 CHAT-BOT: Using semantic-qa system...');
-      await this._processWithSemanticQA(message, context);
+      await this._processMessageWithRouter(message, context);
 
     } catch (error) {
       this._handleProcessingError(error);
@@ -405,10 +423,17 @@ class ChatBot {
    * Clean up resources
    */
   async destroy() {
-    // Clean up semantic-qa system
-    if (this.semanticQA) {
-      // The DualWorkerCoordinator should handle its own cleanup
-      this.semanticQA = null;
+    console.log('🧹 CHAT-BOT: Cleaning up resources...');
+
+    // Clean up router and terminate workers
+    if (this.chatbotQARouter) {
+      try {
+        this.chatbotQARouter.cleanup();
+        console.log('✅ CHAT-BOT: Router cleanup completed');
+      } catch (error) {
+        console.error('❌ CHAT-BOT: Router cleanup error:', error);
+      }
+      this.chatbotQARouter = null;
     }
 
     // Clean up managers
@@ -420,6 +445,8 @@ class ChatBot {
     this.isInitialized = false;
     this.initializationPromise = null;
     this.queryCount = 0;
+
+    console.log('✅ CHAT-BOT: All resources cleaned up');
   }
 
 
@@ -577,8 +604,8 @@ class ChatBot {
     this.initializationPromise = null;
 
     // Clean up existing semantic-qa if any
-    if (this.semanticQA) {
-      this.semanticQA = null;
+    if (this.chatbotQARouter) {
+      this.chatbotQARouter = null;
     }
 
     // Retry initialization
