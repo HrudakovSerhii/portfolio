@@ -60,11 +60,10 @@ export class WorkerCommunicator {
       });
 
       // Send message to worker
-      // Wrap data in 'data' property for workers that expect it
       this.worker.postMessage({
         type,
         requestId,
-        data
+        ...data
       });
     });
   }
@@ -86,12 +85,6 @@ export class WorkerCommunicator {
     
     if (!pendingRequest) {
       console.warn(`[WorkerCommunicator] Received response for unknown request ${requestId}`);
-      return;
-    }
-
-    // Ignore progress messages - don't resolve the promise yet
-    if (type === 'batchProgress' || type === 'downloadProgress' || type === 'progress') {
-      console.log(`[WorkerCommunicator] Received ${this.workerType} progress update:`, type);
       return;
     }
 
