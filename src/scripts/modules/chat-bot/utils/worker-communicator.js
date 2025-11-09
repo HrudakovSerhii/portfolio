@@ -89,6 +89,12 @@ export class WorkerCommunicator {
       return;
     }
 
+    // Ignore progress messages - don't resolve the promise yet
+    if (type === 'batchProgress' || type === 'downloadProgress' || type === 'progress') {
+      console.log(`[WorkerCommunicator] Received ${this.workerType} progress update:`, type);
+      return;
+    }
+
     // Clear timeout
     clearTimeout(pendingRequest.timeoutId);
     this.pendingRequests.delete(requestId);
