@@ -6,9 +6,6 @@
 let qaModel = null;
 let isInitialized = false;
 
-// Global variables for transformers
-let pipeline, env;
-
 // Model configuration
 const MODEL_CONFIG = {
     modelName: 'Xenova/distilbert-base-cased-distilled-squad',
@@ -17,31 +14,33 @@ const MODEL_CONFIG = {
 
 /**
  * Initialize the EQA model
- * // TODO: We use loadTransformers in optimised-ml-worker and here we load it with model...
  */
 async function initializeEQAModel() {
+    if (isInitialized) {
+        console.log('[EQAWorker] Model already initialized');
+        return;
+    }
+
+    console.log('[EQAWorker] Starting model initialization...');
     const initStartTime = Date.now();
 
     try {
         // Dynamic import for Xenova transformers
-        const transformers = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
-
-        pipeline = transformers.pipeline;
-        env = transformers.env;
-
+        console.log('[EQAWorker] Importing transformers library...');
+        const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+        
         // Configure environment for web worker
         env.allowRemoteModels = true;
-
-        // Don't try to load from local filesystem (causes errors in browser)
-        // Transformers.js will automatically use browser's Cache API
         env.allowLocalModels = false;
 
+        console.log(`[EQAWorker] Loading model: ${MODEL_CONFIG.modelName}`);
+        
         // Initialize question-answering pipeline with progress tracking
         qaModel = await pipeline('question-answering', MODEL_CONFIG.modelName, {
             quantized: MODEL_CONFIG.quantized,
             progress_callback: (progress) => {
                 console.log('[EQAWorker] Model loading progress:', progress);
-
+                
                 if (progress.status === 'downloading' || progress.status === 'loading') {
                     self.postMessage({
                         type: 'downloadProgress',
@@ -53,7 +52,10 @@ async function initializeEQAModel() {
             }
         });
 
+        isInitialized = true;
         const initTime = Date.now() - initStartTime;
+        
+        console.log(`[EQAWorker] Model initialized successfully in ${initTime}ms`);
 
         self.postMessage({
             type: 'initialized',
@@ -83,7 +85,14 @@ async function initializeEQAModel() {
  * @param {string} requestId - Request identifier
  */
 async function extractAnswer(question, context, requestId) {
-    if (!qaModel) {
+    console.log('[EQAWorker] extractAnswer called:', {
+        requestId,
+        questionLength: question?.length,
+        contextLength: context?.length,
+        isInitialized
+    });
+
+    if (!isInitialized || !qaModel) {
         console.error('[EQAWorker] Model not initialized');
         self.postMessage({
             type: 'answer',
@@ -91,7 +100,6 @@ async function extractAnswer(question, context, requestId) {
             success: false,
             error: 'Model not initialized'
         });
-
         return;
     }
 
@@ -104,7 +112,6 @@ async function extractAnswer(question, context, requestId) {
             success: false,
             error: 'Invalid question input'
         });
-
         return;
     }
 
@@ -116,23 +123,40 @@ async function extractAnswer(question, context, requestId) {
             success: false,
             error: 'Invalid context input'
         });
-
         return;
     }
 
     const startTime = Date.now();
 
     try {
+        console.log('[EQAWorker] Processing question:', question.substring(0, 100));
+        console.log('[EQAWorker] Context preview:', context.substring(0, 200) + '...');
+
         // Call the QA model
         const result = await qaModel(question, context);
-
+        
         const processingTime = Date.now() - startTime;
+
+        console.log('[EQAWorker] Model result:', {
+            answer: result.answer,
+            score: result.score,
+            start: result.start,
+            end: result.end,
+            processingTime
+        });
 
         // Extract answer details
         const answer = result.answer || '';
         const confidence = result.score || 0;
         const startIndex = result.start || 0;
         const endIndex = result.end || 0;
+
+        console.log('[EQAWorker] Extracted answer:', {
+            answer,
+            confidence,
+            answerLength: answer.length,
+            processingTime
+        });
 
         self.postMessage({
             type: 'answer',
@@ -164,6 +188,8 @@ async function extractAnswer(question, context, requestId) {
  */
 self.onmessage = async function(event) {
     const { type, data, requestId } = event.data;
+
+    console.log('[EQAWorker] Received message:', { type, requestId, hasData: !!data });
 
     try {
         switch (type) {
@@ -231,19 +257,9 @@ self.onunhandledrejection = function(event) {
 };
 
 // Send ready signal when worker loads
+console.log('[EQAWorker] Worker script loaded');
 self.postMessage({
     type: 'workerReady',
     success: true,
     timestamp: Date.now()
-});
-
-// Auto-initialize when worker starts (like embedding worker)
-initializeEQAModel().catch(error => {
-    console.error('[EQAWorker] Auto-initialization failed:', error);
-    self.postMessage({
-        type: 'initialized',
-        success: false,
-        error: error.message,
-        stack: error.stack
-    });
 });
