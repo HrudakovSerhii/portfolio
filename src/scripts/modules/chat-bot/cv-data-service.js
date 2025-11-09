@@ -21,7 +21,7 @@ class CVDataService {
         return this.cvData;
       }
 
-      const response = await fetch('/data/chat-bot/cv-data.json');
+      const response = await fetch('public/cv/cv-data.v2.json');
 
       if (!response.ok) {
         throw new Error(`Failed to load CV data: ${response.status} ${response.statusText}`);
@@ -389,6 +389,56 @@ class CVDataService {
       throw new Error('CV data not loaded. Call loadCVData() first.');
     }
     return this.cvData.metadata;
+  }
+
+  /**
+   * Prepare CV data chunks for semantic processing
+   * Transforms CV sections into standardized chunks for embedding and search
+   * @returns {Array} Array of CV chunks ready for semantic processing
+   */
+  prepareCVChunks() {
+    if (!this.isLoaded) {
+      throw new Error('CV data not loaded. Call loadCVData() first.');
+    }
+
+    const chunks = [];
+
+    // Process all sections from all categories
+    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
+      for (const [sectionName, section] of Object.entries(category)) {
+        // Use embeddingSourceText as the primary text content for chunks
+        const text = section.embeddingSourceText || section.details?.summary || '';
+
+        if (text.trim()) {
+          chunks.push({
+            id: section.id,
+            text: text,
+            keywords: section.keywords || [],
+            metadata: {
+              type: 'cv_section',
+              category: categoryName,
+              sectionName: sectionName,
+              path: `${categoryName}.${sectionName}`,
+              priority: section.priority || 0,
+              confidence: section.confidence || 0.5,
+              details: section.details || {},
+              relatedSections: section.relatedSections || []
+            },
+            // Include existing embeddings if available
+            embedding: section.embeddings || null
+          });
+        }
+      }
+    }
+
+    console.log('📝 CV-DATA-SERVICE: CV chunks prepared:', {
+      totalChunks: chunks.length,
+      chunkIds: chunks.map(c => c.id),
+      avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length,
+      categories: Object.keys(this.cvData.sections)
+    });
+
+    return chunks;
   }
 
   /**

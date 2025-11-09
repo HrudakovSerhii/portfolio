@@ -15,19 +15,19 @@ class DualWorkerCoordinator {
     constructor(options = {}) {
         this.embeddingWorker = null;
         this.textGenWorker = null;
-        
+
         this.isInitialized = false;
         this.requestCounter = 0;
         this.pendingRequests = new Map();
         this.indexedContext = null;
-        
+
         // Performance metrics from SemanticQAManager
         this.performanceMetrics = {
             totalQueries: 0,
             avgResponseTime: 0,
             cacheHits: 0
         };
-        
+
         // Configuration
         this.config = {
             embeddingWorkerPath: options.embeddingWorkerPath || '/src/scripts/workers/embedding-worker.js',
@@ -54,15 +54,23 @@ class DualWorkerCoordinator {
             this.embeddingWorker = new Worker(this.config.embeddingWorkerPath);
             this.setupEmbeddingWorkerHandlers();
 
-            // Initialize text generation worker  
+            // Initialize text generation worker
             this.textGenWorker = new Worker(this.config.textGenWorkerPath);
             this.setupTextGenWorkerHandlers();
 
-            // Wait for both workers to be ready
+            // Wait for both workers to be ready (script loaded)
             await Promise.all([
                 this.waitForWorkerReady(this.embeddingWorker, 'embedding'),
                 this.waitForWorkerReady(this.textGenWorker, 'textgen')
             ]);
+
+            // Now initialize the text generation worker (load the model)
+            console.log('[DualWorkerCoordinator] Sending initialize message to text generation worker...');
+            this.textGenWorker.postMessage({ type: 'initialize' });
+
+            // Wait for text generation worker to finish model loading
+            console.log('[DualWorkerCoordinator] Waiting for text generation worker model initialization...');
+            await this.waitForWorkerInitialization(this.textGenWorker, 'textgen');
 
             // Pre-compute embeddings for CV chunks if provided
             if (cvChunks.length > 0) {
@@ -143,7 +151,7 @@ class DualWorkerCoordinator {
 
         // Use indexed context chunks or provided cvChunks
         const cvChunks = this.indexedContext?.chunks || options.cvChunks || [];
-        
+
         if (cvChunks.length === 0) {
             throw new Error('No context available. Please index context first or provide cvChunks.');
         }
@@ -161,11 +169,11 @@ class DualWorkerCoordinator {
 
         const startTime = Date.now();
         this.performanceMetrics.totalQueries++;
-        
+
         try {
             // Step 1: Enhance query using query-processor
             const enhancedQuery = queryProcessor.preprocessQuery(question, options.context || []);
-            
+
             // Step 2: Check cache for existing result
             const cachedResult = cacheManager.getCachedQueryResult(enhancedQuery);
             if (cachedResult) {
@@ -177,30 +185,41 @@ class DualWorkerCoordinator {
 
             // Step 4: Find similar chunks using similarity-calculator
             const similarChunks = similarityCalculator.findSimilarChunks(
-                questionEmbedding, 
-                cvChunks, 
+                questionEmbedding,
+                cvChunks,
                 options.maxChunks || this.config.maxContextChunks
             );
+            console.log('[DualWorkerCoordinator] Step 4 - Similar chunks found:', similarChunks.length);
 
             // Step 5: Apply similarity threshold filtering
             const threshold = queryProcessor.getAdaptiveThreshold(enhancedQuery);
             const filteredChunks = similarityCalculator.applySimilarityThreshold(similarChunks, threshold);
+            console.log('[DualWorkerCoordinator] Step 5 - Filtered chunks:', filteredChunks.length, 'threshold:', threshold);
+            console.log('[DualWorkerCoordinator] Step 5 - Top chunks:', filteredChunks.slice(0, 3).map(c => ({
+                id: c.id,
+                similarity: c.similarity,
+                text: c.text?.substring(0, 100) + '...'
+            })));
 
             // Step 6: Build context using cv-context-builder
             const cvContext = cvContextBuilder.buildCVContext(filteredChunks);
+            console.log('[DualWorkerCoordinator] Step 6 - CV context built:', typeof cvContext, cvContext?.length || 'N/A');
+            console.log('[DualWorkerCoordinator] Step 6 - CV context preview:', cvContext?.substring(0, 200) + '...');
 
             // Step 7: Create prompt using prompt-builder
             const prompt = promptBuilder.createPrompt(
-                question, 
-                cvContext, 
+                question,
+                cvContext,
                 options.style || 'developer',
                 options.context || []
             );
+            console.log('[DualWorkerCoordinator] Step 7 - Prompt created, length:', prompt.length);
+            console.log('[DualWorkerCoordinator] Step 7 - Prompt preview:', prompt.substring(0, 300) + '...');
 
             // Step 8: Generate response using text generation worker
             const response = await this.generateContextualResponse(
-                question, 
-                prompt, 
+                question,
+                prompt,
                 options
             );
 
@@ -257,25 +276,46 @@ class DualWorkerCoordinator {
      * Generate embedding for text with caching
      */
     async generateEmbedding(text) {
+        console.log('[DualWorkerCoordinator] generateEmbedding called with text:', text?.substring(0, 100) + '...');
+
         // Check cache first
         const cachedEmbedding = cacheManager.getCachedEmbedding(text);
+        console.log('[DualWorkerCoordinator] Cache check result:', cachedEmbedding ? 'HIT' : 'MISS');
+
         if (cachedEmbedding) {
+            console.log('[DualWorkerCoordinator] Returning cached embedding, length:', cachedEmbedding.length);
             return cachedEmbedding;
         }
 
+        console.log('[DualWorkerCoordinator] Requesting embedding from worker, requestId will be generated...');
+
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
-            
-            this.pendingRequests.set(requestId, { 
+            console.log('[DualWorkerCoordinator] Generated requestId:', requestId);
+
+            this.pendingRequests.set(requestId, {
                 resolve: (embedding) => {
+                    console.log('[DualWorkerCoordinator] Received embedding from worker, length:', embedding?.length);
+
                     // Cache the result before resolving
-                    cacheManager.cacheEmbedding(text, embedding);
+                    try {
+                        const cacheResult = cacheManager.cacheEmbedding(text, embedding);
+                        console.log('[DualWorkerCoordinator] Cache storage result:', cacheResult);
+                    } catch (cacheError) {
+                        console.error('[DualWorkerCoordinator] Failed to cache embedding:', cacheError);
+                    }
+
+                    console.log('[DualWorkerCoordinator] Resolving with embedding');
                     resolve(embedding);
-                }, 
-                reject, 
-                type: 'embedding' 
+                },
+                reject: (error) => {
+                    console.error('[DualWorkerCoordinator] Worker request failed:', error);
+                    reject(error);
+                },
+                type: 'embedding'
             });
-            
+
+            console.log('[DualWorkerCoordinator] Sending message to worker...');
             this.embeddingWorker.postMessage({
                 type: 'generateEmbedding',
                 data: { text },
@@ -292,9 +332,9 @@ class DualWorkerCoordinator {
     async calculateSimilarity(embedding1, embedding2) {
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
-            
+
             this.pendingRequests.set(requestId, { resolve, reject, type: 'similarity' });
-            
+
             this.embeddingWorker.postMessage({
                 type: 'calculateSimilarity',
                 data: { embedding1, embedding2 },
@@ -310,16 +350,16 @@ class DualWorkerCoordinator {
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
             const startTime = Date.now();
-            
-            this.pendingRequests.set(requestId, { 
+
+            this.pendingRequests.set(requestId, {
                 resolve: (result) => {
                     result.generationTime = Date.now() - startTime;
                     resolve(result);
-                }, 
-                reject, 
-                type: 'generation' 
+                },
+                reject,
+                type: 'generation'
             });
-            
+
             this.textGenWorker.postMessage({
                 type: 'generate',
                 prompt,
@@ -337,15 +377,29 @@ class DualWorkerCoordinator {
      * Pre-compute embeddings for CV chunks with caching
      */
     async precomputeChunkEmbeddings(cvChunks) {
-        const chunksNeedingEmbeddings = cvChunks.filter(chunk => !chunk.embedding);
-        
-        if (chunksNeedingEmbeddings.length === 0) return;
+        // Force regeneration of all embeddings to ensure consistency with current model
+        const chunksNeedingEmbeddings = cvChunks.filter(chunk => {
+            const hasValidEmbedding = chunk.embedding && 
+                                    Array.isArray(chunk.embedding) && 
+                                    chunk.embedding.length === 384; // Expected dimension for all-MiniLM-L6-v2
+            
+            if (!hasValidEmbedding && chunk.embedding) {
+                console.log(`[DualWorkerCoordinator] Chunk ${chunk.id} has invalid embedding dimensions: ${chunk.embedding?.length}, regenerating...`);
+            }
+            
+            return !hasValidEmbedding;
+        });
+
+        if (chunksNeedingEmbeddings.length === 0) {
+            console.log('All chunks already have valid embeddings');
+            return;
+        }
 
         console.log(`Pre-computing embeddings for ${chunksNeedingEmbeddings.length} chunks...`);
 
         const textsToEmbed = chunksNeedingEmbeddings.map(chunk => chunk.text);
         const embeddings = await this.generateBatchEmbeddings(textsToEmbed);
-        
+
         // Assign embeddings to chunks
         chunksNeedingEmbeddings.forEach((chunk, index) => {
             chunk.embedding = embeddings[index];
@@ -382,8 +436,8 @@ class DualWorkerCoordinator {
         // Generate embeddings for uncached texts
         return new Promise((resolve, reject) => {
             const requestId = this.generateRequestId();
-            
-            this.pendingRequests.set(requestId, { 
+
+            this.pendingRequests.set(requestId, {
                 resolve: (embeddings) => {
                     // Cache and place results in correct positions
                     embeddings.forEach((embedding, uncachedIndex) => {
@@ -393,11 +447,11 @@ class DualWorkerCoordinator {
                         results[originalIndex] = embedding;
                     });
                     resolve(results);
-                }, 
-                reject, 
-                type: 'batchEmbedding' 
+                },
+                reject,
+                type: 'batchEmbedding'
             });
-            
+
             this.embeddingWorker.postMessage({
                 type: 'generateBatchEmbeddings',
                 data: { texts: uncachedTexts },
@@ -413,33 +467,69 @@ class DualWorkerCoordinator {
      */
     setupEmbeddingWorkerHandlers() {
         this.embeddingWorker.onmessage = (event) => {
-            const { type, requestId, success, embedding, embeddings, similarity } = event.data;
-            
-            const request = this.pendingRequests.get(requestId);
-            if (!request) return;
+            console.log('[DualWorkerCoordinator] Received message from worker:', event.data.type, 'requestId:', event.data.requestId);
 
+            const { type, requestId, success, embedding, embeddings, similarity, error } = event.data;
+
+            // Handle messages that don't require pending requests
+            switch (type) {
+                case 'workerReady':
+                case 'initialized':
+                    console.log('[DualWorkerCoordinator] Worker initialization message:', type, success ? 'SUCCESS' : 'FAILED');
+                    if (!success && error) {
+                        console.error('[DualWorkerCoordinator] Worker initialization failed:', error);
+                    }
+                    return;
+
+                case 'batchProgress':
+                case 'cvProcessingProgress':
+                case 'downloadProgress':
+                    console.log('[DualWorkerCoordinator] Progress update:', type, event.data);
+                    return;
+
+                case 'error':
+                case 'workerError':
+                    console.error('[DualWorkerCoordinator] Worker error message:', error);
+                    return;
+            }
+
+            // Handle messages that require pending requests
+            const request = this.pendingRequests.get(requestId);
+            if (!request) {
+                console.warn('[DualWorkerCoordinator] No pending request found for requestId:', requestId, 'type:', type);
+                return;
+            }
+
+            console.log('[DualWorkerCoordinator] Found pending request, type:', request.type);
             this.pendingRequests.delete(requestId);
 
-            if (!success) {
-                request.reject(new Error(event.data.error));
+            if (success === false) {
+                console.error('[DualWorkerCoordinator] Worker reported failure:', error || 'Unknown error');
+                request.reject(new Error(error || 'Unknown worker error'));
                 return;
             }
 
             switch (type) {
                 case 'embedding':
+                    console.log('[DualWorkerCoordinator] Resolving embedding request with data length:', embedding?.length);
                     request.resolve(embedding);
                     break;
                 case 'batchEmbedding':
+                    console.log('[DualWorkerCoordinator] Resolving batch embedding request with', embeddings?.length, 'embeddings');
                     request.resolve(embeddings);
                     break;
                 case 'similarity':
+                    console.log('[DualWorkerCoordinator] Resolving similarity request with score:', similarity);
                     request.resolve(similarity);
                     break;
+                default:
+                    console.warn('[DualWorkerCoordinator] Unknown message type for pending request:', type);
+                    request.reject(new Error(`Unknown message type: ${type}`));
             }
         };
 
         this.embeddingWorker.onerror = (error) => {
-            console.error('Embedding worker error:', error);
+            console.error('[DualWorkerCoordinator] Embedding worker error:', error);
         };
     }
 
@@ -448,19 +538,42 @@ class DualWorkerCoordinator {
      */
     setupTextGenWorkerHandlers() {
         this.textGenWorker.onmessage = (event) => {
-            const { type, requestId, answer, error } = event.data;
+            console.log('[DualWorkerCoordinator] Received message from text generation worker:', event.data.type, 'requestId:', event.data.requestId);
             
-            const request = this.pendingRequests.get(requestId);
-            if (!request) return;
+            const { type, requestId, answer, error, success } = event.data;
 
+            // Handle messages that don't require pending requests
+            switch (type) {
+                case 'workerReady':
+                case 'ready':
+                case 'status':
+                case 'progress':
+                    console.log('[DualWorkerCoordinator] Text generation worker status message:', type, event.data);
+                    return;
+                
+                case 'error':
+                    console.error('[DualWorkerCoordinator] Text generation worker error message:', error);
+                    return;
+            }
+
+            // Handle messages that require pending requests
+            const request = this.pendingRequests.get(requestId);
+            if (!request) {
+                console.warn('[DualWorkerCoordinator] No pending request found for text generation requestId:', requestId, 'type:', type);
+                return;
+            }
+
+            console.log('[DualWorkerCoordinator] Found pending text generation request, type:', request.type);
             this.pendingRequests.delete(requestId);
 
             if (error) {
+                console.error('[DualWorkerCoordinator] Text generation worker reported failure:', error);
                 request.reject(new Error(error));
                 return;
             }
 
             if (type === 'response') {
+                console.log('[DualWorkerCoordinator] Resolving text generation request with answer length:', answer?.length);
                 request.resolve({
                     answer,
                     confidence: 0.7 // Base confidence for generated responses
@@ -469,7 +582,7 @@ class DualWorkerCoordinator {
         };
 
         this.textGenWorker.onerror = (error) => {
-            console.error('Text generation worker error:', error);
+            console.error('[DualWorkerCoordinator] Text generation worker error:', error);
         };
     }
 
@@ -477,16 +590,61 @@ class DualWorkerCoordinator {
      * Wait for worker to be ready
      */
     async waitForWorkerReady(worker, workerType) {
+        console.log(`[DualWorkerCoordinator] Waiting for ${workerType} worker to be ready...`);
+
         return new Promise((resolve, reject) => {
+            // Increase timeout for ML workers that need to download models
+            const timeoutDuration = workerType === 'textgen' ? 300000 : 50000; // 5 minutes for text generation, 50s for others
+
             const timeout = setTimeout(() => {
-                reject(new Error(`${workerType} worker initialization timeout`));
-            }, 30000);
+                console.error(`[DualWorkerCoordinator] ${workerType} worker initialization timeout after ${timeoutDuration}ms`);
+                reject(new Error(`${workerType} worker initialization timeout after ${timeoutDuration}ms`));
+            }, timeoutDuration);
 
             const handler = (event) => {
+                console.log(`[DualWorkerCoordinator] Received message from ${workerType} worker:`, event.data.type);
+
                 if (event.data.type === 'workerReady' || event.data.type === 'ready') {
+                    console.log(`[DualWorkerCoordinator] ${workerType} worker is ready!`);
                     clearTimeout(timeout);
                     worker.removeEventListener('message', handler);
                     resolve();
+                }
+            };
+
+            worker.addEventListener('message', handler);
+        });
+    }
+
+    /**
+     * Wait for worker to complete model initialization
+     */
+    async waitForWorkerInitialization(worker, workerType) {
+        console.log(`[DualWorkerCoordinator] Waiting for ${workerType} worker model initialization...`);
+        
+        return new Promise((resolve, reject) => {
+            // Extended timeout for model loading (10 minutes)
+            const timeoutDuration = 600000;
+            
+            const timeout = setTimeout(() => {
+                console.error(`[DualWorkerCoordinator] ${workerType} worker model initialization timeout after ${timeoutDuration}ms`);
+                reject(new Error(`${workerType} worker model initialization timeout after ${timeoutDuration}ms`));
+            }, timeoutDuration);
+
+            const handler = (event) => {
+                console.log(`[DualWorkerCoordinator] Received initialization message from ${workerType} worker:`, event.data.type, 'success:', event.data.success);
+                
+                if (event.data.type === 'ready') {
+                    clearTimeout(timeout);
+                    worker.removeEventListener('message', handler);
+                    
+                    if (event.data.success) {
+                        console.log(`[DualWorkerCoordinator] ${workerType} worker model initialized successfully!`);
+                        resolve();
+                    } else {
+                        console.error(`[DualWorkerCoordinator] ${workerType} worker model initialization failed:`, event.data.error);
+                        reject(new Error(`${workerType} worker model initialization failed: ${event.data.error}`));
+                    }
                 }
             };
 
@@ -516,7 +674,7 @@ class DualWorkerCoordinator {
      */
     async askQuestions(questions, cvChunks = []) {
         const answers = [];
-        
+
         // Process questions sequentially to avoid overwhelming the system
         for (const question of questions) {
             const answer = await this.processQuestion(question, cvChunks);
@@ -543,8 +701,8 @@ class DualWorkerCoordinator {
 
         // Find similar chunks using similarity-calculator
         const similarChunks = similarityCalculator.findSimilarChunks(
-            queryEmbedding, 
-            cvChunks, 
+            queryEmbedding,
+            cvChunks,
             topK
         );
 
@@ -558,9 +716,9 @@ class DualWorkerCoordinator {
     updatePerformanceMetrics(responseTime) {
         const totalQueries = this.performanceMetrics.totalQueries;
         const currentAvg = this.performanceMetrics.avgResponseTime;
-        
+
         // Calculate new average response time
-        this.performanceMetrics.avgResponseTime = 
+        this.performanceMetrics.avgResponseTime =
             ((currentAvg * (totalQueries - 1)) + responseTime) / totalQueries;
     }
 

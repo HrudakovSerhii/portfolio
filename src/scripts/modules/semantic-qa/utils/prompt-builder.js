@@ -21,24 +21,12 @@ export function createPrompt(question, cvContext, style = 'developer', conversat
     style = 'developer';
   }
 
-  const instruction = getStyleInstructions(style);
-
-  let prompt = `You are Serhii, a software developer. Respond in a ${instruction}.\n\n`;
-
-  if (cvContext && typeof cvContext === 'string') {
-    prompt += `Based on this information:\n${cvContext}\n\n`;
-  }
-
+  // Simplified prompt structure for small models
+  let prompt = `Context: ${cvContext || 'No specific information provided'}\n\n`;
   prompt += `Question: ${question}\n\n`;
-  prompt += `Instructions:
-- Answer as Serhii in first person
-- Only use information provided above
-- If no relevant info is provided, say so honestly
-- Keep response under 100 words
-- Be specific and provide examples when possible
+  prompt += `Answer as Serhii in first person using only the context above:\nI`;
 
-Answer:`;
-
+  console.log('[PromptBuilder] Created simplified prompt, length:', prompt.length);
   return prompt;
 }
 
@@ -62,7 +50,7 @@ export function buildEnhancedPrompt(question, fencedContext, options = {}) {
   } = options;
 
   const instruction = getStyleInstructions(style);
-  
+
   let prompt = `You are Serhii, a software developer. Respond in a ${instruction}.\n\n`;
 
   if (fencedContext && typeof fencedContext === 'string') {
@@ -82,7 +70,7 @@ export function buildEnhancedPrompt(question, fencedContext, options = {}) {
   }
 
   prompt += `Current question: ${question}\n\n`;
-  
+
   prompt += `Instructions:
 - Answer as Serhii in first person
 - Use only the information provided in the context above
@@ -134,7 +122,7 @@ export function formatContextForPrompt(context) {
     if (context.text) {
       return context.text.trim();
     }
-    
+
     if (context.content) {
       return context.content.trim();
     }
