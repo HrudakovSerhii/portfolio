@@ -21,7 +21,7 @@ class CVDataService {
         return this.cvData;
       }
 
-      const response = await fetch('./cv/cv-data.v2.json');
+      const response = await fetch('public/cv/cv-data.v2.json');
 
       if (!response.ok) {
         throw new Error(`Failed to load CV data: ${response.status} ${response.statusText}`);
@@ -408,7 +408,7 @@ class CVDataService {
       for (const [sectionName, section] of Object.entries(category)) {
         // Use embeddingSourceText as the primary text content for chunks
         const text = section.embeddingSourceText || section.details?.summary || '';
-        
+
         if (text.trim()) {
           chunks.push({
             id: section.id,

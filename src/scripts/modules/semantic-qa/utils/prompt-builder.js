@@ -50,7 +50,7 @@ export function buildEnhancedPrompt(question, fencedContext, options = {}) {
   } = options;
 
   const instruction = getStyleInstructions(style);
-  
+
   let prompt = `You are Serhii, a software developer. Respond in a ${instruction}.\n\n`;
 
   if (fencedContext && typeof fencedContext === 'string') {
@@ -70,7 +70,7 @@ export function buildEnhancedPrompt(question, fencedContext, options = {}) {
   }
 
   prompt += `Current question: ${question}\n\n`;
-  
+
   prompt += `Instructions:
 - Answer as Serhii in first person
 - Use only the information provided in the context above
@@ -122,7 +122,7 @@ export function formatContextForPrompt(context) {
     if (context.text) {
       return context.text.trim();
     }
-    
+
     if (context.content) {
       return context.content.trim();
     }
