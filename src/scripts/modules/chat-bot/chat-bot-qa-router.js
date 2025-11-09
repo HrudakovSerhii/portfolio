@@ -23,7 +23,8 @@ export class ChatBotQARouter {
       maxContextChunks: options.maxContextChunks || 5,
       similarityThreshold: options.similarityThreshold || 0.3,
       eqaConfidenceThreshold: options.eqaConfidenceThreshold || 0.3,
-      timeout: options.timeout || 5000
+      timeout: options.timeout || 5000,
+      onProgress: options.onProgress || null
     };
 
     // Worker instances
@@ -41,6 +42,9 @@ export class ChatBotQARouter {
     this.cvChunks = [];
     this.pendingRequests = new Map();
     this.requestIdCounter = 0;
+
+    // Progress tracking
+    this.progressCallback = this.config.onProgress;
 
     console.log('[ChatBotQARouter] Router initialized with config:', this.config);
   }
@@ -107,8 +111,21 @@ export class ChatBotQARouter {
       this.config.timeout
     );
 
+    // Listen for download progress
+    this.embeddingWorker.addEventListener('message', (event) => {
+      if (event.data.type === 'downloadProgress' && this.progressCallback) {
+        this.progressCallback('embedding', event.data.progress || 0);
+      }
+    });
+
     // Wait for worker ready signal
     await this.waitForWorkerReady(this.embeddingWorker, 'embedding');
+    
+    // Report 100% when ready
+    if (this.progressCallback) {
+      this.progressCallback('embedding', 100);
+    }
+    
     console.log('[ChatBotQARouter] Embedding worker ready');
   }
 
@@ -126,8 +143,25 @@ export class ChatBotQARouter {
       this.config.timeout
     );
 
+    // Listen for download progress
+    this.textGenWorker.addEventListener('message', (event) => {
+      if (event.data.type === 'progress' && this.progressCallback) {
+        // Extract progress from the progress object
+        const progressData = event.data.progress;
+        if (progressData && progressData.progress !== undefined) {
+          this.progressCallback('textGen', progressData.progress);
+        }
+      }
+    });
+
     // Wait for worker ready signal
     await this.waitForWorkerReady(this.textGenWorker, 'textGen');
+    
+    // Report 100% when ready
+    if (this.progressCallback) {
+      this.progressCallback('textGen', 100);
+    }
+    
     console.log('[ChatBotQARouter] Text generation worker ready');
   }
 
@@ -145,8 +179,21 @@ export class ChatBotQARouter {
       this.config.timeout
     );
 
+    // Listen for download progress
+    this.eqaWorker.addEventListener('message', (event) => {
+      if (event.data.type === 'downloadProgress' && this.progressCallback) {
+        this.progressCallback('eqa', event.data.progress || 0);
+      }
+    });
+
     // Wait for worker ready signal
     await this.waitForWorkerReady(this.eqaWorker, 'eqa');
+    
+    // Report 100% when ready
+    if (this.progressCallback) {
+      this.progressCallback('eqa', 100);
+    }
+    
     console.log('[ChatBotQARouter] EQA worker ready');
   }
 
