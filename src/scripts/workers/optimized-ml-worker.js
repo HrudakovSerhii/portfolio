@@ -340,8 +340,8 @@ class OptimizedMLWorker {
   /**
    * Process generation request with validation
    */
-  async processGeneration(data) {
-    const { prompt, query, maxTokens, temperature, requestId } = data;
+  async processGeneration(data, requestId) {
+    const { prompt, query, maxTokens, temperature } = data || {};
     console.log('[OptimizedMLWorker] Processing generation with requestId:', requestId);
     console.log('[OptimizedMLWorker] Prompt preview:', prompt);
 
@@ -416,8 +416,8 @@ class OptimizedMLWorker {
   /**
    * Process chat-bot query (handles process_query message type)
    */
-  async processQuery(data) {
-    const { message, context = [], style = 'developer', cvData } = data;
+  async processQuery(data, requestId) {
+    const { message, context = [], style = 'developer', cvData } = data || {};
 
     console.log('🔍 WORKER: Processing query:', {
       message,
@@ -459,7 +459,7 @@ class OptimizedMLWorker {
       query: message,
       maxTokens: 60,
       temperature: 0.3
-    });
+    }, requestId);
   }
 
   /**
@@ -567,7 +567,7 @@ class OptimizedMLWorker {
   /**
    * Get performance metrics
    */
-  getPerformanceMetrics() {
+  getPerformanceMetrics(requestId) {
     const metrics = {
       isInitialized: this.isInitialized,
       modelName: this.modelConfig.name,
@@ -582,6 +582,7 @@ class OptimizedMLWorker {
 
     this.postMessage({
       type: "performance_metrics",
+      requestId: requestId,
       metrics: metrics
     });
   }
@@ -599,8 +600,8 @@ const worker = new OptimizedMLWorker();
 
 // Handle messages from main thread
 self.addEventListener('message', async (event) => {
-  const { type, ...data } = event.data;
-  console.log('[OptimizedMLWorker] Received message:', type, data);
+  const { type, data, requestId } = event.data;
+  console.log('[OptimizedMLWorker] Received message:', type, { hasData: !!data, requestId });
 
   switch (type) {
     case 'initialize':
@@ -610,13 +611,13 @@ self.addEventListener('message', async (event) => {
 
     case 'generate':
       console.log('[OptimizedMLWorker] Processing generate message...');
-      await worker.processGeneration(data);
+      await worker.processGeneration(data, requestId);
       break;
 
     case 'process_query':
       console.log('[OptimizedMLWorker] Processing process_query message...');
       // Handle chat-bot query processing
-      await worker.processQuery(data);
+      await worker.processQuery(data, requestId);
       break;
 
     case 'cleanup':
@@ -628,7 +629,7 @@ self.addEventListener('message', async (event) => {
     case 'get_performance_metrics':
       console.log('[OptimizedMLWorker] Processing get_performance_metrics message...');
       // Handle performance metrics request
-      worker.getPerformanceMetrics();
+      worker.getPerformanceMetrics(requestId);
       break;
 
     default:
