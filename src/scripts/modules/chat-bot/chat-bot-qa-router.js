@@ -104,29 +104,39 @@ export class ChatBotQARouter {
   async initializeEmbeddingWorker() {
     console.log('[ChatBotQARouter] Initializing embedding worker...');
     
-    this.embeddingWorker = new Worker(this.config.embeddingWorkerPath, { type: 'module' });
-    this.embeddingCommunicator = new WorkerCommunicator(
-      this.embeddingWorker,
-      'embedding',
-      this.config.timeout
-    );
+    try {
+      this.embeddingWorker = new Worker(this.config.embeddingWorkerPath, { type: 'module' });
+      console.log('[ChatBotQARouter] Embedding worker created');
+      
+      this.embeddingCommunicator = new WorkerCommunicator(
+        this.embeddingWorker,
+        'embedding',
+        this.config.timeout
+      );
+      console.log('[ChatBotQARouter] Embedding worker communicator created');
 
-    // Listen for download progress
-    this.embeddingWorker.addEventListener('message', (event) => {
-      if (event.data.type === 'downloadProgress' && this.progressCallback) {
-        this.progressCallback('embedding', event.data.progress || 0);
+      // Listen for download progress
+      this.embeddingWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'downloadProgress' && this.progressCallback) {
+          console.log('[ChatBotQARouter] Embedding download progress:', event.data.progress);
+          this.progressCallback('embedding', event.data.progress || 0);
+        }
+      });
+
+      // Wait for worker ready signal
+      console.log('[ChatBotQARouter] Waiting for embedding worker initialization...');
+      await this.waitForWorkerReady(this.embeddingWorker, 'embedding');
+      
+      // Report 100% when ready
+      if (this.progressCallback) {
+        this.progressCallback('embedding', 100);
       }
-    });
-
-    // Wait for worker ready signal
-    await this.waitForWorkerReady(this.embeddingWorker, 'embedding');
-    
-    // Report 100% when ready
-    if (this.progressCallback) {
-      this.progressCallback('embedding', 100);
+      
+      console.log('[ChatBotQARouter] Embedding worker ready and initialized');
+    } catch (error) {
+      console.error('[ChatBotQARouter] Embedding worker initialization error:', error);
+      throw error;
     }
-    
-    console.log('[ChatBotQARouter] Embedding worker ready');
   }
 
   /**
@@ -136,33 +146,43 @@ export class ChatBotQARouter {
   async initializeTextGenWorker() {
     console.log('[ChatBotQARouter] Initializing text generation worker...');
     
-    this.textGenWorker = new Worker(this.config.textGenWorkerPath, { type: 'module' });
-    this.textGenCommunicator = new WorkerCommunicator(
-      this.textGenWorker,
-      'textGen',
-      this.config.timeout
-    );
+    try {
+      this.textGenWorker = new Worker(this.config.textGenWorkerPath, { type: 'module' });
+      console.log('[ChatBotQARouter] Text generation worker created');
+      
+      this.textGenCommunicator = new WorkerCommunicator(
+        this.textGenWorker,
+        'textGen',
+        this.config.timeout
+      );
+      console.log('[ChatBotQARouter] Text generation worker communicator created');
 
-    // Listen for download progress
-    this.textGenWorker.addEventListener('message', (event) => {
-      if (event.data.type === 'progress' && this.progressCallback) {
-        // Extract progress from the progress object
-        const progressData = event.data.progress;
-        if (progressData && progressData.progress !== undefined) {
-          this.progressCallback('textGen', progressData.progress);
+      // Listen for download progress
+      this.textGenWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'progress' && this.progressCallback) {
+          // Extract progress from the progress object
+          const progressData = event.data.progress;
+          if (progressData && progressData.progress !== undefined) {
+            console.log('[ChatBotQARouter] Text generation download progress:', progressData.progress);
+            this.progressCallback('textGen', progressData.progress);
+          }
         }
-      }
-    });
+      });
 
-    // Wait for worker ready signal
-    await this.waitForWorkerReady(this.textGenWorker, 'textGen');
-    
-    // Report 100% when ready
-    if (this.progressCallback) {
-      this.progressCallback('textGen', 100);
+      // Wait for worker ready signal
+      console.log('[ChatBotQARouter] Waiting for text generation worker initialization...');
+      await this.waitForWorkerReady(this.textGenWorker, 'textGen');
+      
+      // Report 100% when ready
+      if (this.progressCallback) {
+        this.progressCallback('textGen', 100);
+      }
+      
+      console.log('[ChatBotQARouter] Text generation worker ready and initialized');
+    } catch (error) {
+      console.error('[ChatBotQARouter] Text generation worker initialization error:', error);
+      throw error;
     }
-    
-    console.log('[ChatBotQARouter] Text generation worker ready');
   }
 
   /**
@@ -172,29 +192,39 @@ export class ChatBotQARouter {
   async initializeEQAWorker() {
     console.log('[ChatBotQARouter] Initializing EQA worker...');
     
-    this.eqaWorker = new Worker(this.config.eqaWorkerPath, { type: 'module' });
-    this.eqaCommunicator = new WorkerCommunicator(
-      this.eqaWorker,
-      'eqa',
-      this.config.timeout
-    );
+    try {
+      this.eqaWorker = new Worker(this.config.eqaWorkerPath, { type: 'module' });
+      console.log('[ChatBotQARouter] EQA worker created');
+      
+      this.eqaCommunicator = new WorkerCommunicator(
+        this.eqaWorker,
+        'eqa',
+        this.config.timeout
+      );
+      console.log('[ChatBotQARouter] EQA worker communicator created');
 
-    // Listen for download progress
-    this.eqaWorker.addEventListener('message', (event) => {
-      if (event.data.type === 'downloadProgress' && this.progressCallback) {
-        this.progressCallback('eqa', event.data.progress || 0);
+      // Listen for download progress
+      this.eqaWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'downloadProgress' && this.progressCallback) {
+          console.log('[ChatBotQARouter] EQA download progress:', event.data.progress);
+          this.progressCallback('eqa', event.data.progress || 0);
+        }
+      });
+
+      // Wait for worker ready signal
+      console.log('[ChatBotQARouter] Waiting for EQA worker initialization...');
+      await this.waitForWorkerReady(this.eqaWorker, 'eqa');
+      
+      // Report 100% when ready
+      if (this.progressCallback) {
+        this.progressCallback('eqa', 100);
       }
-    });
-
-    // Wait for worker ready signal
-    await this.waitForWorkerReady(this.eqaWorker, 'eqa');
-    
-    // Report 100% when ready
-    if (this.progressCallback) {
-      this.progressCallback('eqa', 100);
+      
+      console.log('[ChatBotQARouter] EQA worker ready and initialized');
+    } catch (error) {
+      console.error('[ChatBotQARouter] EQA worker initialization error:', error);
+      throw error;
     }
-    
-    console.log('[ChatBotQARouter] EQA worker ready');
   }
 
   /**
@@ -206,19 +236,34 @@ export class ChatBotQARouter {
   waitForWorkerReady(worker, workerType) {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
+        console.error(`[ChatBotQARouter] ${workerType} worker initialization timeout after 30s`);
         reject(new Error(`${workerType} worker initialization timeout`));
       }, 30000); // 30 second timeout for model loading
 
       const messageHandler = (event) => {
-        if (event.data.type === 'ready') {
-          clearTimeout(timeout);
-          worker.removeEventListener('message', messageHandler);
-          console.log(`[ChatBotQARouter] ${workerType} worker signaled ready`);
-          resolve();
+        console.log(`[ChatBotQARouter] ${workerType} worker message:`, event.data.type, event.data);
+        
+        // Workers send different ready signals:
+        // - 'ready' (textGen worker)
+        // - 'initialized' (embedding/eqa workers)
+        // - 'workerReady' (all workers on script load, but not model ready)
+        if (event.data.type === 'ready' || event.data.type === 'initialized') {
+          if (event.data.success) {
+            clearTimeout(timeout);
+            worker.removeEventListener('message', messageHandler);
+            console.log(`[ChatBotQARouter] ${workerType} worker signaled ready successfully`);
+            resolve();
+          } else {
+            clearTimeout(timeout);
+            worker.removeEventListener('message', messageHandler);
+            console.error(`[ChatBotQARouter] ${workerType} worker initialization failed:`, event.data.error);
+            reject(new Error(`${workerType} worker initialization failed: ${event.data.error}`));
+          }
         }
       };
 
       worker.addEventListener('message', messageHandler);
+      console.log(`[ChatBotQARouter] Waiting for ${workerType} worker to be ready...`);
     });
   }
 
