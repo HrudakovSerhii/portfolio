@@ -1,0 +1,13 @@
+{
+  "watch": ["dist"],
+  "ext": "html,css,js,json",
+  "ignore": ["node_modules", "test", ".git"],
+  "delay": 500,
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "verbose": false,
+  "events": {
+    "restart": "echo '\n🔄 Server restarting due to file changes...\n'"
+  }
+}
