@@ -5,11 +5,10 @@
   "type": "module",
   "main": "src/scripts/app.js",
   "scripts": {
-    "build": "npm run build:clean && npm run build:styles && npm run build:copy && npm run build:cv-data && npm run build:prod-config",
+    "build": "npm run build:clean && npm run build:styles && npm run build:copy && npm run build:prod-config",
     "build:clean": "rm -rf dist && mkdir -p dist",
     "build:styles": "sass src/styles/styles.scss dist/styles.css --style=compressed",
-    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/ && cp -r public/* dist/",
-    "build:cv-data": "mkdir -p dist/cv && cp src/data/chat-bot/cv-data.json dist/cv/cv-data.json",
+    "build:copy": "cp -r src/pages/* dist/ && cp -r src/scripts dist/ && cp -r src/translations dist/ && mkdir -p dist/public && cp -r public/* dist/public",
     "build:prod-config": "sed -i.bak 's/window.isDev = true/window.isDev = false/' dist/scripts/app.js && rm -f dist/scripts/app.js.bak",
     "watch": "npm run watch:styles & npm run watch:html",
     "watch:styles": "sass src/styles/styles.scss dist/styles.css --watch",

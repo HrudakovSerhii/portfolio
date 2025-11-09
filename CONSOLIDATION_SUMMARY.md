@@ -6,7 +6,7 @@ Successfully consolidated overlapping functionality in the semantic Q&A module, 
 ## Changes Made
 
 ### 1. Enhanced DualWorkerCoordinator (5 commits)
-- **Enhanced with SemanticQAManager features**: Added performance metrics, batch processing, semantic search, system status, and data export/import
+- **Enhanced with DualWorkerCoordinator features**: Added performance metrics, batch processing, semantic search, system status, and data export/import
 - **Added context indexing capability**: Integrated ContextChunker for automatic text processing and pre-indexing
 - **Improved error handling**: Added graceful fallback responses and better error management
 
@@ -16,7 +16,7 @@ Successfully consolidated overlapping functionality in the semantic Q&A module, 
 - **Updated documentation**: Reflected new module structure
 
 ### 3. Removed Redundant Code (1 commit)
-- **Deleted SemanticQAManager**: 288 lines of redundant code eliminated
+- **Deleted DualWorkerCoordinator**: 288 lines of redundant code eliminated
 - **Maintained compatibility**: All features preserved in DualWorkerCoordinator
 
 ### 4. Extracted Utilities from ContextFencer (1 commit)
@@ -42,7 +42,7 @@ Successfully consolidated overlapping functionality in the semantic Q&A module, 
 
 ### Code Reduction
 - **Total lines removed**: ~1,266+ lines of redundant code
-- **Files removed**: 5 redundant service classes (SemanticQAManager, QAEngine, SimilarityMatcher, ContextChunker, ContextFencer)
+- **Files removed**: 5 redundant service classes (DualWorkerCoordinator, QAEngine, SimilarityMatcher, ContextChunker, ContextFencer)
 - **Files added**: 3 focused utility modules (fact-extractor.js, context-formatter.js, text-chunker.js)
 
 ### Architecture Improvements
