@@ -196,7 +196,13 @@ class ChatBot {
         maxContextChunks: 5,
         similarityThreshold: 0.3,
         eqaConfidenceThreshold: 0.3,
-        timeout: 5000
+        timeout: 5000,
+        onProgress: (worker, progress) => {
+          // Forward progress updates to UI
+          if (this.ui && this.ui.updateProgress) {
+            this.ui.updateProgress(worker, progress);
+          }
+        }
       });
 
       console.log('🚀 CHAT-BOT: Starting router initialization with CV chunks:', this.cvChunks.length);
@@ -616,17 +622,8 @@ class ChatBot {
    * Complete the progress bar animation
    */
   _completeProgressBar() {
-    if (this.ui && this.ui.chatContainer) {
-      const progressBar = this.ui.chatContainer.querySelector('.progress-bar');
-      if (progressBar) {
-        progressBar.style.width = '100%';
-
-        // Clear any existing progress interval
-        if (this.ui.chatContainer._progressInterval) {
-          clearInterval(this.ui.chatContainer._progressInterval);
-          this.ui.chatContainer._progressInterval = null;
-        }
-      }
+    if (this.ui && this.ui.completeProgress) {
+      this.ui.completeProgress();
     }
   }
 
