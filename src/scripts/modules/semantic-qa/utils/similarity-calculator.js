@@ -198,22 +198,36 @@ export function findSimilarChunks(questionEmbedding, chunks, maxChunks = 3) {
 
   const similarities = [];
 
+  console.log('[SimilarityCalculator] 🔍 FINDING SIMILAR CHUNKS');
+  console.log('[SimilarityCalculator] Question embedding dimensions:', questionEmbedding.length);
+  console.log('[SimilarityCalculator] Question embedding first 10 values:', Array.from(questionEmbedding.slice(0, 10)));
+  console.log('[SimilarityCalculator] Total chunks to compare:', chunks.length);
+
   chunks.forEach((chunk, index) => {
+    console.log(`[SimilarityCalculator] 📊 Processing chunk ${index + 1}/${chunks.length}: ${chunk.id}`);
+    
     if (chunk.embedding && Array.isArray(chunk.embedding)) {
       try {
+        console.log(`[SimilarityCalculator] Chunk ${chunk.id} embedding dimensions:`, chunk.embedding.length);
+        console.log(`[SimilarityCalculator] Chunk ${chunk.id} embedding first 10 values:`, Array.from(chunk.embedding.slice(0, 10)));
         console.log(`[SimilarityCalculator] Comparing embeddings - Question: ${questionEmbedding.length}D, Chunk ${chunk.id}: ${chunk.embedding.length}D`);
         
         const similarity = calculateCosineSimilarity(questionEmbedding, chunk.embedding);
+        console.log(`[SimilarityCalculator] ✅ Chunk ${chunk.id} raw similarity:`, similarity);
         
         // Apply priority weighting from metadata
         const priority = chunk.metadata?.priority || 0;
         const priorityWeight = priority ? (6 - priority) / 5 : 0.6;
+        console.log(`[SimilarityCalculator] Chunk ${chunk.id} priority:`, priority, 'weight:', priorityWeight);
         
         // Apply confidence weighting from metadata
         const confidence = chunk.metadata?.confidence || 1.0;
+        console.log(`[SimilarityCalculator] Chunk ${chunk.id} confidence:`, confidence);
         
         // Calculate weighted similarity
         const weightedSimilarity = similarity * priorityWeight * confidence;
+        console.log(`[SimilarityCalculator] ✅ Chunk ${chunk.id} weighted similarity:`, weightedSimilarity);
+        console.log(`[SimilarityCalculator] Calculation: ${similarity} * ${priorityWeight} * ${confidence} = ${weightedSimilarity}`);
         
         similarities.push({
           ...chunk,
@@ -225,17 +239,20 @@ export function findSimilarChunks(questionEmbedding, chunks, maxChunks = 3) {
           sectionId: chunk.id // For compatibility with existing code
         });
       } catch (error) {
-        console.warn(`[SimilarityCalculator] Failed to calculate similarity for chunk ${chunk.id}:`, error);
+        console.warn(`[SimilarityCalculator] ❌ Failed to calculate similarity for chunk ${chunk.id}:`, error);
         console.warn(`[SimilarityCalculator] Question embedding dimensions: ${questionEmbedding.length}, Chunk embedding dimensions: ${chunk.embedding?.length}`);
       }
     } else {
-      console.warn(`[SimilarityCalculator] Chunk ${chunk.id} has no valid embedding:`, {
+      console.warn(`[SimilarityCalculator] ⚠️ Chunk ${chunk.id} has no valid embedding:`, {
         hasEmbedding: !!chunk.embedding,
         isArray: Array.isArray(chunk.embedding),
         type: typeof chunk.embedding
       });
     }
   });
+
+  console.log('[SimilarityCalculator] 📊 SIMILARITY CALCULATION COMPLETE');
+  console.log('[SimilarityCalculator] Total similarities calculated:', similarities.length);
 
   // Sort by weighted similarity (highest first) and return top chunks
   return similarities
@@ -250,30 +267,50 @@ export function findSimilarChunks(questionEmbedding, chunks, maxChunks = 3) {
  * @returns {Array} - Filtered matches above adaptive threshold
  */
 export function applySimilarityThreshold(matches, options = {}) {
+  console.log('[SimilarityCalculator] 🎯 APPLYING SIMILARITY THRESHOLD');
+  console.log('[SimilarityCalculator] Matches to filter:', matches.length);
+  console.log('[SimilarityCalculator] Options:', options);
+
   if (!Array.isArray(matches)) {
+    console.log('[SimilarityCalculator] Invalid matches array, returning empty');
     return [];
   }
 
   const {
     baseThreshold = 0.3,      // Lower threshold for small LLM (more permissive)
     priorityAdjustment = 0.1, // Lower threshold for high priority sections
-    maxResults = 2            // Limit results for small LLM context
+    maxResults = 3            // Increased to 3 for better context
   } = options;
 
-  const filteredMatches = matches.filter(match => {
+  console.log('[SimilarityCalculator] Base threshold:', baseThreshold);
+  console.log('[SimilarityCalculator] Priority adjustment:', priorityAdjustment);
+  console.log('[SimilarityCalculator] Max results:', maxResults);
+
+  const filteredMatches = matches.filter((match, idx) => {
     const similarity = match.finalScore || match.weightedSimilarity || match.similarity || 0;
     
     // Adjust threshold based on section priority
     let adjustedThreshold = baseThreshold;
     if (match.section && match.section.priority && match.section.priority <= 2) {
       adjustedThreshold -= priorityAdjustment; // Lower threshold for high priority
+      console.log(`[SimilarityCalculator] Match ${idx + 1} (${match.id}): High priority, adjusted threshold:`, adjustedThreshold);
     }
     
     // Ensure threshold is within valid range
     adjustedThreshold = Math.max(0.1, Math.min(1, adjustedThreshold));
     
-    return similarity >= adjustedThreshold;
+    const passes = similarity >= adjustedThreshold;
+    console.log(`[SimilarityCalculator] Match ${idx + 1} (${match.id}):`, {
+      similarity: similarity.toFixed(4),
+      threshold: adjustedThreshold.toFixed(4),
+      passes: passes ? '✅ PASS' : '❌ FAIL'
+    });
+    
+    return passes;
   });
+
+  console.log('[SimilarityCalculator] Filtered matches:', filteredMatches.length);
+  console.log('[SimilarityCalculator] Returning top', Math.min(filteredMatches.length, maxResults), 'results');
 
   // Return top results limited for small LLM context
   return filteredMatches.slice(0, maxResults);
