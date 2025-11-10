@@ -121,32 +121,46 @@ export function normalizeQuery(query) {
 
 /**
  * Get adaptive similarity threshold based on query characteristics
+ * Optimized for embedding models with lower similarity scores
  * @param {string} query - The query to analyze
  * @returns {number} - Adaptive threshold value between 0 and 1
  */
 export function getAdaptiveThreshold(query) {
+  console.log('[QueryProcessor] 🎯 CALCULATING ADAPTIVE THRESHOLD');
+  console.log('[QueryProcessor] Query:', query);
+  console.log('[QueryProcessor] Query length:', query?.length);
+
   if (!query || typeof query !== 'string') {
-    return 0.7; // Default threshold
+    console.log('[QueryProcessor] Invalid query, returning default: 0.3');
+    return 0.3; // Lower default threshold for embedding models
   }
 
-  const baseThreshold = 0.7;
+  // Much lower base threshold optimized for embedding similarity scores
+  // Embedding models typically produce scores in 0.2-0.6 range for relevant matches
+  const baseThreshold = 0.3;
+  console.log('[QueryProcessor] Base threshold:', baseThreshold);
 
   // Lower threshold for shorter queries (they might be less specific)
   if (query.length < 20) {
-    return baseThreshold - 0.1;
+    const threshold = baseThreshold - 0.05;
+    console.log('[QueryProcessor] Short query (<20 chars), adjusted threshold:', threshold);
+    return threshold;
   }
 
   // Lower threshold for questions (they might be more exploratory)
-  if (
-    query.includes("?") ||
-    query.startsWith("what") ||
-    query.startsWith("how") ||
-    query.startsWith("do you")
-  ) {
-    return baseThreshold - 0.05;
+  const isQuestion = query.includes("?") ||
+    query.toLowerCase().startsWith("what") ||
+    query.toLowerCase().startsWith("how") ||
+    query.toLowerCase().startsWith("do you") ||
+    query.toLowerCase().startsWith("tell me");
+  
+  if (isQuestion) {
+    const threshold = baseThreshold - 0.05;
+    console.log('[QueryProcessor] Question detected, adjusted threshold:', threshold);
+    return threshold;
   }
 
-  // Higher threshold for very specific technical terms
+  // Slightly higher threshold for very specific technical terms
   const technicalTerms = [
     "framework",
     "library",
@@ -155,8 +169,11 @@ export function getAdaptiveThreshold(query) {
     "implementation",
   ];
   if (technicalTerms.some((term) => query.toLowerCase().includes(term))) {
-    return baseThreshold + 0.05;
+    const threshold = baseThreshold + 0.05;
+    console.log('[QueryProcessor] Technical terms detected, adjusted threshold:', threshold);
+    return threshold;
   }
 
+  console.log('[QueryProcessor] Using base threshold:', baseThreshold);
   return baseThreshold;
 }
