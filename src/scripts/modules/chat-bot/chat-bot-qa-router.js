@@ -445,6 +445,8 @@ export class ChatBotQARouter {
    */
   async processQueryPipeline(question, conversationContext = []) {
     const startTime = Date.now();
+    console.log('[ChatBotQARouter] ========================================');
+    console.log('[ChatBotQARouter] 🔵 QUERY PROCESSING PIPELINE START');
     console.log('[ChatBotQARouter] Starting query processing pipeline');
     console.log('[ChatBotQARouter] Original query:', question);
 
@@ -457,9 +459,13 @@ export class ChatBotQARouter {
 
     // Step 6: Generate query embedding
     const step6Start = Date.now();
+    console.log('[ChatBotQARouter] 🔵 Step 6: Generating query embedding...');
     const queryEmbedding = await this.generateEmbedding(enhancedQuery);
     const step6Time = Date.now() - step6Start;
     console.log('[ChatBotQARouter] Step 6 - Embedding dimensions:', queryEmbedding.length);
+    console.log('[ChatBotQARouter] Step 6 - Embedding type:', typeof queryEmbedding);
+    console.log('[ChatBotQARouter] Step 6 - Is Float32Array?', queryEmbedding instanceof Float32Array);
+    console.log('[ChatBotQARouter] Step 6 - First 10 values:', Array.from(queryEmbedding.slice(0, 10)));
     console.log('[ChatBotQARouter] Step 6 timing:', step6Time, 'ms');
 
     // Step 7: Find similar chunks
@@ -612,19 +618,47 @@ export class ChatBotQARouter {
   async processConversationalPath(question, similarChunks, options = {}) {
     const startTime = Date.now();
     console.log('[ChatBotQARouter] Step 9b: Conversational Synthesis Path');
+    console.log('[ChatBotQARouter] 📊 SIMILARITY ANALYSIS BEFORE FILTERING:');
+    console.log('[ChatBotQARouter] Similar chunks received:', similarChunks.length);
+    similarChunks.forEach((chunk, idx) => {
+      console.log(`[ChatBotQARouter] Chunk ${idx + 1}:`, {
+        id: chunk.id,
+        similarity: chunk.similarity,
+        weightedSimilarity: chunk.weightedSimilarity,
+        textPreview: chunk.text.substring(0, 100) + '...'
+      });
+    });
 
     const style = options.style || 'developer';
     const conversationContext = options.context || [];
 
     // Apply similarity threshold filtering
     const threshold = getAdaptiveThreshold(question);
+    console.log('[ChatBotQARouter] 🎯 Adaptive threshold calculated:', threshold);
+    
     const filteredChunks = applySimilarityThreshold(similarChunks, {
       baseThreshold: threshold,
       maxResults: this.config.maxContextChunks
     });
 
+    console.log('[ChatBotQARouter] 📊 SIMILARITY ANALYSIS AFTER FILTERING:');
     console.log('[ChatBotQARouter] Filtered chunks count:', filteredChunks.length);
     console.log('[ChatBotQARouter] Similarity threshold used:', threshold);
+    if (filteredChunks.length > 0) {
+      filteredChunks.forEach((chunk, idx) => {
+        console.log(`[ChatBotQARouter] Filtered Chunk ${idx + 1}:`, {
+          id: chunk.id,
+          similarity: chunk.similarity,
+          weightedSimilarity: chunk.weightedSimilarity,
+          passedThreshold: chunk.similarity >= threshold
+        });
+      });
+    } else {
+      console.log('[ChatBotQARouter] ⚠️ NO CHUNKS PASSED THRESHOLD');
+      console.log('[ChatBotQARouter] Highest similarity was:', similarChunks[0]?.similarity);
+      console.log('[ChatBotQARouter] Threshold required:', threshold);
+      console.log('[ChatBotQARouter] Gap:', threshold - (similarChunks[0]?.similarity || 0));
+    }
 
     // Check if we have any relevant context
     if (filteredChunks.length === 0) {

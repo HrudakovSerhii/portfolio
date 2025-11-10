@@ -205,7 +205,14 @@ class OptimizedMLWorker {
    * Generate text response
    */
   async generateText(prompt, options = {}) {
+    console.log('[OptimizedMLWorker] ========================================');
+    console.log('[OptimizedMLWorker] 🔵 GENERATE TEXT CALLED');
     console.log('[OptimizedMLWorker] generateText called with options:', options);
+    console.log('[OptimizedMLWorker] 📝 FULL PROMPT (UNCUT):');
+    console.log('[OptimizedMLWorker] ----------------------------------------');
+    console.log(prompt);
+    console.log('[OptimizedMLWorker] ----------------------------------------');
+    console.log('[OptimizedMLWorker] Prompt length:', prompt.length, 'characters');
 
     if (!this.model || !this.isInitialized) {
       console.error('[OptimizedMLWorker] Model not initialized! isInitialized:', this.isInitialized, 'model:', !!this.model);
@@ -225,34 +232,54 @@ class OptimizedMLWorker {
         early_stopping: true // Add early stopping for better control
       };
 
-      console.log('[OptimizedMLWorker] Calling model with options:', modelOptions);
-      console.log('[OptimizedMLWorker] Prompt length:', prompt.length);
+      console.log('[OptimizedMLWorker] 🎛️ MODEL OPTIONS:', JSON.stringify(modelOptions, null, 2));
+      console.log('[OptimizedMLWorker] 🚀 Calling SmolLM model...');
 
+      const startTime = Date.now();
       const output = await this.model(prompt, modelOptions);
+      const inferenceTime = Date.now() - startTime;
 
-      console.log('[OptimizedMLWorker] Raw model output:', output);
+      console.log('[OptimizedMLWorker] ⏱️ Model inference time:', inferenceTime, 'ms');
+      console.log('[OptimizedMLWorker] 📤 RAW MODEL OUTPUT (COMPLETE):');
+      console.log('[OptimizedMLWorker] ----------------------------------------');
+      console.log(JSON.stringify(output, null, 2));
+      console.log('[OptimizedMLWorker] ----------------------------------------');
       console.log('[OptimizedMLWorker] Output type:', typeof output, 'isArray:', Array.isArray(output));
 
       // Extract generated text
       let generatedText = "";
       if (Array.isArray(output) && output.length > 0) {
         generatedText = output[0].generated_text || "";
-        console.log('[OptimizedMLWorker] Extracted from array:', generatedText);
+        console.log('[OptimizedMLWorker] ✅ Extracted from array[0].generated_text');
       } else if (output.generated_text) {
         generatedText = output.generated_text;
-        console.log('[OptimizedMLWorker] Extracted from object:', generatedText);
+        console.log('[OptimizedMLWorker] ✅ Extracted from object.generated_text');
       } else {
-        console.warn('[OptimizedMLWorker] Unexpected output format:', output);
+        console.warn('[OptimizedMLWorker] ⚠️ Unexpected output format:', output);
       }
 
-      console.log('[OptimizedMLWorker] Raw generated text:', JSON.stringify(generatedText));
+      console.log('[OptimizedMLWorker] 📝 RAW GENERATED TEXT (before cleaning):');
+      console.log('[OptimizedMLWorker] ----------------------------------------');
+      console.log(generatedText);
+      console.log('[OptimizedMLWorker] ----------------------------------------');
+      console.log('[OptimizedMLWorker] Length:', generatedText.length, 'characters');
+      console.log('[OptimizedMLWorker] JSON representation:', JSON.stringify(generatedText));
 
+      console.log('[OptimizedMLWorker] 🧹 Starting text cleaning and validation...');
       const cleanedText = this.cleanAndValidateText(generatedText);
-      console.log('[OptimizedMLWorker] Cleaned and validated text:', JSON.stringify(cleanedText));
+      
+      console.log('[OptimizedMLWorker] 📝 CLEANED TEXT (after validation):');
+      console.log('[OptimizedMLWorker] ----------------------------------------');
+      console.log(cleanedText);
+      console.log('[OptimizedMLWorker] ----------------------------------------');
+      console.log('[OptimizedMLWorker] Cleaned text is null?', cleanedText === null);
+      console.log('[OptimizedMLWorker] JSON representation:', JSON.stringify(cleanedText));
+      console.log('[OptimizedMLWorker] ========================================');
 
       return cleanedText;
     } catch (error) {
-      console.error('[OptimizedMLWorker] Failed to generate text:', error);
+      console.error('[OptimizedMLWorker] ❌ Failed to generate text:', error);
+      console.error('[OptimizedMLWorker] Error stack:', error.stack);
       throw error;
     }
   }
@@ -261,60 +288,85 @@ class OptimizedMLWorker {
    * Clean and validate generated text with strict filtering
    */
   cleanAndValidateText(text) {
-    console.log('[OptimizedMLWorker] cleanAndValidateText input:', JSON.stringify(text));
+    console.log('[OptimizedMLWorker] 🧹 CLEAN AND VALIDATE TEXT');
+    console.log('[OptimizedMLWorker] Input text:', JSON.stringify(text));
+    console.log('[OptimizedMLWorker] Input type:', typeof text);
+    console.log('[OptimizedMLWorker] Input length:', text?.length);
 
     if (!text || typeof text !== 'string') {
-      console.warn('[OptimizedMLWorker] Invalid input text:', typeof text, text);
+      console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Invalid input text');
+      console.warn('[OptimizedMLWorker] Type:', typeof text, 'Value:', text);
       return null;
     }
 
     // Clean the text
+    console.log('[OptimizedMLWorker] 🔧 Applying text cleaning transformations...');
     let cleaned = text
       .replace(/^(Response:|Answer:)\s*/i, "") // Remove prefixes
       .replace(/\n\s*\n/g, "\n") // Remove extra newlines
       .replace(/\s+/g, " ") // Normalize whitespace
       .trim();
 
-    console.log('[OptimizedMLWorker] Cleaned text:', JSON.stringify(cleaned));
+    console.log('[OptimizedMLWorker] ✅ Text after cleaning:', JSON.stringify(cleaned));
+    console.log('[OptimizedMLWorker] Cleaned length:', cleaned.length);
 
     // Validate the text doesn't contain hallucinated content
+    console.log('[OptimizedMLWorker] 🔍 Checking for hallucinated content patterns...');
     const invalidPatterns = [
-      /serdh?ii/i, // Misspelled name variations
-      /serlindo/i,
-      /serdoubust/i,
-      /serdondogs/i,
-      /webpack/i, // Random technical terms not in context
-      /pylons/i,
-      /ejs/i,
-      /\d+\s+guys/i, // Random numbers with "guys"
-      /work out of here/i, // Nonsensical phrases
-      /ain't no joke/i,
-      /made my life so much easier/i
+      { pattern: /serdh?ii/i, name: 'misspelled_name_serdii' },
+      { pattern: /serlindo/i, name: 'misspelled_name_serlindo' },
+      { pattern: /serdoubust/i, name: 'misspelled_name_serdoubust' },
+      { pattern: /serdondogs/i, name: 'misspelled_name_serdondogs' },
+      { pattern: /webpack/i, name: 'random_tech_webpack' },
+      { pattern: /pylons/i, name: 'random_tech_pylons' },
+      { pattern: /ejs/i, name: 'random_tech_ejs' },
+      { pattern: /\d+\s+guys/i, name: 'random_numbers_guys' },
+      { pattern: /work out of here/i, name: 'nonsensical_phrase_1' },
+      { pattern: /ain't no joke/i, name: 'nonsensical_phrase_2' },
+      { pattern: /made my life so much easier/i, name: 'nonsensical_phrase_3' }
     ];
 
     // Check for invalid patterns
-    for (const pattern of invalidPatterns) {
+    for (const { pattern, name } of invalidPatterns) {
       if (pattern.test(cleaned)) {
-        console.warn('[OptimizedMLWorker] Generated text contains hallucinated content:', cleaned, 'Pattern:', pattern);
+        console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Hallucinated content detected');
+        console.warn('[OptimizedMLWorker] Pattern matched:', name);
+        console.warn('[OptimizedMLWorker] Pattern:', pattern);
+        console.warn('[OptimizedMLWorker] Text:', cleaned);
         return null; // Return null to indicate invalid generation
       }
     }
+    console.log('[OptimizedMLWorker] ✅ No hallucinated patterns detected');
 
     // Check if text is too short or too generic
+    console.log('[OptimizedMLWorker] 🔍 Checking text length...');
     if (cleaned.length < 10) {
-      console.warn('[OptimizedMLWorker] Generated text too short:', cleaned.length, 'chars');
+      console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Text too short');
+      console.warn('[OptimizedMLWorker] Length:', cleaned.length, 'chars (minimum: 10)');
+      console.warn('[OptimizedMLWorker] Text:', cleaned);
       return null;
     }
+    console.log('[OptimizedMLWorker] ✅ Text length OK:', cleaned.length, 'chars');
 
     // Check if text starts with first person or contains relevant content
-    if (!cleaned.match(/^(I|Yes|No|Based|According|From|With|Having|As|My)/i) && 
-        !cleaned.includes('years') && 
-        !cleaned.includes('experience')) {
-      console.warn('[OptimizedMLWorker] Generated text does not appear relevant:', cleaned);
+    console.log('[OptimizedMLWorker] 🔍 Checking text relevance...');
+    const startsWithFirstPerson = /^(I|Yes|No|Based|According|From|With|Having|As|My)/i.test(cleaned);
+    const containsYears = cleaned.includes('years');
+    const containsExperience = cleaned.includes('experience');
+    
+    console.log('[OptimizedMLWorker] Starts with first person?', startsWithFirstPerson);
+    console.log('[OptimizedMLWorker] Contains "years"?', containsYears);
+    console.log('[OptimizedMLWorker] Contains "experience"?', containsExperience);
+    
+    if (!startsWithFirstPerson && !containsYears && !containsExperience) {
+      console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Text does not appear relevant');
+      console.warn('[OptimizedMLWorker] Text:', cleaned);
       return null;
     }
+    console.log('[OptimizedMLWorker] ✅ Text appears relevant');
 
-    console.log('[OptimizedMLWorker] Text validation passed:', JSON.stringify(cleaned));
+    console.log('[OptimizedMLWorker] ✅ ALL VALIDATION CHECKS PASSED');
+    console.log('[OptimizedMLWorker] Final validated text:', JSON.stringify(cleaned));
     return cleaned;
   }
 
@@ -504,43 +556,56 @@ class OptimizedMLWorker {
    * Build chat prompt for the model
    */
   buildChatPrompt(message, context = [], style = 'developer', cvContext = null) {
-    console.log('🏗️ WORKER: Building prompt with:', {
-      message,
-      contextItems: context.length,
-      style,
-      hasCvContext: !!cvContext,
-      cvSections: cvContext ? cvContext.map(s => s.key) : []
-    });
+    console.log('[OptimizedMLWorker] 🏗️ BUILD CHAT PROMPT');
+    console.log('[OptimizedMLWorker] ========================================');
+    console.log('[OptimizedMLWorker] Input parameters:');
+    console.log('[OptimizedMLWorker] - Message:', message);
+    console.log('[OptimizedMLWorker] - Context items:', context.length);
+    console.log('[OptimizedMLWorker] - Style:', style);
+    console.log('[OptimizedMLWorker] - Has CV context?', !!cvContext);
+    console.log('[OptimizedMLWorker] - CV sections:', cvContext ? cvContext.map(s => s.key) : []);
 
     // Create a focused prompt for the small model
     let prompt = "You are Serhii, a professional developer. Answer briefly in first person.\n\n";
 
     // Add CV context if available (this is the key part!)
     if (cvContext && cvContext.length > 0) {
+      console.log('[OptimizedMLWorker] 📚 Adding CV context sections...');
       prompt += "Based on this information about Serhii:\n";
-      cvContext.forEach(section => {
+      cvContext.forEach((section, idx) => {
+        console.log(`[OptimizedMLWorker] CV Section ${idx + 1}:`, section.key);
+        console.log(`[OptimizedMLWorker] Content length:`, section.content.length);
+        console.log(`[OptimizedMLWorker] Content preview:`, section.content.substring(0, 100) + '...');
         prompt += `${section.content}\n\n`;
       });
+    } else {
+      console.log('[OptimizedMLWorker] ⚠️ No CV context available');
     }
 
     // Add conversation context if available (keep it minimal for small model)
     if (context.length > 0) {
       const recentContext = context.slice(-2); // Only use last 2 context items
+      console.log('[OptimizedMLWorker] 💬 Adding conversation context (last', recentContext.length, 'items)');
       prompt += "Recent conversation:\n";
-      recentContext.forEach(item => {
+      recentContext.forEach((item, idx) => {
+        console.log(`[OptimizedMLWorker] Context ${idx + 1}:`, item);
         prompt += `- ${item}\n`;
       });
       prompt += "\n";
+    } else {
+      console.log('[OptimizedMLWorker] ℹ️ No conversation context');
     }
 
     prompt += `Question: ${message}\n`;
     prompt += "Answer: I";
 
-    console.log('✅ WORKER: Final prompt built:', {
-      length: prompt.length,
-      preview: prompt.substring(0, 200) + '...',
-      hasCvData: !!cvContext
-    });
+    console.log('[OptimizedMLWorker] ✅ FINAL PROMPT BUILT');
+    console.log('[OptimizedMLWorker] Total length:', prompt.length, 'characters');
+    console.log('[OptimizedMLWorker] COMPLETE PROMPT (UNCUT):');
+    console.log('[OptimizedMLWorker] ----------------------------------------');
+    console.log(prompt);
+    console.log('[OptimizedMLWorker] ----------------------------------------');
+    console.log('[OptimizedMLWorker] ========================================');
 
     return prompt;
   }
