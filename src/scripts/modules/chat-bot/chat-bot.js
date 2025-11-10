@@ -1,3 +1,5 @@
+import {ChatBotQARouter} from "./chat-bot-qa-router.js";
+
 /**
  * ChatBot - Main entry point for the chatbot feature
  * Handles lazy loading, dual-engine initialization, and browser compatibility
@@ -170,7 +172,7 @@ class ChatBot {
       console.log('🔧 CHAT-BOT: Initializing chat bot QA router...');
 
       // Import the chatbot QA router
-      const { default: ChatBotQARouter } = await import('./chat-bot-qa-router.js');
+      const { ChatBotQARouter } = await import('./chat-bot-qa-router.js');
 
       // Use cv-data-service to load and prepare CV data
       await this.cvDataService.loadCVData();
@@ -195,8 +197,8 @@ class ChatBot {
         eqaWorkerPath: './scripts/workers/eqa-worker.js',
         maxContextChunks: 5,
         similarityThreshold: 0.3,
-        eqaConfidenceThreshold: 0.3,
-        timeout: 5000,
+        eqaConfidenceThreshold: 0.05, // Lowered from 0.3 - EQA models often have low confidence scores
+        timeout: 60000,
         onProgress: (worker, progress) => {
           // Forward progress updates to UI
           if (this.ui && this.ui.updateProgress) {
@@ -206,10 +208,28 @@ class ChatBot {
       });
 
       console.log('🚀 CHAT-BOT: Starting router initialization with CV chunks:', this.cvChunks.length);
+      console.log('🔍 CHAT-BOT: BEFORE router init - First 3 chunks embedding status:', 
+        this.cvChunks.slice(0, 3).map(c => ({
+          id: c.id,
+          hasEmbedding: !!c.embedding,
+          embeddingType: typeof c.embedding,
+          isArray: Array.isArray(c.embedding),
+          embeddingValue: c.embedding
+        }))
+      );
 
       // Initialize the router with prepared chunks
-      await this.chatbotQARouter.initialize(this.cvChunks);
+      await this.chatbotQARouter.initializeRouter(this.cvChunks);
 
+      console.log('🔍 CHAT-BOT: AFTER router init - First 3 chunks embedding status:', 
+        this.cvChunks.slice(0, 3).map(c => ({
+          id: c.id,
+          hasEmbedding: !!c.embedding,
+          embeddingType: typeof c.embedding,
+          isArray: Array.isArray(c.embedding),
+          embeddingLength: c.embedding?.length
+        }))
+      );
       console.log('✅ CHAT-BOT: Chat bot QA router initialized successfully, router ready state:', this.chatbotQARouter.getStatus());
     } catch (error) {
       console.error('❌ CHAT-BOT: Router initialization failed:', error);
@@ -280,14 +300,17 @@ class ChatBot {
       console.log('📈 CHAT-BOT: Processing metrics:', result.metrics);
     }
 
-    // Check if fallback handling is needed
-    const fallbackDecision = this.fallbackHandler.shouldTriggerFallback(
-      result.confidence,
-      originalMessage,
-      result.matchedChunks
-    );
+    // Check if the router already indicated a fallback scenario
+    // Router returns method: 'fallback' when it couldn't generate a good answer
+    const isFallbackResponse = result.method === 'fallback' || result.confidence === 0;
 
-    if (fallbackDecision.shouldFallback) {
+    if (isFallbackResponse) {
+      // Let FallbackHandler manage the UX for failed queries
+      const fallbackDecision = {
+        shouldFallback: true,
+        reason: result.matchedChunks?.length === 0 ? 'no_matches' : 'low_confidence',
+        action: this.fallbackHandler.getNextFallbackAction(originalMessage)
+      };
       this._handleFallbackResponse(fallbackDecision, originalMessage);
     } else {
       // Format response based on current style

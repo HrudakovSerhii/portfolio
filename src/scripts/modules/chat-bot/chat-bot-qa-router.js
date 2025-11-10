@@ -1,6 +1,6 @@
 /**
  * Chat Bot QA Router
- * 
+ *
  * Orchestrates intent-based routing for question-answering.
  * Routes queries to specialized workers based on intent classification.
  */
@@ -54,7 +54,7 @@ export class ChatBotQARouter {
    * @param {Array} cvChunks - CV data chunks for context
    * @returns {Promise} Promise that resolves when initialization is complete
    */
-  async initialize(cvChunks = []) {
+  async initializeRouter(cvChunks = []) {
     const startTime = Date.now();
     console.log('[ChatBotQARouter] Starting initialization with', cvChunks.length, 'chunks');
 
@@ -71,7 +71,7 @@ export class ChatBotQARouter {
       await Promise.all([
         // Step 2: Index and chunk CV data
         this.prepareContext(cvChunks),
-        
+
         // Step 3: Load remaining workers
         Promise.all([
           this.initializeTextGenWorker(),
@@ -103,17 +103,17 @@ export class ChatBotQARouter {
    */
   async initializeEmbeddingWorker() {
     console.log('[ChatBotQARouter] Initializing embedding worker...');
-    
+
     try {
       this.embeddingWorker = new Worker(this.config.embeddingWorkerPath, { type: 'module' });
       console.log('[ChatBotQARouter] Embedding worker created');
-      
+
       this.embeddingCommunicator = new WorkerCommunicator(
         this.embeddingWorker,
         'embedding',
         this.config.timeout
       );
-      console.log('[ChatBotQARouter] Embedding worker communicator created');
+      console.log('[ChatBotQARouter] Embedding worker communicator created with timeout:', this.config.timeout, 'ms');
 
       // Listen for download progress
       this.embeddingWorker.addEventListener('message', (event) => {
@@ -126,12 +126,12 @@ export class ChatBotQARouter {
       // Wait for worker ready signal
       console.log('[ChatBotQARouter] Waiting for embedding worker initialization...');
       await this.waitForWorkerReady(this.embeddingWorker, 'embedding');
-      
+
       // Report 100% when ready
       if (this.progressCallback) {
         this.progressCallback('embedding', 100);
       }
-      
+
       console.log('[ChatBotQARouter] Embedding worker ready and initialized');
     } catch (error) {
       console.error('[ChatBotQARouter] Embedding worker initialization error:', error);
@@ -145,11 +145,11 @@ export class ChatBotQARouter {
    */
   async initializeTextGenWorker() {
     console.log('[ChatBotQARouter] Initializing text generation worker...');
-    
+
     try {
       this.textGenWorker = new Worker(this.config.textGenWorkerPath, { type: 'module' });
       console.log('[ChatBotQARouter] Text generation worker created');
-      
+
       this.textGenCommunicator = new WorkerCommunicator(
         this.textGenWorker,
         'textGen',
@@ -172,12 +172,12 @@ export class ChatBotQARouter {
       // Wait for worker ready signal
       console.log('[ChatBotQARouter] Waiting for text generation worker initialization...');
       await this.waitForWorkerReady(this.textGenWorker, 'textGen');
-      
+
       // Report 100% when ready
       if (this.progressCallback) {
         this.progressCallback('textGen', 100);
       }
-      
+
       console.log('[ChatBotQARouter] Text generation worker ready and initialized');
     } catch (error) {
       console.error('[ChatBotQARouter] Text generation worker initialization error:', error);
@@ -191,11 +191,11 @@ export class ChatBotQARouter {
    */
   async initializeEQAWorker() {
     console.log('[ChatBotQARouter] Initializing EQA worker...');
-    
+
     try {
       this.eqaWorker = new Worker(this.config.eqaWorkerPath, { type: 'module' });
       console.log('[ChatBotQARouter] EQA worker created');
-      
+
       this.eqaCommunicator = new WorkerCommunicator(
         this.eqaWorker,
         'eqa',
@@ -214,12 +214,12 @@ export class ChatBotQARouter {
       // Wait for worker ready signal
       console.log('[ChatBotQARouter] Waiting for EQA worker initialization...');
       await this.waitForWorkerReady(this.eqaWorker, 'eqa');
-      
+
       // Report 100% when ready
       if (this.progressCallback) {
         this.progressCallback('eqa', 100);
       }
-      
+
       console.log('[ChatBotQARouter] EQA worker ready and initialized');
     } catch (error) {
       console.error('[ChatBotQARouter] EQA worker initialization error:', error);
@@ -242,7 +242,7 @@ export class ChatBotQARouter {
 
       const messageHandler = (event) => {
         console.log(`[ChatBotQARouter] ${workerType} worker message:`, event.data.type, event.data);
-        
+
         // Workers send different ready signals:
         // - 'ready' (textGen worker)
         // - 'initialized' (embedding/eqa workers)
@@ -273,7 +273,23 @@ export class ChatBotQARouter {
    */
   async prepareContext(cvChunks) {
     console.log('[ChatBotQARouter] Preparing context with', cvChunks.length, 'chunks');
+    console.log('[ChatBotQARouter] prepareContext - First 3 chunks embedding status:', 
+      cvChunks.slice(0, 3).map(c => ({
+        id: c.id,
+        hasEmbedding: !!c.embedding,
+        embeddingType: typeof c.embedding,
+        isArray: Array.isArray(c.embedding)
+      }))
+    );
     this.cvChunks = cvChunks;
+    console.log('[ChatBotQARouter] prepareContext - Stored chunks, verifying first 3:', 
+      this.cvChunks.slice(0, 3).map(c => ({
+        id: c.id,
+        hasEmbedding: !!c.embedding,
+        embeddingType: typeof c.embedding,
+        isArray: Array.isArray(c.embedding)
+      }))
+    );
   }
 
   /**
@@ -282,27 +298,66 @@ export class ChatBotQARouter {
    */
   async precomputeChunkEmbeddings() {
     console.log('[ChatBotQARouter] Pre-computing embeddings for', this.cvChunks.length, 'chunks');
-    
+    console.log('[ChatBotQARouter] precomputeChunkEmbeddings - BEFORE filter, first 3 chunks:', 
+      this.cvChunks.slice(0, 3).map(c => ({
+        id: c.id,
+        hasEmbedding: !!c.embedding,
+        embeddingType: typeof c.embedding,
+        isArray: Array.isArray(c.embedding),
+        embeddingValue: c.embedding
+      }))
+    );
+
     // Check if chunks already have embeddings
     const chunksNeedingEmbeddings = this.cvChunks.filter(chunk => !chunk.embedding);
-    
+
+    console.log('[ChatBotQARouter] Chunks needing embeddings:', chunksNeedingEmbeddings.length, 'out of', this.cvChunks.length);
+    console.log('[ChatBotQARouter] First 3 chunks needing embeddings:', 
+      chunksNeedingEmbeddings.slice(0, 3).map(c => ({ id: c.id, text: c.text.substring(0, 50) }))
+    );
+
     if (chunksNeedingEmbeddings.length === 0) {
       console.log('[ChatBotQARouter] All chunks already have embeddings');
       return;
     }
 
     console.log('[ChatBotQARouter] Computing embeddings for', chunksNeedingEmbeddings.length, 'chunks');
-    
+
     // Batch embed chunks
     const texts = chunksNeedingEmbeddings.map(chunk => chunk.text);
+    console.log('[ChatBotQARouter] Sending', texts.length, 'texts to embedding worker');
+    console.log('[ChatBotQARouter] Communicator timeout setting:', this.embeddingCommunicator.timeout, 'ms');
+    console.log('[ChatBotQARouter] Pending requests before send:', this.embeddingCommunicator.pendingRequests.size);
+    
     const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', { texts });
     
+    console.log('[ChatBotQARouter] Pending requests after receive:', this.embeddingCommunicator.pendingRequests.size);
+
+    console.log('[ChatBotQARouter] Received response from embedding worker:', {
+      success: response.success,
+      hasEmbeddings: !!response.embeddings,
+      embeddingsCount: response.embeddings?.length,
+      firstEmbeddingType: typeof response.embeddings?.[0],
+      firstEmbeddingIsArray: Array.isArray(response.embeddings?.[0]),
+      firstEmbeddingLength: response.embeddings?.[0]?.length
+    });
+
     if (response.embeddings) {
       // Assign embeddings to chunks
       chunksNeedingEmbeddings.forEach((chunk, index) => {
+        console.log(`[ChatBotQARouter] Assigning embedding ${index} to chunk ${chunk.id}, embedding type:`, typeof response.embeddings[index], 'isArray:', Array.isArray(response.embeddings[index]));
         chunk.embedding = response.embeddings[index];
       });
       console.log('[ChatBotQARouter] Chunk embeddings computed successfully');
+      console.log('[ChatBotQARouter] AFTER assignment - First 3 chunks from this.cvChunks:', 
+        this.cvChunks.slice(0, 3).map(c => ({
+          id: c.id,
+          hasEmbedding: !!c.embedding,
+          embeddingType: typeof c.embedding,
+          isArray: Array.isArray(c.embedding),
+          embeddingLength: c.embedding?.length
+        }))
+      );
     }
   }
 
@@ -313,12 +368,12 @@ export class ChatBotQARouter {
    */
   async generateEmbedding(text) {
     console.log('[ChatBotQARouter] Generating embedding for query');
-    
+
     try {
-      const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', { 
-        texts: [text] 
+      const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', {
+        texts: [text]
       });
-      
+
       if (response.success && response.embeddings && response.embeddings.length > 0) {
         console.log('[ChatBotQARouter] Embedding generated successfully, dimensions:', response.embeddings[0].length);
         return response.embeddings[0];
@@ -340,18 +395,18 @@ export class ChatBotQARouter {
   async extractAnswer(question, context) {
     console.log('[ChatBotQARouter] Extracting answer from EQA worker');
     console.log('[ChatBotQARouter] Context length:', context.length);
-    
+
     try {
       const response = await this.eqaCommunicator.sendMessage('extractAnswer', {
         question,
         context
       });
-      
+
       console.log('[ChatBotQARouter] EQA response:', {
         answer: response.answer,
         confidence: response.confidence
       });
-      
+
       return response;
     } catch (error) {
       console.error('[ChatBotQARouter] EQA extraction failed:', error);
@@ -367,14 +422,14 @@ export class ChatBotQARouter {
   async generateResponse(prompt) {
     console.log('[ChatBotQARouter] Generating response from text generation worker');
     console.log('[ChatBotQARouter] Prompt length:', prompt.length);
-    
+
     try {
       const response = await this.textGenCommunicator.sendMessage('generate', {
         prompt
       });
-      
+
       console.log('[ChatBotQARouter] Text generation response received');
-      
+
       return response;
     } catch (error) {
       console.error('[ChatBotQARouter] Text generation failed:', error);
@@ -409,6 +464,16 @@ export class ChatBotQARouter {
 
     // Step 7: Find similar chunks
     const step7Start = Date.now();
+    console.log('[ChatBotQARouter] Step 7 - BEFORE findSimilarChunks, this.cvChunks status:', {
+      totalChunks: this.cvChunks.length,
+      first3Chunks: this.cvChunks.slice(0, 3).map(c => ({
+        id: c.id,
+        hasEmbedding: !!c.embedding,
+        embeddingType: typeof c.embedding,
+        isArray: Array.isArray(c.embedding),
+        embeddingLength: c.embedding?.length
+      }))
+    });
     const similarChunks = findSimilarChunks(
       queryEmbedding,
       this.cvChunks,
@@ -482,7 +547,7 @@ export class ChatBotQARouter {
     const context = similarChunks
       .map(chunk => chunk.text)
       .join(' ');
-    
+
     console.log('[ChatBotQARouter] Context length:', context.length, 'characters');
     console.log('[ChatBotQARouter] Context chunks used:', similarChunks.length);
 
@@ -490,7 +555,7 @@ export class ChatBotQARouter {
       // Call EQA worker
       const eqaResponse = await this.extractAnswer(question, context);
       const eqaTime = Date.now() - startTime;
-      
+
       console.log('[ChatBotQARouter] EQA answer:', eqaResponse.answer);
       console.log('[ChatBotQARouter] EQA confidence:', eqaResponse.confidence);
       console.log('[ChatBotQARouter] EQA timing:', eqaTime, 'ms');
@@ -502,12 +567,22 @@ export class ChatBotQARouter {
         return await this.processConversationalPath(question, similarChunks, options);
       }
 
-      // Check confidence threshold
+      // Check answer quality - reject very short or suspicious answers
+      const answerLength = eqaResponse.answer.trim().length;
+      if (answerLength < 2) {
+        console.log('[ChatBotQARouter] Fallback trigger: EQA answer too short:', answerLength, 'characters');
+        console.log('[ChatBotQARouter] Falling back to conversational path');
+        return await this.processConversationalPath(question, similarChunks, options);
+      }
+
+      // Check confidence threshold (lowered to 0.05 as EQA models often have low confidence)
       if (eqaResponse.confidence < this.config.eqaConfidenceThreshold) {
         console.log('[ChatBotQARouter] Fallback trigger: EQA confidence', eqaResponse.confidence, 'below threshold', this.config.eqaConfidenceThreshold);
         console.log('[ChatBotQARouter] Falling back to conversational path');
         return await this.processConversationalPath(question, similarChunks, options);
       }
+
+      console.log('[ChatBotQARouter] EQA answer accepted:', eqaResponse.answer, 'with confidence:', eqaResponse.confidence);
 
       // Return successful EQA response
       return {
@@ -547,7 +622,7 @@ export class ChatBotQARouter {
       baseThreshold: threshold,
       maxResults: this.config.maxContextChunks
     });
-    
+
     console.log('[ChatBotQARouter] Filtered chunks count:', filteredChunks.length);
     console.log('[ChatBotQARouter] Similarity threshold used:', threshold);
 
@@ -588,7 +663,7 @@ export class ChatBotQARouter {
       // Generate response
       const response = await this.generateResponse(prompt);
       const generationTime = Date.now() - startTime;
-      
+
       console.log('[ChatBotQARouter] Generated response length:', response.text?.length || 0);
       console.log('[ChatBotQARouter] Generation timing:', generationTime, 'ms');
 
@@ -624,16 +699,34 @@ export class ChatBotQARouter {
   formatAndValidateResponse(response, originalQuery, metrics = {}) {
     console.log('[ChatBotQARouter] Step 10: Response formatting and validation');
 
-    // Validate response quality
-    const validated = validateResponseQuality(
-      {
+    // Skip validation for EQA responses - they are naturally short and direct
+    // EQA extracts exact answers from context, so short responses are expected and valid
+    const skipValidation = response.method === 'eqa';
+    
+    let validated;
+    if (skipValidation) {
+      console.log('[ChatBotQARouter] Skipping validation for EQA response (extractive answers are naturally short)');
+      validated = {
         answer: response.answer,
         confidence: response.confidence,
         matchedSections: response.matchedChunks,
-        metrics: response.metrics || {}
-      },
-      originalQuery
-    );
+        metrics: {
+          qualityScore: response.confidence,
+          qualityFlags: []
+        }
+      };
+    } else {
+      // Validate response quality for conversational responses
+      validated = validateResponseQuality(
+        {
+          answer: response.answer,
+          confidence: response.confidence,
+          matchedSections: response.matchedChunks,
+          metrics: response.metrics || {}
+        },
+        originalQuery
+      );
+    }
 
     console.log('[ChatBotQARouter] Validation result:', {
       originalConfidence: response.confidence,
