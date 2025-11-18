@@ -28,7 +28,7 @@ async function initializeEmbeddingService(config = {}) {
     try {
         // Dynamic import for Xenova transformers - use latest stable version
         const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
-        
+
         // Configure environment for web worker
         env.allowRemoteModels = true;
         env.allowLocalModels = false;
@@ -128,36 +128,20 @@ async function generateEmbedding(text, requestId) {
         }
 
         // Generate new embedding with proper pooling
-        console.log('[EmbeddingWorker] Calling model for text:', text.substring(0, 100) + '...');
-        const output = await embeddingService.model(text, { 
-            pooling: 'mean', 
-            normalize: true 
-        });
-        
-        console.log('[EmbeddingWorker] Raw model output:', {
-            type: typeof output,
-            isArray: Array.isArray(output),
-            hasData: !!output.data,
-            dataType: typeof output.data,
-            dataLength: output.data?.length,
-            outputLength: Array.isArray(output) ? output.length : 'not array',
-            shape: output.dims || output.shape || 'no shape info'
+        const output = await embeddingService.model(text, {
+            pooling: 'mean',
+            normalize: true
         });
 
         // Handle different output formats (consistent with embedding service)
         let embedding;
         if (output.data) {
-            console.log('[EmbeddingWorker] Using output.data, length:', output.data.length);
             embedding = new Float32Array(output.data);
         } else if (Array.isArray(output)) {
-            console.log('[EmbeddingWorker] Using array output, length:', output.length);
             embedding = new Float32Array(output);
         } else {
-            console.log('[EmbeddingWorker] Using direct output, type:', typeof output);
             embedding = new Float32Array(output);
         }
-        
-        console.log('[EmbeddingWorker] Final embedding dimensions:', embedding.length);
 
         // Cache the result
         embeddingService.cache.set(cacheKey, embedding);
@@ -227,10 +211,9 @@ async function generateBatchEmbeddings(texts, requestId) {
                 embeddings.push(Array.from(cachedEmbedding));
                 cacheHits.push(true);
             } else {
-                console.log(`[EmbeddingWorker] Batch processing text ${i+1}/${texts.length}:`, text.substring(0, 50) + '...');
-                const output = await embeddingService.model(text, { 
-                    pooling: 'mean', 
-                    normalize: true 
+                const output = await embeddingService.model(text, {
+                    pooling: 'mean',
+                    normalize: true
                 });
 
                 // Handle different output formats (consistent with embedding service)
@@ -242,8 +225,6 @@ async function generateBatchEmbeddings(texts, requestId) {
                 } else {
                     embedding = new Float32Array(output);
                 }
-                
-                console.log(`[EmbeddingWorker] Batch embedding ${i+1} dimensions:`, embedding.length);
 
                 embeddingService.cache.set(cacheKey, embedding);
 
@@ -412,10 +393,9 @@ async function processCVSections(cvSections, requestId) {
                 embedding = Array.from(embeddingService.cache.get(cacheKey));
                 cached = true;
             } else {
-                console.log(`[EmbeddingWorker] Processing CV section ${section.id || i}:`, sanitizedText.substring(0, 100) + '...');
-                const output = await embeddingService.model(sanitizedText, { 
-                    pooling: 'mean', 
-                    normalize: true 
+                const output = await embeddingService.model(sanitizedText, {
+                    pooling: 'mean',
+                    normalize: true
                 });
 
                 // Handle different output formats
@@ -427,8 +407,6 @@ async function processCVSections(cvSections, requestId) {
                 } else {
                     embeddingArray = new Float32Array(output);
                 }
-                
-                console.log(`[EmbeddingWorker] CV section ${section.id || i} embedding dimensions:`, embeddingArray.length);
 
                 embeddingService.cache.set(cacheKey, embeddingArray);
                 embedding = Array.from(embeddingArray);
@@ -589,11 +567,13 @@ function getApproximateMemoryUsage() {
  */
 function hashText(text) {
     let hash = 0;
+
     for (let i = 0; i < text.length; i++) {
         const char = text.charCodeAt(i);
         hash = ((hash << 5) - hash) + char;
         hash = hash & hash; // Convert to 32-bit integer
     }
+
     return hash.toString();
 }
 
@@ -736,4 +716,12 @@ self.postMessage({
 });
 
 // Auto-initialize when worker starts
-initializeEmbeddingService();
+initializeEmbeddingService().catch(error => {
+    console.error('[EmbeddingWorker] Auto-initialization failed:', error);
+    self.postMessage({
+        type: 'initialized',
+        success: false,
+        error: error.message,
+        stack: error.stack
+    });
+});
