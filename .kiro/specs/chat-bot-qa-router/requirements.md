@@ -40,7 +40,6 @@ This feature implements a hybrid question-answering router for the chatbot that 
 2. WHEN the intent is classified as "conversational_synthesis", THE Chat Bot QA Router SHALL route the query to the Text Generation Worker with filtered context chunks
 3. WHEN the Text Generation Worker processes a conversational query, THE Text Generation Worker SHALL generate a coherent narrative response based on the provided context
 4. THE Chat Bot QA Router SHALL apply similarity threshold filtering to context chunks before passing them to the Text Generation Worker
-5. THE Chat Bot QA Router SHALL return the synthesized response to the user interface within 3 seconds of query submission
 
 ### Requirement 3
 
