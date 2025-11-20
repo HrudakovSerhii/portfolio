@@ -1,8 +1,147 @@
 // Header component styles
 
 .header {
-    background-color: $light-gray;
-    padding: $spacing-md 0;
-    max-height: 4rem;
-    max-width: 1200px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $header-height;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  z-index: $z-header;
+  transition: background-color $transition-base, border-color $transition-base;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+
+  @include mobile {
+    padding: 0 $spacing-md;
+  }
+}
+
+// Owner name on the left
+.header-owner-name {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  transition: color $transition-base;
+
+  @include mobile {
+    font-size: $font-size-lg;
+  }
+}
+
+// Controls container on the right
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  @include mobile {
+    gap: $spacing-sm;
+  }
+}
+
+// Control buttons (theme toggle, change role)
+.control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-md;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-family: $font-family-base;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  @include focus-visible;
+
+  &:hover {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @include mobile {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+  }
+
+  // Primary variant for "Change Role" button
+  &--primary {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border-color: var(--color-accent);
+    font-weight: 500;
+
+    &:hover {
+      background-color: var(--color-text);
+      border-color: var(--color-text);
+    }
+  }
+}
+
+// Control icon (for theme toggle)
+.control-icon {
+  font-size: $font-size-lg;
+  line-height: 1;
+
+  @include mobile {
+    font-size: $font-size-base;
+  }
+}
+
+// Language selector
+.control-select {
+  padding: $spacing-sm $spacing-md;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-family: $font-family-base;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  @include focus-visible;
+
+  &:hover {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border-color: var(--color-accent);
+  }
+
+  @include mobile {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+  }
+
+  // Style the dropdown arrow
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='currentColor' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $spacing-sm center;
+  padding-right: $spacing-xl;
+
+  // Options styling
+  option {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
 }
