@@ -1,6 +1,6 @@
 /**
  * AppController - Main application orchestrator
- * 
+ *
  * Coordinates all components and manages the application flow including:
  * - Initialization and state restoration
  * - Personalization flow
@@ -11,7 +11,7 @@
  */
 
 import StateManager from '../../utils/state-manager.js';
-import ContentMiddleware from '../content-middleware.js';
+import ContentMiddleware from '../content-middleware/content-middleware.js';
 import TemplateService from '../template-service/template-service.js';
 import AnimationEngine from '../animation-engine.js';
 
@@ -113,7 +113,7 @@ class AppController {
 
     // Validate critical elements
     const criticalElements = [
-      'initialLoader', 'themeToggle', 'languageSelector', 
+      'initialLoader', 'themeToggle', 'languageSelector',
       'changeRoleButton', 'navToggle', 'navItems', 'sectionsContainer'
     ];
 
@@ -177,7 +177,7 @@ class AppController {
     document.documentElement.setAttribute('data-theme', theme);
     this.elements.themeToggle.setAttribute('data-theme', theme);
     this.elements.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-    
+
     // Update icon
     const icon = this.elements.themeToggle.querySelector('.control-icon');
     if (icon) {
@@ -229,7 +229,7 @@ class AppController {
     try {
       const sections = await this.contentMiddleware.getAllSections();
       this.sectionOrder = sections.map(section => section.id);
-      
+
       if (this.sectionOrder.length === 0) {
         throw new Error('No sections found in content.json');
       }
@@ -248,7 +248,7 @@ class AppController {
   async _loadUserProfile() {
     try {
       const profile = await this.contentMiddleware.getUserProfile();
-      
+
       if (this.elements.ownerName && profile.name) {
         this.elements.ownerName.textContent = profile.name;
       }
@@ -516,7 +516,7 @@ class AppController {
     try {
       // Find the target section element
       const targetSection = document.querySelector(`[data-section-id="${sectionId}"]`);
-      
+
       if (!targetSection) {
         console.warn(`Section "${sectionId}" not found in DOM`);
         return;
@@ -592,10 +592,159 @@ class AppController {
   }
 
   /**
-   * Show role change modal (placeholder - will be implemented in task 11)
+   * Show role change modal
+   * Displays modal with role options, current role disabled
    */
   showRoleChangeModal() {
-    console.log('showRoleChangeModal - to be implemented in task 11');
+    try {
+      const currentRole = this.stateManager.getRole();
+
+      if (!currentRole) {
+        console.warn('No current role found. Cannot show role change modal.');
+        return;
+      }
+
+      // Render role change modal
+      const modal = this.templateService.renderRoleChangeModal(currentRole);
+
+      // Add modal to DOM
+      document.body.appendChild(modal);
+
+      // Get modal elements
+      const modalContent = modal.querySelector('.modal-content');
+      const closeButton = modal.querySelector('.modal-close');
+      const roleButtons = modal.querySelectorAll('.role-button:not([disabled])');
+
+      // Focus on modal content
+      setTimeout(() => {
+        modalContent?.focus();
+      }, 100);
+
+      // Handle role button clicks
+      roleButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+          const newRole = button.getAttribute('data-role');
+          
+          if (newRole && newRole !== currentRole) {
+            // Close modal
+            this._closeModal(modal);
+            
+            // Handle role change
+            await this.handleRoleChange(newRole);
+          }
+        });
+      });
+
+      // Handle close button click
+      closeButton?.addEventListener('click', () => {
+        this._closeModal(modal);
+      });
+
+      // Handle outside click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this._closeModal(modal);
+        }
+      });
+
+      // Handle Escape key
+      const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+          this._closeModal(modal);
+          document.removeEventListener('keydown', handleEscape);
+        }
+      };
+      document.addEventListener('keydown', handleEscape);
+
+      // Store escape handler for cleanup
+      modal.setAttribute('data-escape-handler', 'attached');
+    } catch (error) {
+      console.error('Failed to show role change modal:', error);
+    }
+  }
+
+  /**
+   * Close modal with animation
+   * @private
+   * @param {HTMLElement} modal - Modal element to close
+   */
+  _closeModal(modal) {
+    if (!modal) return;
+
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.remove();
+    }, 300);
+  }
+
+  /**
+   * Handle role change
+   * Resets state and restarts flow with new role
+   * @param {string} newRole - New role to switch to
+   * @returns {Promise<void>}
+   */
+  async handleRoleChange(newRole) {
+    try {
+      // Update role in state
+      this.stateManager.setRole(newRole);
+
+      // Clear all revealed sections except Hero
+      const revealedSections = this.stateManager.getRevealedSections();
+      this.stateManager.resetRevealedSections();
+      this.stateManager.addRevealedSection('hero');
+
+      // Remove all section elements from DOM except Hero
+      const sections = this.elements.sectionsContainer.querySelectorAll('.portfolio-section');
+      sections.forEach(section => {
+        const sectionId = section.getAttribute('data-section-id');
+        if (sectionId !== 'hero') {
+          section.remove();
+        }
+      });
+
+      // Remove any action prompts
+      const actionPrompts = this.elements.sectionsContainer.querySelectorAll('.action-prompt');
+      actionPrompts.forEach(prompt => prompt.remove());
+
+      // Reset navigation panel to show only Hero item
+      const navItems = this.elements.navItems.querySelectorAll('.nav-item');
+      navItems.forEach(navItem => {
+        const sectionId = navItem.getAttribute('data-section-id');
+        if (sectionId !== 'hero') {
+          navItem.remove();
+        }
+      });
+
+      // Hide "Change Role" button
+      if (this.elements.changeRoleButton) {
+        this.elements.changeRoleButton.style.display = 'none';
+      }
+
+      // Fetch and render Hero content with new role
+      const heroSection = this.elements.sectionsContainer.querySelector('[data-section-id="hero"]');
+      if (heroSection) {
+        // Remove existing Hero section
+        heroSection.remove();
+      }
+
+      // Remove Hero navigation item to re-render it
+      const heroNavItem = this.elements.navItems.querySelector('[data-section-id="hero"]');
+      if (heroNavItem) {
+        heroNavItem.remove();
+      }
+
+      // Reveal Hero section with new role
+      await this.revealSection('hero');
+
+      // Scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    } catch (error) {
+      console.error('Failed to handle role change:', error);
+      throw error;
+    }
   }
 
   /**
@@ -626,7 +775,7 @@ class AppController {
   async revealSection(sectionId, customQuery = null) {
     try {
       const role = this.stateManager.getRole();
-      
+
       if (!role) {
         throw new Error('No role selected. Cannot reveal section.');
       }
@@ -638,8 +787,8 @@ class AppController {
 
       // Fetch section content and metadata
       const sectionContent = await this.contentMiddleware.fetchSectionContent(
-        sectionId, 
-        role, 
+        sectionId,
+        role,
         customQuery
       );
       const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
@@ -672,13 +821,13 @@ class AppController {
         const imageUrl = imageContainer.getAttribute('data-image-url');
         const imageAlt = imageContainer.getAttribute('data-image-alt');
         const aspectRatio = imageContainer.getAttribute('data-aspect-ratio');
-        
+
         const generativeImage = this.animationEngine.createGenerativeImage(
           imageUrl,
           imageAlt,
           aspectRatio
         );
-        
+
         if (generativeImage) {
           imageContainer.appendChild(generativeImage);
         }
@@ -699,12 +848,12 @@ class AppController {
       }, 100);
     } catch (error) {
       console.error(`Failed to reveal section "${sectionId}":`, error);
-      
+
       // Hide typing indicator on error
       if (this.elements.typingIndicator) {
         this.elements.typingIndicator.style.display = 'none';
       }
-      
+
       throw error;
     }
   }
@@ -753,7 +902,7 @@ class AppController {
     try {
       // Find current section index
       const currentIndex = this.sectionOrder.indexOf(currentSectionId);
-      
+
       // Check if this is the last section
       if (currentIndex === this.sectionOrder.length - 1) {
         // Show "Change Role" button
@@ -765,16 +914,16 @@ class AppController {
 
       // Get next section
       const nextSectionId = this.sectionOrder[currentIndex + 1];
-      
+
       // Get placeholder for next section
       const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
-      
+
       // Render action prompt
       const actionPrompt = this.templateService.renderActionPrompt(nextSectionId, placeholder);
-      
+
       // Add to sections container
       this.elements.sectionsContainer.appendChild(actionPrompt);
-      
+
       // Set up action prompt interaction handlers
       this._setupActionPromptHandlers(actionPrompt, nextSectionId);
     } catch (error) {
@@ -791,7 +940,7 @@ class AppController {
   _setupActionPromptHandlers(actionPrompt, nextSectionId) {
     const input = actionPrompt.querySelector('.prompt-input');
     const button = actionPrompt.querySelector('.prompt-button');
-    
+
     if (!input || !button) {
       return;
     }
@@ -810,10 +959,10 @@ class AppController {
     // Handle button click
     button.addEventListener('click', async () => {
       const customQuery = input.value.trim() || null;
-      
+
       // Remove action prompt
       actionPrompt.remove();
-      
+
       // Reveal next section
       await this.revealSection(nextSectionId, customQuery);
     });
