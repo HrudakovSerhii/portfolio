@@ -1,0 +1,136 @@
+// Section Component Styles
+// Portfolio section with zig-zag layout and progressive disclosure
+
+.portfolio-section {
+  position: relative;
+  padding: $spacing-3xl $spacing-lg;
+  max-width: $content-max-width;
+  margin: 0 auto;
+  
+  @include desktop {
+    padding: $spacing-3xl $spacing-2xl;
+  }
+  
+  // Parallax layer placeholder for future effects
+  .parallax-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  // Section header with title and optional query
+  .section-header {
+    margin-bottom: $spacing-xl;
+    
+    .section-title {
+      font-size: $font-size-3xl;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: $spacing-sm;
+    }
+    
+    .section-query {
+      font-size: $font-size-lg;
+      color: var(--color-text-secondary);
+      font-style: italic;
+      margin: 0;
+    }
+  }
+  
+  // Main content grid with zig-zag layout
+  .section-content {
+    display: grid;
+    gap: $spacing-xl;
+    align-items: center;
+    
+    // Mobile: vertical stack (image above text)
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+    
+    // Desktop: 50% width columns
+    @include desktop {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    // Zig-zag layout: image on left
+    &.zig-zag-left {
+      .content-image {
+        @include mobile {
+          order: 1;
+        }
+        
+        @include desktop {
+          order: 1;
+        }
+      }
+      
+      .content-text {
+        @include mobile {
+          order: 2;
+        }
+        
+        @include desktop {
+          order: 2;
+        }
+      }
+    }
+    
+    // Zig-zag layout: image on right
+    &.zig-zag-right {
+      .content-image {
+        @include mobile {
+          order: 1;
+        }
+        
+        @include desktop {
+          order: 2;
+        }
+      }
+      
+      .content-text {
+        @include mobile {
+          order: 2;
+        }
+        
+        @include desktop {
+          order: 1;
+        }
+      }
+    }
+  }
+  
+  // Image container with 70% max-width
+  .content-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    img,
+    .image-container {
+      max-width: 70%;
+      height: auto;
+      border-radius: $radius-2xl;
+      object-fit: cover;
+    }
+  }
+  
+  // Text content with readable typography
+  .content-text {
+    font-size: $font-size-lg;
+    line-height: $line-height-relaxed;
+    color: var(--color-text);
+    
+    p {
+      margin-bottom: $spacing-md;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
