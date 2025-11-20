@@ -2,7 +2,7 @@
  * Snapshot tests for TemplateService using real HTML templates
  * 
  * These tests verify that the TemplateService correctly renders
- * actual HTML templates from chat-portfolio.html and that the
+ * actual HTML templates from index.html and that the
  * rendered output matches expected snapshots.
  */
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -18,7 +18,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
 
   beforeEach(() => {
     // Load the actual HTML file
-    const htmlPath = join(process.cwd(), 'src/pages/chat-portfolio.html');
+    const htmlPath = join(process.cwd(), 'src/pages/index.html');
     const htmlContent = readFileSync(htmlPath, 'utf-8');
 
     // Create a DOM environment with the real HTML

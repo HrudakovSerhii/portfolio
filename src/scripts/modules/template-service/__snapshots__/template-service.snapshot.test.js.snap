@@ -18,14 +18,14 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderLoader > s
 `;
 
 exports[`TemplateService - Snapshot Tests with Real Templates > renderNavigationItem > should render navigation item with emoji icon 1`] = `
-"<a href="#section-projects" class="nav-item" data-section-id="projects" role="menuitem" aria-label="Navigate to Projects">
+"<a href="#section-projects" class="nav-item" data-section-id="projects" role="menuitem" aria-label="Navigate to Projects" data-tooltip="Projects">
       <span class="nav-icon" aria-hidden="true">📁</span>
       <span class="nav-title" data-text="Projects"></span>
     </a>"
 `;
 
 exports[`TemplateService - Snapshot Tests with Real Templates > renderNavigationItem > should render navigation item with fallback icon 1`] = `
-"<a href="#section-contact" class="nav-item" data-section-id="contact" role="menuitem" aria-label="Navigate to Contact">
+"<a href="#section-contact" class="nav-item" data-section-id="contact" role="menuitem" aria-label="Navigate to Contact" data-tooltip="Contact">
       <span class="nav-icon" aria-hidden="true">📄</span>
       <span class="nav-title" data-text="Contact"></span>
     </a>"
