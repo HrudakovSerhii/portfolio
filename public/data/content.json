@@ -1,0 +1,182 @@
+{
+  "profile": {
+    "name": "Serhii Hrudakov",
+    "title": "Lead Frontend Developer",
+    "email": "hrudakovserhii@gmail.com",
+    "phone": "+31614848082",
+    "location": "Purmerend, Netherlands",
+    "socialLinks": {
+      "linkedin": "https://linkedin.com/in/serhii-hrudakov"
+    }
+  },
+  "sections": {
+    "hero": {
+      "metadata": {
+        "title": "Welcome",
+        "icon": "home",
+        "order": 1,
+        "main_items": ["Lead Frontend Developer", "10+ years experience", "TypeScript & React specialist"]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Serhii is a Lead Frontend Developer with 10+ years of experience and a computer science degree. He's result-driven, seeks collaborative learning environments, and excels at challenging development tasks. Proven track record in building efficient teams and delivering high-quality solutions across multiple industries.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
+          "aspectRatio": "aspect-square"
+        },
+        "developer": {
+          "text": "I'm Serhii, a Lead Frontend Developer with 10+ years in commercial projects. I have a computer science background and love working in collaborative teams on challenging technical problems. My expertise spans TypeScript, React, Next.js, and modern frontend architecture.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Serhii Hrudakov - Software Engineer",
+          "aspectRatio": "aspect-square"
+        },
+        "friend": {
+          "text": "Hey! I'm Serhii, been coding for over 10 years now and absolutely love it! I'm all about learning together and tackling those tricky development challenges that make you think. When I'm not building cool tech, you'll find me hiking mountains or working on my smart home automation projects! 🚀",
+          "imageUrl": "/images/hero.photo2.jpg",
+          "imageAlt": "Serhii Hrudakov",
+          "aspectRatio": "aspect-square"
+        }
+      }
+    },
+    "about": {
+      "metadata": {
+        "title": "About Me",
+        "icon": "user",
+        "order": 2,
+        "main_items": ["Master's in Computer Science", "10+ years experience", "Team leadership", "Collaborative learning"]
+      },
+      "content": {
+        "recruiter": {
+          "text": "A result-driven software engineer with a Master's degree in Computer Science and Engineering from Lviv Polytechnic University (2004-2009) and 10+ years of experience in commercial projects. Proven leadership in building efficient and happy teams through collaborative learning environments. Strong focus on quality, mentorship, and delivering challenging development solutions across multiple industries including e-commerce, AI, and enterprise systems.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Professional background",
+          "aspectRatio": "aspect-video"
+        },
+        "developer": {
+          "text": "My journey started with a Master's in Computer Science and evolved through 10+ years of hands-on experience. I believe in building teams where people actually want to work - focusing on mentorship, knowledge sharing, and creating environments where everyone can learn and grow. I've worked on everything from legacy system modernization to cutting-edge AI integrations, always with a focus on clean architecture and collaborative problem-solving.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Engineering journey",
+          "aspectRatio": "aspect-video"
+        },
+        "friend": {
+          "text": "I'm an engineer by heart! Started tinkering with motorcycles as a kid in my dad's garage, and now 30 years later I'm building smart home solutions with AI. Got my Master's in Computer Science, but the real learning has been through 10+ years of building cool stuff with amazing teams. I believe you don't really know something until you can teach it to someone else - that's why I love mentoring and creating collaborative learning environments! 🎓",
+          "imageUrl": "/images/hero.photo2.jpg",
+          "imageAlt": "Personal story",
+          "aspectRatio": "aspect-video"
+        }
+      }
+    },
+    "skills": {
+      "metadata": {
+        "title": "Technical Skills",
+        "icon": "code",
+        "order": 3,
+        "main_items": ["TypeScript", "React", "Next.js", "Node.js", "NestJS", "GraphQL"]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Frontend Expertise: TypeScript, React, ReactNative, Next.js, Redux, StyledComponents, HTML, CSS, SCSS. Backend: Node.js, NestJS, Express, GraphQL, REST API, WebSocket API, Prisma ORM, Apollo. Testing: Jest, Playwright, Cypress, React Testing Library, comprehensive test automation. DevOps: Azure, GitLab, GitHub, Docker, CI/CD pipelines. Leadership: Scrum methodology, team building, mentorship, knowledge transfer, quality assurance. Languages: English (fluent), Dutch (basic), Ukrainian (native).",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Technical skills overview",
+          "aspectRatio": "aspect-square"
+        },
+        "developer": {
+          "text": "I'm deep into the modern frontend stack - TypeScript, React (including Native), Next.js, Redux, and all the usual suspects. Love working with hooks, optimizing performance, and building solid component architectures. On the backend, I work with Node.js and TypeScript, using NestJS and Express. Comfortable with different API patterns - GraphQL, REST, WebSocket. I'm big on testing too - Jest for unit tests, Playwright and Cypress for e2e, RTL for React components. DevOps-wise, I work with Azure, GitLab, Docker, and love setting up automated pipelines.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Tech stack",
+          "aspectRatio": "aspect-square"
+        },
+        "friend": {
+          "text": "Frontend is my jam! Been working with React for years, love TypeScript, and I'm always excited about the latest patterns and optimizations. Backend work with Node.js is really satisfying too - building solid APIs with GraphQL, REST, WebSocket. Testing might not be the most glamorous part, but I actually love it! There's something satisfying about building bulletproof test suites. DevOps is like the magic that makes everything work smoothly - Azure, GitLab, Docker, those automated pipelines that just make deployment a breeze! 🚀",
+          "imageUrl": "/images/hero.photo2.jpg",
+          "imageAlt": "Technology passion",
+          "aspectRatio": "aspect-square"
+        }
+      }
+    },
+    "experience": {
+      "metadata": {
+        "title": "Work Experience",
+        "icon": "briefcase",
+        "order": 4,
+        "main_items": ["Hexaware - ChatAgent AI", "Hexaware - Bonfire Dating App", "EriksDigital - WebShop Modernization", "A-Dam - E-commerce (100% revenue increase)"]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Hexaware (Jun 2023 - Present): Senior Plus FullStack Engineer on ChatAgent AI project, developing fully-customizable AI-powered tools with MCP servers, WebSocket API, and LangChain. Frontend Team Lead on Bonfire dating app (NX monorepo, Jest/Playwright testing) and Notification System for 6000+ employees (safety regulations, AI solutions). EriksDigital (Jan 2021 - Jan 2023): Frontend Team Lead modernizing WebSphere e-commerce to headless React architecture, improving performance and SEO compliance. A-Dam (Jan 2020 - Jan 2021): Senior Frontend Engineer building e-commerce SPA that increased yearly revenue by over 100%, expanding to US and China markets. DigitalChefs (May 2019 - Jan 2020): Middle Frontend Engineer on KLM Flight Assistant and Taxafax applications.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Professional experience",
+          "aspectRatio": "aspect-video"
+        },
+        "developer": {
+          "text": "Currently working on ChatAgent - a fully customizable AI system using React, Python, and LangChain. Built WebSocket APIs, integrated MCP servers, and handled the full deployment pipeline. Previously led the Bonfire dating app project using NX monorepo with comprehensive testing (Jest/Playwright), and modernized a legacy WebSphere e-commerce platform by gradually transitioning to headless React apps. Built a complete e-commerce solution for A-Dam using React/Next.js with Apollo/GraphQL that doubled their revenue. Also worked on ReactNative apps for KLM and Dutch tax assistance.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Technical projects",
+          "aspectRatio": "aspect-video"
+        },
+        "friend": {
+          "text": "Currently working on this super cool AI project called ChatAgent - it's like building the future with AI agents! Previously led this really interesting dating app project where I got to balance coding with team leadership. The WebShop modernization was like digital archaeology - taking this old WebSphere monster and gradually turning it into a modern React system. The A-Dam e-commerce project was such a success story - we literally doubled the company's revenue! And working on something for KLM was amazing - building an app that flight crews actually use! ✈️",
+          "imageUrl": "/images/hero.photo2.jpg",
+          "imageAlt": "Career journey",
+          "aspectRatio": "aspect-video"
+        }
+      }
+    },
+    "projects": {
+      "metadata": {
+        "title": "Featured Projects",
+        "icon": "folder",
+        "order": 5,
+        "main_items": ["ChatAgent AI System", "Bonfire Dating Platform", "A-Dam E-commerce", "Smart Home Automation"]
+      },
+      "content": {
+        "recruiter": {
+          "text": "ChatAgent (Hexaware, 2025): AI-powered fully-customizable system with MCP server integration, WebSocket API, and LangChain. Led FE development, designed data formats for chart rendering, configured GitLab deployment pipelines. Bonfire Dating App (Hexaware, 2024-2025): Configurable platform using NX monorepo, comprehensive testing with Jest/Playwright, SonarCloud integration. Built as Frontend Team Lead (60% coding/40% management). A-Dam E-commerce (2020-2021): Next.js/Apollo/GraphQL SPA that increased yearly revenue by 100%+, expanded to US and China markets, created B2B version with bulk ordering. Eriks WebShop Modernization (2021-2023): Gradual transition from WebSphere to headless React, improved performance and SEO compliance, automated translation workflows.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Featured projects",
+          "aspectRatio": "aspect-video"
+        },
+        "developer": {
+          "text": "Working on ChatAgent - a fully customizable AI system using React, Python, and LangChain. Built WebSocket APIs, integrated MCP servers, designed chart rendering formats. Built Bonfire dating app platform using NX monorepo with TypeScript and React, set up comprehensive testing pipeline with Jest/Playwright. Created A-Dam e-commerce using React/Next.js with Apollo/GraphQL - optimized for performance, created B2B fork with bulk ordering. Modernized Eriks WebShop from legacy WebSphere to headless React apps with shared Redux state. Also building a smart home solution using Cursor and local LLM to make home more comfortable for my family.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Technical projects",
+          "aspectRatio": "aspect-video"
+        },
+        "friend": {
+          "text": "Currently working on this super cool AI project called ChatAgent - it's like building the future with AI agents that can read user info and help with different tools! The Bonfire dating app was really interesting - building it as a configurable platform where each brand could customize their own version. The A-Dam e-commerce project was such a success story - we literally doubled the company's revenue! Plus I'm building a smart home solution with local LLM and Cursor - started with motorcycles as a kid, now 30 years later I'm building smart home stuff with AI. The tools change, but the passion for building never does! 🔧",
+          "imageUrl": "/images/hero.photo2.jpg",
+          "imageAlt": "Personal projects",
+          "aspectRatio": "aspect-video"
+        }
+      }
+    },
+    "contact": {
+      "metadata": {
+        "title": "Get In Touch",
+        "icon": "mail",
+        "order": 6,
+        "main_items": ["hrudakovserhii@gmail.com", "LinkedIn: serhii-hrudakov", "+31614848082", "Amsterdam, Netherlands"]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Interested in finding a team with a collaborative learning environment and opportunities to solve challenging development tasks. You can reach Serhii at hrudakovserhii@gmail.com, connect on LinkedIn at linkedin.com/in/serhii-hrudakov, or call +31614848082. Based in Amsterdam, Netherlands. Open to discussing how his 10+ years of experience in frontend development and team leadership can contribute to your organization.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Contact Serhii Hrudakov",
+          "aspectRatio": "aspect-square"
+        },
+        "developer": {
+          "text": "Feel free to reach out! Email me at hrudakovserhii@gmail.com or connect on LinkedIn (serhii-hrudakov). I'm based in Amsterdam if you want to chat about tech, discuss architecture decisions, or explore potential collaborations. Always interested in discussing new technologies, challenging technical problems, or just geeking out about code. Call me at +31614848082 if you prefer a direct conversation.",
+          "imageUrl": "/images/hero.photo.jpg",
+          "imageAlt": "Connect with Serhii",
+          "aspectRatio": "aspect-square"
+        },
+        "friend": {
+          "text": "Want to get in touch? Drop me an email at hrudakovserhii@gmail.com or find me on LinkedIn as serhii-hrudakov. I'm in Amsterdam, always up for a good tech chat over coffee! ☕ Whether you want to discuss the latest frontend trends, share outdoor adventure stories, or just connect - I'd love to hear from you! You can also call me at +31614848082. Looking forward to connecting!",
+          "imageUrl": "/images/hero.photo2.jpg",
+          "imageAlt": "Let's connect",
+          "aspectRatio": "aspect-square"
+        }
+      }
+    }
+  }
+}
