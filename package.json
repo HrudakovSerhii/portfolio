@@ -12,7 +12,7 @@
     "build:prod-config": "sed -i.bak 's/window.isDev = true/window.isDev = false/' dist/scripts/app.js && rm -f dist/scripts/app.js.bak",
     "watch": "npm run watch:styles & npm run watch:html",
     "watch:styles": "sass src/styles/styles.scss dist/styles.css --watch",
-    "watch:html": "nodemon --watch src/pages --watch src/translations --watch public --watch src/data/chat-bot/cv-data.json --ext html,json,jpg,png,svg,ico,js --exec \"npm run build:copy && npm run build:cv-data\"",
+    "watch:html": "nodemon --watch src/pages --watch src/translations --watch public --watch src/data/chat-bot/cv-data.json --ext html,json,jpg,png,svg,ico,js --exec \"npm run build:copy",
     "serve": "nodemon --watch dist --ext html,css,js,json server.js",
     "serve:prod": "node server.js",
     "serve:legacy": "npx live-server dist",

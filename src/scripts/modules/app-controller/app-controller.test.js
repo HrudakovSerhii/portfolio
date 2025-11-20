@@ -14,7 +14,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     // Load the real HTML file
-    const htmlPath = resolve(__dirname, '../../../pages/chat-portfolio.html');
+    const htmlPath = resolve(__dirname, '../../../pages/index.html');
     const htmlContent = readFileSync(htmlPath, 'utf-8');
     
     // Parse and set the full HTML document using happy-dom's DOMParser
