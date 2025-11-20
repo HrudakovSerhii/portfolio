@@ -27,6 +27,18 @@ html {
     text-size-adjust: 100%;
 }
 
+// ============================================
+// CSS Custom Properties (Theme Variables)
+// ============================================
+
+:root {
+    @include theme-light;
+}
+
+:root[data-theme="dark"] {
+    @include theme-dark;
+}
+
 body {
     min-height: 100vh;
     line-height: $line-height-base;
