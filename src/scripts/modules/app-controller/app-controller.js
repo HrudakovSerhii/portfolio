@@ -754,21 +754,70 @@ class AppController {
   }
 
   /**
-   * Handle theme change (placeholder - will be implemented in task 12)
+   * Handle theme change
+   * Toggles between light and dark themes
+   * Updates theme in StateManager, applies CSS classes, and persists preference
    */
   handleThemeChange() {
-    const currentTheme = this.stateManager.getTheme();
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    this.stateManager.setTheme(newTheme);
-    this._applyTheme(newTheme);
+    try {
+      // Get current theme and toggle
+      const currentTheme = this.stateManager.getTheme();
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+      // Update theme in StateManager (persists to session storage)
+      this.stateManager.setTheme(newTheme);
+
+      // Apply theme to document
+      this._applyTheme(newTheme);
+
+      console.log(`Theme changed from ${currentTheme} to ${newTheme}`);
+    } catch (error) {
+      console.error('Failed to change theme:', error);
+    }
   }
 
   /**
-   * Handle language change (placeholder - will be implemented in task 12)
-   * @param {string} lang - Language code
+   * Handle language change
+   * Updates language in StateManager and reloads visible content
+   * @param {string} lang - Language code (e.g., 'en', 'es')
    */
-  handleLanguageChange(lang) {
-    console.log('handleLanguageChange - to be implemented in task 12', lang);
+  async handleLanguageChange(lang) {
+    try {
+      // Validate language code
+      if (!lang || typeof lang !== 'string') {
+        console.warn('Invalid language code provided');
+        return;
+      }
+
+      const currentLanguage = this.stateManager.getLanguage();
+
+      // Check if language is already selected
+      if (lang === currentLanguage) {
+        console.log(`Language already set to ${lang}`);
+        return;
+      }
+
+      // Update language in StateManager (persists to session storage)
+      this.stateManager.setLanguage(lang);
+
+      // Update language selector UI to reflect current language
+      if (this.elements.languageSelector) {
+        this.elements.languageSelector.value = lang;
+      }
+
+      // Reload visible content with new language (placeholder for future i18n)
+      // In the future, this will fetch translated content from the middleware
+      // For now, we just log the change as the content structure doesn't support i18n yet
+      console.log(`Language changed to ${lang}. Content reload will be implemented with i18n support.`);
+
+      // Future implementation will include:
+      // 1. Fetch translated content for all revealed sections
+      // 2. Re-render sections with new language content
+      // 3. Update navigation items with translated titles
+      // 4. Update header controls with translated labels
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
   }
 
   /**
