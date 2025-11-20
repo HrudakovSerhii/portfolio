@@ -226,6 +226,7 @@
   - Style content-image container with 70% max-width and rounded corners
   - Style content-text with readable font size and line height
   - Add parallax-layer placeholder with absolute positioning
+  - **Issues encountered:** Navigation panel was covering section content. Fixed by updating `.main-content` selector in `_main.scss` to add responsive `margin-left` that accounts for navigation panel width (expanded: 16rem, collapsed: 4rem). Mobile has no margin as nav overlays.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.9, 13.1, 13.2, 13.3_
 
 - [ ] 16. Style action prompt component
