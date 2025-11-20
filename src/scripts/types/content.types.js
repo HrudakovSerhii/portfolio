@@ -1,59 +1,55 @@
 /**
- * @typedef {'light'|'dark'} Theme
- * Available theme modes
+ * @typedef {Object} UserProfile
+ * @property {string} name - Full name
+ * @property {string} title - Professional title
+ * @property {string} email - Contact email
+ * @property {string} [phone] - Contact phone number
+ * @property {string} [location] - Location/city
+ * @property {Object.<string, string>} [socialLinks] - Social media links (github, linkedin, twitter, etc.)
  */
 
 /**
- * @typedef {Object} ThemeContextType
- * @property {Theme} theme - Current theme mode
- * @property {() => void} toggleTheme - Function to toggle between themes
- */
-
-/**
- * @typedef {Object} CVMetadata
- * @property {string} version - Schema version (e.g., "4.0")
- * @property {string} lastUpdated - Last update date in YYYY-MM-DD format
- * @property {string} embeddingModel - Model used for generating embeddings (e.g., "Xenova/all-MiniLM-L6-v2")
- * @property {string} strategy - Retrieval strategy description
- * @property {string} description - Schema description and purpose
- */
-
-/**
- * @typedef {Object} ImageMetadata
- * @property {string} [name] - Optional custom image name (e.g., "hero.photo2"). If omitted, defaults to "{sectionId}.{role}"
- * @property {string} imageAlt - Alt text for the image
- * @property {string} aspectRatio - CSS aspect ratio class (e.g., "aspect-square", "aspect-video")
+ * @typedef {Object} SectionMetadata
+ * @property {string} title - Section title
+ * @property {string} icon - Icon identifier
+ * @property {number} order - Display order
+ * @property {string[]} [main_items] - Main/highlighted items for this section
  */
 
 /**
  * @typedef {Object} RoleContent
  * @property {string} text - Content text for this role
- * @property {ImageMetadata} image - Image metadata for this role
+ * @property {string} imageUrl - Image URL
+ * @property {string} imageAlt - Image alt text
+ * @property {string} aspectRatio - CSS aspect ratio class
  */
 
 /**
- * @typedef {Object} ContextData
- * @property {RoleContent} recruiter - Professional, achievement-focused response for HR/recruiters
- * @property {RoleContent} developer - Technical, detailed response for fellow developers
- * @property {RoleContent} friend - Casual, enthusiastic response for informal conversations
+ * @typedef {Object} Section
+ * @property {SectionMetadata} metadata - Section metadata
+ * @property {Object.<string, RoleContent>} content - Role-based content (recruiter, developer, friend)
  */
 
 /**
- * @typedef {Object} CVSection
- * @property {string} id - Unique identifier for this section
- * @property {string[]} keywords - Primary keywords for semantic matching
- * @property {string} embeddingSourceText - Dense, keyword-rich text for embedding generation
- * @property {ContextData} context_data - Pre-written responses for each communication style
+ * @typedef {Object} PortfolioData
+ * @property {UserProfile} profile - User profile information
+ * @property {Object.<string, Section>} sections - Portfolio sections
  */
 
 /**
- * @typedef {Object.<string, CVSection>} CVSections
- * Flat object containing all CV sections indexed by section ID3
+ * @typedef {Object} SectionContent
+ * @property {string} sectionId - Section identifier
+ * @property {string} title - Section title
+ * @property {string} text - Content text
+ * @property {string} imageUrl - Image URL
+ * @property {string} imageAlt - Image alt text
+ * @property {string} aspectRatio - CSS aspect ratio class
+ * @property {string|null} customQuery - Custom query if provided
+ * @property {boolean} [isError] - Whether this is error/fallback content
+ * @property {string} [errorMessage] - Error message if isError is true
  */
 
-/**
- * @typedef {Object} CVData
- * @property {string} $schema - JSON schema reference
- * @property {CVMetadata} metadata - Schema metadata and configuration
- * @property {CVSections} sections - Flat object containing all CV sections
- */
+// Export types for JSDoc usage
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {};
+}
