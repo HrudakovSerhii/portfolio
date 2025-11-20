@@ -169,15 +169,15 @@
     - Show tooltips on icon hover when collapsed
     - _Requirements: 3.3, 3.4, 3.5, 3.6, 10.4_
 
-- [ ] 11. Implement AppController class - Role change
-  - [ ] 11.1 Create role change modal and handling
+- [x] 11. Implement AppController class - Role change
+  - [x] 11.1 Create role change modal and handling
     - Write showRoleChangeModal() that renders modal with glass overlay
     - Display three role buttons with current role visually disabled
     - Implement handleRoleChange() that updates role in StateManager
     - Close modal after new role selection or on outside click/escape key
     - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.9_
   
-  - [ ] 11.2 Implement state reset on role change
+  - [x] 11.2 Implement state reset on role change
     - Clear all revealed sections except Hero from StateManager
     - Remove all section elements from DOM except Hero
     - Reset navigation panel to show only Hero item
@@ -185,22 +185,22 @@
     - Display action prompt for About section to restart flow
     - _Requirements: 16.5, 16.6, 16.7, 16.8_
 
-- [ ] 12. Implement AppController class - Theme and language
-  - [ ] 12.1 Create theme switching functionality
+- [x] 12. Implement AppController class - Theme and language
+  - [x] 12.1 Create theme switching functionality
     - Write handleThemeChange() that updates theme in StateManager
     - Apply theme CSS classes to root element
     - Update CSS custom properties for theme colors
     - Persist theme preference to session storage
     - _Requirements: 13.5_
   
-  - [ ] 12.2 Create language switching functionality
+  - [x] 12.2 Create language switching functionality
     - Write handleLanguageChange() that updates language in StateManager
     - Reload visible content with new language (placeholder for future i18n)
     - Update header controls to reflect current language
     - Persist language preference to session storage
     - _Requirements: 14.3, 14.4_
 
-- [ ] 13. Style header component
+- [x] 13. Style header component
   - Create _header.scss with fixed positioning and z-index
   - Style owner name on left with appropriate typography
   - Style theme toggle, language selector, and change role button on right
@@ -208,7 +208,7 @@
   - Add smooth transitions for button hover states
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 13.1, 13.2_
 
-- [ ] 14. Style navigation panel component
+- [x] 14. Style navigation panel component
   - Create _navigation.scss with fixed left positioning
   - Implement expanded state with 16rem width showing icons and titles
   - Implement collapsed state with 4rem width showing only icons
@@ -218,7 +218,7 @@
   - Style toggle control button
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 13.1, 13.2_
 
-- [ ] 15. Style section component
+- [x] 15. Style section component
   - Create _section.scss with max-width container and padding
   - Style section header with title and optional query sub-header
   - Implement zig-zag grid layout for desktop with 50% width columns
