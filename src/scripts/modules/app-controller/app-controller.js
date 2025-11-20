@@ -66,6 +66,9 @@ class AppController {
       // Initialize theme based on stored preference or system default
       this._initializeTheme();
 
+      // Initialize navigation panel state
+      this._initializeNavigationPanel();
+
       // Load section order from content.json
       await this._loadSectionOrder();
 
@@ -179,6 +182,41 @@ class AppController {
     const icon = this.elements.themeToggle.querySelector('.control-icon');
     if (icon) {
       icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  }
+
+  /**
+   * Initialize navigation panel state based on stored preference
+   * @private
+   */
+  _initializeNavigationPanel() {
+    const isExpanded = this.stateManager.getNavigationExpanded();
+    const navPanel = document.querySelector('.navigation-panel');
+    const navToggle = this.elements.navToggle;
+    const navToggleIcon = navToggle?.querySelector('.nav-toggle-icon');
+
+    if (!navPanel) {
+      return;
+    }
+
+    // Apply initial state
+    if (isExpanded) {
+      navPanel.classList.add('navigation-panel--expanded');
+      navPanel.classList.remove('navigation-panel--collapsed');
+      if (navToggleIcon) {
+        navToggleIcon.textContent = '◀';
+      }
+    } else {
+      navPanel.classList.add('navigation-panel--collapsed');
+      navPanel.classList.remove('navigation-panel--expanded');
+      if (navToggleIcon) {
+        navToggleIcon.textContent = '▶';
+      }
+    }
+
+    // Update ARIA attribute
+    if (navToggle) {
+      navToggle.setAttribute('aria-expanded', isExpanded.toString());
     }
   }
 
@@ -470,18 +508,87 @@ class AppController {
   }
 
   /**
-   * Handle navigation click (placeholder - will be implemented in task 10)
+   * Handle navigation click
+   * Scrolls to the target section with smooth behavior
    * @param {string} sectionId - Section identifier
    */
   handleNavigationClick(sectionId) {
-    console.log('handleNavigationClick - to be implemented in task 10', sectionId);
+    try {
+      // Find the target section element
+      const targetSection = document.querySelector(`[data-section-id="${sectionId}"]`);
+      
+      if (!targetSection) {
+        console.warn(`Section "${sectionId}" not found in DOM`);
+        return;
+      }
+
+      // Scroll to the section with smooth behavior
+      targetSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+      // Update scroll position in state after scrolling completes
+      // Use setTimeout to wait for scroll animation (800ms duration)
+      setTimeout(() => {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        this.stateManager.setScrollPosition(scrollPosition);
+      }, 800);
+    } catch (error) {
+      console.error(`Failed to handle navigation click for "${sectionId}":`, error);
+    }
   }
 
   /**
-   * Toggle navigation panel (placeholder - will be implemented in task 10)
+   * Toggle navigation panel between expanded and collapsed states
+   * Updates CSS classes and maintains scroll position
    */
   toggleNavigationPanel() {
-    console.log('toggleNavigationPanel - to be implemented in task 10');
+    try {
+      // Get current state
+      const isExpanded = this.stateManager.getNavigationExpanded();
+      const newState = !isExpanded;
+
+      // Get navigation panel element
+      const navPanel = document.querySelector('.navigation-panel');
+      const navToggle = this.elements.navToggle;
+      const navToggleIcon = navToggle?.querySelector('.nav-toggle-icon');
+
+      if (!navPanel) {
+        console.warn('Navigation panel not found');
+        return;
+      }
+
+      // Update CSS classes
+      if (newState) {
+        // Expand navigation
+        navPanel.classList.remove('navigation-panel--collapsed');
+        navPanel.classList.add('navigation-panel--expanded');
+        if (navToggleIcon) {
+          navToggleIcon.textContent = '◀';
+        }
+      } else {
+        // Collapse navigation
+        navPanel.classList.remove('navigation-panel--expanded');
+        navPanel.classList.add('navigation-panel--collapsed');
+        if (navToggleIcon) {
+          navToggleIcon.textContent = '▶';
+        }
+      }
+
+      // Update ARIA attribute
+      if (navToggle) {
+        navToggle.setAttribute('aria-expanded', newState.toString());
+      }
+
+      // Update state
+      this.stateManager.setNavigationExpanded(newState);
+
+      // Scroll position is maintained automatically by the browser
+      // No need to manually save/restore scroll position
+    } catch (error) {
+      console.error('Failed to toggle navigation panel:', error);
+    }
   }
 
   /**
