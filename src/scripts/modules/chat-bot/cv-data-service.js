@@ -431,13 +431,6 @@ class CVDataService {
       }
     }
 
-    console.log('📝 CV-DATA-SERVICE: CV chunks prepared:', {
-      totalChunks: chunks.length,
-      chunkIds: chunks.map(c => c.id),
-      avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length,
-      categories: Object.keys(this.cvData.sections)
-    });
-
     return chunks;
   }
 
