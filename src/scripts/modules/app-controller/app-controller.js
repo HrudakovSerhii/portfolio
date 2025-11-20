@@ -366,10 +366,107 @@ class AppController {
   }
 
   /**
-   * Show personalization modal (placeholder - will be implemented in task 8)
+   * Show personalization modal for first-time visitors
+   * Renders modal with name input and role selection buttons
    */
   showPersonalizationModal() {
-    console.log('showPersonalizationModal - to be implemented in task 8');
+    try {
+      // Render personalization modal
+      const modal = this.templateService.renderPersonalizationModal();
+
+      // Add modal to DOM
+      document.body.appendChild(modal);
+
+      // Get form elements
+      const nameInput = modal.querySelector('#user-name-input');
+      const roleButtons = modal.querySelectorAll('.role-button');
+      const modalContent = modal.querySelector('.modal-content');
+
+      // Focus on name input
+      setTimeout(() => {
+        nameInput?.focus();
+      }, 100);
+
+      // Track selected role
+      let selectedRole = null;
+
+      // Handle role button clicks
+      roleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedRole = button.getAttribute('data-role');
+        });
+      });
+
+      // Handle form submission (when role is selected)
+      roleButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+          const name = nameInput?.value.trim();
+          const role = button.getAttribute('data-role');
+
+          // Validate name input
+          if (!name) {
+            nameInput?.focus();
+            nameInput?.classList.add('form-input--error');
+            return;
+          }
+
+          // Remove error state if present
+          nameInput?.classList.remove('form-input--error');
+
+          // Handle personalization
+          await this.handlePersonalization(name, role);
+        });
+      });
+
+      // Handle Enter key on name input
+      nameInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && selectedRole) {
+          const name = nameInput.value.trim();
+          if (name) {
+            const selectedButton = modal.querySelector(`.role-button[data-role="${selectedRole}"]`);
+            selectedButton?.click();
+          }
+        }
+      });
+
+      // Prevent modal close on content click
+      modalContent?.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    } catch (error) {
+      console.error('Failed to show personalization modal:', error);
+      this._showErrorState(error);
+    }
+  }
+
+  /**
+   * Handle personalization completion
+   * Stores user name and role, then triggers first section revelation
+   * @param {string} name - User's name
+   * @param {string} role - Selected role (recruiter, developer, friend)
+   * @returns {Promise<void>}
+   */
+  async handlePersonalization(name, role) {
+    try {
+      // Store name and role in state
+      this.stateManager.setUserName(name);
+      this.stateManager.setRole(role);
+
+      // Hide personalization modal
+      const modal = document.querySelector('.modal-overlay');
+      if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+          modal.remove();
+        }, 300);
+      }
+
+      // Trigger first section revelation (Hero)
+      await this.revealSection('hero');
+    } catch (error) {
+      console.error('Failed to handle personalization:', error);
+      this._showErrorState(error);
+    }
   }
 
   /**
@@ -410,6 +507,216 @@ class AppController {
    */
   handleLanguageChange(lang) {
     console.log('handleLanguageChange - to be implemented in task 12', lang);
+  }
+
+  /**
+   * Reveal a section with content and animations
+   * Orchestrates content fetching, rendering, and animation for a single section
+   * @param {string} sectionId - Section identifier
+   * @param {string} [customQuery] - Optional custom query from action prompt
+   * @returns {Promise<void>}
+   */
+  async revealSection(sectionId, customQuery = null) {
+    try {
+      const role = this.stateManager.getRole();
+      
+      if (!role) {
+        throw new Error('No role selected. Cannot reveal section.');
+      }
+
+      // Show typing indicator
+      if (this.elements.typingIndicator) {
+        this.elements.typingIndicator.style.display = 'flex';
+      }
+
+      // Fetch section content and metadata
+      const sectionContent = await this.contentMiddleware.fetchSectionContent(
+        sectionId, 
+        role, 
+        customQuery
+      );
+      const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+
+      // Hide typing indicator
+      if (this.elements.typingIndicator) {
+        this.elements.typingIndicator.style.display = 'none';
+      }
+
+      // Determine zig-zag layout
+      const sectionIndex = this.sectionOrder.indexOf(sectionId);
+      const isZigZagLeft = sectionIndex % 2 === 0;
+
+      // Render section
+      const sectionElement = this.templateService.renderSection(sectionContent, isZigZagLeft);
+
+      // Add section to DOM
+      this.elements.sectionsContainer.appendChild(sectionElement);
+
+      // Apply typewriter animation to text content
+      const textElement = sectionElement.querySelector('.content-text');
+      if (textElement) {
+        const textContent = textElement.getAttribute('data-text');
+        await this.animationEngine.typewriterEffect(textElement, textContent);
+      }
+
+      // Add generative image component
+      const imageContainer = sectionElement.querySelector('.content-image');
+      if (imageContainer) {
+        const imageUrl = imageContainer.getAttribute('data-image-url');
+        const imageAlt = imageContainer.getAttribute('data-image-alt');
+        const aspectRatio = imageContainer.getAttribute('data-aspect-ratio');
+        
+        const generativeImage = this.animationEngine.createGenerativeImage(
+          imageUrl,
+          imageAlt,
+          aspectRatio
+        );
+        
+        if (generativeImage) {
+          imageContainer.appendChild(generativeImage);
+        }
+      }
+
+      // Add navigation item with typewriter animation
+      await this._addNavigationItem(sectionMetadata);
+
+      // Store revealed section in state
+      this.stateManager.addRevealedSection(sectionId);
+
+      // Display action prompt for next section or show "Change Role" button
+      await this._displayNextPromptOrCompletion(sectionId);
+
+      // Scroll to the new section
+      setTimeout(() => {
+        sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    } catch (error) {
+      console.error(`Failed to reveal section "${sectionId}":`, error);
+      
+      // Hide typing indicator on error
+      if (this.elements.typingIndicator) {
+        this.elements.typingIndicator.style.display = 'none';
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Add navigation item with typewriter animation
+   * @private
+   * @param {Object} sectionMetadata - Section metadata
+   * @returns {Promise<void>}
+   */
+  async _addNavigationItem(sectionMetadata) {
+    try {
+      const navItem = this.templateService.renderNavigationItem(sectionMetadata);
+
+      // Add to navigation panel
+      this.elements.navItems.appendChild(navItem);
+
+      // Apply typewriter animation to title
+      const titleElement = navItem.querySelector('.nav-title');
+      if (titleElement) {
+        const titleText = titleElement.getAttribute('data-text');
+        await this.animationEngine.typewriterEffect(
+          titleElement,
+          titleText,
+          50 // Navigation speed
+        );
+      }
+
+      // Set up click handler for navigation scrolling
+      navItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleNavigationClick(sectionMetadata.id);
+      });
+    } catch (error) {
+      console.error(`Failed to add navigation item for "${sectionMetadata.id}":`, error);
+    }
+  }
+
+  /**
+   * Display next action prompt or completion state
+   * @private
+   * @param {string} currentSectionId - Current section identifier
+   * @returns {Promise<void>}
+   */
+  async _displayNextPromptOrCompletion(currentSectionId) {
+    try {
+      // Find current section index
+      const currentIndex = this.sectionOrder.indexOf(currentSectionId);
+      
+      // Check if this is the last section
+      if (currentIndex === this.sectionOrder.length - 1) {
+        // Show "Change Role" button
+        if (this.elements.changeRoleButton) {
+          this.elements.changeRoleButton.style.display = 'block';
+        }
+        return;
+      }
+
+      // Get next section
+      const nextSectionId = this.sectionOrder[currentIndex + 1];
+      
+      // Get placeholder for next section
+      const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
+      
+      // Render action prompt
+      const actionPrompt = this.templateService.renderActionPrompt(nextSectionId, placeholder);
+      
+      // Add to sections container
+      this.elements.sectionsContainer.appendChild(actionPrompt);
+      
+      // Set up action prompt interaction handlers
+      this._setupActionPromptHandlers(actionPrompt, nextSectionId);
+    } catch (error) {
+      console.error('Failed to display next prompt:', error);
+    }
+  }
+
+  /**
+   * Set up event handlers for action prompt
+   * @private
+   * @param {HTMLElement} actionPrompt - Action prompt element
+   * @param {string} nextSectionId - Next section identifier
+   */
+  _setupActionPromptHandlers(actionPrompt, nextSectionId) {
+    const input = actionPrompt.querySelector('.prompt-input');
+    const button = actionPrompt.querySelector('.prompt-button');
+    
+    if (!input || !button) {
+      return;
+    }
+
+    const defaultText = button.getAttribute('data-default-text');
+
+    // Change button text when input has value
+    input.addEventListener('input', () => {
+      if (input.value.trim()) {
+        button.textContent = 'Ask';
+      } else {
+        button.textContent = defaultText;
+      }
+    });
+
+    // Handle button click
+    button.addEventListener('click', async () => {
+      const customQuery = input.value.trim() || null;
+      
+      // Remove action prompt
+      actionPrompt.remove();
+      
+      // Reveal next section
+      await this.revealSection(nextSectionId, customQuery);
+    });
+
+    // Handle Enter key
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        button.click();
+      }
+    });
   }
 }
 
