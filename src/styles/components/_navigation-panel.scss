@@ -1,0 +1,218 @@
+// Navigation Panel Component Styles
+// Provides styling for the collapsible left sidebar navigation
+
+.navigation-panel {
+  position: fixed;
+  top: $header-height;
+  left: 0;
+  height: calc(100vh - #{$header-height});
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  transition: width $transition-base;
+  z-index: $z-nav;
+  overflow: hidden;
+
+  // Expanded state (default)
+  &--expanded {
+    width: $nav-width-expanded;
+
+    .nav-title {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity $transition-base $transition-fast;
+    }
+
+    .nav-item {
+      justify-content: flex-start;
+      padding: $spacing-md $spacing-lg;
+    }
+  }
+
+  // Collapsed state
+  &--collapsed {
+    width: $nav-width-collapsed;
+
+    .nav-title {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity $transition-fast;
+    }
+
+    .nav-item {
+      justify-content: center;
+      padding: $spacing-md;
+      position: relative;
+
+      // Show tooltip on hover
+      &:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: calc(100% + #{$spacing-sm});
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: var(--color-text);
+        color: var(--color-bg);
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $radius-sm;
+        white-space: nowrap;
+        font-size: $font-size-sm;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0;
+        animation: tooltipFadeIn $transition-fast forwards;
+      }
+    }
+  }
+}
+
+// Navigation toggle button
+.nav-toggle {
+  position: absolute;
+  top: $spacing-md;
+  right: -#{$spacing-md};
+  width: $spacing-xl;
+  height: $spacing-xl;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-base;
+  z-index: 1;
+
+  &:hover {
+    background-color: var(--color-bg);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .nav-toggle-icon {
+    font-size: $font-size-sm;
+    color: var(--color-text);
+    transition: transform $transition-base;
+  }
+}
+
+// Navigation items container
+.nav-items {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-lg 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 2px;
+  }
+}
+
+// Individual navigation item
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: all $transition-base;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--color-bg);
+    border-left-color: var(--color-accent);
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  &.active {
+    background-color: var(--color-bg);
+    border-left-color: var(--color-accent);
+    font-weight: 600;
+  }
+}
+
+// Navigation icon
+.nav-icon {
+  font-size: $font-size-xl;
+  flex-shrink: 0;
+  width: $spacing-xl;
+  height: $spacing-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Navigation title
+.nav-title {
+  font-size: $font-size-base;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Tooltip fade-in animation
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+// Responsive design
+@include mobile {
+  .navigation-panel {
+    // On mobile, navigation could overlay content
+    transform: translateX(-100%);
+    transition: transform $transition-base, width $transition-base;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+
+    &--expanded {
+      width: 80vw;
+      max-width: $nav-width-expanded;
+    }
+  }
+}
+
+// Screen reader only class for accessibility
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

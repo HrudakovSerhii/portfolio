@@ -179,6 +179,9 @@ class TemplateService {
     navItem.href = `#section-${sectionMetadata.id}`;
     navItem.setAttribute('aria-label', `Navigate to ${sectionMetadata.title}`);
 
+    // Set tooltip for collapsed state
+    navItem.setAttribute('data-tooltip', sectionMetadata.title);
+
     // Set icon directly from content data (emoji or text)
     const iconElement = navItem.querySelector('.nav-icon');
     if (iconElement) {
