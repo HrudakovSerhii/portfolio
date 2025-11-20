@@ -597,6 +597,12 @@ class AppController {
    */
   showRoleChangeModal() {
     try {
+      // Check if modal already exists
+      const existingModal = document.querySelector('.modal-overlay');
+      if (existingModal) {
+        return;
+      }
+
       const currentRole = this.stateManager.getRole();
 
       if (!currentRole) {
@@ -607,7 +613,7 @@ class AppController {
       // Render role change modal
       const modal = this.templateService.renderRoleChangeModal(currentRole);
 
-      // Add modal to DOM
+      // Add modal to body (not sections container)
       document.body.appendChild(modal);
 
       // Get modal elements
