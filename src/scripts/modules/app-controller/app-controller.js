@@ -1,94 +1,89 @@
-import StateManager, { SECTION_ORDER } from '../../utils/state-manager.js';
-import ContentMiddleware from '../content-middleware/content-middleware.js';
-import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
-import AnimationController from '../animation-controller';
-import ParallaxController from '../parallax-controller';
-import ThemeSwitcher from '../user-interface/theme-switcher';
-import HeaderController from '../user-interface/header-controller';
-import SectionRenderer from '../user-interface/section-renderer';
-import GenerativeImage from '../user-interface/generative-image/generative-image.js';
-import RoleManager from '../user-interface/role-manager';
+/**
+ * AppController - Main application orchestrator
+ * 
+ * Coordinates all components and manages the application flow including:
+ * - Initialization and state restoration
+ * - Personalization flow
+ * - Section revelation
+ * - Navigation
+ * - Role changes
+ * - Theme and language switching
+ */
 
-const MODAL_FADE_DURATION = 300;
-
-const ELEMENT_IDS = {
-  initialLoader: 'initial-loader',
-  header: 'header',
-  ownerName: 'owner-name',
-  themeToggle: 'theme-toggle',
-  languageSelector: 'language-selector',
-  mainContent: 'main-content',
-  heroSection: 'hero-section',
-  heroRoles: 'hero-roles',
-  heroBackgroundImage: 'hero-background-image',
-  sectionsContainer: 'sections-container',
-  typingIndicator: 'typing-indicator'
-};
+import StateManager from '../../utils/state-manager.js';
+import ContentMiddleware from '../content-middleware.js';
+import TemplateService from '../template-service/template-service.js';
+import AnimationEngine from '../animation-engine.js';
 
 class AppController {
   constructor() {
+    // Initialize core services
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-default-content.json');
-    this.templateBuilder = new TemplateBuilder();
-    this.animationController = new AnimationController();
-    this.parallaxController = new ParallaxController();
-    this.themeSwitcher = new ThemeSwitcher(this.stateManager);
-    this.roleManager = new RoleManager(this.stateManager, this.templateBuilder);
-    this.headerController = new HeaderController(this.stateManager);
-    this.sectionRenderer = new SectionRenderer(
-      this.stateManager,
-      this.contentMiddleware,
-      this.templateBuilder,
-      this.animationController
-    );
+    this.contentMiddleware = new ContentMiddleware('/data/content.json');
+    this.templateService = new TemplateService();
+    this.animationEngine = new AnimationEngine();
 
+    // DOM element references (will be set in init)
     this.elements = {
       initialLoader: null,
       header: null,
       ownerName: null,
       themeToggle: null,
       languageSelector: null,
+      changeRoleButton: null,
+      navToggle: null,
+      navItems: null,
       mainContent: null,
-      heroSection: null,
-      heroRoles: null,
-      heroBackgroundImage: null,
       sectionsContainer: null,
       typingIndicator: null
     };
 
+    // Section order (will be loaded from content.json)
+    this.sectionOrder = [];
+
+    // Track initialization state
     this.initialized = false;
   }
 
+  /**
+   * Initialize the application
+   * Checks for existing state and either restores or shows personalization
+   * @returns {Promise<void>}
+   */
   async init() {
     if (this.initialized) {
+      console.warn('AppController already initialized');
       return;
     }
 
     try {
+      // Cache DOM element references
       this._cacheElements();
+
+      // Set up event listeners
       this._setupEventListeners();
 
-      this.themeSwitcher.initialize(this.elements.themeToggle);
+      // Initialize theme based on stored preference or system default
+      this._initializeTheme();
 
-      this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
+      // Load section order from content.json
+      await this._loadSectionOrder();
 
-      this.headerController.initialize(
-        this.elements.ownerName,
-        this.elements.languageSelector,
-        this.roleManager
-      );
+      // Load user profile and update header
+      await this._loadUserProfile();
 
-      this.parallaxController.init();
+      // Check if user has completed personalization
+      if (this.stateManager.hasCompletedPersonalization()) {
+        // Restore previous state
+        await this.restoreState();
+      } else {
+        // Show personalization modal for first-time visitors
+        this.showPersonalizationModal();
+      }
 
-      this.sectionRenderer.initialize(
-        this.elements.sectionsContainer,
-        this.elements.typingIndicator,
-        SECTION_ORDER,
-        (nextSectionId) => this.revealSection(nextSectionId, '')
-      );
-
-      this._initializeHeroBackgroundImage();
+      // Hide initial loader
       this._hideInitialLoader();
+
       this.initialized = true;
     } catch (error) {
       console.error('Failed to initialize application:', error);
@@ -96,131 +91,153 @@ class AppController {
     }
   }
 
-  async loadAppState() {
-    await this._loadUserProfile();
-
-    if (this.stateManager.hasCompletedPersonalization()) {
-      this.headerController.updateRoleBadge(this.stateManager.getRole());
-
-      await this.restoreState();
-    }
-  }
-
+  /**
+   * Cache references to DOM elements
+   * @private
+   */
   _cacheElements() {
-    this.elements.initialLoader = document.getElementById(ELEMENT_IDS.initialLoader);
-    this.elements.header = document.getElementById(ELEMENT_IDS.header);
-    this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
-    this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
-    this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
-    this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
-    this.elements.heroRoles = document.getElementById(ELEMENT_IDS.heroRoles);
-    this.elements.heroBackgroundImage = document.getElementById(ELEMENT_IDS.heroBackgroundImage);
-    this.elements.sectionsContainer = document.getElementById(ELEMENT_IDS.sectionsContainer);
-    this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
+    this.elements.initialLoader = document.getElementById('initial-loader');
+    this.elements.header = document.querySelector('.header');
+    this.elements.ownerName = document.getElementById('owner-name');
+    this.elements.themeToggle = document.getElementById('theme-toggle');
+    this.elements.languageSelector = document.getElementById('language-selector');
+    this.elements.changeRoleButton = document.getElementById('change-role-button');
+    this.elements.navToggle = document.getElementById('nav-toggle');
+    this.elements.navItems = document.getElementById('nav-items');
+    this.elements.mainContent = document.getElementById('main-content');
+    this.elements.sectionsContainer = document.getElementById('sections-container');
+    this.elements.typingIndicator = document.getElementById('typing-indicator');
 
-    const criticalElementKeys = [
-      'initialLoader',
-      'themeToggle',
-      'languageSelector',
-      'mainContent',
-      'heroRoles',
-      'heroBackgroundImage',
-      'sectionsContainer'
+    // Validate critical elements
+    const criticalElements = [
+      'initialLoader', 'themeToggle', 'languageSelector', 
+      'changeRoleButton', 'navToggle', 'navItems', 'sectionsContainer'
     ];
 
-    for (const key of criticalElementKeys) {
+    for (const key of criticalElements) {
       if (!this.elements[key]) {
-        throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
+        throw new Error(`Critical element not found: ${key}`);
       }
     }
   }
 
+  /**
+   * Set up event listeners for UI controls
+   * @private
+   */
   _setupEventListeners() {
+    // Theme toggle
     this.elements.themeToggle.addEventListener('click', () => {
-      this.themeSwitcher.toggle();
+      this.handleThemeChange();
     });
 
+    // Language selector
     this.elements.languageSelector.addEventListener('change', (e) => {
-      this.headerController.updateLanguage(e.target.value);
+      this.handleLanguageChange(e.target.value);
     });
 
-    this._setupHeroRoleCardListeners();
-  }
+    // Navigation toggle
+    this.elements.navToggle.addEventListener('click', () => {
+      this.toggleNavigationPanel();
+    });
 
-  _setupHeroRoleCardListeners() {
-    const roleCards = this.elements.heroRoles.querySelectorAll('.button[data-role]');
-
-    roleCards.forEach(card => {
-      card.addEventListener('click', async () => {
-        const role = card.getAttribute('data-role');
-
-        if (role) {
-          await this.roleManager.selectRole(role);
-        }
-      });
+    // Change role button
+    this.elements.changeRoleButton.addEventListener('click', () => {
+      this.showRoleChangeModal();
     });
   }
 
+  /**
+   * Initialize theme based on stored preference or system default
+   * @private
+   */
+  _initializeTheme() {
+    let theme = this.stateManager.getTheme();
+
+    // If no stored theme, check system preference
+    if (!theme || (theme !== 'light' && theme !== 'dark')) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      theme = prefersDark ? 'dark' : 'light';
+      this.stateManager.setTheme(theme);
+    }
+
+    // Apply theme
+    this._applyTheme(theme);
+  }
+
+  /**
+   * Apply theme to the document
+   * @private
+   * @param {string} theme - Theme name ('light' or 'dark')
+   */
+  _applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    this.elements.themeToggle.setAttribute('data-theme', theme);
+    this.elements.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    
+    // Update icon
+    const icon = this.elements.themeToggle.querySelector('.control-icon');
+    if (icon) {
+      icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  }
+
+  /**
+   * Load section order from content.json
+   * @private
+   * @returns {Promise<void>}
+   */
+  async _loadSectionOrder() {
+    try {
+      const sections = await this.contentMiddleware.getAllSections();
+      this.sectionOrder = sections.map(section => section.id);
+      
+      if (this.sectionOrder.length === 0) {
+        throw new Error('No sections found in content.json');
+      }
+    } catch (error) {
+      console.error('Failed to load section order:', error);
+      // Fallback to default order
+      this.sectionOrder = ['hero', 'about', 'skills', 'experience', 'projects', 'contact'];
+    }
+  }
+
+  /**
+   * Load user profile and update header
+   * @private
+   * @returns {Promise<void>}
+   */
   async _loadUserProfile() {
     try {
       const profile = await this.contentMiddleware.getUserProfile();
-      this.headerController.updateOwnerName(profile.name);
+      
+      if (this.elements.ownerName && profile.name) {
+        this.elements.ownerName.textContent = profile.name;
+      }
     } catch (error) {
       console.error('Failed to load user profile:', error);
+      // Continue with default header text
     }
   }
 
-  _initializeHeroBackgroundImage() {
-    try {
-      this._tryToInitializeHeroBackgroundImage()
-    } catch (error) {
-      this._handleInitializeHeroBackgroundImageFailure(error)
-    }
-  }
-
-  _tryToInitializeHeroBackgroundImage() {
-    const container = this.elements.heroBackgroundImage;
-
-    if (!container) {
-      console.warn('Hero background image container not found');
-      return;
-    }
-
-    const existingImg = container.querySelector('img');
-    if (existingImg) {
-      existingImg.remove();
-    }
-
-    const generativeHeroImage = new GenerativeImage({
-      highResSrc: './backgrounds/karpaty.full.jpeg',
-      lowResSrc: './backgrounds/karpaty.low.jpeg',
-      alt: 'Hero background image',
-      shouldAnimate: true,
-      aspectClass: 'aspect-portrait',
-      gridConfig: {
-        rows: 8,
-        cols: 8
-      }
-    });
-
-    const imageElement = generativeHeroImage.create();
-    container.appendChild(imageElement);
-  }
-
-  _handleInitializeHeroBackgroundImageFailure(error) {
-    console.error('Failed to initialize hero background image:', error);
-  }
-
+  /**
+   * Hide initial loader
+   * @private
+   */
   _hideInitialLoader() {
     if (this.elements.initialLoader) {
       this.elements.initialLoader.style.opacity = '0';
       setTimeout(() => {
         this.elements.initialLoader.style.display = 'none';
-      }, MODAL_FADE_DURATION);
+      }, 300);
     }
   }
 
+  /**
+   * Show error state when initialization fails
+   * @private
+   * @param {Error} error - Error that occurred
+   */
   _showErrorState(error) {
     if (this.elements.initialLoader) {
       const loaderText = this.elements.initialLoader.querySelector('.loader-text');
@@ -230,121 +247,169 @@ class AppController {
     }
   }
 
+  /**
+   * Restore state from previous session
+   * Renders all previously revealed sections without animations
+   * @returns {Promise<void>}
+   */
   async restoreState() {
     try {
-      await this._tryRestorePreviousSession();
+      const revealedSections = this.stateManager.getRevealedSections();
+      const role = this.stateManager.getRole();
+
+      if (revealedSections.length === 0) {
+        // No sections to restore, show personalization
+        this.showPersonalizationModal();
+        return;
+      }
+
+      // Render each revealed section without animations
+      for (const sectionId of revealedSections) {
+        await this._restoreSection(sectionId, role);
+      }
+
+      // Restore scroll position after content renders
+      setTimeout(() => {
+        const scrollPosition = this.stateManager.getScrollPosition();
+        if (scrollPosition > 0) {
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'instant'
+          });
+        }
+      }, 100);
+
+      // Show "Change Role" button if all sections were revealed
+      if (this.stateManager.hasRevealedAllSections()) {
+        this.elements.changeRoleButton.style.display = 'block';
+      }
     } catch (error) {
-      this._handleRestoreStateFailure(error);
+      console.error('Failed to restore state:', error);
+      // Fall back to showing personalization modal
+      this.showPersonalizationModal();
     }
   }
 
-  async _tryRestorePreviousSession() {
-    const revealedSections = this.stateManager.getRevealedSections();
-    const role = this.stateManager.getRole();
-
-    if (revealedSections.length === 0) {
-      return;
-    }
-
-    if (role) {
-      this.elements.heroRoles.style.display = 'none';
-    }
-
-    await this._restoreRevealedSections(revealedSections, role);
-  }
-
-  async _restoreRevealedSections(revealedSections, role) {
-    for (const sectionId of revealedSections) {
-      await this._handleRevealNavigationItem(sectionId);
-      await this._restoreSingleSection(sectionId, role);
-    }
-
-    const lastSection = this._getSectionElement(revealedSections[revealedSections.length - 1])
-
-    lastSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  async _restoreSingleSection(sectionId, role) {
+  /**
+   * Restore a single section without animations
+   * @private
+   * @param {string} sectionId - Section identifier
+   * @param {string} role - User role
+   * @returns {Promise<void>}
+   */
+  async _restoreSection(sectionId, role) {
     try {
-      await this.sectionRenderer.restore(sectionId, role);
+      // Fetch section content
+      const sectionContent = await this.contentMiddleware.fetchSectionContent(sectionId, role);
+      const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+
+      // Determine zig-zag layout
+      const sectionIndex = this.sectionOrder.indexOf(sectionId);
+      const isZigZagLeft = sectionIndex % 2 === 0;
+
+      // Render section
+      const sectionElement = this.templateService.renderSection(sectionContent, isZigZagLeft);
+
+      // Insert text content immediately (no typewriter)
+      const textElement = sectionElement.querySelector('.content-text');
+      if (textElement) {
+        textElement.textContent = sectionContent.text;
+      }
+
+      // Insert image immediately (no generation effect)
+      const imageContainer = sectionElement.querySelector('.content-image');
+      if (imageContainer) {
+        const img = document.createElement('img');
+        img.src = sectionContent.imageUrl;
+        img.alt = sectionContent.imageAlt;
+        img.className = `section-image ${sectionContent.aspectRatio}`;
+        imageContainer.appendChild(img);
+      }
+
+      // Add section to DOM
+      this.elements.sectionsContainer.appendChild(sectionElement);
+
+      // Restore navigation item
+      await this._restoreNavigationItem(sectionMetadata);
     } catch (error) {
       console.error(`Failed to restore section "${sectionId}":`, error);
     }
   }
 
-  _handleRestoreStateFailure(error) {
-    console.error('Failed to restore state:', error);
-  }
-
-  async handleRoleSelect(role, isRoleChange) {
+  /**
+   * Restore a navigation item without animations
+   * @private
+   * @param {Object} sectionMetadata - Section metadata
+   * @returns {Promise<void>}
+   */
+  async _restoreNavigationItem(sectionMetadata) {
     try {
-      if (isRoleChange) {
-        this._resetPortfolioState();
+      const navItem = this.templateService.renderNavigationItem(sectionMetadata);
+
+      // Set title immediately (no typewriter)
+      const titleElement = navItem.querySelector('.nav-title');
+      if (titleElement) {
+        titleElement.textContent = sectionMetadata.title;
       }
 
-      this.stateManager.setRole(role);
-      this.elements.heroRoles.classList.add('invisible');
-      this.headerController.updateRoleBadge();
+      // Add to navigation panel
+      this.elements.navItems.appendChild(navItem);
 
-      await this.revealSection(SECTION_ORDER[0]);
+      // Set up click handler for navigation scrolling
+      navItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleNavigationClick(sectionMetadata.id);
+      });
     } catch (error) {
-      console.error('Failed to handle role selection:', error);
-      this._showErrorState(error);
+      console.error(`Failed to restore navigation item for "${sectionMetadata.id}":`, error);
     }
   }
 
-  _resetPortfolioState() {
-    this.stateManager.resetRevealedSections();
-
-    const sections = this.elements.sectionsContainer.querySelectorAll('.content-section');
-    sections.forEach(section => section.remove());
-
-    this.headerController.clearNavigation();
-
-    this.revealSection(SECTION_ORDER[0]).catch(error => {
-      console.error('Failed to reveal section after reset:', error);
-    });
+  /**
+   * Show personalization modal (placeholder - will be implemented in task 8)
+   */
+  showPersonalizationModal() {
+    console.log('showPersonalizationModal - to be implemented in task 8');
   }
 
-  async revealSection(sectionId, customQuery = '') {
-    try {
-      await this._tryRevealSection(sectionId, customQuery);
-    } catch (error) {
-      this._handleRevealSectionFailure(sectionId, error);
-      throw error;
-    }
+  /**
+   * Handle navigation click (placeholder - will be implemented in task 10)
+   * @param {string} sectionId - Section identifier
+   */
+  handleNavigationClick(sectionId) {
+    console.log('handleNavigationClick - to be implemented in task 10', sectionId);
   }
 
-  async _tryRevealSection(sectionId, customQuery) {
-    const role = this.stateManager.getRole();
-
-    if (!role) {
-      throw new Error('No role selected. Cannot reveal section.');
-    }
-
-    await this._handleRevealNavigationItem(sectionId);
-
-    await this.sectionRenderer.reveal(sectionId, role, customQuery);
+  /**
+   * Toggle navigation panel (placeholder - will be implemented in task 10)
+   */
+  toggleNavigationPanel() {
+    console.log('toggleNavigationPanel - to be implemented in task 10');
   }
 
-  async _handleRevealNavigationItem(sectionId) {
-    const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
-
-    if (sectionMetadata && sectionMetadata.title) {
-      this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
-    }
+  /**
+   * Show role change modal (placeholder - will be implemented in task 11)
+   */
+  showRoleChangeModal() {
+    console.log('showRoleChangeModal - to be implemented in task 11');
   }
 
-  _handleRevealSectionFailure(sectionId, error) {
-    console.error(`Failed to reveal section "${sectionId}":`, error);
-
-    if (this.elements.typingIndicator) {
-      this.elements.typingIndicator.style.display = 'none';
-    }
+  /**
+   * Handle theme change (placeholder - will be implemented in task 12)
+   */
+  handleThemeChange() {
+    const currentTheme = this.stateManager.getTheme();
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.stateManager.setTheme(newTheme);
+    this._applyTheme(newTheme);
   }
 
-  _getSectionElement(sectionId) {
-    return this.elements.sectionsContainer.querySelector(`[data-section-id="${sectionId}"]`);
+  /**
+   * Handle language change (placeholder - will be implemented in task 12)
+   * @param {string} lang - Language code
+   */
+  handleLanguageChange(lang) {
+    console.log('handleLanguageChange - to be implemented in task 12', lang);
   }
 }
 
