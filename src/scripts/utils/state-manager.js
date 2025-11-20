@@ -63,7 +63,8 @@ class StateManager {
       revealedSections: [],
       scrollPosition: 0,
       language: 'en',
-      theme: 'light'
+      theme: 'light',
+      navigationExpanded: true
     };
   }
 
@@ -191,6 +192,16 @@ class StateManager {
     }
 
     this.state.theme = theme;
+    this.syncToStorage();
+  }
+
+  // Navigation panel methods
+  getNavigationExpanded() {
+    return this.state.navigationExpanded;
+  }
+
+  setNavigationExpanded(expanded) {
+    this.state.navigationExpanded = expanded;
     this.syncToStorage();
   }
 
