@@ -153,12 +153,6 @@ class ChatBot {
       this._CVDataService = CVDataService;
       this._StyleManager = StyleManager;
       this._FallbackHandler = FallbackHandler;
-
-      const moduleLoadTime = performance.now() - moduleLoadStart;
-      if (window.isDev) {
-        console.log(`Chat modules loaded in ${moduleLoadTime.toFixed(2)}ms`);
-      }
-
     } catch (error) {
       throw new Error(`MODULE_LOAD_FAILED: ${error.message}`);
     }
@@ -169,26 +163,12 @@ class ChatBot {
    */
   async initializeChat() {
     try {
-      console.log('🔧 CHAT-BOT: Initializing chat bot QA router...');
-
       // Import the chatbot QA router
       const { ChatBotQARouter } = await import('./chat-bot-qa-router.js');
 
       // Use cv-data-service to load and prepare CV data
       await this.cvDataService.loadCVData();
       this.cvChunks = this.cvDataService.prepareCVChunks();
-
-      console.log('📊 CHAT-BOT: CV data loaded via cv-data-service:', {
-        totalChunks: this.cvChunks.length,
-        categories: [...new Set(this.cvChunks.map(chunk => chunk.metadata.category))],
-        version: this.cvDataService.getMetadata().version,
-        sampleChunk: this.cvChunks[0] ? {
-          id: this.cvChunks[0].id,
-          hasEmbedding: !!this.cvChunks[0].embedding,
-          embeddingDimensions: this.cvChunks[0].embedding?.length,
-          textPreview: this.cvChunks[0].text?.substring(0, 100) + '...'
-        } : null
-      });
 
       // Initialize the chatbot QA router with CV chunks for embedding pre-computation
       this.chatbotQARouter = new ChatBotQARouter({
@@ -207,30 +187,8 @@ class ChatBot {
         }
       });
 
-      console.log('🚀 CHAT-BOT: Starting router initialization with CV chunks:', this.cvChunks.length);
-      console.log('🔍 CHAT-BOT: BEFORE router init - First 3 chunks embedding status:', 
-        this.cvChunks.slice(0, 3).map(c => ({
-          id: c.id,
-          hasEmbedding: !!c.embedding,
-          embeddingType: typeof c.embedding,
-          isArray: Array.isArray(c.embedding),
-          embeddingValue: c.embedding
-        }))
-      );
-
       // Initialize the router with prepared chunks
       await this.chatbotQARouter.initializeRouter(this.cvChunks);
-
-      console.log('🔍 CHAT-BOT: AFTER router init - First 3 chunks embedding status:', 
-        this.cvChunks.slice(0, 3).map(c => ({
-          id: c.id,
-          hasEmbedding: !!c.embedding,
-          embeddingType: typeof c.embedding,
-          isArray: Array.isArray(c.embedding),
-          embeddingLength: c.embedding?.length
-        }))
-      );
-      console.log('✅ CHAT-BOT: Chat bot QA router initialized successfully, router ready state:', this.chatbotQARouter.getStatus());
     } catch (error) {
       console.error('❌ CHAT-BOT: Router initialization failed:', error);
       throw error;
@@ -244,39 +202,14 @@ class ChatBot {
    */
   async _processMessageWithRouter(message, conversationContext) {
     try {
-      console.log('🔍 CHAT-BOT: Starting router processing...');
-      console.log('📝 CHAT-BOT: User message:', message);
-      console.log('🎨 CHAT-BOT: Conversation style:', this.currentStyle);
-
       // Query the router with conversation style and context
       const result = await this.chatbotQARouter.processQuery(message, {
         style: this.currentStyle,
         context: conversationContext
       });
 
-      console.log('📊 CHAT-BOT: Router result:', {
-        hasAnswer: !!result.answer,
-        confidence: result.confidence,
-        intent: result.intent,
-        method: result.method,
-        matchedChunks: result.matchedChunks?.length || 0,
-        processingTime: result.processingTime
-      });
-
-      // Log the context that was selected
-      if (result.matchedChunks && result.matchedChunks.length > 0) {
-        console.log('🎯 CHAT-BOT: Selected CV context:',
-          result.matchedChunks.map(chunk => ({
-            id: chunk.id,
-            similarity: chunk.similarity,
-            preview: chunk.text.substring(0, 100) + '...'
-          }))
-        );
-      }
-
       // Handle the response
       this._handleRouterResponse(result, message);
-
     } catch (error) {
       console.error('❌ CHAT-BOT: Router processing failed:', error);
       this._handleWorkerError(error.message);
@@ -293,11 +226,6 @@ class ChatBot {
       console.error('❌ CHAT-BOT: Router error:', result.error);
       this._handleWorkerError(result.error);
       return;
-    }
-
-    // Log processing metrics for debugging
-    if (result.metrics && window.isDev) {
-      console.log('📈 CHAT-BOT: Processing metrics:', result.metrics);
     }
 
     // Check if the router already indicated a fallback scenario
@@ -389,18 +317,7 @@ class ChatBot {
       // Get conversation context
       const context = this.conversationManager.getContext();
 
-      console.log('🚀 CHAT-BOT: Processing message:', {
-        message,
-        contextLength: context.length,
-        contextPreview: context.slice(0, 2),
-        style: this.currentStyle,
-        queryCount: this.queryCount
-      });
-
-      // Always use semantic-qa system
-      console.log('🧠 CHAT-BOT: Using semantic-qa system...');
       await this._processMessageWithRouter(message, context);
-
     } catch (error) {
       this._handleProcessingError(error);
     }
@@ -452,16 +369,14 @@ class ChatBot {
    * Clean up resources
    */
   async destroy() {
-    console.log('🧹 CHAT-BOT: Cleaning up resources...');
-
     // Clean up router and terminate workers
     if (this.chatbotQARouter) {
       try {
         this.chatbotQARouter.cleanup();
-        console.log('✅ CHAT-BOT: Router cleanup completed');
       } catch (error) {
         console.error('❌ CHAT-BOT: Router cleanup error:', error);
       }
+
       this.chatbotQARouter = null;
     }
 
@@ -474,8 +389,6 @@ class ChatBot {
     this.isInitialized = false;
     this.initializationPromise = null;
     this.queryCount = 0;
-
-    console.log('✅ CHAT-BOT: All resources cleaned up');
   }
 
 
@@ -485,11 +398,6 @@ class ChatBot {
    */
   _handleWorkerResponse(answer, confidence, matchedSections, processingMetrics) {
     this.ui.hideTypingIndicator();
-
-    // Log processing metrics for debugging
-    if (processingMetrics && window.isDev) {
-      console.log('Query processing metrics:', processingMetrics);
-    }
 
     const lastUserMessage = this.ui.getLastUserMessage();
 

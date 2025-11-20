@@ -48,7 +48,7 @@ class OptimizedMLWorker {
     this.model = null;
     this.isInitialized = false;
     this.modelConfig = {
-      name: "HuggingFaceTB/SmolLM2-135M-Instruct",
+      name: "HuggingFaceTB/SmolLM2-135M-Instruct-Q8-mlx",
       type: "text-generation",
       dtype: "q4",
       device: "webgpu"

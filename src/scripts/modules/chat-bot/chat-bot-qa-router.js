@@ -273,7 +273,7 @@ export class ChatBotQARouter {
    */
   async prepareContext(cvChunks) {
     console.log('[ChatBotQARouter] Preparing context with', cvChunks.length, 'chunks');
-    console.log('[ChatBotQARouter] prepareContext - First 3 chunks embedding status:', 
+    console.log('[ChatBotQARouter] prepareContext - First 3 chunks embedding status:',
       cvChunks.slice(0, 3).map(c => ({
         id: c.id,
         hasEmbedding: !!c.embedding,
@@ -282,7 +282,7 @@ export class ChatBotQARouter {
       }))
     );
     this.cvChunks = cvChunks;
-    console.log('[ChatBotQARouter] prepareContext - Stored chunks, verifying first 3:', 
+    console.log('[ChatBotQARouter] prepareContext - Stored chunks, verifying first 3:',
       this.cvChunks.slice(0, 3).map(c => ({
         id: c.id,
         hasEmbedding: !!c.embedding,
@@ -298,7 +298,7 @@ export class ChatBotQARouter {
    */
   async precomputeChunkEmbeddings() {
     console.log('[ChatBotQARouter] Pre-computing embeddings for', this.cvChunks.length, 'chunks');
-    console.log('[ChatBotQARouter] precomputeChunkEmbeddings - BEFORE filter, first 3 chunks:', 
+    console.log('[ChatBotQARouter] precomputeChunkEmbeddings - BEFORE filter, first 3 chunks:',
       this.cvChunks.slice(0, 3).map(c => ({
         id: c.id,
         hasEmbedding: !!c.embedding,
@@ -311,53 +311,23 @@ export class ChatBotQARouter {
     // Check if chunks already have embeddings
     const chunksNeedingEmbeddings = this.cvChunks.filter(chunk => !chunk.embedding);
 
-    console.log('[ChatBotQARouter] Chunks needing embeddings:', chunksNeedingEmbeddings.length, 'out of', this.cvChunks.length);
-    console.log('[ChatBotQARouter] First 3 chunks needing embeddings:', 
-      chunksNeedingEmbeddings.slice(0, 3).map(c => ({ id: c.id, text: c.text.substring(0, 50) }))
-    );
-
-    if (chunksNeedingEmbeddings.length === 0) {
-      console.log('[ChatBotQARouter] All chunks already have embeddings');
-      return;
-    }
-
-    console.log('[ChatBotQARouter] Computing embeddings for', chunksNeedingEmbeddings.length, 'chunks');
-
     // Batch embed chunks
     const texts = chunksNeedingEmbeddings.map(chunk => chunk.text);
-    console.log('[ChatBotQARouter] Sending', texts.length, 'texts to embedding worker');
-    console.log('[ChatBotQARouter] Communicator timeout setting:', this.embeddingCommunicator.timeout, 'ms');
-    console.log('[ChatBotQARouter] Pending requests before send:', this.embeddingCommunicator.pendingRequests.size);
-    
     const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', { texts });
-    
-    console.log('[ChatBotQARouter] Pending requests after receive:', this.embeddingCommunicator.pendingRequests.size);
-
-    console.log('[ChatBotQARouter] Received response from embedding worker:', {
-      success: response.success,
-      hasEmbeddings: !!response.embeddings,
-      embeddingsCount: response.embeddings?.length,
-      firstEmbeddingType: typeof response.embeddings?.[0],
-      firstEmbeddingIsArray: Array.isArray(response.embeddings?.[0]),
-      firstEmbeddingLength: response.embeddings?.[0]?.length
-    });
 
     if (response.embeddings) {
       // Assign embeddings to chunks
       chunksNeedingEmbeddings.forEach((chunk, index) => {
-        console.log(`[ChatBotQARouter] Assigning embedding ${index} to chunk ${chunk.id}, embedding type:`, typeof response.embeddings[index], 'isArray:', Array.isArray(response.embeddings[index]));
         chunk.embedding = response.embeddings[index];
       });
-      console.log('[ChatBotQARouter] Chunk embeddings computed successfully');
-      console.log('[ChatBotQARouter] AFTER assignment - First 3 chunks from this.cvChunks:', 
-        this.cvChunks.slice(0, 3).map(c => ({
-          id: c.id,
-          hasEmbedding: !!c.embedding,
-          embeddingType: typeof c.embedding,
-          isArray: Array.isArray(c.embedding),
-          embeddingLength: c.embedding?.length
-        }))
-      );
+
+      this.cvChunks.slice(0, 3).map(c => ({
+        id: c.id,
+        hasEmbedding: !!c.embedding,
+        embeddingType: typeof c.embedding,
+        isArray: Array.isArray(c.embedding),
+        embeddingLength: c.embedding?.length
+      }));
     }
   }
 
@@ -367,15 +337,12 @@ export class ChatBotQARouter {
    * @returns {Promise<Float32Array>} Query embedding
    */
   async generateEmbedding(text) {
-    console.log('[ChatBotQARouter] Generating embedding for query');
-
     try {
       const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', {
         texts: [text]
       });
 
       if (response.success && response.embeddings && response.embeddings.length > 0) {
-        console.log('[ChatBotQARouter] Embedding generated successfully, dimensions:', response.embeddings[0].length);
         return response.embeddings[0];
       } else {
         throw new Error('Failed to generate embedding');
@@ -393,18 +360,10 @@ export class ChatBotQARouter {
    * @returns {Promise<Object>} EQA response with answer and confidence
    */
   async extractAnswer(question, context) {
-    console.log('[ChatBotQARouter] Extracting answer from EQA worker');
-    console.log('[ChatBotQARouter] Context length:', context.length);
-
     try {
       const response = await this.eqaCommunicator.sendMessage('extractAnswer', {
         question,
         context
-      });
-
-      console.log('[ChatBotQARouter] EQA response:', {
-        answer: response.answer,
-        confidence: response.confidence
       });
 
       return response;
@@ -420,15 +379,10 @@ export class ChatBotQARouter {
    * @returns {Promise<Object>} Generated response
    */
   async generateResponse(prompt) {
-    console.log('[ChatBotQARouter] Generating response from text generation worker');
-    console.log('[ChatBotQARouter] Prompt length:', prompt.length);
-
     try {
       const response = await this.textGenCommunicator.sendMessage('generate', {
         prompt
       });
-
-      console.log('[ChatBotQARouter] Text generation response received');
 
       return response;
     } catch (error) {
@@ -445,59 +399,28 @@ export class ChatBotQARouter {
    */
   async processQueryPipeline(question, conversationContext = []) {
     const startTime = Date.now();
-    console.log('[ChatBotQARouter] ========================================');
-    console.log('[ChatBotQARouter] 🔵 QUERY PROCESSING PIPELINE START');
-    console.log('[ChatBotQARouter] Starting query processing pipeline');
-    console.log('[ChatBotQARouter] Original query:', question);
 
     // Step 5: Query preprocessing
     const step5Start = Date.now();
     const enhancedQuery = preprocessQuery(question, conversationContext);
     const step5Time = Date.now() - step5Start;
-    console.log('[ChatBotQARouter] Step 5 - Enhanced query:', enhancedQuery);
-    console.log('[ChatBotQARouter] Step 5 timing:', step5Time, 'ms');
 
     // Step 6: Generate query embedding
     const step6Start = Date.now();
-    console.log('[ChatBotQARouter] 🔵 Step 6: Generating query embedding...');
+
     const queryEmbedding = await this.generateEmbedding(enhancedQuery);
     const step6Time = Date.now() - step6Start;
-    console.log('[ChatBotQARouter] Step 6 - Embedding dimensions:', queryEmbedding.length);
-    console.log('[ChatBotQARouter] Step 6 - Embedding type:', typeof queryEmbedding);
-    console.log('[ChatBotQARouter] Step 6 - Is Float32Array?', queryEmbedding instanceof Float32Array);
-    console.log('[ChatBotQARouter] Step 6 - First 10 values:', Array.from(queryEmbedding.slice(0, 10)));
-    console.log('[ChatBotQARouter] Step 6 timing:', step6Time, 'ms');
 
     // Step 7: Find similar chunks
     const step7Start = Date.now();
-    console.log('[ChatBotQARouter] Step 7 - BEFORE findSimilarChunks, this.cvChunks status:', {
-      totalChunks: this.cvChunks.length,
-      first3Chunks: this.cvChunks.slice(0, 3).map(c => ({
-        id: c.id,
-        hasEmbedding: !!c.embedding,
-        embeddingType: typeof c.embedding,
-        isArray: Array.isArray(c.embedding),
-        embeddingLength: c.embedding?.length
-      }))
-    });
     const similarChunks = findSimilarChunks(
       queryEmbedding,
       this.cvChunks,
       this.config.maxContextChunks
     );
-    const step7Time = Date.now() - step7Start;
-    console.log('[ChatBotQARouter] Step 7 - Similar chunks found:', similarChunks.length);
-    similarChunks.forEach((chunk, idx) => {
-      console.log(`[ChatBotQARouter] Chunk ${idx + 1}:`, {
-        id: chunk.id,
-        similarity: chunk.similarity.toFixed(4),
-        weightedSimilarity: chunk.weightedSimilarity.toFixed(4)
-      });
-    });
-    console.log('[ChatBotQARouter] Step 7 timing:', step7Time, 'ms');
 
+    const step7Time = Date.now() - step7Start;
     const totalTime = Date.now() - startTime;
-    console.log('[ChatBotQARouter] Query pipeline complete:', totalTime, 'ms');
 
     return {
       originalQuery: question,
@@ -521,19 +444,13 @@ export class ChatBotQARouter {
    * @returns {Promise<Object>} Response from appropriate path
    */
   async routeByIntent(enhancedQuery, similarChunks, options = {}) {
-    console.log('[ChatBotQARouter] Step 8: Intent-based routing');
-
     // Classify intent
     const intent = classifyIntent(enhancedQuery);
-    console.log('[ChatBotQARouter] Intent classification result:', intent);
-    console.log('[ChatBotQARouter] Routing decision: Route to', intent === 'fact_retrieval' ? 'fact retrieval path' : 'conversational synthesis path');
 
     // Route based on intent
     if (intent === 'fact_retrieval') {
-      console.log('[ChatBotQARouter] Path taken: Fact Retrieval (Step 9a)');
       return await this.processFactRetrievalPath(enhancedQuery, similarChunks, options);
     } else {
-      console.log('[ChatBotQARouter] Path taken: Conversational Synthesis (Step 9b)');
       return await this.processConversationalPath(enhancedQuery, similarChunks, options);
     }
   }
@@ -547,48 +464,33 @@ export class ChatBotQARouter {
    */
   async processFactRetrievalPath(question, similarChunks, options = {}) {
     const startTime = Date.now();
-    console.log('[ChatBotQARouter] Step 9a: Fact Retrieval Path');
 
     // Combine similar chunks into single context string
     const context = similarChunks
       .map(chunk => chunk.text)
       .join(' ');
 
-    console.log('[ChatBotQARouter] Context length:', context.length, 'characters');
-    console.log('[ChatBotQARouter] Context chunks used:', similarChunks.length);
-
     try {
       // Call EQA worker
       const eqaResponse = await this.extractAnswer(question, context);
       const eqaTime = Date.now() - startTime;
 
-      console.log('[ChatBotQARouter] EQA answer:', eqaResponse.answer);
-      console.log('[ChatBotQARouter] EQA confidence:', eqaResponse.confidence);
-      console.log('[ChatBotQARouter] EQA timing:', eqaTime, 'ms');
-
       // Check for empty answer
       if (!eqaResponse.answer || eqaResponse.answer.trim().length === 0) {
-        console.log('[ChatBotQARouter] Fallback trigger: EQA returned empty answer');
-        console.log('[ChatBotQARouter] Falling back to conversational path');
         return await this.processConversationalPath(question, similarChunks, options);
       }
 
       // Check answer quality - reject very short or suspicious answers
       const answerLength = eqaResponse.answer.trim().length;
+
       if (answerLength < 2) {
-        console.log('[ChatBotQARouter] Fallback trigger: EQA answer too short:', answerLength, 'characters');
-        console.log('[ChatBotQARouter] Falling back to conversational path');
         return await this.processConversationalPath(question, similarChunks, options);
       }
 
       // Check confidence threshold (lowered to 0.05 as EQA models often have low confidence)
       if (eqaResponse.confidence < this.config.eqaConfidenceThreshold) {
-        console.log('[ChatBotQARouter] Fallback trigger: EQA confidence', eqaResponse.confidence, 'below threshold', this.config.eqaConfidenceThreshold);
-        console.log('[ChatBotQARouter] Falling back to conversational path');
         return await this.processConversationalPath(question, similarChunks, options);
       }
-
-      console.log('[ChatBotQARouter] EQA answer accepted:', eqaResponse.answer, 'with confidence:', eqaResponse.confidence);
 
       // Return successful EQA response
       return {
@@ -602,8 +504,7 @@ export class ChatBotQARouter {
 
     } catch (error) {
       console.error('[ChatBotQARouter] EQA error:', error);
-      console.log('[ChatBotQARouter] Fallback trigger: EQA worker error');
-      console.log('[ChatBotQARouter] Falling back to conversational path');
+
       return await this.processConversationalPath(question, similarChunks, options);
     }
   }
@@ -617,52 +518,18 @@ export class ChatBotQARouter {
    */
   async processConversationalPath(question, similarChunks, options = {}) {
     const startTime = Date.now();
-    console.log('[ChatBotQARouter] Step 9b: Conversational Synthesis Path');
-    console.log('[ChatBotQARouter] 📊 SIMILARITY ANALYSIS BEFORE FILTERING:');
-    console.log('[ChatBotQARouter] Similar chunks received:', similarChunks.length);
-    similarChunks.forEach((chunk, idx) => {
-      console.log(`[ChatBotQARouter] Chunk ${idx + 1}:`, {
-        id: chunk.id,
-        similarity: chunk.similarity,
-        weightedSimilarity: chunk.weightedSimilarity,
-        textPreview: chunk.text.substring(0, 100) + '...'
-      });
-    });
-
     const style = options.style || 'developer';
     const conversationContext = options.context || [];
 
     // Apply similarity threshold filtering
     const threshold = getAdaptiveThreshold(question);
-    console.log('[ChatBotQARouter] 🎯 Adaptive threshold calculated:', threshold);
-    
     const filteredChunks = applySimilarityThreshold(similarChunks, {
       baseThreshold: threshold,
       maxResults: this.config.maxContextChunks
     });
 
-    console.log('[ChatBotQARouter] 📊 SIMILARITY ANALYSIS AFTER FILTERING:');
-    console.log('[ChatBotQARouter] Filtered chunks count:', filteredChunks.length);
-    console.log('[ChatBotQARouter] Similarity threshold used:', threshold);
-    if (filteredChunks.length > 0) {
-      filteredChunks.forEach((chunk, idx) => {
-        console.log(`[ChatBotQARouter] Filtered Chunk ${idx + 1}:`, {
-          id: chunk.id,
-          similarity: chunk.similarity,
-          weightedSimilarity: chunk.weightedSimilarity,
-          passedThreshold: chunk.similarity >= threshold
-        });
-      });
-    } else {
-      console.log('[ChatBotQARouter] ⚠️ NO CHUNKS PASSED THRESHOLD');
-      console.log('[ChatBotQARouter] Highest similarity was:', similarChunks[0]?.similarity);
-      console.log('[ChatBotQARouter] Threshold required:', threshold);
-      console.log('[ChatBotQARouter] Gap:', threshold - (similarChunks[0]?.similarity || 0));
-    }
-
     // Check if we have any relevant context
     if (filteredChunks.length === 0) {
-      console.log('[ChatBotQARouter] No relevant context found above threshold');
       return {
         answer: "I don't have enough information to answer that question.",
         confidence: 0,
@@ -675,10 +542,8 @@ export class ChatBotQARouter {
 
     // Build CV context
     const cvContext = buildCVContext(filteredChunks, style);
-    console.log('[ChatBotQARouter] CV context length:', cvContext ? cvContext.length : 0, 'characters');
 
     if (!cvContext) {
-      console.log('[ChatBotQARouter] Failed to build CV context');
       return {
         answer: "I don't have enough information to answer that question.",
         confidence: 0,
@@ -691,15 +556,11 @@ export class ChatBotQARouter {
 
     // Create prompt
     const prompt = createPrompt(question, cvContext, style, conversationContext);
-    console.log('[ChatBotQARouter] Prompt length:', prompt.length, 'characters');
 
     try {
       // Generate response
       const response = await this.generateResponse(prompt);
       const generationTime = Date.now() - startTime;
-
-      console.log('[ChatBotQARouter] Generated response length:', response.text?.length || 0);
-      console.log('[ChatBotQARouter] Generation timing:', generationTime, 'ms');
 
       return {
         answer: response.text || response.answer || '',
@@ -731,15 +592,12 @@ export class ChatBotQARouter {
    * @returns {Object} Formatted and validated response
    */
   formatAndValidateResponse(response, originalQuery, metrics = {}) {
-    console.log('[ChatBotQARouter] Step 10: Response formatting and validation');
-
     // Skip validation for EQA responses - they are naturally short and direct
     // EQA extracts exact answers from context, so short responses are expected and valid
     const skipValidation = response.method === 'eqa';
-    
+
     let validated;
     if (skipValidation) {
-      console.log('[ChatBotQARouter] Skipping validation for EQA response (extractive answers are naturally short)');
       validated = {
         answer: response.answer,
         confidence: response.confidence,
@@ -762,13 +620,6 @@ export class ChatBotQARouter {
       );
     }
 
-    console.log('[ChatBotQARouter] Validation result:', {
-      originalConfidence: response.confidence,
-      validatedConfidence: validated.confidence,
-      qualityScore: validated.metrics.qualityScore,
-      qualityFlags: validated.metrics.qualityFlags
-    });
-
     // Calculate total processing time
     const totalTime = metrics.totalPipelineTime + (response.processingTime || 0);
 
@@ -790,16 +641,6 @@ export class ChatBotQARouter {
         qualityFlags: validated.metrics.qualityFlags || []
       }
     };
-
-    console.log('[ChatBotQARouter] Final response format:', {
-      answerLength: formattedResponse.answer.length,
-      confidence: formattedResponse.confidence,
-      intent: formattedResponse.intent,
-      method: formattedResponse.method,
-      totalTime: formattedResponse.processingTime
-    });
-
-    console.log('[ChatBotQARouter] All metrics:', formattedResponse.metrics);
 
     return formattedResponse;
   }
@@ -835,12 +676,10 @@ export class ChatBotQARouter {
    */
   async processQuery(question, options = {}) {
     const startTime = Date.now();
-    console.log('[ChatBotQARouter] ========================================');
-    console.log('[ChatBotQARouter] Processing query:', question);
-    console.log('[ChatBotQARouter] Options:', options);
 
     if (!this.isInitialized) {
       console.error('[ChatBotQARouter] Router not initialized');
+
       return this.formatErrorResponse(
         new Error('Router not initialized'),
         question
@@ -867,10 +706,6 @@ export class ChatBotQARouter {
         question,
         pipelineResult.metrics
       );
-
-      const totalTime = Date.now() - startTime;
-      console.log('[ChatBotQARouter] Query processing complete:', totalTime, 'ms');
-      console.log('[ChatBotQARouter] ========================================');
 
       return finalResponse;
 
@@ -909,31 +744,25 @@ export class ChatBotQARouter {
    * Cleanup and terminate all workers
    */
   cleanup() {
-    console.log('[ChatBotQARouter] Cleanup initiated');
-
     // Clear pending requests
     if (this.pendingRequests.size > 0) {
-      console.log('[ChatBotQARouter] Clearing', this.pendingRequests.size, 'pending requests');
       this.pendingRequests.clear();
     }
 
     // Terminate workers using communicators
     if (this.embeddingCommunicator) {
-      console.log('[ChatBotQARouter] Terminating embedding worker');
       this.embeddingCommunicator.terminate();
       this.embeddingCommunicator = null;
       this.embeddingWorker = null;
     }
 
     if (this.textGenCommunicator) {
-      console.log('[ChatBotQARouter] Terminating text generation worker');
       this.textGenCommunicator.terminate();
       this.textGenCommunicator = null;
       this.textGenWorker = null;
     }
 
     if (this.eqaCommunicator) {
-      console.log('[ChatBotQARouter] Terminating EQA worker');
       this.eqaCommunicator.terminate();
       this.eqaCommunicator = null;
       this.eqaWorker = null;
@@ -942,7 +771,5 @@ export class ChatBotQARouter {
     // Reset state
     this.isInitialized = false;
     this.cvChunks = [];
-
-    console.log('[ChatBotQARouter] Cleanup complete - all workers terminated, state reset');
   }
 }
