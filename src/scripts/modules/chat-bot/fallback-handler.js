@@ -1,5 +1,15 @@
 /**
- * FallbackHandler - Manages query understanding failure detection and fallback flows
+ * FallbackHandler - Manages UX for failed query scenarios
+ * 
+ * ARCHITECTURE:
+ * - Router (chat-bot-qa-router.js): Handles ALL technical decisions (confidence, quality, method selection)
+ * - FallbackHandler (this file): Handles ONLY UX concerns (messages, email forms, attempt tracking)
+ * 
+ * FLOW:
+ * 1. Router tries multiple methods (EQA → Text Generation → Fallback)
+ * 2. Router returns result with method='fallback' if all methods fail
+ * 3. FallbackHandler provides appropriate UX based on attempt count
+ * 
  * Implements two-attempt fallback system: rephrase request → email contact
  */
 
@@ -9,18 +19,28 @@ class FallbackHandler {
     this.conversationManager = conversationManager;
     this.fallbackAttempts = new Map(); // Track attempts per session
     this.maxAttempts = 2;
-    this.confidenceThreshold = 0.5;
-    this.lowConfidenceThreshold = 0.3;
+    
+    // NOTE: These thresholds are deprecated and should be removed in future refactoring.
+    // The router (chat-bot-qa-router.js) now handles all confidence/quality decisions.
+    // FallbackHandler should only manage UX concerns (rephrase prompts, email forms, etc.)
+    this.confidenceThreshold = 0.5; // For conversational responses (deprecated)
+    this.lowConfidenceThreshold = 0.05; // Lowered to match EQA threshold (deprecated)
   }
 
   /**
    * Check if a response should trigger fallback handling
+   * NOTE: This method is deprecated - the router now handles all confidence/quality decisions.
+   * This is kept for backward compatibility but should be removed in future refactoring.
+   * 
+   * @deprecated Use router's method='fallback' signal instead
    * @param {number} confidence - Confidence score from ML processing
    * @param {string} query - Original user query
    * @param {Array} matchedSections - Matched CV sections
    * @returns {Object} Fallback decision with type and action
    */
   shouldTriggerFallback(confidence, query, matchedSections = []) {
+    console.warn('[FallbackHandler] shouldTriggerFallback is deprecated - router should handle quality decisions');
+    
     // No matches found
     if (!matchedSections || matchedSections.length === 0) {
       return {

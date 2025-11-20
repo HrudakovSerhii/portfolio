@@ -202,20 +202,57 @@ class ChatUI {
     const loadingMessage = this.loadingContainer.querySelector('.loading-message');
     loadingMessage.textContent = message;
 
-    // Animate progress bar
+    // Initialize progress bar
     const progressBar = this.loadingContainer.querySelector('.progress-bar');
     progressBar.style.width = '0%';
 
-    // Simulate loading progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 15;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-      }
-      progressBar.style.width = `${progress}%`;
-    }, 200);
+    // Store progress bar reference for external updates
+    this.progressBar = progressBar;
+    
+    // Initialize progress tracking
+    this.progressState = {
+      embedding: 0,
+      eqa: 0,
+      textGen: 0
+    };
+  }
+
+  /**
+   * Update loading progress with weighted calculation
+   * Model sizes: SmolLM: 270MB (76%), distilbert-squad: 65MB (18%), all-MiniLM-L6-v2: 23MB (6%)
+   * @param {string} worker - Worker name ('embedding', 'eqa', 'textGen')
+   * @param {number} progress - Progress value (0-100)
+   */
+  updateProgress(worker, progress) {
+    if (!this.progressBar || !this.progressState) return;
+
+    // Update worker-specific progress
+    this.progressState[worker] = Math.min(100, Math.max(0, progress));
+
+    // Calculate weighted total progress
+    // Weights based on model sizes: Embedding 6%, EQA 18%, SmolLM 76%
+    const weights = {
+      embedding: 0.06,
+      eqa: 0.18,
+      textGen: 0.76
+    };
+
+    const totalProgress = 
+      (this.progressState.embedding * weights.embedding) +
+      (this.progressState.eqa * weights.eqa) +
+      (this.progressState.textGen * weights.textGen);
+
+    // Update progress bar smoothly
+    this.progressBar.style.width = `${totalProgress.toFixed(1)}%`;
+  }
+
+  /**
+   * Complete progress bar animation
+   */
+  completeProgress() {
+    if (this.progressBar) {
+      this.progressBar.style.width = '100%';
+    }
   }
 
   /**

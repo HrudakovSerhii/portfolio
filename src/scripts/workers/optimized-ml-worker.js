@@ -1,38 +1,44 @@
 /**
  * Optimized ML Worker for Text Generation
  * Simplified approach focused on better prompting and response quality
+ *
+ * Note: Uses @huggingface/transformers (not @xenova/transformers) because
+ * SmolLM2 models are only available in the HuggingFace package
  */
 
 // Global variables for transformers
 let pipeline, env;
 
+const MAX_TOKENS = 200;
+
+// TODO: Check why we do this.
 // Load transformers library dynamically
 async function loadTransformers() {
-  console.log('[OptimizedMLWorker] Starting transformers library load...');
-  const loadStartTime = Date.now();
-
   try {
-    console.log('[OptimizedMLWorker] Importing transformers from CDN...');
     const transformers = await import(
       "https://cdn.jsdelivr.net/npm/@huggingface/transformers"
     );
 
-    console.log('[OptimizedMLWorker] Transformers imported successfully, configuring...');
     pipeline = transformers.pipeline;
     env = transformers.env;
 
-    // Configure environment
+    // Allow remote models (required for initial download)
     env.allowRemoteModels = true;
+
+    // Transformers.js will automatically use browser's Cache API
     env.allowLocalModels = false;
+
+    // Allow remote models (required for initial download)
+    env.allowRemoteModels = true;
+
+    // Transformers.js will automatically use browser's Cache API
+    env.allowLocalModels = false;
+
     env.backends.onnx.wasm.numThreads = 1;
     env.backends.onnx.wasm.simd = true;
 
-    const loadTime = Date.now() - loadStartTime;
-    console.log(`[OptimizedMLWorker] Transformers library loaded successfully in ${loadTime}ms`);
     return true;
   } catch (error) {
-    const loadTime = Date.now() - loadStartTime;
-    console.error(`[OptimizedMLWorker] Failed to load transformers after ${loadTime}ms:`, error);
     return false;
   }
 }
@@ -42,7 +48,7 @@ class OptimizedMLWorker {
     this.model = null;
     this.isInitialized = false;
     this.modelConfig = {
-      name: "HuggingFaceTB/SmolLM2-135M-Instruct",
+      name: "HuggingFaceTB/SmolLM2-135M-Instruct-Q8-mlx",
       type: "text-generation",
       dtype: "q4",
       device: "webgpu"
@@ -53,12 +59,10 @@ class OptimizedMLWorker {
    * Initialize the model
    */
   async initialize() {
-    console.log('[OptimizedMLWorker] Starting initialization process...');
     const initStartTime = Date.now();
 
     try {
       // Step 1: Load transformers library
-      console.log('[OptimizedMLWorker] Step 1: Loading transformers library...');
       const transformersLoadStart = Date.now();
       const transformersLoaded = await loadTransformers();
       const transformersLoadTime = Date.now() - transformersLoadStart;
@@ -66,33 +70,26 @@ class OptimizedMLWorker {
       if (!transformersLoaded) {
         throw new Error("Failed to load transformers library");
       }
-      console.log(`[OptimizedMLWorker] Step 1 completed in ${transformersLoadTime}ms`);
 
       // Step 2: Check WebGPU availability
-      console.log('[OptimizedMLWorker] Step 2: Checking WebGPU availability...');
       const webgpuCheckStart = Date.now();
+
       let deviceToUse = this.modelConfig.device;
 
       if (this.modelConfig.device === 'webgpu') {
         const webgpuAvailable = await this.checkWebGPUAvailability();
-        const webgpuCheckTime = Date.now() - webgpuCheckStart;
-        console.log(`[OptimizedMLWorker] WebGPU check completed in ${webgpuCheckTime}ms, available: ${webgpuAvailable}`);
 
         if (!webgpuAvailable) {
-          console.warn('[OptimizedMLWorker] WebGPU not available, falling back to WASM');
           deviceToUse = 'wasm';
+
           this.postMessage({
             type: "status",
             message: "WebGPU not available, using WASM backend",
           });
         }
-      } else {
-        const webgpuCheckTime = Date.now() - webgpuCheckStart;
-        console.log(`[OptimizedMLWorker] Skipping WebGPU check, using ${deviceToUse} (${webgpuCheckTime}ms)`);
       }
 
       // Step 3: Load the model
-      console.log(`[OptimizedMLWorker] Step 3: Loading model ${this.modelConfig.name} with device: ${deviceToUse}...`);
       this.postMessage({
         type: "status",
         message: `Loading ${this.modelConfig.name} model...`,
@@ -111,7 +108,6 @@ class OptimizedMLWorker {
         {
           quantized: true,
           progress_callback: (progress) => {
-            console.log('[OptimizedMLWorker] Model loading progress:', progress);
             this.postMessage({
               type: "progress",
               progress: progress,
@@ -121,12 +117,10 @@ class OptimizedMLWorker {
       );
 
       const modelLoadTime = Date.now() - modelLoadStart;
-      console.log(`[OptimizedMLWorker] Model loaded successfully in ${modelLoadTime}ms`);
 
       this.isInitialized = true;
 
       const totalInitTime = Date.now() - initStartTime;
-      console.log(`[OptimizedMLWorker] Initialization completed successfully in ${totalInitTime}ms`);
 
       this.postMessage({
         type: "ready",
@@ -143,7 +137,7 @@ class OptimizedMLWorker {
 
     } catch (error) {
       const totalInitTime = Date.now() - initStartTime;
-      console.error(`[OptimizedMLWorker] Failed to initialize ML model after ${totalInitTime}ms:`, error);
+
       this.postMessage({
         type: "ready",
         success: false,
@@ -157,46 +151,46 @@ class OptimizedMLWorker {
   }
 
   /**
-   * Check WebGPU availability with detailed diagnostics
+   * Check WebGPU availability with detailed dagnostics
    */
   async checkWebGPUAvailability() {
-    console.log('[OptimizedMLWorker] Starting WebGPU availability check...');
-
     try {
       // Check if WebGPU is supported
-      console.log('[OptimizedMLWorker] Checking navigator.gpu availability...');
       if (!navigator.gpu) {
         console.warn('[OptimizedMLWorker] WebGPU not supported: navigator.gpu not available');
+
         return false;
       }
 
       // Check Cross-Origin Isolation (required for WebGPU)
-      console.log('[OptimizedMLWorker] Checking Cross-Origin Isolation...');
       if (!crossOriginIsolated) {
         console.warn('[OptimizedMLWorker] WebGPU requires Cross-Origin Isolation. Server headers needed.');
+
         return false;
       }
 
       // Request adapter
-      console.log('[OptimizedMLWorker] Requesting WebGPU adapter...');
       const adapter = await navigator.gpu.requestAdapter();
+
       if (!adapter) {
         console.warn('[OptimizedMLWorker] WebGPU adapter not available');
+
         return false;
       }
 
       // Request device
-      console.log('[OptimizedMLWorker] Requesting WebGPU device...');
       const device = await adapter.requestDevice();
+
       if (!device) {
         console.warn('[OptimizedMLWorker] WebGPU device not available');
+
         return false;
       }
 
-      console.log('[OptimizedMLWorker] WebGPU successfully initialized');
       return true;
     } catch (error) {
       console.warn('[OptimizedMLWorker] WebGPU initialization failed:', error.message);
+
       return false;
     }
   }
@@ -205,10 +199,9 @@ class OptimizedMLWorker {
    * Generate text response
    */
   async generateText(prompt, options = {}) {
-    console.log('[OptimizedMLWorker] generateText called with options:', options);
-
     if (!this.model || !this.isInitialized) {
       console.error('[OptimizedMLWorker] Model not initialized! isInitialized:', this.isInitialized, 'model:', !!this.model);
+
       throw new Error("Model not initialized");
     }
 
@@ -225,34 +218,24 @@ class OptimizedMLWorker {
         early_stopping: true // Add early stopping for better control
       };
 
-      console.log('[OptimizedMLWorker] Calling model with options:', modelOptions);
-      console.log('[OptimizedMLWorker] Prompt length:', prompt.length);
-
       const output = await this.model(prompt, modelOptions);
-
-      console.log('[OptimizedMLWorker] Raw model output:', output);
-      console.log('[OptimizedMLWorker] Output type:', typeof output, 'isArray:', Array.isArray(output));
 
       // Extract generated text
       let generatedText = "";
       if (Array.isArray(output) && output.length > 0) {
         generatedText = output[0].generated_text || "";
-        console.log('[OptimizedMLWorker] Extracted from array:', generatedText);
       } else if (output.generated_text) {
         generatedText = output.generated_text;
-        console.log('[OptimizedMLWorker] Extracted from object:', generatedText);
       } else {
-        console.warn('[OptimizedMLWorker] Unexpected output format:', output);
+        console.warn('[OptimizedMLWorker] ⚠️ Unexpected output format:', output);
       }
 
-      console.log('[OptimizedMLWorker] Raw generated text:', JSON.stringify(generatedText));
-
       const cleanedText = this.cleanAndValidateText(generatedText);
-      console.log('[OptimizedMLWorker] Cleaned and validated text:', JSON.stringify(cleanedText));
 
       return cleanedText;
     } catch (error) {
-      console.error('[OptimizedMLWorker] Failed to generate text:', error);
+      console.error('[OptimizedMLWorker] ❌ Failed to generate text:', error, error.stack);
+
       throw error;
     }
   }
@@ -261,10 +244,10 @@ class OptimizedMLWorker {
    * Clean and validate generated text with strict filtering
    */
   cleanAndValidateText(text) {
-    console.log('[OptimizedMLWorker] cleanAndValidateText input:', JSON.stringify(text));
-
     if (!text || typeof text !== 'string') {
-      console.warn('[OptimizedMLWorker] Invalid input text:', typeof text, text);
+      console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Invalid input text');
+      console.warn('[OptimizedMLWorker] Type:', typeof text, 'Value:', text);
+
       return null;
     }
 
@@ -275,46 +258,52 @@ class OptimizedMLWorker {
       .replace(/\s+/g, " ") // Normalize whitespace
       .trim();
 
-    console.log('[OptimizedMLWorker] Cleaned text:', JSON.stringify(cleaned));
-
     // Validate the text doesn't contain hallucinated content
     const invalidPatterns = [
-      /serdh?ii/i, // Misspelled name variations
-      /serlindo/i,
-      /serdoubust/i,
-      /serdondogs/i,
-      /webpack/i, // Random technical terms not in context
-      /pylons/i,
-      /ejs/i,
-      /\d+\s+guys/i, // Random numbers with "guys"
-      /work out of here/i, // Nonsensical phrases
-      /ain't no joke/i,
-      /made my life so much easier/i
+      { pattern: /serdh?ii/i, name: 'misspelled_name_serdii' },
+      { pattern: /serlindo/i, name: 'misspelled_name_serlindo' },
+      { pattern: /serdoubust/i, name: 'misspelled_name_serdoubust' },
+      { pattern: /serdondogs/i, name: 'misspelled_name_serdondogs' },
+      { pattern: /webpack/i, name: 'random_tech_webpack' },
+      { pattern: /pylons/i, name: 'random_tech_pylons' },
+      { pattern: /ejs/i, name: 'random_tech_ejs' },
+      { pattern: /\d+\s+guys/i, name: 'random_numbers_guys' },
+      { pattern: /work out of here/i, name: 'nonsensical_phrase_1' },
+      { pattern: /ain't no joke/i, name: 'nonsensical_phrase_2' },
+      { pattern: /made my life so much easier/i, name: 'nonsensical_phrase_3' }
     ];
 
     // Check for invalid patterns
-    for (const pattern of invalidPatterns) {
+    for (const { pattern, name } of invalidPatterns) {
       if (pattern.test(cleaned)) {
-        console.warn('[OptimizedMLWorker] Generated text contains hallucinated content:', cleaned, 'Pattern:', pattern);
+        console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Hallucinated content detected');
+        console.warn('[OptimizedMLWorker] Pattern matched:', name);
+        console.warn('[OptimizedMLWorker] Pattern:', pattern);
+        console.warn('[OptimizedMLWorker] Text:', cleaned);
+
         return null; // Return null to indicate invalid generation
       }
     }
 
     // Check if text is too short or too generic
     if (cleaned.length < 10) {
-      console.warn('[OptimizedMLWorker] Generated text too short:', cleaned.length, 'chars');
+      console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Text too short');
+      console.warn('[OptimizedMLWorker] Length:', cleaned.length, 'chars (minimum: 10)', '[OptimizedMLWorker]: Text', cleaned);
+
       return null;
     }
 
     // Check if text starts with first person or contains relevant content
-    if (!cleaned.match(/^(I|Yes|No|Based|According|From|With|Having|As|My)/i) && 
-        !cleaned.includes('years') && 
-        !cleaned.includes('experience')) {
-      console.warn('[OptimizedMLWorker] Generated text does not appear relevant:', cleaned);
+    const startsWithFirstPerson = /^(I|Yes|No|Based|According|From|With|Having|As|My)/i.test(cleaned);
+    const containsYears = cleaned.includes('years');
+    const containsExperience = cleaned.includes('experience');
+
+    if (!startsWithFirstPerson && !containsYears && !containsExperience) {
+      console.warn('[OptimizedMLWorker] ❌ VALIDATION FAILED: Text does not appear relevant', '[OptimizedMLWorker] Text:', cleaned);
+
       return null;
     }
 
-    console.log('[OptimizedMLWorker] Text validation passed:', JSON.stringify(cleaned));
     return cleaned;
   }
 
@@ -340,27 +329,21 @@ class OptimizedMLWorker {
   /**
    * Process generation request with validation
    */
-  async processGeneration(data) {
-    const { prompt, query, maxTokens, temperature, requestId } = data;
-    console.log('[OptimizedMLWorker] Processing generation with requestId:', requestId);
-    console.log('[OptimizedMLWorker] Prompt preview:', prompt);
+  async processGeneration(data, requestId) {
+    const { prompt, query, maxTokens, temperature } = data || {};
 
     const startTime = Date.now();
 
     try {
-      console.log('[OptimizedMLWorker] Calling generateText...');
       const generatedText = await this.generateText(prompt, {
-        maxTokens: Math.min(maxTokens || 60, 60), // Cap at 60 tokens
+        maxTokens: Math.min(maxTokens || MAX_TOKENS, MAX_TOKENS), // Cap at 60 tokens
         temperature: Math.min(temperature || 0.3, 0.3) // Cap temperature
       });
 
       const processingTime = Date.now() - startTime;
-      console.log('[OptimizedMLWorker] Generated text:', generatedText);
-      console.log('[OptimizedMLWorker] Processing time:', processingTime + 'ms');
 
       // If generation failed validation, return null and error
       if (!generatedText) {
-        console.warn('[OptimizedMLWorker] Generated text failed validation, sending error response');
         this.postMessage({
           type: "error",
           requestId: requestId,
@@ -378,9 +361,7 @@ class OptimizedMLWorker {
 
       // Validate response format
       const formatValidation = this.validateResponseFormat(generatedText);
-      console.log('[OptimizedMLWorker] Format validation:', formatValidation);
 
-      console.log('[OptimizedMLWorker] Sending successful response with requestId:', requestId);
       this.postMessage({
         type: "response",
         requestId: requestId,
@@ -397,7 +378,6 @@ class OptimizedMLWorker {
       });
 
     } catch (error) {
-      console.error('[OptimizedMLWorker] Generation failed:', error);
       this.postMessage({
         type: "error",
         requestId: requestId,
@@ -414,18 +394,10 @@ class OptimizedMLWorker {
   }
 
   /**
-   * Process chat-bot query (handles process_query message type)
+   * Process chatbot query (handles process_query message type)
    */
-  async processQuery(data) {
-    const { message, context = [], style = 'developer', cvData } = data;
-
-    console.log('🔍 WORKER: Processing query:', {
-      message,
-      contextLength: context.length,
-      context: context.slice(0, 2), // Log first 2 context items
-      style,
-      hasCvData: !!cvData
-    });
+  async processQuery(data, requestId) {
+    const { message, context = [], style = 'developer', cvData } = data || {};
 
     if (!message) {
       this.postMessage({
@@ -439,19 +411,10 @@ class OptimizedMLWorker {
     let cvContext = null;
     if (cvData) {
       cvContext = this.findRelevantCVContext(message, cvData);
-      console.log('🎯 WORKER: Found CV context:', {
-        contextSections: cvContext ? cvContext.length : 0,
-        sectionKeys: cvContext ? cvContext.map(s => s.key) : []
-      });
     }
 
     // Build prompt from message, context, and CV data
     const prompt = this.buildChatPrompt(message, context, style, cvContext);
-
-    console.log('📝 WORKER: Built prompt:', {
-      promptLength: prompt.length,
-      prompt: prompt.substring(0, 300) + '...' // Log first 300 chars
-    });
 
     // Process using existing generation logic
     await this.processGeneration({
@@ -459,7 +422,7 @@ class OptimizedMLWorker {
       query: message,
       maxTokens: 60,
       temperature: 0.3
-    });
+    }, requestId);
   }
 
   /**
@@ -491,12 +454,6 @@ class OptimizedMLWorker {
       }
     });
 
-    console.log('🔍 WORKER: CV context search:', {
-      searchTerms: messageLower,
-      foundSections: relevantSections.map(s => s.key),
-      totalSections: Object.keys(cvData.knowledge_base).length
-    });
-
     return relevantSections.length > 0 ? relevantSections : null;
   }
 
@@ -504,21 +461,13 @@ class OptimizedMLWorker {
    * Build chat prompt for the model
    */
   buildChatPrompt(message, context = [], style = 'developer', cvContext = null) {
-    console.log('🏗️ WORKER: Building prompt with:', {
-      message,
-      contextItems: context.length,
-      style,
-      hasCvContext: !!cvContext,
-      cvSections: cvContext ? cvContext.map(s => s.key) : []
-    });
-
     // Create a focused prompt for the small model
     let prompt = "You are Serhii, a professional developer. Answer briefly in first person.\n\n";
 
     // Add CV context if available (this is the key part!)
     if (cvContext && cvContext.length > 0) {
       prompt += "Based on this information about Serhii:\n";
-      cvContext.forEach(section => {
+      cvContext.forEach((section, idx) => {
         prompt += `${section.content}\n\n`;
       });
     }
@@ -526,8 +475,10 @@ class OptimizedMLWorker {
     // Add conversation context if available (keep it minimal for small model)
     if (context.length > 0) {
       const recentContext = context.slice(-2); // Only use last 2 context items
+
       prompt += "Recent conversation:\n";
-      recentContext.forEach(item => {
+      recentContext.forEach((item, idx) => {
+
         prompt += `- ${item}\n`;
       });
       prompt += "\n";
@@ -536,12 +487,6 @@ class OptimizedMLWorker {
     prompt += `Question: ${message}\n`;
     prompt += "Answer: I";
 
-    console.log('✅ WORKER: Final prompt built:', {
-      length: prompt.length,
-      preview: prompt.substring(0, 200) + '...',
-      hasCvData: !!cvContext
-    });
-
     return prompt;
   }
 
@@ -549,10 +494,7 @@ class OptimizedMLWorker {
    * Cleanup resources
    */
   cleanup() {
-    // Clean up model resources if needed
     if (this.model) {
-      // Note: Transformers.js doesn't have explicit cleanup methods
-      // but we can clear the reference
       this.model = null;
     }
 
@@ -567,7 +509,7 @@ class OptimizedMLWorker {
   /**
    * Get performance metrics
    */
-  getPerformanceMetrics() {
+  getPerformanceMetrics(requestId) {
     const metrics = {
       isInitialized: this.isInitialized,
       modelName: this.modelConfig.name,
@@ -582,6 +524,7 @@ class OptimizedMLWorker {
 
     this.postMessage({
       type: "performance_metrics",
+      requestId: requestId,
       metrics: metrics
     });
   }
@@ -599,36 +542,27 @@ const worker = new OptimizedMLWorker();
 
 // Handle messages from main thread
 self.addEventListener('message', async (event) => {
-  const { type, ...data } = event.data;
-  console.log('[OptimizedMLWorker] Received message:', type, data);
+  const { type, data, requestId } = event.data;
 
   switch (type) {
     case 'initialize':
-      console.log('[OptimizedMLWorker] Processing initialize message...');
       await worker.initialize();
       break;
 
     case 'generate':
-      console.log('[OptimizedMLWorker] Processing generate message...');
-      await worker.processGeneration(data);
+      await worker.processGeneration(data, requestId);
       break;
 
     case 'process_query':
-      console.log('[OptimizedMLWorker] Processing process_query message...');
-      // Handle chat-bot query processing
-      await worker.processQuery(data);
+      await worker.processQuery(data, requestId);
       break;
 
     case 'cleanup':
-      console.log('[OptimizedMLWorker] Processing cleanup message...');
-      // Handle cleanup request
       worker.cleanup();
       break;
 
     case 'get_performance_metrics':
-      console.log('[OptimizedMLWorker] Processing get_performance_metrics message...');
-      // Handle performance metrics request
-      worker.getPerformanceMetrics();
+      worker.getPerformanceMetrics(requestId);
       break;
 
     default:
@@ -638,7 +572,6 @@ self.addEventListener('message', async (event) => {
 
 // Handle errors
 self.addEventListener('error', (error) => {
-  console.error('Worker error:', error);
   self.postMessage({
     type: 'error',
     error: error.message || 'Unknown worker error'
@@ -646,18 +579,24 @@ self.addEventListener('error', (error) => {
 });
 
 self.addEventListener('unhandledrejection', (event) => {
-  console.error('[OptimizedMLWorker] Unhandled promise rejection in worker:', event.reason);
   self.postMessage({
     type: 'error',
     error: event.reason?.message || 'Unhandled promise rejection'
   });
 });
 
-// Send startup message
-console.log('[OptimizedMLWorker] Worker script loaded, sending startup message...');
 self.postMessage({
   type: 'workerReady',
   success: true,
   message: 'OptimizedMLWorker script loaded and ready to receive messages',
   timestamp: Date.now()
+});
+
+worker.initialize().catch(error => {
+  self.postMessage({
+    type: 'ready',
+    success: false,
+    error: error.message,
+    stack: error.stack
+  });
 });

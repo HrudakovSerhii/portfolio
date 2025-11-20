@@ -424,19 +424,12 @@ class CVDataService {
               details: section.details || {},
               relatedSections: section.relatedSections || []
             },
-            // Include existing embeddings if available
-            embedding: section.embeddings || null
+            // Include existing embeddings if available (only if valid array)
+            embedding: (section.embeddings && Array.isArray(section.embeddings) && section.embeddings.length > 0) ? section.embeddings : null
           });
         }
       }
     }
-
-    console.log('📝 CV-DATA-SERVICE: CV chunks prepared:', {
-      totalChunks: chunks.length,
-      chunkIds: chunks.map(c => c.id),
-      avgLength: chunks.reduce((sum, c) => sum + c.text.length, 0) / chunks.length,
-      categories: Object.keys(this.cvData.sections)
-    });
 
     return chunks;
   }
