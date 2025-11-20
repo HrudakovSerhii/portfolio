@@ -107,23 +107,23 @@
     - Show "Change Role" button if all sections were revealed
     - _Requirements: 17.3, 17.4, 17.5, 17.6_
 
-- [ ] 8. Implement AppController class - Personalization flow
-  - [ ] 8.1 Create personalization modal display and handling
+- [x] 8. Implement AppController class - Personalization flow
+  - [x] 8.1 Create personalization modal display and handling
     - Write showPersonalizationModal() that renders and displays the modal
     - Implement handlePersonalization() that stores name and role in StateManager
     - Hide personalization modal after role selection
     - Trigger first section revelation (Hero) after personalization
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
   
-  - [ ] 8.2 Implement initial Hero section revelation
+  - [x] 8.2 Implement initial Hero section revelation
     - Call revealSection() with 'hero' section ID after personalization
     - Add Hero navigation item with typewriter animation
     - Render Hero section content with role-based data
     - Display action prompt for next section (About)
     - _Requirements: 5.1, 5.2_
 
-- [ ] 9. Implement AppController class - Section revelation
-  - [ ] 9.1 Create section revelation orchestration
+- [x] 9. Implement AppController class - Section revelation
+  - [x] 9.1 Create section revelation orchestration
     - Write async revealSection() that accepts sectionId and optional customQuery
     - Display typing indicator while fetching content from ContentMiddleware
     - Render section using TemplateService with zig-zag layout logic
@@ -132,7 +132,7 @@
     - Store revealed section in StateManager
     - _Requirements: 5.3, 5.4, 6.6, 6.7, 7.1, 7.2, 7.3, 15.1, 15.2, 15.3_
   
-  - [ ] 9.2 Implement action prompt interaction handling
+  - [x] 9.2 Implement action prompt interaction handling
     - Set up event listeners on action prompt input and button
     - Change button text from "Get to know [Section]" to "Ask" when input has value
     - Handle button click to trigger next section revelation
@@ -141,28 +141,28 @@
     - Remove action prompt after interaction
     - _Requirements: 6.1, 6.3, 6.4, 6.5, 6.6, 6.7, 7.2_
   
-  - [ ] 9.3 Add navigation item with typewriter effect
+  - [x] 9.3 Add navigation item with typewriter effect
     - Render navigation item using TemplateService
     - Apply typewriter animation to navigation title
     - Insert navigation item into navigation panel
     - Set up click handler for navigation scrolling
     - _Requirements: 5.3, 5.5_
   
-  - [ ] 9.4 Display next action prompt or completion state
+  - [x] 9.4 Display next action prompt or completion state
     - Check if current section is the last in SECTION_ORDER
     - If not last, render and display action prompt for next section
     - If last section, show "Change Role" button in header
     - _Requirements: 4.4, 5.6_
 
-- [ ] 10. Implement AppController class - Navigation
-  - [ ] 10.1 Create navigation click handling
+- [x] 10. Implement AppController class - Navigation
+  - [x] 10.1 Create navigation click handling
     - Write handleNavigationClick() that scrolls to target section
     - Use smooth scroll behavior with 800ms duration
     - Update StateManager with new scroll position
     - Ensure navigation works regardless of how many sections are revealed
     - _Requirements: 10.2, 10.3_
   
-  - [ ] 10.2 Implement navigation panel toggle
+  - [x] 10.2 Implement navigation panel toggle
     - Write toggleNavigationPanel() that switches between expanded and collapsed states
     - Update CSS classes to show/hide navigation titles
     - Maintain scroll position during toggle
