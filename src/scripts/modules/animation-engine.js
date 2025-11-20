@@ -47,6 +47,7 @@ class AnimationEngine {
     // Skip animation if user prefers reduced motion
     if (!this.shouldAnimate()) {
       element.textContent = text;
+
       return Promise.resolve();
     }
 
@@ -71,78 +72,49 @@ class AnimationEngine {
    * @param {string} aspectClass - CSS class for aspect ratio (e.g., 'aspect-video')
    * @returns {HTMLElement} Container element with placeholder, image, and badge
    */
-  createGenerativeImage(src, alt, aspectClass) {
-    // Create container
-    const container = document.createElement('div');
-    container.className = `image-container ${aspectClass}`;
-    container.style.position = 'relative';
-    container.style.overflow = 'hidden';
+  createGenerativeImage(src, alt, aspectClass = '') {
+    // Get template from DOM
+    const template = document.getElementById('generative-image-template');
 
-    // Create animated gradient placeholder
-    const placeholder = document.createElement('div');
-    placeholder.className = 'image-placeholder';
-    placeholder.style.position = 'absolute';
-    placeholder.style.top = '0';
-    placeholder.style.left = '0';
-    placeholder.style.width = '100%';
-    placeholder.style.height = '100%';
-    placeholder.style.background = 'linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)';
-    placeholder.style.backgroundSize = '200% 200%';
-    placeholder.style.animation = 'gradient-shift 2s ease infinite';
-    container.appendChild(placeholder);
+    if (!template) {
+      console.error('Generative image template not found');
+      return null;
+    }
 
-    // Create image element
-    const img = document.createElement('img');
+    // Clone template content
+    const container = template.content.cloneNode(true).querySelector('.generative-image');
+    
+    // Add aspect ratio class if provided
+    if (aspectClass) {
+      container.classList.add(aspectClass);
+    }
+
+    // Set image attributes
+    const img = container.querySelector('.generative-image__img');
+    const badge = container.querySelector('.generative-image__badge');
+    
     img.src = src;
     img.alt = alt;
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-    img.style.position = 'relative';
-    img.style.zIndex = '1';
-
-    // Create "Generating image..." badge
-    const badge = document.createElement('div');
-    badge.className = 'generation-badge';
-    badge.textContent = 'Generating image...';
-    badge.style.position = 'absolute';
-    badge.style.bottom = '1rem';
-    badge.style.right = '1rem';
-    badge.style.padding = '0.5rem 1rem';
-    badge.style.background = 'rgba(0, 0, 0, 0.7)';
-    badge.style.color = 'white';
-    badge.style.borderRadius = '0.5rem';
-    badge.style.fontSize = '0.875rem';
-    badge.style.zIndex = '2';
-    badge.style.transition = 'opacity 0.3s ease';
-    container.appendChild(badge);
 
     // Handle animations based on user preference
     if (!this.shouldAnimate()) {
       // Skip animations - show image immediately
-      img.style.filter = 'none';
-      img.style.opacity = '1';
-      container.appendChild(img);
+      img.classList.add('loaded');
       badge.remove();
+
       return container;
     }
-
-    // Apply initial blur and opacity for animation
-    img.style.filter = 'blur(20px)';
-    img.style.opacity = '0';
-    img.style.transition = `filter ${ANIMATION_CONFIG.image.transitionDuration}ms ease, opacity ${ANIMATION_CONFIG.image.transitionDuration}ms ease`;
 
     // Delay image load by 500ms
     setTimeout(() => {
       // Start loading the image
       img.onload = () => {
-        // Transition from blurred/transparent to sharp/opaque
-        img.style.filter = 'blur(0px)';
-        img.style.opacity = '1';
+        // Add loaded class to trigger CSS transitions
+        img.classList.add('loaded');
 
         // Fade out and remove badge after 1500ms
         setTimeout(() => {
-          badge.style.opacity = '0';
+          badge.classList.add('fade-out');
           setTimeout(() => {
             badge.remove();
           }, 300); // Wait for fade transition to complete
@@ -152,16 +124,13 @@ class AnimationEngine {
       // Handle image load errors
       img.onerror = () => {
         console.warn(`Failed to load image: ${src}`);
-        img.style.filter = 'none';
-        img.style.opacity = '1';
+        img.classList.add('loaded', 'error');
         badge.textContent = 'Image unavailable';
         setTimeout(() => {
-          badge.style.opacity = '0';
+          badge.classList.add('fade-out');
           setTimeout(() => badge.remove(), 300);
         }, 1000);
       };
-
-      container.appendChild(img);
     }, ANIMATION_CONFIG.image.placeholderDelay);
 
     return container;
