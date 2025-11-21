@@ -24,7 +24,8 @@
   
   // Section header with title and optional query
   .section-header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-2xl;
+    text-align: center;
     
     .section-title {
       font-size: $font-size-3xl;
@@ -45,7 +46,7 @@
   .section-content {
     display: grid;
     gap: $spacing-xl;
-    align-items: center;
+    align-items: start;
     
     // Mobile: vertical stack (image above text)
     @include mobile {
@@ -59,7 +60,7 @@
     
     // Zig-zag layout: image on left
     &.zig-zag-left {
-      .content-image {
+      .content-media {
         @include mobile {
           order: 1;
         }
@@ -82,7 +83,7 @@
     
     // Zig-zag layout: image on right
     &.zig-zag-right {
-      .content-image {
+      .content-media {
         @include mobile {
           order: 1;
         }
@@ -104,18 +105,30 @@
     }
   }
   
-  // Image container with 70% max-width
+  // Media container wrapper
+  .content-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  // Image container with max available space
   .content-image {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
     
     img,
-    .image-container {
-      max-width: 70%;
+    .image-container,
+    .generative-image {
+      width: 100%;
+      max-width: 100%;
       height: auto;
       border-radius: $radius-2xl;
-      object-fit: cover;
+      object-fit: contain;
     }
   }
   
