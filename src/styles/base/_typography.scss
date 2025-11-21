@@ -1,5 +1,7 @@
 // Typography styles
 
+@use 'sass:color';
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: $line-height-tight;
@@ -32,7 +34,7 @@ a {
     transition: color 0.3s ease;
 
     &:hover {
-        color: darken($secondary-color, 10%);
+        color: color.scale($secondary-color, $lightness: -10%);
     }
 }
 

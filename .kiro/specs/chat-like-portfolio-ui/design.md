@@ -310,6 +310,35 @@ class AnimationEngine {
 }
 ```
 
+**Generative Image Component:**
+
+The generative image component creates a sophisticated loading effect that mimics AI image generation. It consists of three layers:
+
+1. **High-Resolution Image Layer (Bottom)**: The actual image loads underneath with initial opacity of 0, transitioning to full opacity when loaded.
+
+2. **Grid Overlay (Middle)**: A configurable grid (default 4x4) displays a low-resolution or blurred version of the image. Each cell shows a portion of the low-res image with proper background positioning to create a mosaic effect. Cells have a 2px blur filter to enhance the "generative" appearance.
+
+3. **Badge Overlay (Top)**: A "Refining..." badge appears in the bottom-right corner with a semi-transparent black background and backdrop blur.
+
+**Animation Sequence:**
+- Grid overlay displays immediately with low-res/blurred image
+- High-res image loads in background
+- Once loaded, grid cells fade out randomly (shuffled order) at configurable intervals (default 50ms)
+- Creates a progressive reveal effect as high-res image shows through
+- Badge fades out and removes after all cells disappear
+- Respects `prefers-reduced-motion` by showing image instantly without animation
+
+**Configuration:**
+```javascript
+interface GridConfig {
+  rows: number;      // Grid rows (default: 4)
+  cols: number;      // Grid columns (default: 4)
+  delay: number;     // Milliseconds between cell removals (default: 50)
+}
+```
+
+The component is sized to 70% of its container width with automatic centering, matching the section image sizing requirements.
+
 **Animation Configuration:**
 ```javascript
 const ANIMATION_CONFIG = {

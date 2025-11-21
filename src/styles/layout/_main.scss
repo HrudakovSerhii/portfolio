@@ -7,12 +7,12 @@
     
     // Account for navigation panel on desktop
     @include desktop {
-        margin-left: $nav-width-expanded;
+        margin-left: $nav-width-collapsed;
         transition: margin-left $transition-base;
         
         // When nav is collapsed
         &.nav-collapsed {
-            margin-left: $nav-width-collapsed;
+            margin-left: $nav-width-expanded;
         }
     }
     

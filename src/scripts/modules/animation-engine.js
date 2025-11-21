@@ -4,6 +4,8 @@
  * Respects user's motion preferences for accessibility
  */
 
+import { createGenerativeImage } from './generative-image/index.js';
+
 // Animation configuration constants
 const ANIMATION_CONFIG = {
   typewriter: {
@@ -67,73 +69,23 @@ class AnimationEngine {
 
   /**
    * Create generative image component with loading animation
+   * Uses the imported createGenerativeImage function with grid overlay effect
    * @param {string} src - Image source URL
    * @param {string} alt - Image alt text
    * @param {string} aspectClass - CSS class for aspect ratio (e.g., 'aspect-video')
-   * @returns {HTMLElement} Container element with placeholder, image, and badge
+   * @param {string} lowResSrc - Optional low-resolution image for grid overlay
+   * @returns {HTMLElement} Container element with grid animation
    */
-  createGenerativeImage(src, alt, aspectClass = '') {
-    // Get template from DOM
-    const template = document.getElementById('generative-image-template');
-
-    if (!template) {
-      console.error('Generative image template not found');
-      return null;
-    }
-
-    // Clone template content
-    const container = template.content.cloneNode(true).querySelector('.generative-image');
-    
-    // Add aspect ratio class if provided
-    if (aspectClass) {
-      container.classList.add(aspectClass);
-    }
-
-    // Set image attributes
-    const img = container.querySelector('.generative-image__img');
-    const badge = container.querySelector('.generative-image__badge');
-    
-    img.src = src;
-    img.alt = alt;
-
-    // Handle animations based on user preference
-    if (!this.shouldAnimate()) {
-      // Skip animations - show image immediately
-      img.classList.add('loaded');
-      badge.remove();
-
-      return container;
-    }
-
-    // Delay image load by 500ms
-    setTimeout(() => {
-      // Start loading the image
-      img.onload = () => {
-        // Add loaded class to trigger CSS transitions
-        img.classList.add('loaded');
-
-        // Fade out and remove badge after 1500ms
-        setTimeout(() => {
-          badge.classList.add('fade-out');
-          setTimeout(() => {
-            badge.remove();
-          }, 300); // Wait for fade transition to complete
-        }, ANIMATION_CONFIG.image.badgeFadeDelay);
-      };
-
-      // Handle image load errors
-      img.onerror = () => {
-        console.warn(`Failed to load image: ${src}`);
-        img.classList.add('loaded', 'error');
-        badge.textContent = 'Image unavailable';
-        setTimeout(() => {
-          badge.classList.add('fade-out');
-          setTimeout(() => badge.remove(), 300);
-        }, 1000);
-      };
-    }, ANIMATION_CONFIG.image.placeholderDelay);
-
-    return container;
+  createGenerativeImage(src, alt, aspectClass = '', lowResSrc = undefined) {
+    // Use the imported generative image component
+    return createGenerativeImage(
+      src,
+      lowResSrc,
+      alt,
+      aspectClass,
+      this.shouldAnimate(),
+      { rows: 4, cols: 4, delay: 50 }
+    );
   }
 
   /**

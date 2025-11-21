@@ -229,7 +229,7 @@
   - **Issues encountered:** Navigation panel was covering section content. Fixed by updating `.main-content` selector in `_main.scss` to add responsive `margin-left` that accounts for navigation panel width (expanded: 16rem, collapsed: 4rem). Mobile has no margin as nav overlays.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.9, 13.1, 13.2, 13.3_
 
-- [ ] 16. Style action prompt component
+- [x] 16. Style action prompt component
   - Create _action-prompt.scss with input and button layout
   - Style text input with placeholder styling and max-length indicator
   - Style action button with hover and active states
@@ -237,7 +237,7 @@
   - Add focus states for accessibility
   - _Requirements: 6.1, 6.3, 6.4, 13.1, 13.2_
 
-- [ ] 17. Style modal components
+- [x] 17. Style modal components
   - Create _modal.scss with glass effect overlay
   - Style personalization modal with centered layout
   - Style role selection buttons with hover and disabled states
@@ -246,14 +246,14 @@
   - Style close button and outside-click overlay
   - _Requirements: 2.1, 2.2, 16.1, 16.2, 16.3, 16.9, 13.1, 13.2_
 
-- [ ] 18. Style loader components
+- [x] 18. Style loader components
   - Create _loader.scss with centered positioning
   - Implement initial page loader with spinner animation
   - Style typing indicator for content generation state
   - Add pulsing animation for loading states
   - _Requirements: 1.1, 15.1, 15.4, 13.1, 13.2_
 
-- [ ] 19. Create animation utilities
+- [x] 19. Create animation utilities
   - Create _animations.scss with keyframe definitions
   - Implement typewriter cursor blink animation
   - Add fade-in and fade-out animations
@@ -262,7 +262,7 @@
   - Define smooth scroll behavior
   - _Requirements: 8.1, 8.2, 9.4, 13.1, 13.2_
 
-- [ ] 20. Implement responsive layouts
+- [x] 20. Implement responsive layouts
   - Create _responsive.scss with mobile-first breakpoints
   - Adjust header layout for mobile screens
   - Modify navigation to overlay on mobile

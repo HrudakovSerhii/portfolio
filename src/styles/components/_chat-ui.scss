@@ -1,6 +1,8 @@
 // Chat UI Component Styles
 // Provides styling for the chat interface, loading states, and interactions
 
+@use 'sass:color';
+
 .chat-container {
   position: fixed;
   top: 50%;
@@ -338,7 +340,7 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.scale($primary-color, $lightness: -10%);
       transform: scale(1.05);
     }
 
@@ -410,7 +412,7 @@
     margin-right: $spacing-sm;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.scale($primary-color, $lightness: -10%);
     }
   }
 
@@ -492,7 +494,7 @@
       transition: background 0.2s ease;
 
       &:hover {
-        background: darken($primary-color, 10%);
+        background: color.scale($primary-color, $lightness: -10%);
       }
     }
 
@@ -535,7 +537,7 @@
   z-index: 999;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: color.scale($primary-color, $lightness: -10%);
     transform: scale(1.1);
     box-shadow: $shadow-lg;
   }

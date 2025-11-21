@@ -148,11 +148,14 @@
   </template>
 
   <!-- Generative Image Template -->
+  <!-- Note: This template is not used directly. The generative image component -->
+  <!-- is created programmatically via createGenerativeImage() in JavaScript -->
+  <!-- for better control over the animation sequence and grid overlay. -->
   <template id="generative-image-template">
-    <div class="generative-image">
-      <div class="generative-image__placeholder"></div>
-      <img class="generative-image__img" src="" alt="" />
-      <div class="generative-image__badge">Generating image...</div>
+    <div class="generative-image aspect-video">
+      <img class="generative-image__high-res" src="" alt="" />
+      <div class="generative-image__overlay"></div>
+      <div class="generative-image__badge">Refining...</div>
     </div>
   </template>
 
