@@ -1,249 +1,362 @@
-/**
- * Modal Component Styles
- * Handles personalization and role change modals
- */
+// Modal Component Styles
+// Glass morphism overlays for personalization and role change modals
+
+// ============================================
+// Modal Overlay (Backdrop)
+// ============================================
 
 .modal-overlay {
+  @include absolute-fill;
+  @include flex-center;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 1;
-  transition: opacity 0.3s ease;
-
-  &--glass {
-    backdrop-filter: blur(8px);
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-}
-
-.modal-content {
-  position: relative;
-  background-color: var(--bg-primary);
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: modalSlideIn 0.3s ease;
-
-  &--personalization {
-    max-width: 600px;
-  }
-
-  &--role-change {
-    max-width: 500px;
-  }
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--text-secondary);
+  z-index: $z-modal-overlay;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $transition-base, visibility $transition-base;
   cursor: pointer;
-  padding: 0.25rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s ease;
 
-  &:hover {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
+  &.active {
+    opacity: 1;
+    visibility: visible;
   }
 
-  &:focus {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
+  // Prevent body scroll when modal is open
+  &.active ~ body {
+    overflow: hidden;
   }
 }
 
-.modal-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
-}
+// ============================================
+// Modal Container
+// ============================================
 
-.modal-description {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
-  line-height: 1.5;
-}
+.modal {
+  @include glass-effect;
+  position: relative;
+  max-width: 90%;
+  width: 500px;
+  padding: $spacing-2xl;
+  border-radius: $radius-2xl;
+  box-shadow: $shadow-lg;
+  cursor: default;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform $transition-base, opacity $transition-base;
 
-.personalization-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-label {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.form-input {
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.1);
+  @include mobile {
+    max-width: 95%;
+    padding: $spacing-xl;
   }
 
-  &--error {
-    border-color: var(--error-color);
-    animation: shake 0.3s ease;
+  .modal-overlay.active & {
+    transform: scale(1);
+    opacity: 1;
   }
 
-  &::placeholder {
-    color: var(--text-tertiary);
+  // Dark theme glass effect
+  [data-theme="dark"] & {
+    @include glass-effect-dark;
   }
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+// ============================================
+// Modal Header
+// ============================================
+
+.modal-header {
+  margin-bottom: $spacing-xl;
+  text-align: center;
+
+  .modal-title {
+    font-size: $font-size-2xl;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: $spacing-sm;
+  }
+
+  .modal-subtitle {
+    font-size: $font-size-base;
+    color: var(--color-text-secondary);
+    line-height: $line-height-normal;
+  }
 }
 
-.role-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+// ============================================
+// Modal Body
+// ============================================
+
+.modal-body {
+  margin-bottom: $spacing-xl;
 }
+
+// ============================================
+// Personalization Modal
+// ============================================
+
+.personalization-modal {
+  .name-input-wrapper {
+    margin-bottom: $spacing-xl;
+
+    label {
+      display: block;
+      font-size: $font-size-sm;
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: $spacing-sm;
+    }
+
+    input {
+      width: 100%;
+      padding: $spacing-md;
+      font-size: $font-size-base;
+      font-family: $font-family-base;
+      color: var(--color-text);
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid var(--color-border);
+      border-radius: $radius-md;
+      transition: border-color $transition-fast, background $transition-fast;
+
+      &::placeholder {
+        color: var(--color-text-secondary);
+        opacity: 0.7;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      [data-theme="dark"] & {
+        background: rgba(0, 0, 0, 0.2);
+
+        &:focus {
+          background: rgba(0, 0, 0, 0.3);
+        }
+      }
+    }
+  }
+
+  .role-selection {
+    .role-label {
+      display: block;
+      font-size: $font-size-sm;
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: $spacing-md;
+    }
+
+    .role-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+
+      @include tablet {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// ============================================
+// Role Selection Buttons
+// ============================================
 
 .role-button {
   flex: 1;
-  min-width: 140px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1.5rem 1rem;
-  background-color: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: 500;
+  font-family: $font-family-base;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid var(--color-border);
+  border-radius: $radius-lg;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 1rem;
-  color: var(--text-primary);
+  transition: all $transition-fast;
+  text-transform: capitalize;
 
-  &:hover:not(&--disabled) {
-    border-color: var(--accent-primary);
-    background-color: var(--bg-tertiary);
+  @include focus-visible;
+
+  // Hover state
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: var(--color-accent);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-md;
   }
 
-  &:focus {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
+  // Active/pressed state
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
   }
 
-  &--selected {
-    border-color: var(--accent-primary);
-    background-color: var(--accent-primary);
-    color: white;
-
-    .role-icon {
-      transform: scale(1.1);
-    }
-  }
-
-  &--disabled {
+  // Disabled state (current role)
+  &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    border-color: var(--border-color);
-    background-color: var(--bg-secondary);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-border);
+  }
 
-    &:hover {
-      transform: none;
-      box-shadow: none;
+  // Selected/current role indicator
+  &.current-role {
+    border-color: var(--color-accent);
+    background: rgba(37, 99, 235, 0.1);
+    position: relative;
+
+    &::after {
+      content: '✓';
+      position: absolute;
+      top: $spacing-xs;
+      right: $spacing-xs;
+      font-size: $font-size-sm;
+      color: var(--color-accent);
+    }
+  }
+
+  // Dark theme
+  [data-theme="dark"] & {
+    background: rgba(0, 0, 0, 0.2);
+
+    &:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    &:disabled {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    &.current-role {
+      background: rgba(59, 130, 246, 0.1);
     }
   }
 }
 
-.role-icon {
-  font-size: 2rem;
-  transition: transform 0.2s ease;
-}
+// ============================================
+// Role Change Modal
+// ============================================
 
-.role-label {
-  font-weight: 500;
-}
-
-// Screen reader only text
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .modal-content {
-    padding: 1.5rem;
-    width: 95%;
-  }
-
-  .modal-title {
-    font-size: 1.5rem;
-  }
-
+.role-change-modal {
   .role-buttons {
+    display: flex;
     flex-direction: column;
+    gap: $spacing-md;
+
+    @include tablet {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+}
+
+// ============================================
+// Modal Close Button
+// ============================================
+
+.modal-close {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  color: var(--color-text);
+  font-size: $font-size-xl;
+  line-height: 1;
+  transition: background $transition-fast, transform $transition-fast;
+
+  @include focus-visible;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
   }
 
-  .role-button {
-    min-width: 100%;
+  &:active {
+    transform: scale(0.95);
+  }
+
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// Animation Keyframes
+// ============================================
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modal-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlay-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// ============================================
+// Accessibility - Reduced Motion
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal {
+    transition: none;
+  }
+
+  .modal {
+    transform: none;
+  }
+
+  .role-button:hover:not(:disabled) {
+    transform: none;
   }
 }
