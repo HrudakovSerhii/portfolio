@@ -1,0 +1,87 @@
+// Responsive Layout Styles
+// Additional mobile-first responsive adjustments
+
+// ============================================
+// Mobile Navigation Overlay
+// ============================================
+
+@include mobile {
+  // Mobile hamburger menu button
+  .mobile-nav-toggle {
+    display: flex;
+    position: fixed;
+    bottom: $spacing-lg;
+    right: $spacing-lg;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: $z-header + 1;
+    transition: all $transition-base;
+
+    @include focus-visible;
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  // Backdrop when nav is open
+  .nav-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: $z-nav - 1;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+// ============================================
+// Tablet and Desktop
+// ============================================
+
+@include tablet {
+  // Hide mobile nav toggle on tablet and up
+  .mobile-nav-toggle {
+    display: none;
+  }
+
+  .nav-backdrop {
+    display: none !important;
+  }
+}
+
+// ============================================
+// Touch Device Optimizations
+// ============================================
+
+@media (hover: none) and (pointer: coarse) {
+  // Increase touch targets
+  .control-button,
+  .nav-item,
+  .role-button,
+  .prompt-button {
+    min-height: 44px;
+  }
+
+  // Remove hover transforms on touch
+  .control-button:hover,
+  .nav-item:hover,
+  .role-button:hover,
+  .prompt-button:hover {
+    transform: none;
+  }
+}
