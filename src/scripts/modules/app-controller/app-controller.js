@@ -415,6 +415,11 @@ class AppController {
       // Add modal to DOM
       document.body.appendChild(modal);
 
+      // Make modal visible by adding active class
+      requestAnimationFrame(() => {
+        modal.classList.add('active');
+      });
+
       // Get form elements
       const nameInput = modal.querySelector('#user-name-input');
       const roleButtons = modal.querySelectorAll('.role-button');
@@ -615,6 +620,11 @@ class AppController {
 
       // Add modal to body (not sections container)
       document.body.appendChild(modal);
+
+      // Make modal visible by adding active class
+      requestAnimationFrame(() => {
+        modal.classList.add('active');
+      });
 
       // Get modal elements
       const modalContent = modal.querySelector('.modal-content');
