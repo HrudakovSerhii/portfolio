@@ -1,0 +1,149 @@
+// Action Prompt Component Styles
+// Provides styling for the interactive action prompt with input and button
+
+.action-prompt {
+  margin: $spacing-xl 0;
+  padding: $spacing-lg;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-xl;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .prompt-input-wrapper {
+    display: flex;
+    gap: $spacing-md;
+    align-items: stretch;
+
+    @include mobile {
+      flex-direction: column;
+    }
+  }
+
+  .prompt-input {
+    flex: 1;
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: $radius-lg;
+    transition: all $transition-base;
+    outline: none;
+
+    &::placeholder {
+      color: var(--color-text-secondary);
+      opacity: 0.7;
+    }
+
+    &:hover {
+      border-color: var(--color-accent);
+    }
+
+    &:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    // Focus visible for accessibility
+    @include focus-visible;
+
+    @include mobile {
+      padding: $spacing-sm $spacing-md;
+      font-size: $font-size-sm;
+    }
+  }
+
+  .prompt-button {
+    padding: $spacing-md $spacing-2xl;
+    font-size: $font-size-base;
+    font-weight: 600;
+    font-family: $font-family-base;
+    color: $color-bg-light;
+    background: var(--color-accent);
+    border: none;
+    border-radius: $radius-lg;
+    cursor: pointer;
+    transition: all $transition-base;
+    white-space: nowrap;
+    min-width: 140px;
+
+    &:hover {
+      background: darken($color-accent-light, 10%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+
+    &:disabled {
+      background: var(--color-border);
+      color: var(--color-text-secondary);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    // Focus visible for accessibility
+    @include focus-visible;
+
+    @include mobile {
+      padding: $spacing-sm $spacing-lg;
+      font-size: $font-size-sm;
+      min-width: 100px;
+    }
+  }
+
+  // Character counter (optional, for future use)
+  .prompt-counter {
+    margin-top: $spacing-xs;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+    text-align: right;
+
+    &.warning {
+      color: #f59e0b;
+    }
+
+    &.error {
+      color: #ef4444;
+    }
+  }
+}
+
+// Dark theme adjustments
+[data-theme="dark"] {
+  .action-prompt {
+    .prompt-button {
+      color: $color-text-dark;
+
+      &:hover {
+        background: lighten($color-accent-dark, 10%);
+      }
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .action-prompt {
+    transition: none;
+
+    .prompt-input,
+    .prompt-button {
+      transition: none;
+    }
+
+    .prompt-button:hover {
+      transform: none;
+    }
+  }
+}
