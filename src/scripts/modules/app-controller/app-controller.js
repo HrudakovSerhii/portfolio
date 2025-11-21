@@ -873,16 +873,17 @@ class AppController {
       // Add section to DOM
       this.elements.sectionsContainer.appendChild(sectionElement);
 
-      // Apply typewriter animation to text content
+      // Start image and text animations simultaneously
       const textElement = sectionElement.querySelector('.content-text');
-      if (textElement) {
+      const imageContainer = sectionElement.querySelector('.content-image');
+
+      // Create promises for both animations
+      const textPromise = textElement ? (async () => {
         const textContent = textElement.getAttribute('data-text');
         await this.animationEngine.typewriterEffect(textElement, textContent);
-      }
+      })() : Promise.resolve();
 
-      // Add generative image component
-      const imageContainer = sectionElement.querySelector('.content-image');
-      if (imageContainer) {
+      const imagePromise = imageContainer ? (async () => {
         const imageUrl = imageContainer.getAttribute('data-image-url');
         const imageAlt = imageContainer.getAttribute('data-image-alt');
         const aspectRatio = imageContainer.getAttribute('data-aspect-ratio');
@@ -896,7 +897,10 @@ class AppController {
         if (generativeImage) {
           imageContainer.appendChild(generativeImage);
         }
-      }
+      })() : Promise.resolve();
+
+      // Wait for both animations to complete
+      await Promise.all([textPromise, imagePromise]);
 
       // Add navigation item with typewriter animation
       await this._addNavigationItem(sectionMetadata);
