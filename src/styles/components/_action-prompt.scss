@@ -1,6 +1,8 @@
 // Action Prompt Component Styles
 // Provides styling for the interactive action prompt with input and button
 
+@use 'sass:color';
+
 .action-prompt {
   margin: $spacing-xl 0;
   padding: $spacing-lg;
@@ -74,7 +76,7 @@
     min-width: 140px;
 
     &:hover {
-      background: darken($color-accent-light, 10%);
+      background: color.scale($color-accent-light, $lightness: -10%);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
@@ -126,7 +128,7 @@
       color: $color-text-dark;
 
       &:hover {
-        background: lighten($color-accent-dark, 10%);
+        background: color.scale($color-accent-dark, $lightness: 10%);
       }
     }
   }
