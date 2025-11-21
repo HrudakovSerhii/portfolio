@@ -34,13 +34,16 @@
 // ============================================
 
 .modal {
-  @include glass-effect;
   position: relative;
   max-width: 90%;
   width: 500px;
   padding: $spacing-2xl;
   border-radius: $radius-2xl;
-  box-shadow: $shadow-lg;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
   cursor: default;
   transform: scale(0.9);
   opacity: 0;
@@ -56,9 +59,11 @@
     opacity: 1;
   }
 
-  // Dark theme glass effect
+  // Dark theme - more opaque background
   [data-theme="dark"] & {
-    @include glass-effect-dark;
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 }
 

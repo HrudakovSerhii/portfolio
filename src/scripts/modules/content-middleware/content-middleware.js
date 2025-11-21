@@ -5,7 +5,7 @@
 
 /**
  * ContentMiddleware - Abstracts content retrieval to enable future chatbot integration
- * 
+ *
  * This middleware layer provides a promise-based API for fetching role-based content.
  * The initial implementation uses JSON files, but the interface is designed to allow
  * future replacement with a chatbot API without requiring UI changes.
@@ -56,7 +56,7 @@ class ContentMiddleware {
 
     try {
       const fetchFn = this._getFetch();
-      
+
       this.loadPromise = fetchFn(this.dataSourceUrl)
         .then(response => {
           if (!response.ok) {
@@ -90,19 +90,19 @@ class ContentMiddleware {
   async fetchSectionContent(sectionId, role, customQuery = null) {
     try {
       const data = await this._loadContentData();
-      
+
       if (!data.sections || !data.sections[sectionId]) {
         throw new Error(`Section "${sectionId}" not found in content data`);
       }
 
       const section = data.sections[sectionId];
-      
+
       if (!section.content || !section.content[role]) {
         throw new Error(`Content for role "${role}" not found in section "${sectionId}"`);
       }
 
       const roleContent = section.content[role];
-      
+
       return {
         sectionId,
         title: section.metadata.title,
@@ -114,7 +114,7 @@ class ContentMiddleware {
       };
     } catch (error) {
       console.error(`Error fetching content for section "${sectionId}":`, error);
-      
+
       // Return fallback content instead of throwing
       return this._getFallbackContent(sectionId, error);
     }
@@ -154,14 +154,14 @@ class ContentMiddleware {
   async getActionPromptPlaceholder(sectionId) {
     try {
       const data = await this._loadContentData();
-      
+
       if (!data.sections || !data.sections[sectionId]) {
         console.warn(`Section "${sectionId}" not found for placeholder`);
         return this._getDefaultPlaceholder(sectionId);
       }
 
       const section = data.sections[sectionId];
-      
+
       // Use main_items array if available
       if (section.metadata.main_items && section.metadata.main_items.length > 0) {
         return section.metadata.main_items.join(', ');
@@ -202,13 +202,13 @@ class ContentMiddleware {
   async getSectionMetadata(sectionId) {
     try {
       const data = await this._loadContentData();
-      
+
       if (!data.sections || !data.sections[sectionId]) {
         throw new Error(`Section "${sectionId}" not found in content data`);
       }
 
       const section = data.sections[sectionId];
-      
+
       return {
         id: sectionId,
         title: section.metadata.title,
@@ -217,7 +217,7 @@ class ContentMiddleware {
       };
     } catch (error) {
       console.error(`Error getting metadata for section "${sectionId}":`, error);
-      
+
       // Return fallback metadata
       return this._getFallbackMetadata(sectionId);
     }
@@ -246,7 +246,7 @@ class ContentMiddleware {
   async getUserProfile() {
     try {
       const data = await this._loadContentData();
-      
+
       if (!data.profile) {
         throw new Error('Profile data not found in content.json');
       }
@@ -254,7 +254,7 @@ class ContentMiddleware {
       return data.profile;
     } catch (error) {
       console.error('Error getting user profile:', error);
-      
+
       // Return error profile to make loading failure obvious
       return {
         name: '⚠️ ERROR: Profile Not Loaded',
@@ -272,7 +272,7 @@ class ContentMiddleware {
   async getMainItems(sectionId) {
     try {
       const data = await this._loadContentData();
-      
+
       if (!data.sections || !data.sections[sectionId]) {
         return [];
       }
@@ -292,7 +292,7 @@ class ContentMiddleware {
   async getAllSections() {
     try {
       const data = await this._loadContentData();
-      
+
       if (!data.sections) {
         return [];
       }
@@ -312,7 +312,4 @@ class ContentMiddleware {
   }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = ContentMiddleware;
-}
+export default ContentMiddleware;
