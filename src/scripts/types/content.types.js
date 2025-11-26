@@ -37,13 +37,18 @@
  */
 
 /**
+ * @typedef {Object} SectionImage
+ * @property {string} imageUrl - Image URL
+ * @property {string} imageAlt - Image alt text
+ * @property {string} aspectRatio - CSS aspect ratio class
+ */
+
+/**
  * @typedef {Object} SectionContent
  * @property {string} sectionId - Section identifier
  * @property {string} title - Section title
  * @property {string} text - Content text
- * @property {string} imageUrl - Image URL
- * @property {string} imageAlt - Image alt text
- * @property {string} aspectRatio - CSS aspect ratio class
+ * @property {Object.<string, SectionImage>} image - Content image object
  * @property {string|null} customQuery - Custom query if provided
  * @property {boolean} [isError] - Whether this is error/fallback content
  * @property {string} [errorMessage] - Error message if isError is true

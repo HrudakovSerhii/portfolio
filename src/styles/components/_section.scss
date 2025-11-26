@@ -1,6 +1,3 @@
-// Section Component Styles
-// Portfolio section with zig-zag layout and progressive disclosure
-
 .portfolio-section {
   position: relative;
   padding: $spacing-3xl $spacing-lg;
@@ -11,7 +8,6 @@
     padding: $spacing-3xl $spacing-2xl;
   }
 
-  // Parallax layer placeholder for future effects
   .parallax-layer {
     position: absolute;
     top: 0;
@@ -22,7 +18,6 @@
     pointer-events: none;
   }
 
-  // Section header with title and optional query
   .section-header {
     text-align: start;
 
@@ -41,23 +36,19 @@
     }
   }
 
-  // Main content grid with zig-zag layout
   .section-content {
     display: grid;
     gap: $spacing-xl;
     align-items: start;
 
-    // Mobile: vertical stack (image above text)
     @include mobile {
       grid-template-columns: 1fr;
     }
 
-    // Desktop: 50% width columns
     @include desktop {
       grid-template-columns: 1fr 1fr;
     }
 
-    // Zig-zag layout: image on left
     &.zig-zag-left {
       .content-media {
         @include mobile {
@@ -80,7 +71,6 @@
       }
     }
 
-    // Zig-zag layout: image on right
     &.zig-zag-right {
       .content-media {
         @include mobile {
@@ -104,7 +94,6 @@
     }
   }
 
-  // Media container wrapper
   .content-media {
     display: flex;
     justify-content: center;
@@ -113,7 +102,6 @@
     min-width: 50%;
   }
 
-  // Image container with max available space
   .content-image {
     display: flex;
     justify-content: center;
@@ -132,7 +120,6 @@
     }
   }
 
-  // Text content with readable typography
   .content-text {
     display: flex;
     justify-content: center;
