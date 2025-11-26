@@ -59,23 +59,116 @@
   </header>
 
   <!-- Navigation Panel -->
-  <nav class="navigation-panel" role="navigation" aria-label="Portfolio sections">
-    <button
-      id="nav-toggle"
-      class="nav-toggle"
-      aria-label="Toggle navigation panel"
-      aria-expanded="true"
-      aria-controls="nav-items">
-      <span class="nav-toggle-icon" aria-hidden="true">◀</span>
-    </button>
+<!--  <nav class="navigation-panel" role="navigation" aria-label="Portfolio sections">-->
+<!--    <button-->
+<!--      id="nav-toggle"-->
+<!--      class="nav-toggle"-->
+<!--      aria-label="Toggle navigation panel"-->
+<!--      aria-expanded="true"-->
+<!--      aria-controls="nav-items">-->
+<!--      <span class="nav-toggle-icon" aria-hidden="true">◀</span>-->
+<!--    </button>-->
 
-    <div id="nav-items" class="nav-items">
-      <!-- Navigation items will be added dynamically -->
-    </div>
-  </nav>
+<!--    <div id="nav-items" class="nav-items">-->
+<!--      &lt;!&ndash; Navigation items will be added dynamically &ndash;&gt;-->
+<!--    </div>-->
+<!--  </nav>-->
 
   <!-- Main Content Area -->
   <main class="main-content" role="main" id="main-content">
+    
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+      <!-- Background Decorative Elements -->
+      <div class="hero-background">
+        <div class="hero-blob hero-blob--blue"></div>
+        <div class="hero-blob hero-blob--purple"></div>
+      </div>
+
+      <div class="hero-container">
+        <!-- Profile Image & Badge -->
+        <div class="hero-profile">
+          <div class="hero-profile-ring">
+            <div class="hero-profile-image">
+              <img src="https://picsum.photos/300/300" alt="Profile" />
+            </div>
+          </div>
+          <div class="hero-profile-badge">
+            <span class="hero-profile-name">Alex Dev</span>
+          </div>
+        </div>
+
+        <!-- Intro Text -->
+        <div class="hero-intro">
+          <h1 class="hero-title">
+            Building <span class="hero-title-gradient">Digital Experiences</span>
+          </h1>
+          <div class="hero-description" id="hero-description">
+            <!-- Typewriter text will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Role Selection Cards -->
+        <div class="hero-roles" id="hero-roles">
+          <div class="hero-roles-grid">
+            
+            <!-- Recruiter Card -->
+            <button class="role-card role-card--recruiter" data-role="recruiter">
+              <div class="role-card-overlay"></div>
+              <div class="role-card-content">
+                <div class="role-card-icon role-card-icon--blue">
+                  <span>💼</span>
+                </div>
+                <h3 class="role-card-title">Recruiter</h3>
+                <p class="role-card-description">
+                  Focus on skills, work history, and project metrics.
+                </p>
+                <div class="role-card-action">
+                  Select <span class="role-card-arrow">→</span>
+                </div>
+              </div>
+            </button>
+
+            <!-- Developer Card -->
+            <button class="role-card role-card--developer" data-role="developer">
+              <div class="role-card-overlay"></div>
+              <div class="role-card-content">
+                <div class="role-card-icon role-card-icon--indigo">
+                  <span>💻</span>
+                </div>
+                <h3 class="role-card-title">Developer</h3>
+                <p class="role-card-description">
+                  Deep dive into code quality, stack, and architecture.
+                </p>
+                <div class="role-card-action">
+                  Select <span class="role-card-arrow">→</span>
+                </div>
+              </div>
+            </button>
+
+            <!-- Friend Card -->
+            <button class="role-card role-card--friend" data-role="friend">
+              <div class="role-card-overlay"></div>
+              <div class="role-card-content">
+                <div class="role-card-icon role-card-icon--teal">
+                  <span>👋</span>
+                </div>
+                <h3 class="role-card-title">Friend</h3>
+                <p class="role-card-description">
+                  Get to know me, my hobbies, and what drives me.
+                </p>
+                <div class="role-card-action">
+                  Select <span class="role-card-arrow">→</span>
+                </div>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- Sections will be added dynamically -->
     <div id="sections-container" class="sections-container"></div>
 
