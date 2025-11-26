@@ -35,13 +35,13 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderPersonaliz
 "<div class="modal-overlay modal-overlay--glass" role="dialog" aria-modal="true" aria-labelledby="personalization-title">
       <div class="modal-content modal-content--personalization">
         <h2 id="personalization-title" class="modal-title">Welcome! Let's personalize your experience</h2>
-        
+
         <div class="personalization-form">
           <div class="form-group">
             <label for="user-name-input" class="form-label">What's your name?</label>
             <input type="text" id="user-name-input" class="form-input" placeholder="Enter your name" maxlength="50" required="" aria-required="true">
           </div>
-          
+
           <div class="form-group">
             <p class="form-label">I'm a...</p>
             <div class="role-buttons" role="radiogroup" aria-label="Select your role">
@@ -70,20 +70,20 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderRoleChange
         <button class="modal-close" aria-label="Close modal">
           <span aria-hidden="true">×</span>
         </button>
-        
+
         <h2 id="role-change-title" class="modal-title">Change Your Role</h2>
         <p class="modal-description">Select a different perspective to see personalized content</p>
-        
+
         <div class="role-buttons" role="radiogroup" aria-label="Select new role">
-          <button class="role-button" data-role="recruiter" role="radio" aria-checked="false" aria-disabled="false">
+          <button class="role-button" data-role="recruiter" role="radio" aria-checked="false">
             <span class="role-icon" aria-hidden="true">💼</span>
             <span class="role-label">Recruiter</span>
           </button>
-          <button class="role-button role-button--disabled" data-role="developer" role="radio" aria-checked="true" aria-disabled="true" disabled="">
+          <button class="role-button" data-role="developer" role="radio" aria-checked="false" disabled="">
             <span class="role-icon" aria-hidden="true">💻</span>
             <span class="role-label">Developer</span>
           </button>
-          <button class="role-button" data-role="friend" role="radio" aria-checked="false" aria-disabled="false">
+          <button class="role-button" data-role="friend" role="radio" aria-checked="false">
             <span class="role-icon" aria-hidden="true">👋</span>
             <span class="role-label">Friend</span>
           </button>
@@ -98,20 +98,20 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderRoleChange
         <button class="modal-close" aria-label="Close modal">
           <span aria-hidden="true">×</span>
         </button>
-        
+
         <h2 id="role-change-title" class="modal-title">Change Your Role</h2>
         <p class="modal-description">Select a different perspective to see personalized content</p>
-        
+
         <div class="role-buttons" role="radiogroup" aria-label="Select new role">
-          <button class="role-button" data-role="recruiter" role="radio" aria-checked="false" aria-disabled="false">
+          <button class="role-button" data-role="recruiter" role="radio" aria-checked="false">
             <span class="role-icon" aria-hidden="true">💼</span>
             <span class="role-label">Recruiter</span>
           </button>
-          <button class="role-button" data-role="developer" role="radio" aria-checked="false" aria-disabled="false">
+          <button class="role-button" data-role="developer" role="radio" aria-checked="false">
             <span class="role-icon" aria-hidden="true">💻</span>
             <span class="role-label">Developer</span>
           </button>
-          <button class="role-button role-button--disabled" data-role="friend" role="radio" aria-checked="true" aria-disabled="true" disabled="">
+          <button class="role-button" data-role="friend" role="radio" aria-checked="false" disabled="">
             <span class="role-icon" aria-hidden="true">👋</span>
             <span class="role-label">Friend</span>
           </button>
@@ -126,20 +126,20 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderRoleChange
         <button class="modal-close" aria-label="Close modal">
           <span aria-hidden="true">×</span>
         </button>
-        
+
         <h2 id="role-change-title" class="modal-title">Change Your Role</h2>
         <p class="modal-description">Select a different perspective to see personalized content</p>
-        
+
         <div class="role-buttons" role="radiogroup" aria-label="Select new role">
-          <button class="role-button role-button--disabled" data-role="recruiter" role="radio" aria-checked="true" aria-disabled="true" disabled="">
+          <button class="role-button" data-role="recruiter" role="radio" aria-checked="false" disabled="">
             <span class="role-icon" aria-hidden="true">💼</span>
             <span class="role-label">Recruiter</span>
           </button>
-          <button class="role-button" data-role="developer" role="radio" aria-checked="false" aria-disabled="false">
+          <button class="role-button" data-role="developer" role="radio" aria-checked="false">
             <span class="role-icon" aria-hidden="true">💻</span>
             <span class="role-label">Developer</span>
           </button>
-          <button class="role-button" data-role="friend" role="radio" aria-checked="false" aria-disabled="false">
+          <button class="role-button" data-role="friend" role="radio" aria-checked="false">
             <span class="role-icon" aria-hidden="true">👋</span>
             <span class="role-label">Friend</span>
           </button>
@@ -156,8 +156,10 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderSection > 
         <p class="section-query" style="display: block;">"What are your top 3 programming languages?"</p>
       </div>
       <div class="section-content zig-zag-left">
-        <div class="content-image" data-image-url="/images/skills.jpg" data-image-alt="Skills visualization" data-aspect-ratio="aspect-video">
-          <!-- Image will be inserted here -->
+        <div class="content-media">
+          <div class="content-image" data-image-url="/images/skills.jpg" data-image-alt="Skills visualization" data-aspect-ratio="aspect-video">
+            <!-- Image will be inserted here -->
+          </div>
         </div>
         <div class="content-text" data-text="Here are my technical skills and expertise.">
           <!-- Text content will be inserted here -->
@@ -174,8 +176,10 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderSection > 
         <p class="section-query" style="display: none;"></p>
       </div>
       <div class="section-content zig-zag-left">
-        <div class="content-image" data-image-url="/images/hero.jpg" data-image-alt="Hero image" data-aspect-ratio="aspect-video">
-          <!-- Image will be inserted here -->
+        <div class="content-media">
+          <div class="content-image" data-image-url="/images/hero.jpg" data-image-alt="Hero image" data-aspect-ratio="aspect-video">
+            <!-- Image will be inserted here -->
+          </div>
         </div>
         <div class="content-text" data-text="This is the hero section with some introductory text.">
           <!-- Text content will be inserted here -->
@@ -192,8 +196,10 @@ exports[`TemplateService - Snapshot Tests with Real Templates > renderSection > 
         <p class="section-query" style="display: none;"></p>
       </div>
       <div class="section-content zig-zag-right">
-        <div class="content-image" data-image-url="/images/about.jpg" data-image-alt="About image" data-aspect-ratio="aspect-square">
-          <!-- Image will be inserted here -->
+        <div class="content-media">
+          <div class="content-image" data-image-url="/images/about.jpg" data-image-alt="About image" data-aspect-ratio="aspect-square">
+            <!-- Image will be inserted here -->
+          </div>
         </div>
         <div class="content-text" data-text="Learn more about my background and experience.">
           <!-- Text content will be inserted here -->
