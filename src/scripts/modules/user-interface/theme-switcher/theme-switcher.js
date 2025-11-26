@@ -7,7 +7,13 @@ class ThemeSwitcher {
   initialize(themeToggleElement) {
     this.themeToggle = themeToggleElement;
 
-    const theme = this.stateManager.getTheme();
+    let theme = this.stateManager.getTheme();
+
+    if (!theme || (theme !== 'light' && theme !== 'dark')) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      theme = prefersDark ? 'dark' : 'light';
+      this.stateManager.setTheme(theme);
+    }
 
     this.apply(theme);
   }
@@ -24,7 +30,7 @@ class ThemeSwitcher {
 
   apply(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-
+    
     if (this.themeToggle) {
       this.themeToggle.setAttribute('data-theme', theme);
       this.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');

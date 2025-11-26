@@ -1,239 +1,127 @@
-class GenerativeImage {
-  static DEFAULTS = {
-    ANIMATION_CLEANUP_DELAY: 100,
-    BADGE_FADE_DELAY: 50,
-    OVERLAY_CELL_TRANSITION_DELAY: 100,
-  };
+/**
+ * Generative Image Component
+ * Creates an AI-generation-style image loading effect with grid overlay
+ */
 
-  constructor(config = {}) {
-    this.highResSrc = config.highResSrc;
-    this.lowResSrc = config.lowResSrc;
-    this.alt = config.alt;
-    this.aspectClass = config.aspectClass;
-    this.shouldAnimate = config.shouldAnimate !== false;
-    this.gridConfig = config.gridConfig;
+/**
+ * Creates a generative image element with progressive reveal animation
+ * @param {string} highResSrc - URL of the high-resolution image
+ * @param {string|undefined} lowResSrc - Optional URL of low-resolution image for overlay
+ * @param {string} alt - Alt text for accessibility
+ * @param {string} aspectClass - CSS class for aspect ratio (e.g., 'aspect-video')
+ * @param {boolean} shouldAnimate - Whether to enable animation
+ * @param {Object} gridConfig - Grid configuration
+ * @param {number} gridConfig.rows - Number of grid rows
+ * @param {number} gridConfig.cols - Number of grid columns
+ * @param {number} gridConfig.delay - Delay between cell removals in milliseconds
+ * @returns {HTMLElement} The generative image container element
+ */
+export function createGenerativeImage(
+  highResSrc,
+  lowResSrc = undefined,
+  alt = '',
+  aspectClass = 'aspect-video',
+  shouldAnimate = true,
+  gridConfig = { rows: 4, cols: 4, delay: 50 }
+) {
+  // Create container
+  const container = document.createElement('div');
+  container.className = `generative-image ${aspectClass}`;
 
-    this.container = null;
-    this.highResImg = null;
-    this.overlay = null;
-    this.badge = null;
-    this.cells = [];
-  }
+  // 1. High Resolution Image (Underneath)
+  const highResImg = new Image();
+  highResImg.alt = alt;
+  highResImg.className = 'generative-image__high-res';
+  highResImg.src = highResSrc;
 
-  create() {
-    this._buildFromTemplate();
-    this._configureImage();
+  container.appendChild(highResImg);
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const shouldSkipAnimation = !this.shouldAnimate || prefersReducedMotion;
-
-    if (shouldSkipAnimation) {
-      this._setupSimpleLoad();
-      this._removeAnimationElements();
-      return this.container;
-    }
-
-    this._setupAnimatedLoad();
-
-    return this.container;
-  }
-
-  load() {
-    if (this.highResImg && this.highResImg.complete) {
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve) => {
-      if (this.highResImg) {
-        this.highResImg.addEventListener('load', () => resolve(), { once: true });
-      } else {
-        resolve();
-      }
-    });
-  }
-
-  _buildFromTemplate() {
-    const template = document.getElementById('generative-image-template');
-    if (!template) {
-      throw new Error('GenerativeImage: Template not found');
-    }
-
-    const clone = template.content.cloneNode(true);
-    this.container = clone.querySelector('.generative-image');
-    this.highResImg = clone.querySelector('.generative-image__high-res');
-    this.overlay = clone.querySelector('.generative-image__overlay');
-    this.badge = clone.querySelector('.generative-image__badge');
-
-    if (this.aspectClass) {
-      this.container.classList.add(this.aspectClass);
-    }
-  }
-
-  _configureImage() {
-    this.highResImg.alt = this.alt;
-    this.highResImg.src = this.highResSrc;
-  }
-
-  _removeAnimationElements() {
-    if (this.overlay) {
-      this.overlay.remove();
-      this.overlay = null;
-    }
-    if (this.badge) {
-      this.badge.remove();
-      this.badge = null;
-    }
-  }
-
-  _setupOverlay() {
-    const overlaySrc = this.lowResSrc || this.highResSrc;
-    const img = new Image();
-    img.src = overlaySrc;
-
-    img.onload = () => {
-      const dimensions = this._calculateImageDimensions(img);
-      this._positionOverlay(dimensions);
-      this._configureOverlayGrid();
-      this._createGridCells(overlaySrc, dimensions);
-
-      // If high-res image already loaded, start animation now
-      if (this.highResImg.complete && this.highResImg.classList.contains('generative-image__high-res--loaded')) {
-        this._startRevealAnimation();
-      }
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  // If animation is disabled or reduced motion is preferred, handle simple load
+  if (!shouldAnimate || prefersReducedMotion || gridConfig.delay === 0) {
+    highResImg.onload = () => {
+      highResImg.classList.add('generative-image__high-res--loaded');
     };
+    return container;
   }
 
-  _calculateImageDimensions(img) {
-    const containerRect = this.container.getBoundingClientRect();
-    const imgAspect = img.naturalWidth / img.naturalHeight;
-    const containerAspect = containerRect.width / containerRect.height;
+  // 2. Grid Overlay (The Low Res "Mosaic")
+  // Use lowResSrc if provided, otherwise fallback to highResSrc
+  const overlaySrc = lowResSrc || highResSrc;
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'generative-image__overlay';
+  overlay.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
+  overlay.style.gridTemplateRows = `repeat(${gridConfig.rows}, 1fr)`;
 
-    let renderedWidth, renderedHeight, offsetX, offsetY;
+  const totalCells = gridConfig.rows * gridConfig.cols;
+  const cells = [];
 
-    if (imgAspect > containerAspect) {
-      // Image is wider - fits to container width
-      renderedWidth = containerRect.width;
-      renderedHeight = containerRect.width / imgAspect;
-      offsetX = 0;
-      offsetY = (containerRect.height - renderedHeight) / 2;
-    } else {
-      // Image is taller - fits to container height
-      renderedHeight = containerRect.height;
-      renderedWidth = containerRect.height * imgAspect;
-      offsetX = (containerRect.width - renderedWidth) / 2;
-      offsetY = 0;
-    }
-
-    return { renderedWidth, renderedHeight, offsetX, offsetY };
-  }
-
-  _positionOverlay(dimensions) {
-    this.overlay.style.left = `${dimensions.offsetX}px`;
-    this.overlay.style.top = `${dimensions.offsetY}px`;
-  }
-
-  _configureOverlayGrid() {
-    this.overlay.style.gridTemplateColumns = `repeat(${this.gridConfig.cols}, 1fr)`;
-    this.overlay.style.gridTemplateRows = `repeat(${this.gridConfig.rows}, 1fr)`;
-  }
-
-  _createGridCells(imageSrc, dimensions) {
-    const totalCells = this.gridConfig.rows * this.gridConfig.cols;
-    const cellWidth = dimensions.renderedWidth / this.gridConfig.cols;
-    const cellHeight = dimensions.renderedHeight / this.gridConfig.rows;
-
-    for (let i = 0; i < totalCells; i++) {
-      const cell = this._createCell(i, imageSrc, cellWidth, cellHeight, dimensions);
-      this.overlay.appendChild(cell);
-      this.cells.push(cell);
-    }
-  }
-
-  _createCell(index, imageSrc, cellWidth, cellHeight, dimensions) {
-    const row = Math.floor(index / this.gridConfig.cols);
-    const col = index % this.gridConfig.cols;
-
+  for (let i = 0; i < totalCells; i++) {
     const cell = document.createElement('div');
     cell.className = 'generative-image__cell';
-    cell.style.backgroundImage = `url(${imageSrc})`;
-    cell.style.backgroundSize = `${dimensions.renderedWidth}px ${dimensions.renderedHeight}px`;
-    cell.style.backgroundPosition = `-${col * cellWidth}px -${row * cellHeight}px`;
-    cell.dataset.cellIndex = index; // For debugging
-
-    return cell;
+    cell.style.backgroundImage = `url(${overlaySrc})`;
+    cell.style.backgroundSize = `${gridConfig.cols * 100}% ${gridConfig.rows * 100}%`;
+    
+    // Calculate position for this specific cell
+    const row = Math.floor(i / gridConfig.cols);
+    const col = i % gridConfig.cols;
+    
+    const xPos = (col / (gridConfig.cols - 1)) * 100;
+    const yPos = (row / (gridConfig.rows - 1)) * 100;
+    
+    cell.style.backgroundPosition = `${xPos}% ${yPos}%`;
+    
+    overlay.appendChild(cell);
+    cells.push(cell);
   }
+  
+  container.appendChild(overlay);
 
-  _setupSimpleLoad() {
-    this.highResImg.onload = () => {
-      this.highResImg.classList.add('generative-image__high-res--loaded');
-    };
-  }
+  // 3. Badge
+  const badge = document.createElement('div');
+  badge.className = 'generative-image__badge';
+  badge.textContent = 'Refining...';
+  container.appendChild(badge);
 
-  _setupAnimatedLoad() {
-    this.highResImg.onload = () => {
-      this.highResImg.classList.add('generative-image__high-res--loaded');
+  // 4. Animation Logic
+  highResImg.onload = () => {
+    // Show the high res image underneath
+    highResImg.classList.add('generative-image__high-res--loaded');
 
-      if (this.cells.length > 0) {
-        this._startRevealAnimation();
-      }
-    };
-
-    this._setupOverlay();
-  }
-
-  _startRevealAnimation() {
-    const shuffledIndices = this._generateShuffledIndices();
-    this._revealNextCell(shuffledIndices, 0);
-  }
-
-  _generateShuffledIndices() {
-    const totalCells = this.cells.length;
-    return Array.from({ length: totalCells }, (_, i) => i)
+    // Shuffle the cells to remove them randomly
+    const shuffledIndices = Array.from({ length: totalCells }, (_, i) => i)
       .sort(() => Math.random() - 0.5);
-  }
 
-  _revealNextCell(shuffledIndices, position) {
-    if (position >= shuffledIndices.length) {
-      this._cleanupAnimation();
-      return;
-    }
+    let processedCount = 0;
 
-    const cellIndex = shuffledIndices[position];
-    this._hideCell(cellIndex);
+    const intervalId = setInterval(() => {
+      if (processedCount >= totalCells) {
+        clearInterval(intervalId);
+        
+        // Cleanup DOM
+        setTimeout(() => {
+          overlay.remove();
+          badge.classList.add('generative-image__badge--hidden');
+          setTimeout(() => badge.remove(), 500);
+        }, 500);
+        return;
+      }
 
-    setTimeout(() => {
-      this._revealNextCell(shuffledIndices, position + 1);
-    }, GenerativeImage.DEFAULTS.OVERLAY_CELL_TRANSITION_DELAY);
-  }
+      // Pick next random cell index
+      const cellIndex = shuffledIndices[processedCount];
+      const cell = cells[cellIndex];
+      
+      // Hide it
+      if (cell) {
+        cell.classList.add('generative-image__cell--hidden');
+      }
 
-  _hideCell(cellIndex) {
-    const cell = this.cells[cellIndex];
-    if (cell) {
-      cell.classList.add('generative-image__cell--hidden');
-    }
-  }
+      processedCount++;
+    }, gridConfig.delay);
+  };
 
-  _cleanupAnimation() {
-    this._removeOverlay();
-    this._fadeBadge();
-  }
-
-  _removeOverlay() {
-    if (this.overlay) {
-      this.overlay.remove();
-      this.overlay = null;
-    }
-  }
-
-  _fadeBadge() {
-    if (this.badge) {
-      this.badge.classList.add('generative-image__badge--hidden');
-      setTimeout(() => {
-        this.badge.remove();
-        this.badge = null;
-      }, GenerativeImage.DEFAULTS.BADGE_FADE_DELAY);
-    }
-  }
+  return container;
 }
-
-export default GenerativeImage;
