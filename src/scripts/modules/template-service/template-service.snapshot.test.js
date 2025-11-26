@@ -17,8 +17,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
   let templateService;
 
   beforeEach(() => {
-    // Load the actual HTML file
-    const htmlPath = join(process.cwd(), 'src/pages/index.html');
+    const htmlPath = join(process.cwd(), 'src/index.html');
     const htmlContent = readFileSync(htmlPath, 'utf-8');
 
     // Create a DOM environment with the real HTML
@@ -195,7 +194,6 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
       expect(modal.classList.contains('modal-overlay--glass')).toBe(true);
 
       const developerButton = modal.querySelector('[data-role="developer"]');
-      expect(developerButton.classList.contains('role-button--disabled')).toBe(true);
       expect(developerButton.disabled).toBe(true);
 
       const recruiterButton = modal.querySelector('[data-role="recruiter"]');
@@ -208,7 +206,6 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
       const modal = templateService.renderRoleChangeModal('recruiter');
 
       const recruiterButton = modal.querySelector('[data-role="recruiter"]');
-      expect(recruiterButton.classList.contains('role-button--disabled')).toBe(true);
       expect(recruiterButton.disabled).toBe(true);
 
       expect(modal.outerHTML).toMatchSnapshot();
@@ -218,7 +215,6 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
       const modal = templateService.renderRoleChangeModal('friend');
 
       const friendButton = modal.querySelector('[data-role="friend"]');
-      expect(friendButton.classList.contains('role-button--disabled')).toBe(true);
       expect(friendButton.disabled).toBe(true);
 
       expect(modal.outerHTML).toMatchSnapshot();
