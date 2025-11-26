@@ -8,6 +8,9 @@
 @import 'base/reset';
 @import 'base/typography';
 
+// Elements (must come before components that extend them)
+@import "components/elements";
+
 // Components
 @import 'components/header';
 @import 'components/navigation';
@@ -16,17 +19,16 @@
 @import 'components/skills';
 @import 'components/featured-projects';
 @import 'components/footer';
-@import 'components/chat-ui';
+//@import 'components/chat-ui';
 @import 'components/generative-image';
-@import 'components/modal';
+@import 'components/modal-base';
+@import 'components/modal-content';
 @import 'components/section';
 @import 'components/action-prompt';
 @import 'components/loader';
 
-// Elements
-@import "components/elements";
-
 // Layout
+@import 'layout/overlay';
 @import 'layout/main';
 @import 'layout/responsive';
 
