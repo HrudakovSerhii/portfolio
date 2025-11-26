@@ -1,0 +1,41 @@
+// Overlay & Layout Utilities
+
+// Overlay pattern (reusable for modals, drawers, etc.)
+.overlay {
+  @include absolute-fill;
+  @include flex-center;
+  position: fixed;
+  z-index: $z-modal-overlay;
+  background: var(--modal-overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $transition-base, visibility $transition-base;
+  cursor: pointer;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// Button group layout
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  @include tablet {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--horizontal {
+    flex-direction: row;
+  }
+}
