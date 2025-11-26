@@ -192,13 +192,13 @@
     background: rgba(255, 255, 255, 0.3);
     border-color: var(--color-accent);
     transform: translateY(-2px);
-    box-shadow: $shadow-md;
+    box-shadow: var(--shadow-md);
   }
 
   // Active/pressed state
   &:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: $shadow-sm;
+    box-shadow: var(--shadow-sm);
   }
 
   // Disabled state (current role)

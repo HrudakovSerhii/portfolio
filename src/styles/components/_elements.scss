@@ -2,19 +2,19 @@
 .button {
   width: 160px;
   height: 48px;
-  border-radius: 4px;
+  border-radius: $radius-sm;
   padding: $spacing-sm $spacing-md;
 
   &--primary {
-    background-color: $accent-color;
-    color: $light-gray;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: background-color $transition-base;
 
     &:hover {
       outline: none;
-      background-color: lighten($accent-color, 10%);
-      color: $white;
+      background-color: var(--color-accent-hover);
+      color: var(--color-bg);
     }
   }
 }
