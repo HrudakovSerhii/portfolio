@@ -1,9 +1,6 @@
 // SCSS Mixins - Claude-inspired Design System
 
-// ============================================
 // Responsive Breakpoints
-// ============================================
-
 @mixin mobile {
   @media (max-width: #{$breakpoint-mobile - 1px}) {
     @content;
@@ -28,57 +25,9 @@
   }
 }
 
-// Legacy breakpoint mixins (kept for backward compatibility)
-@mixin respond-to-sm {
-  @media (min-width: $breakpoint-sm) {
-    @content;
-  }
-}
-
-@mixin respond-to-md {
-  @media (min-width: $breakpoint-md) {
-    @content;
-  }
-}
-
-@mixin respond-to-lg {
-  @media (min-width: $breakpoint-lg) {
-    @content;
-  }
-}
-
-@mixin respond-to-xl {
-  @media (min-width: $breakpoint-xl) {
-    @content;
-  }
-}
-
-// ============================================
 // Theme Switching Utilities
-// ============================================
 
-@mixin theme-light {
-  --color-bg: #{$color-bg-light};
-  --color-surface: #{$color-surface-light};
-  --color-text: #{$color-text-light};
-  --color-text-secondary: #{$color-text-secondary-light};
-  --color-border: #{$color-border-light};
-  --color-accent: #{$color-accent-light};
-}
-
-@mixin theme-dark {
-  --color-bg: #{$color-bg-dark};
-  --color-surface: #{$color-surface-dark};
-  --color-text: #{$color-text-dark};
-  --color-text-secondary: #{$color-text-secondary-dark};
-  --color-border: #{$color-border-dark};
-  --color-accent: #{$color-accent-dark};
-}
-
-// ============================================
 // Glass Effect for Modals
-// ============================================
-
 @mixin glass-effect {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -93,18 +42,11 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-// ============================================
 // Smooth Scrolling
-// ============================================
-
 @mixin smooth-scroll {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
-
-// ============================================
-// Utility Mixins
-// ============================================
 
 // Flexbox centering
 @mixin flex-center {
