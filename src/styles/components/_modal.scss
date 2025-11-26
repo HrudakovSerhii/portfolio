@@ -1,16 +1,9 @@
-// Modal Component Styles
-// Glass morphism overlays for personalization and role change modals
-
-// ============================================
-// Modal Overlay (Backdrop)
-// ============================================
-
 .modal-overlay {
   @include absolute-fill;
   @include flex-center;
   position: fixed;
   z-index: $z-modal-overlay;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--modal-overlay-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
@@ -29,21 +22,17 @@
   }
 }
 
-// ============================================
-// Modal Container
-// ============================================
-
 .modal {
   position: relative;
   max-width: 90%;
   width: 500px;
   padding: $spacing-2xl;
   border-radius: $radius-2xl;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--glass-bg-light);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: var(--shadow-lg);
   cursor: default;
   transform: scale(0.9);
   opacity: 0;
@@ -59,17 +48,9 @@
     opacity: 1;
   }
 
-  // Dark theme - more opaque background
-  [data-theme="dark"] & {
-    background: rgba(30, 30, 30, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
+
 }
 
-// ============================================
-// Modal Header
-// ============================================
 
 .modal-header {
   margin-bottom: $spacing-xl;
@@ -89,17 +70,10 @@
   }
 }
 
-// ============================================
-// Modal Body
-// ============================================
 
 .modal-body {
   margin-bottom: $spacing-xl;
 }
-
-// ============================================
-// Personalization Modal
-// ============================================
 
 .personalization-modal {
   .name-input-wrapper {
@@ -119,7 +93,7 @@
       font-size: $font-size-base;
       font-family: $font-family-base;
       color: var(--color-text);
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--glass-overlay-light);
       border: 1px solid var(--color-border);
       border-radius: $radius-md;
       transition: border-color $transition-fast, background $transition-fast;
@@ -132,15 +106,7 @@
       &:focus {
         outline: none;
         border-color: var(--color-accent);
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      [data-theme="dark"] & {
-        background: rgba(0, 0, 0, 0.2);
-
-        &:focus {
-          background: rgba(0, 0, 0, 0.3);
-        }
+        background: var(--glass-overlay-light-hover);
       }
     }
   }
@@ -167,10 +133,6 @@
   }
 }
 
-// ============================================
-// Role Selection Buttons
-// ============================================
-
 .role-button {
   flex: 1;
   padding: $spacing-md $spacing-lg;
@@ -178,7 +140,7 @@
   font-weight: 500;
   font-family: $font-family-base;
   color: var(--color-text);
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--glass-overlay-light);
   border: 2px solid var(--color-border);
   border-radius: $radius-lg;
   cursor: pointer;
@@ -187,32 +149,28 @@
 
   @include focus-visible;
 
-  // Hover state
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--glass-overlay-light-hover);
     border-color: var(--color-accent);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
 
-  // Active/pressed state
   &:active:not(:disabled) {
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
   }
 
-  // Disabled state (current role)
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-overlay-light-disabled);
     border-color: var(--color-border);
   }
 
-  // Selected/current role indicator
   &.current-role {
     border-color: var(--color-accent);
-    background: rgba(37, 99, 235, 0.1);
+    background: var(--accent-bg-light);
     position: relative;
 
     &::after {
@@ -224,28 +182,7 @@
       color: var(--color-accent);
     }
   }
-
-  // Dark theme
-  [data-theme="dark"] & {
-    background: rgba(0, 0, 0, 0.2);
-
-    &:hover:not(:disabled) {
-      background: rgba(0, 0, 0, 0.3);
-    }
-
-    &:disabled {
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-    &.current-role {
-      background: rgba(59, 130, 246, 0.1);
-    }
-  }
 }
-
-// ============================================
-// Role Change Modal
-// ============================================
 
 .role-change-modal {
   .role-buttons {
@@ -260,10 +197,6 @@
   }
 }
 
-// ============================================
-// Modal Close Button
-// ============================================
-
 .modal-close {
   position: absolute;
   top: $spacing-md;
@@ -274,7 +207,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--glass-button-bg);
   border: none;
   border-radius: $radius-md;
   cursor: pointer;
@@ -286,26 +219,14 @@
   @include focus-visible;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--glass-button-bg-hover);
     transform: scale(1.1);
   }
 
   &:active {
     transform: scale(0.95);
   }
-
-  [data-theme="dark"] & {
-    background: rgba(255, 255, 255, 0.1);
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-  }
 }
-
-// ============================================
-// Animation Keyframes
-// ============================================
 
 @keyframes modal-fade-in {
   from {
@@ -346,10 +267,6 @@
     opacity: 0;
   }
 }
-
-// ============================================
-// Accessibility - Reduced Motion
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
   .modal-overlay,
