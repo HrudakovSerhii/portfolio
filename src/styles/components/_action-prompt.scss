@@ -13,7 +13,7 @@
 
   &:hover {
     border-color: var(--color-accent);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
   }
 
   .prompt-input-wrapper {
@@ -49,7 +49,7 @@
 
     &:focus {
       border-color: var(--color-accent);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      box-shadow: var(--shadow-sm);
     }
 
     // Focus visible for accessibility
@@ -66,7 +66,7 @@
     font-size: $font-size-base;
     font-weight: 600;
     font-family: $font-family-base;
-    color: $color-bg-light;
+    color: var(--color-bg);
     background: var(--color-accent);
     border: none;
     border-radius: $radius-lg;
@@ -76,14 +76,14 @@
     min-width: 140px;
 
     &:hover {
-      background: color.scale($color-accent-light, $lightness: -10%);
+      background: var(--color-accent-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      box-shadow: var(--shadow-md);
     }
 
     &:active {
       transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+      box-shadow: var(--shadow-sm);
     }
 
     &:disabled {
@@ -112,11 +112,11 @@
     text-align: right;
 
     &.warning {
-      color: #f59e0b;
+      color: var(--color-warning);
     }
 
     &.error {
-      color: #ef4444;
+      color: var(--color-error);
     }
   }
 }
@@ -125,10 +125,10 @@
 [data-theme="dark"] {
   .action-prompt {
     .prompt-button {
-      color: $color-text-dark;
+      color: var(--color-bg);
 
       &:hover {
-        background: color.scale($color-accent-dark, $lightness: 10%);
+        background: var(--color-accent-hover);
       }
     }
   }

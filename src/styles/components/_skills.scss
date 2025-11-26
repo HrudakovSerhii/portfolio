@@ -10,16 +10,16 @@
     justify-content: center;
     height: 100%;
     width: 50%;
-    padding: 0 2rem;
+    padding: 0 $spacing-xl;
   }
 
   &__details__container {
-    background-color: $light-gray;
+    background-color: var(--color-surface);
   }
 
   &__grid {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: $spacing-xl;
   }
 }
