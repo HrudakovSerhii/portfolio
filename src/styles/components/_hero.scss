@@ -3,7 +3,7 @@
 .hero {
     flex-direction: column;
     justify-content: center;
-    background-color: $background-color;
+    background-color: var(--color-bg);
     height: calc(100vh - 4rem);
     gap: 2rem;
 
@@ -14,11 +14,11 @@
         max-width: 70%;
 
         span {
-            color: $secondary-color;
+            color: var(--color-secondary);
         }
 
         &__title {
-            color: $primary-color;
+            color: var(--color-text);
             margin-bottom: $spacing-lg;
         }
 
@@ -36,10 +36,10 @@
         max-width: 160px;
         height: 160px;
         border-radius: 50%;
-        border-color: $primary-color;
+        border-color: var(--color-accent);
         border-style: solid;
         border-width: 2px;
-        background-color: #6c757d;
+        background-color: var(--color-surface);
         overflow: hidden;
         position: relative;
 
