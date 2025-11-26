@@ -1,6 +1,3 @@
-// Animation keyframes and utilities
-
-// Gradient shift animation for image placeholder
 @keyframes gradient-shift {
   0% {
     background-position: 0% 50%;
@@ -13,7 +10,6 @@
   }
 }
 
-// Typewriter cursor blink (for future use)
 @keyframes cursor-blink {
   0%, 49% {
     opacity: 1;
@@ -23,7 +19,6 @@
   }
 }
 
-// Fade in animation
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -33,7 +28,6 @@
   }
 }
 
-// Fade out animation
 @keyframes fade-out {
   from {
     opacity: 1;
@@ -43,7 +37,6 @@
   }
 }
 
-// Pulse animation for loaders
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -53,7 +46,6 @@
   }
 }
 
-// Slide in from bottom (for modals)
 @keyframes slide-in-bottom {
   from {
     transform: translateY(100%);
@@ -65,12 +57,10 @@
   }
 }
 
-// Smooth scroll behavior
 html {
   scroll-behavior: smooth;
 }
 
-// Respect reduced motion preference
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
