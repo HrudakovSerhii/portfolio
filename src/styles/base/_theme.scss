@@ -29,6 +29,17 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  // Glass morphism effects
+  --glass-bg-light: rgba(255, 255, 255, 0.95);
+  --glass-border-light: rgba(255, 255, 255, 0.3);
+  --glass-overlay-light: rgba(255, 255, 255, 0.2);
+  --glass-overlay-light-hover: rgba(255, 255, 255, 0.3);
+  --glass-overlay-light-disabled: rgba(255, 255, 255, 0.1);
+  --glass-button-bg: rgba(0, 0, 0, 0.1);
+  --glass-button-bg-hover: rgba(0, 0, 0, 0.2);
+  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  --accent-bg-light: rgba(37, 99, 235, 0.1);
 }
 
 // Dark Theme
@@ -60,4 +71,15 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+
+  // Glass morphism effects
+  --glass-bg-light: rgba(30, 30, 30, 0.95);
+  --glass-border-light: rgba(255, 255, 255, 0.15);
+  --glass-overlay-light: rgba(0, 0, 0, 0.2);
+  --glass-overlay-light-hover: rgba(0, 0, 0, 0.3);
+  --glass-overlay-light-disabled: rgba(0, 0, 0, 0.1);
+  --glass-button-bg: rgba(255, 255, 255, 0.1);
+  --glass-button-bg-hover: rgba(255, 255, 255, 0.2);
+  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  --accent-bg-light: rgba(59, 130, 246, 0.1);
 }
