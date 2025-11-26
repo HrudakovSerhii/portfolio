@@ -1,0 +1,120 @@
+// Modal Content - Specific Modal Variants
+
+// Modal Typography
+.modal-title {
+  font-size: $font-size-2xl;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: $spacing-sm;
+}
+
+.modal-subtitle {
+  font-size: $font-size-base;
+  color: var(--color-text-secondary);
+  line-height: $line-height-normal;
+}
+
+// Personalization Modal Variant
+.personalization-modal {
+  .name-input-wrapper {
+    margin-bottom: $spacing-xl;
+
+    label {
+      @extend .label;
+    }
+
+    input {
+      @extend .input;
+    }
+  }
+
+  .role-selection {
+    .role-label {
+      @extend .label;
+    }
+
+    .role-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+
+      @include tablet {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Role Button (specific to modals)
+.role-button {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: 500;
+  font-family: $font-family-base;
+  color: var(--color-text);
+  background: var(--glass-overlay-light);
+  border: 2px solid var(--color-border);
+  border-radius: $radius-lg;
+  cursor: pointer;
+  transition: all $transition-fast;
+  text-transform: capitalize;
+
+  @include focus-visible;
+
+  &:hover:not(:disabled) {
+    background: var(--glass-overlay-light-hover);
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--glass-overlay-light-disabled);
+    border-color: var(--color-border);
+  }
+
+  &.current-role {
+    border-color: var(--color-accent);
+    background: var(--accent-bg-light);
+    position: relative;
+
+    &::after {
+      content: '✓';
+      position: absolute;
+      top: $spacing-xs;
+      right: $spacing-xs;
+      font-size: $font-size-sm;
+      color: var(--color-accent);
+    }
+  }
+}
+
+// Role Change Modal Variant
+.role-change-modal {
+  .role-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    @include tablet {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+}
+
+// Reduced motion support for interactive elements
+@media (prefers-reduced-motion: reduce) {
+  .role-button:hover:not(:disabled) {
+    transform: none;
+  }
+}
