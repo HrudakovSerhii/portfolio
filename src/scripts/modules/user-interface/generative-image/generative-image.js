@@ -1,97 +1,123 @@
-/**
- * Generative Image Component
- * Creates an AI-generation-style image loading effect with grid overlay
- */
-
-/**
- * Creates a generative image element with progressive reveal animation
- * @param {string} highResSrc - URL of the high-resolution image
- * @param {string|undefined} lowResSrc - Optional URL of low-resolution image for overlay
- * @param {string} alt - Alt text for accessibility
- * @param {string} aspectClass - CSS class for aspect ratio (e.g., 'aspect-video')
- * @param {boolean} shouldAnimate - Whether to enable animation
- * @param {Object} gridConfig - Grid configuration
- * @param {number} gridConfig.rows - Number of grid rows
- * @param {number} gridConfig.cols - Number of grid columns
- * @param {number} gridConfig.delay - Delay between cell removals in milliseconds
- * @returns {HTMLElement} The generative image container element
- */
-export function createGenerativeImage(
-  highResSrc,
-  lowResSrc = undefined,
-  alt = '',
-  aspectClass = 'aspect-video',
-  shouldAnimate = true,
-  gridConfig = { rows: 4, cols: 4, delay: 50 }
-) {
-  // Create container
-  const container = document.createElement('div');
-  container.className = `generative-image ${aspectClass}`;
-
-  // 1. High Resolution Image (Underneath)
-  const highResImg = new Image();
-  highResImg.alt = alt;
-  highResImg.className = 'generative-image__high-res';
-  highResImg.src = highResSrc;
-
-  container.appendChild(highResImg);
-
-  // Check for reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
-  // If animation is disabled or reduced motion is preferred, handle simple load
-  if (!shouldAnimate || prefersReducedMotion || gridConfig.delay === 0) {
-    highResImg.onload = () => {
-      highResImg.classList.add('generative-image__high-res--loaded');
-    };
-    return container;
+class GenerativeImage {
+  constructor(config = {}) {
+    this.highResSrc = config.highResSrc;
+    this.lowResSrc = config.lowResSrc;
+    this.alt = config.alt || '';
+    this.aspectClass = config.aspectClass || 'aspect-video';
+    this.shouldAnimate = config.shouldAnimate !== false;
+    this.gridConfig = config.gridConfig || { rows: 4, cols: 4, delay: 50 };
+    
+    this.container = null;
+    this.highResImg = null;
+    this.overlay = null;
+    this.badge = null;
+    this.cells = [];
   }
 
-  // 2. Grid Overlay (The Low Res "Mosaic")
-  // Use lowResSrc if provided, otherwise fallback to highResSrc
-  const overlaySrc = lowResSrc || highResSrc;
-  
-  const overlay = document.createElement('div');
-  overlay.className = 'generative-image__overlay';
-  overlay.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
-  overlay.style.gridTemplateRows = `repeat(${gridConfig.rows}, 1fr)`;
+  create() {
+    this._buildContainer();
+    this._buildHighResImage();
+    
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (!this.shouldAnimate || prefersReducedMotion || this.gridConfig.delay === 0) {
+      this._setupSimpleLoad();
+      return this.container;
+    }
 
-  const totalCells = gridConfig.rows * gridConfig.cols;
-  const cells = [];
+    this._buildOverlay();
+    this._buildBadge();
+    this._setupAnimatedLoad();
+    
+    return this.container;
+  }
 
-  for (let i = 0; i < totalCells; i++) {
+  load() {
+    if (this.highResImg && this.highResImg.complete) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      if (this.highResImg) {
+        this.highResImg.addEventListener('load', () => resolve(), { once: true });
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  _buildContainer() {
+    this.container = document.createElement('div');
+    this.container.className = `generative-image ${this.aspectClass}`;
+  }
+
+  _buildHighResImage() {
+    this.highResImg = new Image();
+    this.highResImg.alt = this.alt;
+    this.highResImg.className = 'generative-image__high-res';
+    this.highResImg.src = this.highResSrc;
+    this.container.appendChild(this.highResImg);
+  }
+
+  _buildOverlay() {
+    const overlaySrc = this.lowResSrc || this.highResSrc;
+    
+    this.overlay = document.createElement('div');
+    this.overlay.className = 'generative-image__overlay';
+    this.overlay.style.gridTemplateColumns = `repeat(${this.gridConfig.cols}, 1fr)`;
+    this.overlay.style.gridTemplateRows = `repeat(${this.gridConfig.rows}, 1fr)`;
+
+    const totalCells = this.gridConfig.rows * this.gridConfig.cols;
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = this._createCell(i, overlaySrc);
+      this.overlay.appendChild(cell);
+      this.cells.push(cell);
+    }
+    
+    this.container.appendChild(this.overlay);
+  }
+
+  _createCell(index, imageSrc) {
     const cell = document.createElement('div');
     cell.className = 'generative-image__cell';
-    cell.style.backgroundImage = `url(${overlaySrc})`;
-    cell.style.backgroundSize = `${gridConfig.cols * 100}% ${gridConfig.rows * 100}%`;
+    cell.style.backgroundImage = `url(${imageSrc})`;
+    cell.style.backgroundSize = `${this.gridConfig.cols * 100}% ${this.gridConfig.rows * 100}%`;
     
-    // Calculate position for this specific cell
-    const row = Math.floor(i / gridConfig.cols);
-    const col = i % gridConfig.cols;
+    const row = Math.floor(index / this.gridConfig.cols);
+    const col = index % this.gridConfig.cols;
     
-    const xPos = (col / (gridConfig.cols - 1)) * 100;
-    const yPos = (row / (gridConfig.rows - 1)) * 100;
+    const xPos = (col / (this.gridConfig.cols - 1)) * 100;
+    const yPos = (row / (this.gridConfig.rows - 1)) * 100;
     
     cell.style.backgroundPosition = `${xPos}% ${yPos}%`;
+    cell.style.filter = 'blur(2px)';
     
-    overlay.appendChild(cell);
-    cells.push(cell);
+    return cell;
   }
-  
-  container.appendChild(overlay);
 
-  // 3. Badge
-  const badge = document.createElement('div');
-  badge.className = 'generative-image__badge';
-  badge.textContent = 'Refining...';
-  container.appendChild(badge);
+  _buildBadge() {
+    this.badge = document.createElement('div');
+    this.badge.className = 'generative-image__badge';
+    this.badge.textContent = 'Refining...';
+    this.container.appendChild(this.badge);
+  }
 
-  // 4. Animation Logic
-  highResImg.onload = () => {
-    // Show the high res image underneath
-    highResImg.classList.add('generative-image__high-res--loaded');
+  _setupSimpleLoad() {
+    this.highResImg.onload = () => {
+      this.highResImg.classList.add('generative-image__high-res--loaded');
+    };
+  }
 
-    // Shuffle the cells to remove them randomly
+  _setupAnimatedLoad() {
+    this.highResImg.onload = () => {
+      this.highResImg.classList.add('generative-image__high-res--loaded');
+      this._startRevealAnimation();
+    };
+  }
+
+  _startRevealAnimation() {
+    const totalCells = this.cells.length;
     const shuffledIndices = Array.from({ length: totalCells }, (_, i) => i)
       .sort(() => Math.random() - 0.5);
 
@@ -100,28 +126,32 @@ export function createGenerativeImage(
     const intervalId = setInterval(() => {
       if (processedCount >= totalCells) {
         clearInterval(intervalId);
-        
-        // Cleanup DOM
-        setTimeout(() => {
-          overlay.remove();
-          badge.classList.add('generative-image__badge--hidden');
-          setTimeout(() => badge.remove(), 500);
-        }, 500);
+        this._cleanupAnimation();
         return;
       }
 
-      // Pick next random cell index
       const cellIndex = shuffledIndices[processedCount];
-      const cell = cells[cellIndex];
+      const cell = this.cells[cellIndex];
       
-      // Hide it
       if (cell) {
-        cell.classList.add('generative-image__cell--hidden');
+        cell.style.opacity = '0';
       }
 
       processedCount++;
-    }, gridConfig.delay);
-  };
+    }, this.gridConfig.delay);
+  }
 
-  return container;
+  _cleanupAnimation() {
+    setTimeout(() => {
+      if (this.overlay) {
+        this.overlay.remove();
+      }
+      if (this.badge) {
+        this.badge.style.opacity = '0';
+        setTimeout(() => this.badge.remove(), 500);
+      }
+    }, 500);
+  }
 }
+
+export default GenerativeImage;

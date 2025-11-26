@@ -1,10 +1,12 @@
+import { GenerativeImage } from '../generative-image/index.js';
+
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
     this.stateManager = stateManager;
     this.contentMiddleware = contentMiddleware;
     this.templateBuilder = templateBuilder;
     this.animationController = animationController;
-    
+
     this.sectionsContainer = null;
     this.typingIndicator = null;
     this.sectionOrder = [];
@@ -20,25 +22,27 @@ class SectionRenderer {
     this._showTypingIndicator();
 
     const { sectionContent } = await this._fetchSectionData(sectionId, role, customQuery);
-    
+
     this._hideTypingIndicator();
 
     const isZigZagLeft = this._calculateZigZagLayout(sectionId);
     const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
 
-    await this._animateSectionContent(sectionElement);
+    await this._animateSectionContent(sectionElement, sectionContent);
 
     this.stateManager.addRevealedSection(sectionId);
   }
 
   async restore(sectionId, role) {
     const { sectionContent } = await this._fetchSectionData(sectionId, role);
-    
+
     const isZigZagLeft = this._calculateZigZagLayout(sectionId);
     const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
 
     this._populateTextContent(sectionElement, sectionContent.text);
-    this._populateImageContent(sectionElement, sectionContent);
+    
+    const imageData = sectionContent.image[role] || sectionContent.image.default;
+    this._populateImageContent(sectionElement, imageData);
   }
 
   _showTypingIndicator() {
@@ -75,9 +79,14 @@ class SectionRenderer {
     return sectionElement;
   }
 
-  async _animateSectionContent(sectionElement) {
+  async _animateSectionContent(sectionElement, sectionContent) {
     const textElement = sectionElement.querySelector('.content-text');
     const imageContainer = sectionElement.querySelector('.content-image');
+
+    const role = this.stateManager.getRole();
+    const imageData = sectionContent.image[role] || sectionContent.image.default;
+    
+    this._createImage(imageContainer, imageData, true);
 
     const textPromise = this._animateText(textElement);
     const imagePromise = this._animateImage(imageContainer);
@@ -94,46 +103,47 @@ class SectionRenderer {
     await this.animationController.typewriterEffect(textElement, textContent);
   }
 
-  async _animateImage(imageContainer) {
+  _createImage(imageContainer, imageData, shouldAnimate = false) {
     if (!imageContainer) {
       return;
     }
 
-    const imageUrl = imageContainer.getAttribute('data-image-url');
-    const imageAlt = imageContainer.getAttribute('data-image-alt');
-    const aspectRatio = imageContainer.getAttribute('data-aspect-ratio');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const enableAnimation = shouldAnimate && !prefersReducedMotion;
 
-    const generativeImage = this.animationController.createGenerativeImage(
-      imageUrl,
-      imageAlt,
-      aspectRatio
-    );
+    const generativeImage = new GenerativeImage({
+      highResSrc: imageData.imageUrl,
+      lowResSrc: imageData.lowResImageUrl,
+      alt: imageData.imageAlt,
+      aspectClass: imageData.aspectRatio,
+      shouldAnimate: enableAnimation,
+      gridConfig: { rows: 4, cols: 4, delay: 50 }
+    });
 
-    if (generativeImage) {
-      imageContainer.appendChild(generativeImage);
+    const imageElement = generativeImage.create();
+    imageContainer.appendChild(imageElement);
+    imageContainer.generativeImage = generativeImage;
+  }
+
+  async _animateImage(imageContainer) {
+    if (!imageContainer || !imageContainer.generativeImage) {
+      return;
     }
+
+    await imageContainer.generativeImage.load();
   }
 
   _populateTextContent(sectionElement, text) {
     const textElement = sectionElement.querySelector('.content-text');
-    
+
     if (textElement) {
       textElement.textContent = text;
     }
   }
 
-  _populateImageContent(sectionElement, sectionContent) {
+  _populateImageContent(sectionElement, sectionImageContent) {
     const imageContainer = sectionElement.querySelector('.content-image');
-    
-    if (!imageContainer) {
-      return;
-    }
-
-    const img = document.createElement('img');
-    img.src = sectionContent.imageUrl;
-    img.alt = sectionContent.imageAlt;
-    img.className = `section-image ${sectionContent.aspectRatio}`;
-    imageContainer.appendChild(img);
+    this._createImage(imageContainer, sectionImageContent, false);
   }
 }
 

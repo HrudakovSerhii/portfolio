@@ -87,7 +87,7 @@ class ContentMiddleware {
    * @param {string} [customQuery] - Optional custom query for personalized content
    * @returns {Promise<SectionContent>} Section content object
    */
-  async fetchSectionContent(sectionId, role, customQuery = null) {
+  async fetchSectionContent(sectionId, role, customQuery = '') {
     try {
       const data = await this._loadContentData();
 
@@ -107,9 +107,12 @@ class ContentMiddleware {
         sectionId,
         title: section.metadata.title,
         text: roleContent.text,
-        imageUrl: roleContent.imageUrl,
-        imageAlt: roleContent.imageAlt,
-        aspectRatio: roleContent.aspectRatio,
+        image: {
+          imageUrl: roleContent.imageUrl,
+          lowResImageUrl: roleContent.lowResImageUrl,
+          imageAlt: roleContent.imageAlt,
+          aspectRatio: roleContent.aspectRatio,
+        },
         customQuery: customQuery || null
       };
     } catch (error) {
