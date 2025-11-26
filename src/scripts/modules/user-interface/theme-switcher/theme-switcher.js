@@ -1,4 +1,4 @@
-class ThemeManager {
+class ThemeSwitcher {
   constructor(stateManager) {
     this.stateManager = stateManager;
     this.themeToggle = null;
@@ -43,4 +43,4 @@ class ThemeManager {
   }
 }
 
-export default ThemeManager;
+export default ThemeSwitcher;

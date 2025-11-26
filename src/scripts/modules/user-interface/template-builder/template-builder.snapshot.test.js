@@ -1,7 +1,7 @@
 /**
- * Snapshot tests for TemplateService using real HTML templates
+ * Snapshot tests for TemplateBuilder using real HTML templates
  * 
- * These tests verify that the TemplateService correctly renders
+ * These tests verify that the TemplateBuilder correctly renders
  * actual HTML templates from index.html and that the
  * rendered output matches expected snapshots.
  */
@@ -9,12 +9,12 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Window } from 'happy-dom';
-import TemplateService from './template-service.js';
+import TemplateBuilder from './template-builder.js';
 
-describe('TemplateService - Snapshot Tests with Real Templates', () => {
+describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
   let window;
   let document;
-  let templateService;
+  let templateBuilder;
 
   beforeEach(() => {
     const htmlPath = join(process.cwd(), 'src/index.html');
@@ -25,11 +25,11 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
     document = window.document;
     document.write(htmlContent);
 
-    // Set global document for TemplateService
+    // Set global document for TemplateBuilder
     global.document = document;
 
-    // Create TemplateService instance
-    templateService = new TemplateService();
+    // Create TemplateBuilder instance
+    templateBuilder = new TemplateBuilder();
   });
 
   describe('renderSection', () => {
@@ -44,7 +44,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
         customQuery: null
       };
 
-      const section = templateService.renderSection(sectionData, true);
+      const section = templateBuilder.renderSection(sectionData, true);
 
       // Verify structure
       expect(section.getAttribute('data-section-id')).toBe('hero');
@@ -67,7 +67,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
         customQuery: null
       };
 
-      const section = templateService.renderSection(sectionData, false);
+      const section = templateBuilder.renderSection(sectionData, false);
 
       expect(section.querySelector('.section-content').classList.contains('zig-zag-right')).toBe(true);
       expect(section.outerHTML).toMatchSnapshot();
@@ -84,7 +84,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
         customQuery: 'What are your top 3 programming languages?'
       };
 
-      const section = templateService.renderSection(sectionData, true);
+      const section = templateBuilder.renderSection(sectionData, true);
 
       const queryElement = section.querySelector('.section-query');
       expect(queryElement.textContent).toBe('"What are your top 3 programming languages?"');
@@ -95,7 +95,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
 
   describe('renderActionPrompt', () => {
     it('should render action prompt with placeholder', () => {
-      const actionPrompt = templateService.renderActionPrompt(
+      const actionPrompt = templateBuilder.renderActionPrompt(
         'experience',
         'React, Node.js, TypeScript'
       );
@@ -122,7 +122,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
         icon: '📁'
       };
 
-      const navItem = templateService.renderNavigationItem(metadata);
+      const navItem = templateBuilder.renderNavigationItem(metadata);
 
       expect(navItem.getAttribute('data-section-id')).toBe('projects');
       expect(navItem.href).toContain('#section-projects');
@@ -139,7 +139,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
         icon: null
       };
 
-      const navItem = templateService.renderNavigationItem(metadata);
+      const navItem = templateBuilder.renderNavigationItem(metadata);
 
       expect(navItem.querySelector('.nav-icon').textContent).toBe('📄');
       expect(navItem.outerHTML).toMatchSnapshot();
@@ -148,7 +148,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
 
   describe('renderLoader', () => {
     it('should render loader component', () => {
-      const loader = templateService.renderLoader();
+      const loader = templateBuilder.renderLoader();
 
       expect(loader.classList.contains('loader')).toBe(true);
       expect(loader.querySelector('.loader-spinner')).toBeTruthy();
@@ -159,7 +159,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
 
   describe('renderTypingIndicator', () => {
     it('should return existing typing indicator from DOM', () => {
-      const indicator = templateService.renderTypingIndicator();
+      const indicator = templateBuilder.renderTypingIndicator();
 
       expect(indicator.id).toBe('typing-indicator');
       expect(indicator.querySelector('.typing-dot')).toBeTruthy();
@@ -170,7 +170,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
 
   describe('renderPersonalizationModal', () => {
     it('should render personalization modal with glass effect', () => {
-      const modal = templateService.renderPersonalizationModal();
+      const modal = templateBuilder.renderPersonalizationModal();
 
       expect(modal.classList.contains('modal-overlay')).toBe(true);
       expect(modal.classList.contains('modal-overlay--glass')).toBe(true);
@@ -188,7 +188,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
 
   describe('renderRoleChangeModal', () => {
     it('should render role change modal with developer role disabled', () => {
-      const modal = templateService.renderRoleChangeModal('developer');
+      const modal = templateBuilder.renderRoleChangeModal('developer');
 
       expect(modal.classList.contains('modal-overlay')).toBe(true);
       expect(modal.classList.contains('modal-overlay--glass')).toBe(true);
@@ -203,7 +203,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
     });
 
     it('should render role change modal with recruiter role disabled', () => {
-      const modal = templateService.renderRoleChangeModal('recruiter');
+      const modal = templateBuilder.renderRoleChangeModal('recruiter');
 
       const recruiterButton = modal.querySelector('[data-role="recruiter"]');
       expect(recruiterButton.disabled).toBe(true);
@@ -212,7 +212,7 @@ describe('TemplateService - Snapshot Tests with Real Templates', () => {
     });
 
     it('should render role change modal with friend role disabled', () => {
-      const modal = templateService.renderRoleChangeModal('friend');
+      const modal = templateBuilder.renderRoleChangeModal('friend');
 
       const friendButton = modal.querySelector('[data-role="friend"]');
       expect(friendButton.disabled).toBe(true);

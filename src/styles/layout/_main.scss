@@ -3,23 +3,6 @@
 .main-content {
     display: flex;
     flex-direction: column;
-    margin-top: $header-height;
-
-    // Account for navigation panel on desktop
-    @include desktop {
-        margin-left: $nav-width-collapsed;
-        transition: margin-left $transition-base;
-
-        // When nav is collapsed
-        &.nav-collapsed {
-            margin-left: $nav-width-expanded;
-        }
-    }
-
-    // Mobile: no margin (nav overlays)
-    @include mobile {
-        margin-left: 0;
-    }
 
     section {
         display: flex;
