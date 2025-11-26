@@ -1,10 +1,10 @@
 import StateManager from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
-import TemplateService from '../template-service/template-service.js';
-import AnimationEngine from '../animation-engine.js';
-import ThemeManager from '../theme-manager/theme-manager.js';
-import HeaderManager from '../header-manager/header-manager.js';
-import SectionRenderer from '../section-renderer/section-renderer.js';
+import TemplateBuilder from '../user-interface/template-builder/index.js';
+import AnimationController from '../animation-controller/index.js';
+import ThemeSwitcher from '../user-interface/theme-switcher/index.js';
+import HeaderController from '../user-interface/header-controller/index.js';
+import SectionRenderer from '../user-interface/section-renderer/index.js';
 
 const MODAL_FADE_DURATION = 300;
 const SCROLL_AFTER_RENDER_DELAY = 100;
@@ -14,16 +14,16 @@ class AppController {
   constructor() {
     this.stateManager = new StateManager();
     this.contentMiddleware = new ContentMiddleware('/data/content.json');
-    this.templateService = new TemplateService();
-    this.animationEngine = new AnimationEngine();
+    this.templateBuilder = new TemplateBuilder();
+    this.animationController = new AnimationController();
 
-    this.themeManager = new ThemeManager(this.stateManager);
-    this.headerManager = new HeaderManager(this.stateManager, this.templateService);
+    this.themeSwitcher = new ThemeSwitcher(this.stateManager);
+    this.headerController = new HeaderController(this.stateManager, this.templateBuilder);
     this.sectionRenderer = new SectionRenderer(
       this.stateManager,
       this.contentMiddleware,
-      this.templateService,
-      this.animationEngine
+      this.templateBuilder,
+      this.animationController
     );
 
     this.elements = {
@@ -54,8 +54,8 @@ class AppController {
       this._cacheElements();
       this._setupEventListeners();
 
-      this.themeManager.initialize(this.elements.themeToggle);
-      this.headerManager.initialize(
+      this.themeSwitcher.initialize(this.elements.themeToggle);
+      this.headerController.initialize(
         this.elements.ownerName,
         this.elements.languageSelector,
         this.elements.changeRoleButton
@@ -115,15 +115,15 @@ class AppController {
 
   _setupEventListeners() {
     this.elements.themeToggle.addEventListener('click', () => {
-      this.themeManager.toggle();
+      this.themeSwitcher.toggle();
     });
 
     this.elements.languageSelector.addEventListener('change', (e) => {
-      this.headerManager.updateLanguage(e.target.value);
+      this.headerController.updateLanguage(e.target.value);
     });
 
     this.elements.changeRoleButton.addEventListener('click', () => {
-      this.headerManager.showRoleChangeModal((newRole) => this.handleRoleChange(newRole));
+      this.headerController.showRoleChangeModal((newRole) => this.handleRoleChange(newRole));
     });
 
     this._setupHeroRoleCardListeners();
@@ -173,7 +173,7 @@ class AppController {
   async _loadUserProfile() {
     try {
       const profile = await this.contentMiddleware.getUserProfile();
-      this.headerManager.updateOwnerName(profile.name);
+      this.headerController.updateOwnerName(profile.name);
     } catch (error) {
       console.error('Failed to load user profile:', error);
     }
@@ -217,7 +217,7 @@ class AppController {
     this._applyStoredScrollPosition();
 
     if (this.stateManager.hasRevealedAllSections()) {
-      this.headerManager.showChangeRoleButton();
+      this.headerController.showChangeRoleButton();
     }
   }
 
@@ -263,7 +263,7 @@ class AppController {
       const actionPrompts = this.elements.sectionsContainer.querySelectorAll('.action-prompt');
       actionPrompts.forEach(prompt => prompt.remove());
 
-      this.headerManager.hideChangeRoleButton();
+      this.headerController.hideChangeRoleButton();
 
       this.elements.heroRoles.style.display = 'block';
 
@@ -317,13 +317,13 @@ class AppController {
       const currentIndex = this.sectionOrder.indexOf(currentSectionId);
 
       if (currentIndex === this.sectionOrder.length - 1) {
-        this.headerManager.showChangeRoleButton();
+        this.headerController.showChangeRoleButton();
         return;
       }
 
       const nextSectionId = this.sectionOrder[currentIndex + 1];
       const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
-      const actionPrompt = this.templateService.renderActionPrompt(nextSectionId, placeholder);
+      const actionPrompt = this.templateBuilder.renderActionPrompt(nextSectionId, placeholder);
 
       this.elements.sectionsContainer.appendChild(actionPrompt);
       this._setupActionPromptHandlers(actionPrompt, nextSectionId);

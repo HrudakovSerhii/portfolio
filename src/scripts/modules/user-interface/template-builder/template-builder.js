@@ -14,17 +14,17 @@ class TemplateBuilder {
 
   _getTemplate(templateId) {
     const cacheKey = templateId.replace('-template', '').replace(/-/g, '');
-
+    
     if (!this.templates[cacheKey]) {
       const template = document.getElementById(templateId);
-
+      
       if (!template) {
         throw new Error(`Template with id "${templateId}" not found in DOM`);
       }
-
+      
       this.templates[cacheKey] = template;
     }
-
+    
     return this.templates[cacheKey];
   }
 
@@ -33,41 +33,17 @@ class TemplateBuilder {
     return template.content.cloneNode(true);
   }
 
-  renderSection(sectionData, isZigZagLeft, profileData = null) {
-    const sectionId = sectionData.sectionId;
-    const templateId = sectionId === 'contact' ? 'contact-section-template' : 'section-template';
+  renderSection(sectionData, isZigZagLeft) {
+    const fragment = this._cloneTemplate('section-template');
+    const section = fragment.querySelector('.portfolio-section');
     
-    const section = this._createSectionElement(templateId, sectionData, isZigZagLeft);
-    
-    if (sectionId === 'contact') {
-      this._populateContactActions(section, sectionData, profileData);
-    }
-    
-    return section;
-  }
-
-  _createSectionElement(templateId, sectionData, isZigZagLeft) {
-    const fragment = this._cloneTemplate(templateId);
-    const section = fragment.querySelector('.content-section');
-
     if (!section) {
-      throw new Error(`Section element not found in template: ${templateId}`);
+      throw new Error('Section element not found in template');
     }
 
-    this._setSectionAttributes(section, sectionData);
-    this._setSectionHeader(section, sectionData);
-    this._setSectionLayout(section, sectionData, isZigZagLeft);
-    this._setSectionContent(section, sectionData);
-
-    return section;
-  }
-
-  _setSectionAttributes(section, sectionData) {
     section.setAttribute('data-section-id', sectionData.sectionId);
     section.id = `section-${sectionData.sectionId}`;
-  }
 
-  _setSectionHeader(section, sectionData) {
     const titleElement = section.querySelector('.section-title');
     if (titleElement) {
       titleElement.textContent = sectionData.title;
@@ -82,61 +58,32 @@ class TemplateBuilder {
         queryElement.style.display = 'none';
       }
     }
-  }
 
-  _setSectionLayout(section, sectionData, isZigZagLeft) {
-    const layoutElement = section.querySelector('.section-layout');
-    if (!layoutElement) return;
-
-    const aspectRatio = sectionData.image.aspectRatio;
-    const isLandscape = aspectRatio === 'aspect-landscape';
-
-    if (isLandscape) {
-      layoutElement.classList.add('non-square-image');
-    } else {
+    const contentElement = section.querySelector('.section-content');
+    if (contentElement) {
       const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
-      layoutElement.classList.add(layoutClass);
-      section.style.justifyContent = 'center';
+      contentElement.classList.add(layoutClass);
     }
-  }
 
-  _setSectionContent(section, sectionData) {
-    const textElement = section.querySelector('.section-body-content');
+    const textElement = section.querySelector('.content-text');
     if (textElement) {
       textElement.setAttribute('data-text', sectionData.text);
     }
 
     const imageContainer = section.querySelector('.content-image');
     if (imageContainer) {
-      imageContainer.setAttribute('data-image-url', sectionData.image.imageUrl);
-      imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
-      imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
-    }
-  }
-
-  _populateContactActions(section, sectionData, profileData) {
-    if (!profileData) return;
-
-    const emailLink = section.querySelector('.contact-email-link');
-    if (emailLink && profileData.email) {
-      const subject = encodeURIComponent(sectionData.emailSubject || 'Hello');
-      const body = encodeURIComponent(sectionData.emailBody || '');
-      emailLink.href = `mailto:${profileData.email}?subject=${subject}&body=${body}`;
-      emailLink.setAttribute('data-email', profileData.email);
-      emailLink.setAttribute('data-name', profileData.name);
+      imageContainer.setAttribute('data-image-url', sectionData.imageUrl);
+      imageContainer.setAttribute('data-image-alt', sectionData.imageAlt);
+      imageContainer.setAttribute('data-aspect-ratio', sectionData.aspectRatio);
     }
 
-    const linkedinLink = section.querySelector('.contact-linkedin-link');
-    if (linkedinLink && profileData.socialLinks?.linkedin) {
-      linkedinLink.href = profileData.socialLinks.linkedin;
-    }
+    return section;
   }
 
   renderActionPrompt(sectionId, placeholder) {
-    // TODO: move usage of placeholder to chat feature that can be called on each section.
     const fragment = this._cloneTemplate('action-prompt-template');
     const actionPrompt = fragment.querySelector('.action-prompt');
-
+    
     if (!actionPrompt) {
       throw new Error('Action prompt element not found in template');
     }
@@ -144,10 +91,16 @@ class TemplateBuilder {
     actionPrompt.id = `action-prompt-${sectionId}`;
     actionPrompt.setAttribute('data-section-id', sectionId);
 
+    const input = actionPrompt.querySelector('.prompt-input');
+    if (input) {
+      input.placeholder = placeholder;
+      input.id = `prompt-input-${sectionId}`;
+    }
+
     const button = actionPrompt.querySelector('.prompt-button');
     if (button) {
       const sectionName = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-      const defaultText = `Read next: ${sectionName}`;
+      const defaultText = `Get to know ${sectionName}`;
       button.textContent = defaultText;
       button.setAttribute('data-default-text', defaultText);
       button.setAttribute('data-section-id', sectionId);
@@ -159,7 +112,7 @@ class TemplateBuilder {
   renderNavigationItem(sectionMetadata) {
     const fragment = this._cloneTemplate('nav-item-template');
     const navItem = fragment.querySelector('.nav-item');
-
+    
     if (!navItem) {
       throw new Error('Navigation item element not found in template');
     }
@@ -186,7 +139,7 @@ class TemplateBuilder {
   renderLoader() {
     const fragment = this._cloneTemplate('loader-template');
     const loader = fragment.querySelector('.loader');
-
+    
     if (!loader) {
       throw new Error('Loader element not found in template');
     }
@@ -196,7 +149,7 @@ class TemplateBuilder {
 
   renderTypingIndicator() {
     const indicator = document.getElementById('typing-indicator');
-
+    
     if (!indicator) {
       throw new Error('Typing indicator element not found in DOM');
     }
@@ -207,7 +160,7 @@ class TemplateBuilder {
   renderPersonalizationModal() {
     const fragment = this._cloneTemplate('personalization-modal-template');
     const modal = fragment.querySelector('.modal-overlay');
-
+    
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
@@ -221,7 +174,7 @@ class TemplateBuilder {
           btn.classList.remove('role-button--selected');
           btn.setAttribute('aria-checked', 'false');
         });
-
+        
         button.classList.add('role-button--selected');
         button.setAttribute('aria-checked', 'true');
       });
@@ -233,18 +186,32 @@ class TemplateBuilder {
   renderRoleChangeModal(currentRole) {
     const fragment = this._cloneTemplate('role-change-modal-template');
     const modal = fragment.querySelector('.modal-overlay');
-
+    
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
 
+    modal.classList.add('modal-overlay--glass');
+
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {
       currentButton.disabled = true;
-      currentButton.style.opacity = '0.5';
-      currentButton.style.cursor = 'not-allowed';
-      currentButton.style.pointerEvents = 'none';
     }
+
+    const roleButtons = modal.querySelectorAll('.role-button');
+    roleButtons.forEach(button => {
+      if (!button.disabled) {
+        button.addEventListener('click', () => {
+          roleButtons.forEach(btn => {
+            btn.classList.remove('role-button--selected');
+            btn.setAttribute('aria-checked', 'false');
+          });
+          
+          button.classList.add('role-button--selected');
+          button.setAttribute('aria-checked', 'true');
+        });
+      }
+    });
 
     return modal;
   }

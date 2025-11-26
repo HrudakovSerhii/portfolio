@@ -3,4 +3,4 @@
  * Export the createGenerativeImage function
  */
 
-export { default as GenerativeImage } from './generative-image.js';
+export { createGenerativeImage } from './generative-image.js';
