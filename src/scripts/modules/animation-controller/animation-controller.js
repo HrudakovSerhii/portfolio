@@ -1,10 +1,10 @@
 /**
- * AnimationEngine - Handles typewriter effects and image loading animations
+ * AnimationController - Handles typewriter effects and image loading animations
  * Provides smooth, AI-like text generation and image reveal effects
  * Respects user's motion preferences for accessibility
  */
 
-import { createGenerativeImage } from './generative-image/index.js';
+import { createGenerativeImage } from '../user-interface/generative-image/index.js';
 
 // Animation configuration constants
 const ANIMATION_CONFIG = {
@@ -24,7 +24,7 @@ const ANIMATION_CONFIG = {
   }
 };
 
-class AnimationEngine {
+class AnimationController {
   constructor() {
     // Cache the prefers-reduced-motion query
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -112,5 +112,5 @@ class AnimationEngine {
 }
 
 // Export the class and configuration for testing
-export default AnimationEngine;
+export default AnimationController;
 export { ANIMATION_CONFIG };

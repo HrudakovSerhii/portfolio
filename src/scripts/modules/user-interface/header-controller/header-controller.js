@@ -1,10 +1,10 @@
 const MODAL_FADE_DURATION = 300;
 const MODAL_FOCUS_DELAY = 100;
 
-class HeaderManager {
-  constructor(stateManager, templateService) {
+class HeaderController {
+  constructor(stateManager, templateBuilder) {
     this.stateManager = stateManager;
-    this.templateService = templateService;
+    this.templateBuilder = templateBuilder;
     
     this.ownerName = null;
     this.languageSelector = null;
@@ -79,7 +79,7 @@ class HeaderManager {
   }
 
   _renderModal(currentRole) {
-    const modal = this.templateService.renderRoleChangeModal(currentRole);
+    const modal = this.templateBuilder.renderRoleChangeModal(currentRole);
     document.body.appendChild(modal);
 
     requestAnimationFrame(() => {
@@ -156,4 +156,4 @@ class HeaderManager {
   }
 }
 
-export default HeaderManager;
+export default HeaderController;

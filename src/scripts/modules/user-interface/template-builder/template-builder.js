@@ -1,4 +1,4 @@
-class TemplateService {
+class TemplateBuilder {
   constructor() {
     this.templates = {
       section: null,
@@ -217,5 +217,5 @@ class TemplateService {
   }
 }
 
-export default TemplateService;
+export default TemplateBuilder;
 

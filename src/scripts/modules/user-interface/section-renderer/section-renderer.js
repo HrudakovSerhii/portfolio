@@ -1,9 +1,9 @@
 class SectionRenderer {
-  constructor(stateManager, contentMiddleware, templateService, animationEngine) {
+  constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
     this.stateManager = stateManager;
     this.contentMiddleware = contentMiddleware;
-    this.templateService = templateService;
-    this.animationEngine = animationEngine;
+    this.templateBuilder = templateBuilder;
+    this.animationController = animationController;
     
     this.sectionsContainer = null;
     this.typingIndicator = null;
@@ -70,7 +70,7 @@ class SectionRenderer {
   }
 
   _renderSection(sectionContent, isZigZagLeft) {
-    const sectionElement = this.templateService.renderSection(sectionContent, isZigZagLeft);
+    const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft);
     this.sectionsContainer.appendChild(sectionElement);
     return sectionElement;
   }
@@ -91,7 +91,7 @@ class SectionRenderer {
     }
 
     const textContent = textElement.getAttribute('data-text');
-    await this.animationEngine.typewriterEffect(textElement, textContent);
+    await this.animationController.typewriterEffect(textElement, textContent);
   }
 
   async _animateImage(imageContainer) {
@@ -103,7 +103,7 @@ class SectionRenderer {
     const imageAlt = imageContainer.getAttribute('data-image-alt');
     const aspectRatio = imageContainer.getAttribute('data-aspect-ratio');
 
-    const generativeImage = this.animationEngine.createGenerativeImage(
+    const generativeImage = this.animationController.createGenerativeImage(
       imageUrl,
       imageAlt,
       aspectRatio
