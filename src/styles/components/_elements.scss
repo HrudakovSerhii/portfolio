@@ -23,3 +23,64 @@
   width: 24px;
   height: 24px;
 }
+
+// Form Elements
+.input {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  color: var(--color-text);
+  background: var(--glass-overlay-light);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  transition: border-color $transition-fast, background $transition-fast;
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background: var(--glass-overlay-light-hover);
+  }
+}
+
+.label {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: $spacing-sm;
+}
+
+// Icon Button
+.icon-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-button-bg);
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  color: var(--color-text);
+  font-size: $font-size-xl;
+  line-height: 1;
+  transition: background $transition-fast, transform $transition-fast;
+
+  @include focus-visible;
+
+  &:hover {
+    background: var(--glass-button-bg-hover);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
