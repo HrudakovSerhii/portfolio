@@ -1,9 +1,5 @@
 // CSS Reset and Normalize - Enhanced for cross-browser consistency
-
-// ============================================
-// Box Model Reset
-// ============================================
-
+// Note: Theme variables are now defined in _theme.scss
 *,
 *::before,
 *::after {
@@ -15,10 +11,6 @@
     padding: 0;
 }
 
-// ============================================
-// Root and Body
-// ============================================
-
 html {
     font-size: 100%;
     scroll-behavior: smooth;
@@ -27,32 +19,16 @@ html {
     text-size-adjust: 100%;
 }
 
-// ============================================
-// CSS Custom Properties (Theme Variables)
-// ============================================
-
-:root {
-    @include theme-light;
-}
-
-:root[data-theme="dark"] {
-    @include theme-dark;
-}
-
 body {
     min-height: 100vh;
     line-height: $line-height-base;
     font-family: $font-family-primary;
-    color: $text-color;
-    background-color: $background-color;
+    color: var(--color-text);
+    background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
-
-// ============================================
-// Media Elements
-// ============================================
 
 img,
 picture,
@@ -63,10 +39,6 @@ svg {
     max-width: 100%;
     height: auto;
 }
-
-// ============================================
-// Form Elements
-// ============================================
 
 input,
 button,
@@ -94,36 +66,22 @@ button::-moz-focus-inner {
     padding: 0;
 }
 
-// ============================================
-// Links
-// ============================================
-
 a {
     text-decoration: none;
     color: inherit;
 }
-
-// ============================================
-// Lists
-// ============================================
 
 ul,
 ol {
     list-style: none;
 }
 
-// ============================================
-// Headings
-// ============================================
-
 h1, h2, h3, h4, h5, h6 {
     font-weight: inherit;
     font-size: inherit;
 }
 
-// ============================================
 // Accessibility
-// ============================================
 
 // Respect user's motion preferences
 @media (prefers-reduced-motion: reduce) {
