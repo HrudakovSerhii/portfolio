@@ -1,85 +1,124 @@
 // Theme System - CSS Custom Properties
+// Colors extracted from React app Tailwind classes
 
 // Light Theme (Default)
 :root {
   // Background colors
-  --color-bg: #ffffff;
-  --color-surface: #f5f5f5;
+  --color-bg: #f9fafb; // gray-50
+  --color-surface: #ffffff; // white
+  --color-surface-secondary: #f3f4f6; // gray-100
 
   // Text colors
-  --color-text: #1a1a1a;
-  --color-text-secondary: #666666;
+  --color-text: #111827; // gray-900
+  --color-text-secondary: #6b7280; // gray-500
+  --color-text-tertiary: #9ca3af; // gray-400
 
   // Border colors
-  --color-border: #e0e0e0;
+  --color-border: #e5e7eb; // gray-200
+  --color-border-light: #f3f4f6; // gray-100
 
-  // Accent colors
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
+  // Accent colors - Blue
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-accent: #2563eb; // blue-600
+  --color-accent-hover: #3b82f6; // blue-500
+
+  // Accent colors - Indigo
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+
+  // Accent colors - Purple
+  --color-purple-200: #e9d5ff;
+  --color-purple-600: #9333ea;
+
+  // Accent colors - Teal
+  --color-teal-50: #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
 
   // Semantic colors
-  --color-primary: #2c3e50;
-  --color-primary-dark: #1a252f;
-  --color-secondary: #3498db;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
+  --color-success: #10b981; // green-500
+  --color-warning: #f59e0b; // amber-500
+  --color-error: #ef4444; // red-500
 
-  // Shadows (theme-dependent)
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
-  // Glass morphism effects
-  --glass-bg-light: rgba(255, 255, 255, 0.95);
-  --glass-border-light: rgba(255, 255, 255, 0.3);
-  --glass-overlay-light: rgba(255, 255, 255, 0.2);
-  --glass-overlay-light-hover: rgba(255, 255, 255, 0.3);
-  --glass-overlay-light-disabled: rgba(255, 255, 255, 0.1);
-  --glass-button-bg: rgba(0, 0, 0, 0.1);
-  --glass-button-bg-hover: rgba(0, 0, 0, 0.2);
-  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
-  --accent-bg-light: rgba(37, 99, 235, 0.1);
+  // Role card hover backgrounds
+  --color-blue-hover-bg: rgba(239, 246, 255, 1); // blue-50
+  --color-indigo-hover-bg: rgba(238, 242, 255, 1); // indigo-50
+  --color-teal-hover-bg: rgba(240, 253, 250, 1); // teal-50
+
+  // Gradient colors
+  --gradient-blue-purple-from: #2563eb; // blue-600
+  --gradient-blue-purple-to: #9333ea; // purple-600
 }
 
 // Dark Theme
 [data-theme="dark"] {
   // Background colors
-  --color-bg: #1a1a1a;
-  --color-surface: #2d2d2d;
+  --color-bg: #030712; // gray-950
+  --color-surface: #1f2937; // gray-800
+  --color-surface-secondary: #111827; // gray-900
 
   // Text colors
-  --color-text: #ffffff;
-  --color-text-secondary: #a0a0a0;
+  --color-text: #ffffff; // white
+  --color-text-secondary: #d1d5db; // gray-300
+  --color-text-tertiary: #9ca3af; // gray-400
 
   // Border colors
-  --color-border: #404040;
+  --color-border: #374151; // gray-700
+  --color-border-light: #1f2937; // gray-800
 
-  // Accent colors
-  --color-accent: #3b82f6;
-  --color-accent-hover: #60a5fa;
+  // Accent colors - Blue
+  --color-blue-50: #1e3a8a;
+  --color-blue-100: #1e40af;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-accent: #3b82f6; // blue-500
+  --color-accent-hover: #60a5fa; // blue-400
+
+  // Accent colors - Indigo
+  --color-indigo-50: #312e81;
+  --color-indigo-100: #3730a3;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+
+  // Accent colors - Purple
+  --color-purple-200: #581c87;
+  --color-purple-600: #9333ea;
+
+  // Accent colors - Teal
+  --color-teal-50: #134e4a;
+  --color-teal-100: #115e59;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
 
   // Semantic colors
-  --color-primary: #3498db;
-  --color-primary-dark: #2980b9;
-  --color-secondary: #2c3e50;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-error: #f87171;
+  --color-success: #34d399; // green-400
+  --color-warning: #fbbf24; // amber-400
+  --color-error: #f87171; // red-400
 
-  // Shadows (theme-dependent)
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
 
-  // Glass morphism effects
-  --glass-bg-light: rgba(30, 30, 30, 0.95);
-  --glass-border-light: rgba(255, 255, 255, 0.15);
-  --glass-overlay-light: rgba(0, 0, 0, 0.2);
-  --glass-overlay-light-hover: rgba(0, 0, 0, 0.3);
-  --glass-overlay-light-disabled: rgba(0, 0, 0, 0.1);
-  --glass-button-bg: rgba(255, 255, 255, 0.1);
-  --glass-button-bg-hover: rgba(255, 255, 255, 0.2);
-  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
-  --accent-bg-light: rgba(59, 130, 246, 0.1);
+  // Role card hover backgrounds
+  --color-blue-hover-bg: rgba(30, 58, 138, 0.1); // blue-900/10
+  --color-indigo-hover-bg: rgba(49, 46, 129, 0.1); // indigo-900/10
+  --color-teal-hover-bg: rgba(19, 78, 74, 0.1); // teal-900/10
+
+  // Gradient colors (same as light)
+  --gradient-blue-purple-from: #2563eb;
+  --gradient-blue-purple-to: #9333ea;
 }
