@@ -27,18 +27,55 @@
   <!-- Header -->
   <header class="header" role="banner">
     <div class="header-content">
-      <h1 class="header-owner-name" id="owner-name">Serhii Hrudakov - Portfolio</h1>
+      <!-- Left: Brand & Navigation -->
+      <div class="header-left">
+        <!-- Brand -->
+        <div class="header-brand">
+          <div class="header-brand-avatar">
+            <span>SH</span>
+          </div>
+          <span class="header-brand-text">Portfolio</span>
+        </div>
 
+        <!-- Divider -->
+        <div class="header-divider"></div>
+
+        <!-- Progressive Navigation -->
+        <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
+          <!-- Navigation items will be added dynamically -->
+        </nav>
+      </div>
+
+      <!-- Right: Controls -->
       <div class="header-controls">
+        <!-- Role Badge -->
+        <div class="header-role-badge" id="header-role-badge" style="display: none;">
+          <span class="header-role-icon" aria-hidden="true">👤</span>
+          <span class="header-role-text" id="header-role-text">View</span>
+        </div>
+
+        <!-- Change Role Button -->
+        <button
+          id="change-role-button"
+          class="control-button control-button--icon"
+          aria-label="Change role"
+          title="Change Role"
+          style="display: none;">
+          <span class="control-icon" aria-hidden="true">🔄</span>
+        </button>
+
+        <!-- Theme Toggle -->
         <button
           id="theme-toggle"
-          class="control-button"
+          class="control-button control-button--icon"
           aria-label="Toggle theme"
           aria-pressed="false"
+          title="Toggle Theme"
           data-theme="light">
           <span class="control-icon" aria-hidden="true">🌙</span>
         </button>
 
+        <!-- Language Selector -->
         <select
           id="language-selector"
           class="control-select"
@@ -46,14 +83,6 @@
           <option value="en">English</option>
           <option value="es">Español</option>
         </select>
-
-        <button
-          id="change-role-button"
-          class="control-button control-button--primary"
-          aria-label="Change role"
-          style="display: none;">
-          Change Role
-        </button>
       </div>
     </div>
   </header>
@@ -169,7 +198,7 @@
 
   <!-- Section Template -->
   <template id="section-template">
-    <section class="portfolio-section" data-section-id="">
+    <section class="portfolio-section" id="" data-section-id="">
       <div class="parallax-layer" aria-hidden="true"></div>
       <div class="section-header">
         <h2 class="section-title"></h2>

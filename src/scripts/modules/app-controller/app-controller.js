@@ -1,10 +1,10 @@
-import StateManager from '../../utils/state-manager.js';
+import StateManager, { SECTION_ORDER } from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
-import TemplateBuilder from '../user-interface/template-builder/index.js';
-import AnimationController from '../animation-controller/index.js';
-import ThemeSwitcher from '../user-interface/theme-switcher/index.js';
-import HeaderController from '../user-interface/header-controller/index.js';
-import SectionRenderer from '../user-interface/section-renderer/index.js';
+import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
+import AnimationController from '../animation-controller';
+import ThemeSwitcher from '../user-interface/theme-switcher';
+import HeaderController from '../user-interface/header-controller';
+import SectionRenderer from '../user-interface/section-renderer';
 
 const MODAL_FADE_DURATION = 300;
 const SCROLL_AFTER_RENDER_DELAY = 100;
@@ -13,7 +13,7 @@ const SECTION_SCROLL_DELAY = 100;
 class AppController {
   constructor() {
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/data/content.json');
+    this.contentMiddleware = new ContentMiddleware('/data/portfolio-default-content.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
 
@@ -148,8 +148,11 @@ class AppController {
       this.stateManager.setRole(role);
 
       this.elements.heroRoles.style.display = 'none';
+      
+      // Update role badge in header
+      this.headerController.updateRoleBadge(role);
 
-      await this.revealSection('about');
+      await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
@@ -264,6 +267,8 @@ class AppController {
       actionPrompts.forEach(prompt => prompt.remove());
 
       this.headerController.hideChangeRoleButton();
+      this.headerController.updateRoleBadge(null);
+      this.headerController.clearNavigation();
 
       this.elements.heroRoles.style.display = 'block';
 
@@ -294,6 +299,13 @@ class AppController {
     }
 
     await this.sectionRenderer.reveal(sectionId, role, customQuery);
+    
+    // Add navigation item for this section
+    const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+    if (sectionMetadata && sectionMetadata.title) {
+      this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
+    }
+    
     await this._displayNextPromptOrCompletion(sectionId);
 
     setTimeout(() => {
