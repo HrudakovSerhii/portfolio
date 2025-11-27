@@ -1,5 +1,7 @@
 import { GenerativeImage } from '../generative-image/index.js';
 
+const SCROLL_DELAY = 100;
+
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
     this.stateManager = stateManager;
@@ -40,8 +42,8 @@ class SectionRenderer {
     const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
 
     this._populateTextContent(sectionElement, sectionContent.text);
-    
-    const imageData = sectionContent.image[role] || sectionContent.image.default;
+
+    const imageData = sectionContent.image;
     this._populateImageContent(sectionElement, imageData);
   }
 
@@ -76,16 +78,30 @@ class SectionRenderer {
   _renderSection(sectionContent, isZigZagLeft) {
     const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft);
     this.sectionsContainer.appendChild(sectionElement);
+    this._scrollToSection(sectionElement);
     return sectionElement;
+  }
+
+  _scrollToSection(sectionElement) {
+    if (!sectionElement) {
+      return;
+    }
+
+    // Small delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      sectionElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }, SCROLL_DELAY);
   }
 
   async _animateSectionContent(sectionElement, sectionContent) {
     const textElement = sectionElement.querySelector('.content-text');
     const imageContainer = sectionElement.querySelector('.content-image');
 
-    const role = this.stateManager.getRole();
-    const imageData = sectionContent.image[role] || sectionContent.image.default;
-    
+    const imageData = sectionContent.image;
+
     this._createImage(imageContainer, imageData, true);
 
     const textPromise = this._animateText(textElement);
@@ -113,11 +129,11 @@ class SectionRenderer {
 
     const generativeImage = new GenerativeImage({
       highResSrc: imageData.imageUrl,
-      lowResSrc: imageData.lowResImageUrl,
+      lowResSrc: imageData.lowResImageUrl || '',
       alt: imageData.imageAlt,
       aspectClass: imageData.aspectRatio,
       shouldAnimate: enableAnimation,
-      gridConfig: { rows: 4, cols: 4, delay: 50 }
+      gridConfig: { rows: 4, cols: 4, delay: 500 }
     });
 
     const imageElement = generativeImage.create();
