@@ -13,7 +13,6 @@ class HeaderController {
     this.roleBadge = null;
     this.roleBadgeText = null;
     
-    // Track visible sections and active section
     this.visibleSections = [];
     this.activeSection = null;
   }
@@ -33,7 +32,6 @@ class HeaderController {
       }
     }
 
-    // Setup scroll detection for active section
     this._setupScrollDetection();
   }
 
@@ -89,30 +87,26 @@ class HeaderController {
   addNavigationItem(sectionId, sectionTitle) {
     if (!this.headerNav) return;
 
-    // Check if already exists
     if (this.visibleSections.includes(sectionId)) {
       return;
     }
 
-    // Add to visible sections
     this.visibleSections.push(sectionId);
 
-    // Create navigation button
-    const navButton = document.createElement('button');
-    navButton.className = 'header-nav-item';
-    navButton.setAttribute('data-section-id', sectionId);
-    navButton.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-    
-    // Add click handler
-    navButton.addEventListener('click', () => {
-      this._navigateToSection(sectionId);
-    });
-
-    // Append to nav
+    const navButton = this._createNavigationButton(sectionId, sectionTitle);
     this.headerNav.appendChild(navButton);
 
-    // Check for overflow
     this._checkNavOverflow();
+  }
+
+  _createNavigationButton(sectionId, sectionTitle) {
+    const navLink = document.createElement('a');
+    navLink.className = 'header-nav-item';
+    navLink.setAttribute('data-section-id', sectionId);
+    navLink.setAttribute('href', `#${sectionId}`);
+    navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+
+    return navLink;
   }
 
   setActiveSection(sectionId) {
@@ -120,7 +114,6 @@ class HeaderController {
 
     this.activeSection = sectionId;
 
-    // Update all nav items
     const navItems = this.headerNav.querySelectorAll('.header-nav-item');
     navItems.forEach(item => {
       const itemSectionId = item.getAttribute('data-section-id');
@@ -140,26 +133,18 @@ class HeaderController {
     this.activeSection = null;
   }
 
-  _navigateToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      const headerHeight = 64; // 4rem
-      const sectionTop = section.offsetTop - headerHeight - 20;
-      
-      window.scrollTo({
-        top: sectionTop,
-        behavior: 'smooth'
-      });
-    }
-  }
-
+  /**
+   * Monitors scroll position to automatically highlight the active section in navigation.
+   * Uses requestAnimationFrame for performance optimization to avoid excessive reflows.
+   * Updates the active nav item based on which section is currently in the viewport.
+   */
   _setupScrollDetection() {
     let ticking = false;
 
     const updateActiveSection = () => {
       if (!this.headerNav) return;
 
-      const scrollPosition = window.scrollY + 100; // Offset for header
+      const scrollPosition = window.scrollY + 100;
       const sections = document.querySelectorAll('.portfolio-section');
 
       let currentSection = null;
@@ -188,6 +173,11 @@ class HeaderController {
     });
   }
 
+  /**
+   * Checks if navigation items overflow the container width and applies a gradient mask.
+   * The mask provides a visual indicator that more items are available via horizontal scroll.
+   * Called after each new navigation item is added to maintain proper overflow state.
+   */
   _checkNavOverflow() {
     if (!this.headerNav) return;
 

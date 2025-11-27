@@ -1,10 +1,4 @@
 /**
- * Section display order
- * @constant {CVSection[]}
- */
-const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects', 'contact'];
-
-/**
  * @typedef {'light'|'dark'} Theme
  * Available theme modes
  */
@@ -54,7 +48,7 @@ const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects', 'con
 
 /**
  * @typedef {Object.<string, CVSection>} CVSections
- * Flat object containing all CV sections indexed by section ID
+ * Flat object containing all CV sections indexed by section ID3
  */
 
 /**
@@ -63,10 +57,3 @@ const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects', 'con
  * @property {CVMetadata} metadata - Schema metadata and configuration
  * @property {CVSections} sections - Flat object containing all CV sections
  */
-
-// Export types and constants for JSDoc usage
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    SECTION_ORDER
-  };
-}
