@@ -3,6 +3,15 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   root: 'src',
   publicDir: '../public',
+  server: {
+    port: 3000,
+    open: true,
+    watch: {
+      // Watch for changes in public directory
+      usePolling: false,
+      ignored: ['**/node_modules/**', '**/dist/**']
+    }
+  },
   build: {
     outDir: '../dist',
     emptyOutDir: true,
@@ -10,7 +19,7 @@ export default defineConfig({
     minify: 'terser',
     rollupOptions: {
       input: {
-        main: './src/index.html'  // Specify entry point
+        main: './src/index.html'
       }
     }
   },
