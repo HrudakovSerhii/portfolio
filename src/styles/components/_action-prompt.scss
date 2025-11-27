@@ -4,8 +4,10 @@
 @use 'sass:color';
 
 .action-prompt {
-  margin: $spacing-xl 0;
-  padding: $spacing-lg;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: $radius-xl;
@@ -18,8 +20,10 @@
 
   .prompt-input-wrapper {
     display: flex;
+    justify-content: center;
     gap: $spacing-md;
     align-items: stretch;
+    padding: $spacing-lg;
 
     @include mobile {
       flex-direction: column;

@@ -1,7 +1,7 @@
 /**
  * StateManager - Manages application state with session storage persistence
  * Handles user personalization, section revelation tracking, and UI preferences
- * 
+ *
  * Similar to React's useState with session storage sync:
  * - Maintains in-memory state for fast access
  * - Initializes from session storage or defaults
@@ -9,13 +9,13 @@
  * - Gracefully handles storage failures
  */
 
-const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects', 'contact'];
+export const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects', 'contact'];
 
 class StateManager {
   constructor() {
     this.storageKey = 'portfolioState';
     this.storageAvailable = this.checkStorageAvailability();
-    
+
     // Initialize in-memory state from session storage or defaults
     this.state = this.initializeState();
   }
@@ -78,15 +78,15 @@ class StateManager {
       if (!stored) {
         return null;
       }
-      
+
       const parsed = JSON.parse(stored);
-      
+
       // Validate the loaded state
       if (typeof parsed !== 'object' || parsed === null) {
         console.warn('Invalid state format in session storage. Using defaults.');
         return null;
       }
-      
+
       return parsed;
     } catch (error) {
       console.warn('Failed to load state from session storage:', error.message);
@@ -216,7 +216,7 @@ class StateManager {
 
   clearAll() {
     this.state = this.getDefaultState();
-    
+
     if (this.storageAvailable) {
       try {
         sessionStorage.removeItem(this.storageKey);

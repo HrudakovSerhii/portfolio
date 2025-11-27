@@ -90,7 +90,7 @@ class ContentMiddleware {
 
   _buildSectionContent({ sectionId, role, section, roleContent, customQuery }) {
     const imageName = roleContent.image?.name || `${sectionId}.${role}`;
-    
+
     return {
       sectionId,
       title: section.metadata.title,
@@ -99,7 +99,7 @@ class ContentMiddleware {
         imageUrl: `/images/${imageName}.full.jpg`,
         lowResImageUrl: `/images/${imageName}.low.jpg`,
         imageAlt: roleContent.image?.imageAlt || section.metadata.title,
-        aspectRatio: roleContent.image?.aspectRatio || 'aspect-square',
+        aspectRatio: roleContent.image?.aspectRatio || 'aspect-portrait',
       },
       customQuery: customQuery || null
     };
@@ -146,13 +146,6 @@ class ContentMiddleware {
     }
 
     return this.contentData.profile;
-  }
-
-  async getMainItems(sectionId) {
-    await this._ensureDataLoaded();
-
-    const section = this._getSection(sectionId);
-    return section.metadata.main_items || [];
   }
 
   async getAllSections() {
