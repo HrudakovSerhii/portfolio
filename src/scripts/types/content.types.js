@@ -25,10 +25,23 @@ const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects', 'con
  */
 
 /**
+ * @typedef {Object} ImageMetadata
+ * @property {string} [name] - Optional custom image name (e.g., "hero.photo2"). If omitted, defaults to "{sectionId}.{role}"
+ * @property {string} imageAlt - Alt text for the image
+ * @property {string} aspectRatio - CSS aspect ratio class (e.g., "aspect-square", "aspect-video")
+ */
+
+/**
+ * @typedef {Object} RoleContent
+ * @property {string} text - Content text for this role
+ * @property {ImageMetadata} image - Image metadata for this role
+ */
+
+/**
  * @typedef {Object} ContextData
- * @property {string} hr - Professional, achievement-focused response for HR/recruiters
- * @property {string} developer - Technical, detailed response for fellow developers
- * @property {string} friend - Casual, enthusiastic response for informal conversations
+ * @property {RoleContent} recruiter - Professional, achievement-focused response for HR/recruiters
+ * @property {RoleContent} developer - Technical, detailed response for fellow developers
+ * @property {RoleContent} friend - Casual, enthusiastic response for informal conversations
  */
 
 /**
