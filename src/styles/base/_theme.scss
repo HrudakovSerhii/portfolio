@@ -5,6 +5,7 @@
 :root {
   // Background colors
   --color-bg: #f9fafb; // gray-50
+  --color-bg-rgb: 249, 250, 251; // RGB for backdrop
   --color-surface: #ffffff; // white
   --color-surface-secondary: #f3f4f6; // gray-100
   --color-surface-dark: #1e1f20; // dark gray for image containers
@@ -68,6 +69,7 @@
 [data-theme="dark"] {
   // Background colors
   --color-bg: #030712; // gray-950
+  --color-bg-rgb: 3, 7, 18; // RGB for backdrop
   --color-surface: #1f2937; // gray-800
   --color-surface-secondary: #111827; // gray-900
   --color-surface-dark: #1e1f20; // dark gray for image containers

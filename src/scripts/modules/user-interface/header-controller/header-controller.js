@@ -9,12 +9,22 @@ class HeaderController {
     this.ownerName = null;
     this.languageSelector = null;
     this.changeRoleButton = null;
+    this.headerNav = null;
+    this.roleBadge = null;
+    this.roleBadgeText = null;
+    
+    // Track visible sections and active section
+    this.visibleSections = [];
+    this.activeSection = null;
   }
 
   initialize(ownerNameElement, languageSelectorElement, changeRoleButtonElement) {
     this.ownerName = ownerNameElement;
     this.languageSelector = languageSelectorElement;
     this.changeRoleButton = changeRoleButtonElement;
+    this.headerNav = document.getElementById('header-nav');
+    this.roleBadge = document.getElementById('header-role-badge');
+    this.roleBadgeText = document.getElementById('header-role-text');
 
     if (this.languageSelector) {
       const currentLanguage = this.stateManager.getLanguage();
@@ -22,6 +32,9 @@ class HeaderController {
         this.languageSelector.value = currentLanguage;
       }
     }
+
+    // Setup scroll detection for active section
+    this._setupScrollDetection();
   }
 
   updateOwnerName(name) {
@@ -51,13 +64,139 @@ class HeaderController {
 
   showChangeRoleButton() {
     if (this.changeRoleButton) {
-      this.changeRoleButton.style.display = 'block';
+      this.changeRoleButton.style.display = 'flex';
     }
   }
 
   hideChangeRoleButton() {
     if (this.changeRoleButton) {
       this.changeRoleButton.style.display = 'none';
+    }
+  }
+
+  updateRoleBadge(role) {
+    if (!this.roleBadge || !this.roleBadgeText) return;
+
+    if (role) {
+      const roleText = role.charAt(0).toUpperCase() + role.slice(1);
+      this.roleBadgeText.textContent = `${roleText} View`;
+      this.roleBadge.style.display = 'flex';
+    } else {
+      this.roleBadge.style.display = 'none';
+    }
+  }
+
+  addNavigationItem(sectionId, sectionTitle) {
+    if (!this.headerNav) return;
+
+    // Check if already exists
+    if (this.visibleSections.includes(sectionId)) {
+      return;
+    }
+
+    // Add to visible sections
+    this.visibleSections.push(sectionId);
+
+    // Create navigation button
+    const navButton = document.createElement('button');
+    navButton.className = 'header-nav-item';
+    navButton.setAttribute('data-section-id', sectionId);
+    navButton.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+    
+    // Add click handler
+    navButton.addEventListener('click', () => {
+      this._navigateToSection(sectionId);
+    });
+
+    // Append to nav
+    this.headerNav.appendChild(navButton);
+
+    // Check for overflow
+    this._checkNavOverflow();
+  }
+
+  setActiveSection(sectionId) {
+    if (!this.headerNav) return;
+
+    this.activeSection = sectionId;
+
+    // Update all nav items
+    const navItems = this.headerNav.querySelectorAll('.header-nav-item');
+    navItems.forEach(item => {
+      const itemSectionId = item.getAttribute('data-section-id');
+      if (itemSectionId === sectionId) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  clearNavigation() {
+    if (!this.headerNav) return;
+    
+    this.headerNav.innerHTML = '';
+    this.visibleSections = [];
+    this.activeSection = null;
+  }
+
+  _navigateToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      const headerHeight = 64; // 4rem
+      const sectionTop = section.offsetTop - headerHeight - 20;
+      
+      window.scrollTo({
+        top: sectionTop,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  _setupScrollDetection() {
+    let ticking = false;
+
+    const updateActiveSection = () => {
+      if (!this.headerNav) return;
+
+      const scrollPosition = window.scrollY + 100; // Offset for header
+      const sections = document.querySelectorAll('.portfolio-section');
+
+      let currentSection = null;
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          currentSection = section.id;
+        }
+      });
+
+      if (currentSection && currentSection !== this.activeSection) {
+        this.setActiveSection(currentSection);
+      }
+
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateActiveSection);
+        ticking = true;
+      }
+    });
+  }
+
+  _checkNavOverflow() {
+    if (!this.headerNav) return;
+
+    const hasOverflow = this.headerNav.scrollWidth > this.headerNav.clientWidth;
+    
+    if (hasOverflow) {
+      this.headerNav.classList.add('has-overflow');
+    } else {
+      this.headerNav.classList.remove('has-overflow');
     }
   }
 
