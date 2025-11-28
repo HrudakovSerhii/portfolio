@@ -14,6 +14,7 @@ $font-size-lg: 1.125rem;  // 18px
 $font-size-xl: 1.25rem;   // 20px
 $font-size-2xl: 1.5rem;   // 24px
 $font-size-3xl: 2rem;     // 32px
+$font-size-6xl: 3.75rem;  // 60px
 
 // Line Heights
 $line-height-tight: 1.25;
@@ -48,11 +49,18 @@ $radius-md: 0.5rem;
 $radius-lg: 0.75rem;
 $radius-xl: 1rem;
 $radius-2xl: 1.5rem;
+$radius-full: 9999px;
 
 // Transitions
 $transition-fast: 150ms ease;
 $transition-base: 250ms ease;
+$transition-medium: 300ms ease;
 $transition-slow: 400ms ease;
+$transition-slower: 500ms ease;
+$transition-slowest: 700ms ease-in-out;
+
+// Animation Durations
+$animation-blob: 7s;
 
 // Z-index Layers
 $z-base: 1;
@@ -60,3 +68,18 @@ $z-nav: 10;
 $z-header: 20;
 $z-modal-overlay: 30;
 $z-modal-content: 31;
+$z-tooltip: 100;
+
+// Hero Section Constants
+$hero-blob-size: 16rem;
+$hero-blob-blur: 64px;
+$hero-container-max-width: 72rem;
+$hero-roles-max-width: 80rem;
+$hero-intro-max-width: 42rem;
+$hero-intro-min-height: 120px;
+$hero-background-image-width: 400px;
+$hero-profile-ring-size: 8rem;
+$hero-profile-ring-size-desktop: 10rem;
+$hero-profile-border-width: 4px;
+$hero-card-icon-size: 2rem;
+$hero-tooltip-arrow-size: 6px;
