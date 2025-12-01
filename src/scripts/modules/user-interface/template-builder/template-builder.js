@@ -72,9 +72,13 @@ class TemplateBuilder {
 
     const imageContainer = section.querySelector('.content-image');
     if (imageContainer) {
-      imageContainer.setAttribute('data-image-url', sectionData.imageUrl);
-      imageContainer.setAttribute('data-image-alt', sectionData.imageAlt);
-      imageContainer.setAttribute('data-aspect-ratio', sectionData.aspectRatio);
+      imageContainer.setAttribute('data-image-url', sectionData.image.imageUrl);
+      imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
+      imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
+    }
+
+    if (sectionData.image.aspectRatio === 'aspect-landscape' || sectionData.image.aspectRatio === 'aspect-wide') {
+      layoutElement.classList.add('has-wide-image');
     }
 
     return section;
