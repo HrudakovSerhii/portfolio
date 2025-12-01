@@ -57,23 +57,32 @@
 .hero-container {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   z-index: $z-nav;
   gap: $spacing-2xl;
   width: 100%;
 
-  > div {
-    width: 50%;
+  @include desktop {
+    flex-direction: row;
+
+    > div {
+      width: 50%;
+    }
   }
 }
 
 .hero-background-image {
   position: relative;
-  width: $hero-background-image-width;
+  width: 100%;
   height: auto;
   border-radius: $radius-xl;
   overflow: hidden;
   box-shadow: var(--shadow-xl);
+
+  @include desktop {
+    width: $hero-background-image-width;
+  }
 
   .generative-image {
     width: 100%;
@@ -83,7 +92,11 @@
 }
 
 .hero-intro {
-  min-height: $hero-intro-min-height;
+  width: 100%;
+
+  @include desktop {
+    min-height: $hero-intro-min-height;
+  }
 }
 
 .hero-title {
