@@ -5,6 +5,7 @@
   margin: 0 auto;
 
   .parallax-layer {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -17,11 +18,12 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: $spacing-xl;
+    gap: $spacing-md;
 
     @include desktop {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: $spacing-xl;
     }
 
     &.has-wide-image {
@@ -123,15 +125,7 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: $spacing-md;
-
-    @include mobile {
-      max-width: 100%;
-    }
-
-    @include desktop {
-      max-width: 100%;
-    }
+    max-width: 100%;
 
     img,
     .image-container,
@@ -147,13 +141,13 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: $spacing-lg;
-    padding: $spacing-md;
+    gap: normal;
     height: 100%;
     width: 100%;
+    background: none;
 
-    @include mobile {
-      background: none !important;
+    @include desktop {
+      gap: $spacing-lg;
     }
   }
 
