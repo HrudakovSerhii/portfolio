@@ -2,7 +2,7 @@
   position: relative;
   justify-content: center;
   padding: $spacing-3xl $spacing-lg;
-  min-height: 100vh;
+  min-height: calc(100vh - #{$spacing-3xl});
   max-width: $content-max-width;
   width: 100%;
   margin: 0 auto;
@@ -12,7 +12,6 @@
   }
 
   .parallax-layer {
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -24,7 +23,6 @@
   .section-layout {
     display: grid;
     width: 100%;
-    height: $section-height;
     gap: $spacing-xl;
 
     @include mobile {
