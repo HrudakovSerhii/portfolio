@@ -3,6 +3,10 @@ const MODAL_FOCUS_DELAY = 100;
 
 const HEADER_ELEMENTS = {
   nav: 'header-nav',
+  navMobile: 'header-nav-mobile',
+  navDropdownToggle: 'header-nav-dropdown-toggle',
+  navDropdownLabel: 'header-nav-dropdown-label',
+  navDropdownMenu: 'header-nav-dropdown-menu',
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
   navItem: 'header-nav-item',
@@ -24,7 +28,8 @@ const SECTION_ATTRIBUTES = {
 
 const CSS_CLASSES = {
   active: 'active',
-  hasOverflow: 'has-overflow'
+  hasOverflow: 'has-overflow',
+  isOpen: 'is-open'
 };
 
 class HeaderController {
@@ -35,18 +40,27 @@ class HeaderController {
     this.ownerName = null;
     this.languageSelector = null;
     this.headerNav = null;
+    this.headerNavMobile = null;
+    this.navDropdownToggle = null;
+    this.navDropdownLabel = null;
+    this.navDropdownMenu = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
     this.onRoleSelectCallback = null;
 
     this.visibleSections = [];
     this.activeSection = null;
+    this.isDropdownOpen = false;
   }
 
   initialize(ownerNameElement, languageSelectorElement) {
     this.ownerName = ownerNameElement;
     this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
+    this.headerNavMobile = document.getElementById(HEADER_ELEMENTS.navMobile);
+    this.navDropdownToggle = document.getElementById(HEADER_ELEMENTS.navDropdownToggle);
+    this.navDropdownLabel = document.getElementById(HEADER_ELEMENTS.navDropdownLabel);
+    this.navDropdownMenu = document.getElementById(HEADER_ELEMENTS.navDropdownMenu);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
 
@@ -59,6 +73,7 @@ class HeaderController {
 
     this._setupScrollDetection();
     this._setupRoleBadgeClick();
+    this._setupMobileDropdown();
   }
 
   _setupRoleBadgeClick() {
@@ -130,6 +145,9 @@ class HeaderController {
     const navButton = this._createNavigationButton(sectionId, sectionTitle);
     this.headerNav.appendChild(navButton);
 
+    // Add to mobile dropdown
+    this._addMobileDropdownItem(sectionId, sectionTitle);
+
     this._checkNavOverflow();
     this._checkIfSectionIsActive(sectionId);
   }
@@ -172,6 +190,11 @@ class HeaderController {
     if (!this.headerNav) return;
 
     this.headerNav.innerHTML = '';
+    
+    if (this.navDropdownMenu) {
+      this.navDropdownMenu.innerHTML = '';
+    }
+    
     this.visibleSections = [];
     this.activeSection = null;
   }
@@ -249,6 +272,72 @@ class HeaderController {
     } else {
       this.headerNav.classList.remove(CSS_CLASSES.hasOverflow);
     }
+  }
+
+  _setupMobileDropdown() {
+    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
+
+    this.navDropdownToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this._toggleDropdown();
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (this.isDropdownOpen && 
+          !this.headerNavMobile?.contains(e.target)) {
+        this._closeDropdown();
+      }
+    });
+  }
+
+  _toggleDropdown() {
+    if (this.isDropdownOpen) {
+      this._closeDropdown();
+    } else {
+      this._openDropdown();
+    }
+  }
+
+  _openDropdown() {
+    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
+
+    this.isDropdownOpen = true;
+    this.navDropdownToggle.classList.add(CSS_CLASSES.isOpen);
+    this.navDropdownToggle.setAttribute('aria-expanded', 'true');
+    this.navDropdownMenu.classList.add(CSS_CLASSES.isOpen);
+  }
+
+  _closeDropdown() {
+    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
+
+    this.isDropdownOpen = false;
+    this.navDropdownToggle.classList.remove(CSS_CLASSES.isOpen);
+    this.navDropdownToggle.setAttribute('aria-expanded', 'false');
+    this.navDropdownMenu.classList.remove(CSS_CLASSES.isOpen);
+  }
+
+  _addMobileDropdownItem(sectionId, sectionTitle) {
+    if (!this.navDropdownMenu) return;
+
+    const dropdownItem = document.createElement('a');
+    dropdownItem.className = 'header-nav-dropdown-item';
+    dropdownItem.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
+    dropdownItem.setAttribute('href', `#section-${sectionId}`);
+    dropdownItem.setAttribute('role', 'menuitem');
+    dropdownItem.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+
+    dropdownItem.addEventListener('click', () => {
+      this._closeDropdown();
+      this.setActiveSection(sectionId);
+      
+      // Update dropdown label to show selected item
+      if (this.navDropdownLabel) {
+        this.navDropdownLabel.textContent = dropdownItem.textContent;
+      }
+    });
+
+    this.navDropdownMenu.appendChild(dropdownItem);
   }
 
   showRoleChangeModal(onRoleSelect) {
