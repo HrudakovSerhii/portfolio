@@ -13,7 +13,7 @@ const MODAL_ELEMENTS = {
   overlay: 'modal-overlay',
   content: 'modal-content',
   close: 'modal-close',
-  roleCard: 'role-card'
+  roleCard: 'button'
 };
 
 const SECTION_ATTRIBUTES = {
