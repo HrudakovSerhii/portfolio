@@ -24,8 +24,8 @@
   .section-layout {
     display: grid;
     width: 100%;
+    height: $section-height;
     gap: $spacing-xl;
-    align-items: start;
 
     @include mobile {
       grid-template-columns: 1fr;
@@ -33,6 +33,26 @@
 
     @include desktop {
       grid-template-columns: 1fr 1fr;
+    }
+
+    &.has-wide-image {
+      grid-template-columns: 1fr 1.2fr;
+
+      .section-visual {
+        grid-column: 1 / 3;
+        grid-row: 1;
+
+        .section-visual-container {
+          width: 100%;
+          max-width: 80%;
+          height: auto;
+        }
+      }
+
+      .section-body {
+        grid-row: 1;
+        z-index: 2;
+      }
     }
 
     &.zig-zag-left {
@@ -53,6 +73,23 @@
 
         @include desktop {
           order: 2;
+        }
+      }
+
+      &.has-wide-image {
+        .section-visual {
+          justify-content: right;
+          align-items: end;
+        }
+
+        .section-body {
+          grid-column: 1 / 2;
+          background: linear-gradient(
+            to right,
+            var(--color-bg) 0%,
+            var(--color-bg) 55%,
+            transparent 100%
+          );
         }
       }
     }
@@ -77,6 +114,23 @@
           order: 1;
         }
       }
+
+      &.has-wide-image {
+        .section-visual {
+          justify-content: left;
+          align-items: end;
+        }
+
+        .section-body {
+          grid-column: 2 / 3;
+          background: linear-gradient(
+            to left,
+            var(--color-bg) 0%,
+            var(--color-bg) 55%,
+            transparent 100%
+          );
+        }
+      }
     }
   }
 
@@ -86,7 +140,7 @@
     align-items: center;
     width: 100%;
     min-width: 50%;
-    max-width: 70%;
+    height: 100%;
   }
 
   .section-visual-container {
@@ -94,7 +148,9 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    height: 100%;
     max-width: 100%;
+    padding: $spacing-md;
 
     img,
     .image-container,
@@ -108,7 +164,10 @@
   .section-body {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: $spacing-lg;
+    padding: $spacing-md;
+    height: 100%;
   }
 
   .section-header {

@@ -3,12 +3,12 @@
   overflow: hidden;
   border-radius: $radius-2xl;
   background: var(--color-surface-dark);
-  width: 70%;
+  width: 100%;
   margin: 0 auto;
   box-shadow: var(--shadow-xl);
 
-  &.aspect-video {
-    aspect-ratio: 16 / 9;
+  &.aspect-landscape {
+    aspect-ratio: 16 / 8.5;
   }
 
   &.aspect-square {
