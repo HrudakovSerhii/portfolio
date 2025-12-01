@@ -78,3 +78,31 @@
     outline-offset: 2px;
   }
 }
+
+@mixin interactive-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $spacing-xl;
+  padding: $spacing-s;
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-bg);
+  border-radius: $radius-lg;
+  font-family: $font-family-base;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  @include focus-visible;
+
+  &:hover {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    transform: translateY(2px);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

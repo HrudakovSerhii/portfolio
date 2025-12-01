@@ -5,10 +5,25 @@ import AnimationController from '../animation-controller';
 import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
+import GenerativeImage from '../user-interface/generative-image/generative-image.js';
 
 const MODAL_FADE_DURATION = 300;
 const SCROLL_AFTER_RENDER_DELAY = 100;
 const SECTION_SCROLL_DELAY = 100;
+
+const ELEMENT_IDS = {
+  initialLoader: 'initial-loader',
+  header: 'header',
+  ownerName: 'owner-name',
+  themeToggle: 'theme-toggle',
+  languageSelector: 'language-selector',
+  mainContent: 'main-content',
+  heroSection: 'hero-section',
+  heroRoles: 'hero-roles',
+  heroBackgroundImage: 'hero-background-image',
+  sectionsContainer: 'sections-container',
+  typingIndicator: 'typing-indicator'
+};
 
 class AppController {
   constructor() {
@@ -32,10 +47,10 @@ class AppController {
       ownerName: null,
       themeToggle: null,
       languageSelector: null,
-      changeRoleButton: null,
       mainContent: null,
       heroSection: null,
       heroRoles: null,
+      heroBackgroundImage: null,
       sectionsContainer: null,
       typingIndicator: null
     };
@@ -57,8 +72,7 @@ class AppController {
       this.themeSwitcher.initialize(this.elements.themeToggle);
       this.headerController.initialize(
         this.elements.ownerName,
-        this.elements.languageSelector,
-        this.elements.changeRoleButton
+        this.elements.languageSelector
       );
 
       await this._loadSectionOrder();
@@ -70,6 +84,8 @@ class AppController {
       );
 
       await this._loadUserProfile();
+
+      this._initializeHeroBackgroundImage();
 
       if (this.stateManager.hasCompletedPersonalization()) {
         await this.restoreState();
@@ -84,31 +100,31 @@ class AppController {
   }
 
   _cacheElements() {
-    this.elements.initialLoader = document.getElementById('initial-loader');
-    this.elements.header = document.querySelector('.header');
-    this.elements.ownerName = document.getElementById('owner-name');
-    this.elements.themeToggle = document.getElementById('theme-toggle');
-    this.elements.languageSelector = document.getElementById('language-selector');
-    this.elements.changeRoleButton = document.getElementById('change-role-button');
-    this.elements.mainContent = document.getElementById('main-content');
-    this.elements.heroSection = document.getElementById('hero');
-    this.elements.heroRoles = document.getElementById('hero-roles');
-    this.elements.sectionsContainer = document.getElementById('sections-container');
-    this.elements.typingIndicator = document.getElementById('typing-indicator');
+    this.elements.initialLoader = document.getElementById(ELEMENT_IDS.initialLoader);
+    this.elements.header = document.getElementById(ELEMENT_IDS.header);
+    this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
+    this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
+    this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
+    this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
+    this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
+    this.elements.heroRoles = document.getElementById(ELEMENT_IDS.heroRoles);
+    this.elements.heroBackgroundImage = document.getElementById(ELEMENT_IDS.heroBackgroundImage);
+    this.elements.sectionsContainer = document.getElementById(ELEMENT_IDS.sectionsContainer);
+    this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
 
-    const criticalElements = [
+    const criticalElementKeys = [
       'initialLoader',
       'themeToggle',
       'languageSelector',
-      'changeRoleButton',
-      'heroSection',
+      'mainContent',
       'heroRoles',
+      'heroBackgroundImage',
       'sectionsContainer'
     ];
 
-    for (const key of criticalElements) {
+    for (const key of criticalElementKeys) {
       if (!this.elements[key]) {
-        throw new Error(`Critical element not found: ${key}`);
+        throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
       }
     }
   }
@@ -120,10 +136,6 @@ class AppController {
 
     this.elements.languageSelector.addEventListener('change', (e) => {
       this.headerController.updateLanguage(e.target.value);
-    });
-
-    this.elements.changeRoleButton.addEventListener('click', () => {
-      this.headerController.showRoleChangeModal((newRole) => this.handleRoleChange(newRole));
     });
 
     this._setupHeroRoleCardListeners();
@@ -148,9 +160,8 @@ class AppController {
       this.stateManager.setRole(role);
 
       this.elements.heroRoles.style.display = 'none';
-      
-      // Update role badge in header
-      this.headerController.updateRoleBadge(role);
+
+      this.headerController.updateRoleBadge(role, (newRole) => this.handleRoleChange(newRole));
 
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
@@ -180,6 +191,47 @@ class AppController {
     } catch (error) {
       console.error('Failed to load user profile:', error);
     }
+  }
+
+  _initializeHeroBackgroundImage() {
+    try {
+      this._tryToInitializeHeroBackgroundImage()
+    } catch (error) {
+      this._handleInitializeHeroBackgroundImageFailure(error)
+    }
+  }
+
+  _tryToInitializeHeroBackgroundImage() {
+    const container = this.elements.heroBackgroundImage;
+
+    if (!container) {
+      console.warn('Hero background image container not found');
+      return;
+    }
+
+    const existingImg = container.querySelector('img');
+    if (existingImg) {
+      existingImg.remove();
+    }
+
+    const generativeHeroImage = new GenerativeImage({
+      highResSrc: './backgrounds/karpaty.full.jpeg',
+      lowResSrc: './backgrounds/karpaty.low.jpeg',
+      alt: 'Hero background image',
+      shouldAnimate: true,
+      aspectClass: 'aspect-portrait',
+      gridConfig: {
+        rows: 8,
+        cols: 8
+      }
+    });
+
+    const imageElement = generativeHeroImage.create();
+    container.appendChild(imageElement);
+  }
+
+  _handleInitializeHeroBackgroundImageFailure(error) {
+    console.error('Failed to initialize hero background image:', error);
   }
 
   _hideInitialLoader() {
@@ -217,11 +269,6 @@ class AppController {
     }
 
     await this._restoreRevealedSections(revealedSections, role);
-    this._applyStoredScrollPosition();
-
-    if (this.stateManager.hasRevealedAllSections()) {
-      this.headerController.showChangeRoleButton();
-    }
   }
 
   async _restoreRevealedSections(revealedSections, role) {
@@ -254,28 +301,28 @@ class AppController {
     console.error('Failed to restore state:', error);
   }
 
+  _resetPortfolioState() {
+    this.stateManager.resetRevealedSections();
+
+    const sections = this.elements.sectionsContainer.querySelectorAll('.content-section');
+    sections.forEach(section => section.remove());
+
+    const actionPrompts = this.elements.sectionsContainer.querySelectorAll('.action-prompt');
+    actionPrompts.forEach(prompt => prompt.remove());
+
+    this.headerController.clearNavigation();
+    this.elements.heroRoles.style.display = 'none';
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
   async handleRoleChange(newRole) {
     try {
-      this.stateManager.setRole(newRole);
-
-      this.stateManager.resetRevealedSections();
-
-      const sections = this.elements.sectionsContainer.querySelectorAll('.portfolio-section');
-      sections.forEach(section => section.remove());
-
-      const actionPrompts = this.elements.sectionsContainer.querySelectorAll('.action-prompt');
-      actionPrompts.forEach(prompt => prompt.remove());
-
-      this.headerController.hideChangeRoleButton();
-      this.headerController.updateRoleBadge(null);
-      this.headerController.clearNavigation();
-
-      this.elements.heroRoles.style.display = 'block';
-
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      this._resetPortfolioState();
+      await this.handleRoleSelection(newRole);
     } catch (error) {
       console.error('Failed to handle role change:', error);
       throw error;
@@ -299,13 +346,13 @@ class AppController {
     }
 
     await this.sectionRenderer.reveal(sectionId, role, customQuery);
-    
+
     // Add navigation item for this section
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
     if (sectionMetadata && sectionMetadata.title) {
       this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
     }
-    
+
     await this._displayNextPromptOrCompletion(sectionId);
 
     setTimeout(() => {
@@ -327,11 +374,6 @@ class AppController {
   async _displayNextPromptOrCompletion(currentSectionId) {
     try {
       const currentIndex = this.sectionOrder.indexOf(currentSectionId);
-
-      if (currentIndex === this.sectionOrder.length - 1) {
-        this.headerController.showChangeRoleButton();
-        return;
-      }
 
       const nextSectionId = this.sectionOrder[currentIndex + 1];
       const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
