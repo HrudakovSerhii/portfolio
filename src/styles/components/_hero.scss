@@ -60,11 +60,12 @@
   flex-direction: column;
   align-items: center;
   z-index: $z-nav;
-  gap: $spacing-2xl;
+  gap: $spacing-md;
   width: 100%;
 
   @include desktop {
     flex-direction: row;
+    gap: $spacing-2xl;
 
     > div {
       width: 50%;
@@ -75,12 +76,13 @@
 .hero-background-image {
   position: relative;
   width: 100%;
-  height: auto;
+  height: 30vh;
   border-radius: $radius-xl;
   overflow: hidden;
   box-shadow: var(--shadow-xl);
 
   @include desktop {
+    height: auto;
     width: $hero-background-image-width;
   }
 
@@ -103,11 +105,11 @@
   font-size: $font-size-3xl;
   font-weight: 700;
   color: var(--color-text);
-  margin-bottom: $spacing-lg;
   letter-spacing: -0.025em;
 
   @include desktop {
     font-size: $font-size-6xl;
+    margin-bottom: $spacing-lg;
   }
 
   &-gradient {
@@ -119,10 +121,10 @@
   font-size: $font-size-xl;
   font-weight: 600;
   color: var(--color-text-secondary);
-  margin-bottom: $spacing-lg;
 
   @include desktop {
     font-size: $font-size-2xl;
+    margin-bottom: $spacing-lg;
   }
 }
 
@@ -141,7 +143,19 @@
   width: 100%;
   max-width: $hero-roles-max-width;
   transition: all $transition-slowest;
-  margin-top: $spacing-xl;
+  margin-top: $spacing-md;
+
+  .button {
+    width: 100%;
+
+    @include desktop {
+      width: auto;
+    }
+  }
+
+  @include desktop {
+    margin-top: $spacing-xl;
+  }
 
   &.invisible {
     visibility: hidden;
@@ -149,7 +163,7 @@
 
   &.hidden {
     max-height: $spacing-s;
-    opacity: $spacing-s;
+    opacity: 0.25;
     pointer-events: none;
   }
 
@@ -170,8 +184,11 @@
   &-title {
     display: inline-block;
     width: 100%;
-    text-align: center;
     font-size: $font-size-lg;
-    opacity: $spacing-xs;
+    opacity: 0.25;
+
+    @include desktop {
+      text-align: center;
+    }
   }
 }
