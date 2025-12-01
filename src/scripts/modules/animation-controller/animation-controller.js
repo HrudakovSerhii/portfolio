@@ -1,6 +1,6 @@
 const ANIMATION_CONFIG = {
   typewriter: {
-    defaultSpeed: 30,
+    defaultSpeed: 1,
     navigationSpeed: 50,
     fastSpeed: 15
   },
@@ -42,16 +42,16 @@ class AnimationController {
 
   async animateNavigationItem(element) {
     const titleElement = element.querySelector('.nav-title');
-    
+
     if (!titleElement) {
       return Promise.resolve();
     }
 
     const titleText = titleElement.textContent;
-    
+
     return this.typewriterEffect(
-      titleElement, 
-      titleText, 
+      titleElement,
+      titleText,
       ANIMATION_CONFIG.typewriter.navigationSpeed
     );
   }
