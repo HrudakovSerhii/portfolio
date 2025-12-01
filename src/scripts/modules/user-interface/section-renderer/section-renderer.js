@@ -17,12 +17,14 @@ class SectionRenderer {
     this.sectionsContainer = null;
     this.typingIndicator = null;
     this.sectionOrder = [];
+    this.onActionPromptClick = null;
   }
 
-  initialize(sectionsContainerElement, typingIndicatorElement, sectionOrder) {
+  initialize(sectionsContainerElement, typingIndicatorElement, sectionOrder, onActionPromptClick) {
     this.sectionsContainer = sectionsContainerElement;
     this.typingIndicator = typingIndicatorElement;
     this.sectionOrder = sectionOrder;
+    this.onActionPromptClick = onActionPromptClick;
   }
 
   async reveal(sectionId, role, customQuery = null) {
@@ -35,7 +37,16 @@ class SectionRenderer {
     const isZigZagLeft = this._calculateZigZagLayout(sectionId);
     const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
 
+    const nextSectionId = this._getNextSectionId(sectionId);
+    if (nextSectionId) {
+      await this._renderActionPrompt(sectionElement, nextSectionId);
+    }
+
     await this._animateSectionContent(sectionElement, sectionContent);
+
+    if (nextSectionId) {
+      this._revealActionPrompt(sectionElement);
+    }
 
     this.stateManager.addRevealedSection(sectionId);
   }
@@ -165,6 +176,58 @@ class SectionRenderer {
   _populateImageContent(sectionElement, sectionImageContent) {
     const imageContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.image}`);
     this._createImage(imageContainer, sectionImageContent, false);
+  }
+
+  _getNextSectionId(currentSectionId) {
+    const currentIndex = this.sectionOrder.indexOf(currentSectionId);
+    return this.sectionOrder[currentIndex + 1] || null;
+  }
+
+  async _renderActionPrompt(sectionElement, nextSectionId) {
+    if (!sectionElement || !nextSectionId) {
+      return;
+    }
+
+    try {
+      await this._tryToRenderActionPrompt(sectionElement, nextSectionId);
+    } catch (error) {
+      console.error('Failed to render action prompt:', error);
+    }
+  }
+
+  async _tryToRenderActionPrompt(sectionElement, nextSectionId) {
+    const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
+    const actionPrompt = this.templateBuilder.renderActionPrompt(nextSectionId, placeholder);
+
+    this._setupActionPromptHandler(actionPrompt, nextSectionId);
+
+    sectionElement.appendChild(actionPrompt);
+  }
+
+  _setupActionPromptHandler(actionPrompt, nextSectionId) {
+    const button = actionPrompt.querySelector('.prompt-button');
+
+    if (!button || !this.onActionPromptClick) {
+      return;
+    }
+
+    button.addEventListener('click', async () => {
+      actionPrompt.remove();
+      await this.onActionPromptClick(nextSectionId);
+    });
+  }
+
+  _revealActionPrompt(sectionElement) {
+    if (!sectionElement) {
+      return;
+    }
+
+    const actionPrompt = sectionElement.querySelector('.action-prompt');
+    if (actionPrompt) {
+      requestAnimationFrame(() => {
+        actionPrompt.classList.add('action-prompt--visible');
+      });
+    }
   }
 }
 
