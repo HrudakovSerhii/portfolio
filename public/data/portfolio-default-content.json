@@ -99,7 +99,7 @@
           "image": {
             "name": "skills.developer",
             "imageAlt": "Tech stack",
-            "aspectRatio": "aspect-square"
+            "aspectRatio": "aspect-landscape"
           }
         },
         "friend": {
@@ -201,7 +201,7 @@
           "image": {
             "name": "contact.developer",
             "imageAlt": "Connect with Serhii",
-            "aspectRatio": "aspect-square"
+            "aspectRatio": "aspect-landscape"
           }
         },
         "friend": {
