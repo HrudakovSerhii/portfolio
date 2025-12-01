@@ -32,6 +32,25 @@
         <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
           <!-- Navigation items will be added dynamically -->
         </nav>
+
+        <div class="header-nav-mobile" id="header-nav-mobile">
+          <button
+            id="header-nav-dropdown-toggle"
+            class="header-nav-dropdown"
+            aria-label="Navigation menu"
+            aria-expanded="false"
+            aria-haspopup="true">
+            <span id="header-nav-dropdown-label">Menu</span>
+            <span class="dropdown-icon" aria-hidden="true">▼</span>
+          </button>
+          <div
+            id="header-nav-dropdown-menu"
+            class="header-nav-dropdown-menu"
+            role="menu"
+            aria-labelledby="header-nav-dropdown-toggle">
+            <!-- Dropdown items will be added dynamically -->
+          </div>
+        </div>
       </div>
 
       <div class="header-controls">
@@ -66,13 +85,12 @@
   </header>
 
   <main class="main-content" role="main" id="main-content">
+    <div class="hero-background">
+      <div class="hero-blob hero-blob--blue"></div>
+      <div class="hero-blob hero-blob--purple"></div>
+    </div>
 
     <section id="hero" class="hero-section">
-      <div class="hero-background">
-        <div class="hero-blob hero-blob--blue"></div>
-        <div class="hero-blob hero-blob--purple"></div>
-      </div>
-
       <div class="hero-container">
         <div class="hero-intro">
           <h1 class="hero-title"> Hi, I'm <span class="hero-title-gradient">Serhii</span></h1>
@@ -163,7 +181,7 @@
   <template id="action-prompt-template">
     <div class="action-prompt" role="region" aria-label="Section interaction">
       <button
-              class="button"
+              class="button prompt-button"
               aria-label="Submit prompt"
               data-default-text="Get to know">
         Next:
