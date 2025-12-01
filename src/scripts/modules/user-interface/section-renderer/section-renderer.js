@@ -2,6 +2,11 @@ import { GenerativeImage } from '../generative-image/index.js';
 
 const SCROLL_DELAY = 100;
 
+const SECTION_ELEMENTS = {
+  text: 'section-body-content',
+  image: 'section-visual-container'
+};
+
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
     this.stateManager = stateManager;
@@ -89,16 +94,16 @@ class SectionRenderer {
 
     // Small delay to ensure DOM is fully rendered
     setTimeout(() => {
-      sectionElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      sectionElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
     }, SCROLL_DELAY);
   }
 
   async _animateSectionContent(sectionElement, sectionContent) {
-    const textElement = sectionElement.querySelector('.content-text');
-    const imageContainer = sectionElement.querySelector('.content-image');
+    const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.text}`);
+    const imageContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.image}`);
 
     const imageData = sectionContent.image;
 
@@ -150,7 +155,7 @@ class SectionRenderer {
   }
 
   _populateTextContent(sectionElement, text) {
-    const textElement = sectionElement.querySelector('.content-text');
+    const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.text}`);
 
     if (textElement) {
       textElement.textContent = text;
@@ -158,7 +163,7 @@ class SectionRenderer {
   }
 
   _populateImageContent(sectionElement, sectionImageContent) {
-    const imageContainer = sectionElement.querySelector('.content-image');
+    const imageContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.image}`);
     this._createImage(imageContainer, sectionImageContent, false);
   }
 }

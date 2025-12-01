@@ -105,6 +105,7 @@
   align-items: center;
   text-align: center;
   padding-top: $spacing-3xl;
+  gap: $spacing-2xl;
 
   > div {
     width: 50%;
@@ -116,6 +117,15 @@
   position: relative;
   width: $hero-background-image-width;
   height: auto;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+
+  .generative-image {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+  }
 }
 
 // Profile Section
@@ -182,8 +192,6 @@
 // ----------------------------------------------------------------------------
 
 .hero-intro {
-  max-width: $hero-intro-max-width;
-  margin-bottom: $spacing-3xl;
   min-height: $hero-intro-min-height;
 }
 
@@ -207,6 +215,7 @@
   font-size: $font-size-lg;
   color: var(--color-text-secondary);
   line-height: $line-height-relaxed;
+  text-align: left;
 
   @include desktop {
     font-size: $font-size-xl;
@@ -256,7 +265,7 @@ $icon-variants: (
   width: 100%;
   max-width: $hero-roles-max-width;
   transition: all $transition-slowest;
-  margin-top: $spacing-2xl;
+  margin-top: $spacing-xl;
 
   &.hidden {
     max-height: 0;
@@ -271,12 +280,21 @@ $icon-variants: (
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: $spacing-2xl $spacing-md;
+    margin-top: $spacing-lg;
+    //padding: $spacing-lg $spacing-md $spacing-2xl;
 
     @include desktop {
       flex-direction: row;
     }
   }
+}
+
+.hero-roles-title {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-size: $font-size-lg;
+  opacity: 0.5;
 }
 
 // Role Card Component

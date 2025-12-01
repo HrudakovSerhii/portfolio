@@ -11,7 +11,7 @@
   <meta property="og:title" content="Interactive Portfolio">
   <meta property="og:description" content="Explore my professional journey through an engaging conversational interface">
 
-  <title>Interactive Portfolio</title>
+  <title>Interactive Portfolio of Serhii Hrudakov</title>
 
   <link rel="stylesheet" href="./styles/styles.scss">
 </head>
@@ -25,36 +25,23 @@
     <div class="header-content">
       <div class="header-left">
         <div class="header-brand">
-          <div class="header-brand-avatar">
-            <span>SH</span>
-          </div>
-          <span class="header-brand-text">Portfolio</span>
+          <span class="header-brand-text">Serhii Hrudakov</span>
+          <span class="header-brand-sub-text">Portfolio</span>
         </div>
 
-        <!-- Divider -->
-        <div class="header-divider"></div>
-
-        <!-- Progressive Navigation -->
         <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
           <!-- Navigation items will be added dynamically -->
         </nav>
       </div>
 
       <div class="header-controls">
-        <!-- Role Badge -->
-        <div class="header-role-badge" id="header-role-badge" style="display: none;">
-          <span class="header-role-icon" aria-hidden="true">👤</span>
-          <span class="header-role-text" id="header-role-text">View</span>
-        </div>
-
-        <!-- Change Role Button -->
         <button
-          id="change-role-button"
-          class="control-button control-button--icon"
+          id="header-role-badge"
+          class="header-role-badge"
           aria-label="Change role"
-          title="Change Role"
+          title="Click to change role"
           style="display: none;">
-          <span class="control-icon" aria-hidden="true">🔄</span>
+          <span class="header-role-text" id="header-role-text">View</span>
         </button>
 
         <button
@@ -87,84 +74,55 @@
       </div>
 
       <div class="hero-container">
-        <!-- Profile Image & Badge -->
-        <div class="hero-profile">
-          <div class="hero-profile-ring">
-            <div class="hero-profile-image">
-              <img src="./images/hero.hr.full.jpg" alt="Profile" />
-            </div>
-          </div>
-          <div class="hero-profile-badge">
-            <span class="hero-profile-name">Serhii Hrudakov</span>
-          </div>
-        </div>
-
-        <!-- Intro Text -->
         <div class="hero-intro">
-          <h1 class="hero-title">
-            Building <span class="hero-title-gradient">Digital Experiences</span>
-          </h1>
-          <div class="hero-description" id="hero-description">
-            <!-- Typewriter text will be inserted here -->
-          </div>
+          <h1 class="hero-title"> Hi, I'm <span class="hero-title-gradient">Serhii</span></h1>
+          <h2 class="hero-subtitle">Lead Frontend Engineer</h2>
+          <p class="hero-description" id="hero-description">
+            I bridge the gap between Design, Backend, and Product. <br> With 10+ years in Banking, E-Commerce and SaaS, <br>I fix development workflows to ensure teams ship reliable software on time. <br>I believe clear communication is the most important coding tool.
+          </p>
         </div>
+        <div class="hero-background-image" id="hero-background-image"></div>
+      </div>
 
-        <!-- Role Selection Cards -->
-        <div class="hero-roles" id="hero-roles">
-          <div class="hero-roles-grid">
+      <div class="hero-roles" id="hero-roles">
+        <span class="hero-roles-title">Let's speak the same language. Tell me about you:</span>
 
-            <!-- Recruiter Card -->
-            <button class="role-card role-card--recruiter" data-role="recruiter">
-              <div class="role-card-overlay"></div>
-              <div class="role-card-content">
-                <div class="role-card-icon role-card-icon--blue">
-                  <span>💼</span>
-                </div>
-                <h3 class="role-card-title">Recruiter</h3>
-                <p class="role-card-description">
-                  Focus on skills, work history, and project metrics.
-                </p>
-                <div class="role-card-action">
-                  Select <span class="role-card-arrow">→</span>
-                </div>
+        <div class="hero-roles-grid">
+          <button class="role-card role-card--recruiter" data-role="recruiter">
+            <p class="role-card-description">
+              I'll focus on reliability, estimations, and delivery.
+            </p>
+            <div class="role-card-content">
+              <div class="role-card-icon role-card-icon--blue">
+                <span>💼</span>
               </div>
-            </button>
+              <span class="role-card-title">I am Recruiter</span>
+            </div>
+          </button>
 
-            <!-- Developer Card -->
-            <button class="role-card role-card--developer" data-role="developer">
-              <div class="role-card-overlay"></div>
-              <div class="role-card-content">
-                <div class="role-card-icon role-card-icon--indigo">
-                  <span>💻</span>
-                </div>
-                <h3 class="role-card-title">Developer</h3>
-                <p class="role-card-description">
-                  Deep dive into code quality, stack, and architecture.
-                </p>
-                <div class="role-card-action">
-                  Select <span class="role-card-arrow">→</span>
-                </div>
+          <button class="role-card role-card--developer" data-role="developer">
+            <p class="role-card-description">
+              I'll dive into the tech stack, architecture, and tools.
+            </p>
+            <div class="role-card-content">
+              <div class="role-card-icon role-card-icon--indigo">
+                <span>💻</span>
               </div>
-            </button>
+              <span class="role-card-title">I am Developer</span>
+            </div>
+          </button>
 
-            <!-- Friend Card -->
-            <button class="role-card role-card--friend" data-role="friend">
-              <div class="role-card-overlay"></div>
-              <div class="role-card-content">
-                <div class="role-card-icon role-card-icon--teal">
-                  <span>👋</span>
-                </div>
-                <h3 class="role-card-title">Friend</h3>
-                <p class="role-card-description">
-                  Get to know me, my hobbies, and what drives me.
-                </p>
-                <div class="role-card-action">
-                  Select <span class="role-card-arrow">→</span>
-                </div>
+          <button class="role-card role-card--friend" data-role="friend">
+            <p class="role-card-description">
+              I'll introduce the human side of my work.
+            </p>
+            <div class="role-card-content">
+              <div class="role-card-icon role-card-icon--teal">
+                <span>👋</span>
               </div>
-            </button>
-
-          </div>
+              <span class="role-card-title">I am Friend</span>
+            </div>
+          </button>
         </div>
       </div>
     </section>
@@ -181,20 +139,23 @@
 
 
   <template id="section-template">
-    <section class="portfolio-section" id="" data-section-id="">
+    <section class="content-section" id="" data-section-id="">
       <div class="parallax-layer" aria-hidden="true"></div>
-      <div class="section-header">
-        <h2 class="section-title"></h2>
-        <p class="section-query"></p>
-      </div>
-      <div class="section-content">
-        <div class="content-media">
-          <div class="content-image">
+
+      <div class="section-layout">
+        <div class="section-visual">
+          <div class="section-visual-container">
             <!-- Image will be inserted here -->
           </div>
         </div>
-        <div class="content-text">
-          <!-- Text content will be inserted here -->
+        <div class="section-body">
+          <div class="section-header">
+            <h2 class="section-title"></h2>
+            <p class="section-query"></p>
+          </div>
+          <div class="section-body-content">
+            <!-- Text content will be inserted here -->
+          </div>
         </div>
       </div>
     </section>
@@ -305,30 +266,41 @@
         <h2 id="role-change-title" class="modal-title">Change Your Role</h2>
         <p class="modal-description">Select a different perspective to see personalized content</p>
 
-        <div class="role-buttons" role="radiogroup" aria-label="Select new role">
-          <button
-            class="role-button"
-            data-role="recruiter"
-            role="radio"
-            aria-checked="false">
-            <span class="role-icon" aria-hidden="true">💼</span>
-            <span class="role-label">Recruiter</span>
+        <div class="hero-roles-grid">
+          <button class="role-card role-card--recruiter" data-role="recruiter">
+            <p class="role-card-description">
+              I'll focus on reliability, estimations, and delivery.
+            </p>
+            <div class="role-card-content">
+              <div class="role-card-icon role-card-icon--blue">
+                <span>💼</span>
+              </div>
+              <span class="role-card-title">I am Recruiter</span>
+            </div>
           </button>
-          <button
-            class="role-button"
-            data-role="developer"
-            role="radio"
-            aria-checked="false">
-            <span class="role-icon" aria-hidden="true">💻</span>
-            <span class="role-label">Developer</span>
+
+          <button class="role-card role-card--developer" data-role="developer">
+            <p class="role-card-description">
+              I'll dive into the tech stack, architecture, and tools.
+            </p>
+            <div class="role-card-content">
+              <div class="role-card-icon role-card-icon--indigo">
+                <span>💻</span>
+              </div>
+              <span class="role-card-title">I am Developer</span>
+            </div>
           </button>
-          <button
-            class="role-button"
-            data-role="friend"
-            role="radio"
-            aria-checked="false">
-            <span class="role-icon" aria-hidden="true">👋</span>
-            <span class="role-label">Friend</span>
+
+          <button class="role-card role-card--friend" data-role="friend">
+            <p class="role-card-description">
+              I'll introduce the human side of my work.
+            </p>
+            <div class="role-card-content">
+              <div class="role-card-icon role-card-icon--teal">
+                <span>👋</span>
+              </div>
+              <span class="role-card-title">I am Friend</span>
+            </div>
           </button>
         </div>
       </div>

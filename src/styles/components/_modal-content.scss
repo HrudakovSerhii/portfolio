@@ -112,6 +112,80 @@
   }
 }
 
+.modal-content--role-change {
+  max-width: 90%;
+  width: auto;
+  padding: $spacing-2xl;
+  background-color: var(--color-bg);
+  border-radius: $radius-2xl;
+  box-shadow: var(--shadow-xl);
+  cursor: default;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform $transition-base, opacity $transition-base;
+
+  @include mobile {
+    max-width: 95%;
+    padding: $spacing-xl;
+  }
+
+  .modal-overlay.active & {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: $spacing-md;
+    right: $spacing-md;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: $radius-md;
+    font-size: $font-size-2xl;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    @include focus-visible;
+
+    &:hover {
+      background-color: var(--color-surface-secondary);
+      color: var(--color-text);
+    }
+  }
+
+  .modal-title {
+    text-align: center;
+    margin-bottom: $spacing-sm;
+  }
+
+  .modal-description {
+    text-align: center;
+    font-size: $font-size-base;
+    color: var(--color-text-secondary);
+    margin-bottom: $spacing-xl;
+  }
+
+  // Reuse hero-roles styles within modal
+  .hero-roles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    @include desktop {
+      flex-direction: row;
+    }
+  }
+}
+
 // Reduced motion support for interactive elements
 @media (prefers-reduced-motion: reduce) {
   .role-button:hover:not(:disabled) {

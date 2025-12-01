@@ -6,7 +6,7 @@
   @include flex-center;
   position: fixed;
   z-index: $z-modal-overlay;
-  background: var(--modal-overlay-bg);
+  background: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
