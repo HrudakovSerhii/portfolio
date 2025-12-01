@@ -1,29 +1,54 @@
 const MODAL_FADE_DURATION = 300;
 const MODAL_FOCUS_DELAY = 100;
 
+const HEADER_ELEMENTS = {
+  nav: 'header-nav',
+  roleBadge: 'header-role-badge',
+  roleText: 'header-role-text',
+  navItem: 'header-nav-item',
+  divider: 'header-divider'
+};
+
+const MODAL_ELEMENTS = {
+  overlay: 'modal-overlay',
+  content: 'modal-content',
+  close: 'modal-close',
+  roleCard: 'role-card'
+};
+
+const SECTION_ATTRIBUTES = {
+  sectionId: 'data-section-id',
+  role: 'data-role',
+  escapeHandler: 'data-escape-handler'
+};
+
+const CSS_CLASSES = {
+  active: 'active',
+  hasOverflow: 'has-overflow'
+};
+
 class HeaderController {
   constructor(stateManager, templateBuilder) {
     this.stateManager = stateManager;
     this.templateBuilder = templateBuilder;
-    
+
     this.ownerName = null;
     this.languageSelector = null;
-    this.changeRoleButton = null;
     this.headerNav = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
-    
+    this.onRoleSelectCallback = null;
+
     this.visibleSections = [];
     this.activeSection = null;
   }
 
-  initialize(ownerNameElement, languageSelectorElement, changeRoleButtonElement) {
+  initialize(ownerNameElement, languageSelectorElement) {
     this.ownerName = ownerNameElement;
     this.languageSelector = languageSelectorElement;
-    this.changeRoleButton = changeRoleButtonElement;
-    this.headerNav = document.getElementById('header-nav');
-    this.roleBadge = document.getElementById('header-role-badge');
-    this.roleBadgeText = document.getElementById('header-role-text');
+    this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
+    this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
+    this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
 
     if (this.languageSelector) {
       const currentLanguage = this.stateManager.getLanguage();
@@ -33,6 +58,17 @@ class HeaderController {
     }
 
     this._setupScrollDetection();
+    this._setupRoleBadgeClick();
+  }
+
+  _setupRoleBadgeClick() {
+    if (this.roleBadge) {
+      this.roleBadge.addEventListener('click', () => {
+        if (this.onRoleSelectCallback) {
+          this.showRoleChangeModal(this.onRoleSelectCallback);
+        }
+      });
+    }
   }
 
   updateOwnerName(name) {
@@ -60,27 +96,22 @@ class HeaderController {
     }
   }
 
-  showChangeRoleButton() {
-    if (this.changeRoleButton) {
-      this.changeRoleButton.style.display = 'flex';
-    }
-  }
 
-  hideChangeRoleButton() {
-    if (this.changeRoleButton) {
-      this.changeRoleButton.style.display = 'none';
-    }
-  }
 
-  updateRoleBadge(role) {
+  updateRoleBadge(role, onRoleSelect = null) {
     if (!this.roleBadge || !this.roleBadgeText) return;
 
     if (role) {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
       this.roleBadgeText.textContent = `${roleText} View`;
       this.roleBadge.style.display = 'flex';
+      
+      if (onRoleSelect) {
+        this.onRoleSelectCallback = onRoleSelect;
+      }
     } else {
       this.roleBadge.style.display = 'none';
+      this.onRoleSelectCallback = null;
     }
   }
 
@@ -93,17 +124,29 @@ class HeaderController {
 
     this.visibleSections.push(sectionId);
 
+    const navDivider = this._createNavigationDivider();
+    this.headerNav.appendChild(navDivider);
+
     const navButton = this._createNavigationButton(sectionId, sectionTitle);
     this.headerNav.appendChild(navButton);
 
     this._checkNavOverflow();
+    this._checkIfSectionIsActive(sectionId);
+  }
+
+  _createNavigationDivider() {
+    const navDivider = document.createElement('div');
+
+    navDivider.className = HEADER_ELEMENTS.divider;
+
+    return navDivider;
   }
 
   _createNavigationButton(sectionId, sectionTitle) {
     const navLink = document.createElement('a');
-    navLink.className = 'header-nav-item';
-    navLink.setAttribute('data-section-id', sectionId);
-    navLink.setAttribute('href', `#${sectionId}`);
+    navLink.className = HEADER_ELEMENTS.navItem;
+    navLink.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
+    navLink.setAttribute('href', `#section-${sectionId}`);
     navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
     return navLink;
@@ -114,23 +157,37 @@ class HeaderController {
 
     this.activeSection = sectionId;
 
-    const navItems = this.headerNav.querySelectorAll('.header-nav-item');
+    const navItems = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
     navItems.forEach(item => {
-      const itemSectionId = item.getAttribute('data-section-id');
+      const itemSectionId = item.getAttribute(SECTION_ATTRIBUTES.sectionId);
       if (itemSectionId === sectionId) {
-        item.classList.add('active');
+        item.classList.add(CSS_CLASSES.active);
       } else {
-        item.classList.remove('active');
+        item.classList.remove(CSS_CLASSES.active);
       }
     });
   }
 
   clearNavigation() {
     if (!this.headerNav) return;
-    
+
     this.headerNav.innerHTML = '';
     this.visibleSections = [];
     this.activeSection = null;
+  }
+
+  _checkIfSectionIsActive(sectionId) {
+    const scrollPosition = window.scrollY + 150;
+
+    const section = document.querySelector(`[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
+    if (section) {
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+
+      if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+        this.setActiveSection(sectionId);
+      }
+    }
   }
 
   /**
@@ -144,17 +201,19 @@ class HeaderController {
     const updateActiveSection = () => {
       if (!this.headerNav) return;
 
-      const scrollPosition = window.scrollY + 100;
-      const sections = document.querySelectorAll('.portfolio-section');
-
+      const scrollPosition = window.scrollY + 150;
       let currentSection = null;
 
-      sections.forEach(section => {
+      const contentSections = document.querySelectorAll('.content-section');
+      contentSections.forEach(section => {
         const sectionTop = section.offsetTop;
         const sectionBottom = sectionTop + section.offsetHeight;
 
         if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = section.id;
+          const sectionId = section.getAttribute(SECTION_ATTRIBUTES.sectionId);
+          if (sectionId) {
+            currentSection = sectionId;
+          }
         }
       });
 
@@ -171,6 +230,8 @@ class HeaderController {
         ticking = true;
       }
     });
+
+    updateActiveSection();
   }
 
   /**
@@ -182,17 +243,17 @@ class HeaderController {
     if (!this.headerNav) return;
 
     const hasOverflow = this.headerNav.scrollWidth > this.headerNav.clientWidth;
-    
+
     if (hasOverflow) {
-      this.headerNav.classList.add('has-overflow');
+      this.headerNav.classList.add(CSS_CLASSES.hasOverflow);
     } else {
-      this.headerNav.classList.remove('has-overflow');
+      this.headerNav.classList.remove(CSS_CLASSES.hasOverflow);
     }
   }
 
   showRoleChangeModal(onRoleSelect) {
     const currentRole = this.stateManager.getRole();
-    const existingModal = document.querySelector('.modal-overlay');
+    const existingModal = document.querySelector(`.${MODAL_ELEMENTS.overlay}`);
 
     if (existingModal) {
       return;
@@ -212,10 +273,10 @@ class HeaderController {
     document.body.appendChild(modal);
 
     requestAnimationFrame(() => {
-      modal.classList.add('active');
+      modal.classList.add(CSS_CLASSES.active);
     });
 
-    const modalContent = modal.querySelector('.modal-content');
+    const modalContent = modal.querySelector(`.${MODAL_ELEMENTS.content}`);
     setTimeout(() => {
       modalContent?.focus();
     }, MODAL_FOCUS_DELAY);
@@ -231,11 +292,11 @@ class HeaderController {
   }
 
   _setupRoleButtons(modal, currentRole, onRoleSelect) {
-    const roleButtons = modal.querySelectorAll('.role-button:not([disabled])');
+    const roleCards = modal.querySelectorAll(`.${MODAL_ELEMENTS.roleCard}:not([disabled])`);
 
-    roleButtons.forEach(button => {
-      button.addEventListener('click', async () => {
-        const newRole = button.getAttribute('data-role');
+    roleCards.forEach(card => {
+      card.addEventListener('click', async () => {
+        const newRole = card.getAttribute(SECTION_ATTRIBUTES.role);
 
         if (newRole && newRole !== currentRole) {
           this._closeModal(modal);
@@ -249,8 +310,8 @@ class HeaderController {
   }
 
   _setupCloseButton(modal) {
-    const closeButton = modal.querySelector('.modal-close');
-    
+    const closeButton = modal.querySelector(`.${MODAL_ELEMENTS.close}`);
+
     closeButton?.addEventListener('click', () => {
       this._closeModal(modal);
     });
@@ -272,7 +333,7 @@ class HeaderController {
       }
     };
     document.addEventListener('keydown', handleEscape);
-    modal.setAttribute('data-escape-handler', 'attached');
+    modal.setAttribute(SECTION_ATTRIBUTES.escapeHandler, 'attached');
   }
 
   _closeModal(modal) {
