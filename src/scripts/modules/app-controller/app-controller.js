@@ -160,7 +160,7 @@ class AppController {
     try {
       this.stateManager.setRole(role);
 
-      this.elements.heroRoles.style.display = 'none';
+      this.elements.heroRoles.classList.add('invisible');
 
       this.headerController.updateRoleBadge(role, (newRole) => this.handleRoleChange(newRole));
 
