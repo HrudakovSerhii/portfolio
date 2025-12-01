@@ -13,10 +13,8 @@
 
 // Components
 @import 'components/header';
-@import 'components/navigation';
-@import 'components/navigation-panel';
 @import 'components/hero';
-@import 'components/skills';
+
 @import 'components/featured-projects';
 @import 'components/footer';
 //@import 'components/chat-ui';
@@ -30,8 +28,6 @@
 // Layout
 @import 'layout/overlay';
 @import 'layout/main';
-@import 'layout/responsive';
 
 // Utilities
-@import 'utilities/helpers';
 @import 'utilities/animations';
