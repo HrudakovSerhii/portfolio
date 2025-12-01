@@ -85,6 +85,7 @@ class TemplateBuilder {
   }
 
   renderActionPrompt(sectionId, placeholder) {
+    // TODO: move usage of placeholder to chat feature that can be called on each section.
     const fragment = this._cloneTemplate('action-prompt-template');
     const actionPrompt = fragment.querySelector('.action-prompt');
 
@@ -95,16 +96,10 @@ class TemplateBuilder {
     actionPrompt.id = `action-prompt-${sectionId}`;
     actionPrompt.setAttribute('data-section-id', sectionId);
 
-    const input = actionPrompt.querySelector('.prompt-input');
-    if (input) {
-      input.placeholder = placeholder;
-      input.id = `prompt-input-${sectionId}`;
-    }
-
     const button = actionPrompt.querySelector('.prompt-button');
     if (button) {
       const sectionName = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-      const defaultText = `Get to know ${sectionName}`;
+      const defaultText = `Read next: ${sectionName}`;
       button.textContent = defaultText;
       button.setAttribute('data-default-text', defaultText);
       button.setAttribute('data-section-id', sectionId);
