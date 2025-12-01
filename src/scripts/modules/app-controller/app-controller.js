@@ -80,7 +80,8 @@ class AppController {
       this.sectionRenderer.initialize(
         this.elements.sectionsContainer,
         this.elements.typingIndicator,
-        this.sectionOrder
+        this.sectionOrder,
+        (nextSectionId) => this.revealSection(nextSectionId, '')
       );
 
       await this._loadUserProfile();
@@ -142,7 +143,7 @@ class AppController {
   }
 
   _setupHeroRoleCardListeners() {
-    const roleCards = this.elements.heroRoles.querySelectorAll('.role-card');
+    const roleCards = this.elements.heroRoles.querySelectorAll('.button[data-role]');
 
     roleCards.forEach(card => {
       card.addEventListener('click', async () => {
@@ -353,8 +354,6 @@ class AppController {
       this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
     }
 
-    await this._displayNextPromptOrCompletion(sectionId);
-
     setTimeout(() => {
       const lastSection = this.elements.sectionsContainer.lastElementChild;
       if (lastSection) {
@@ -371,50 +370,8 @@ class AppController {
     }
   }
 
-  async _displayNextPromptOrCompletion(currentSectionId) {
-    try {
-      const currentIndex = this.sectionOrder.indexOf(currentSectionId);
-
-      const nextSectionId = this.sectionOrder[currentIndex + 1];
-      const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
-      const actionPrompt = this.templateBuilder.renderActionPrompt(nextSectionId, placeholder);
-
-      this.elements.sectionsContainer.appendChild(actionPrompt);
-      this._setupActionPromptHandlers(actionPrompt, nextSectionId);
-    } catch (error) {
-      console.error('Failed to display next prompt:', error);
-    }
-  }
-
-  _setupActionPromptHandlers(actionPrompt, nextSectionId) {
-    const input = actionPrompt.querySelector('.prompt-input');
-    const button = actionPrompt.querySelector('.prompt-button');
-
-    if (!input || !button) {
-      return;
-    }
-
-    const defaultText = button.getAttribute('data-default-text');
-
-    input.addEventListener('input', () => {
-      if (input.value.trim()) {
-        button.textContent = 'Ask';
-      } else {
-        button.textContent = defaultText;
-      }
-    });
-
-    button.addEventListener('click', async () => {
-      const customQuery = input.value.trim() || null;
-      actionPrompt.remove();
-      await this.revealSection(nextSectionId, customQuery);
-    });
-
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        button.click();
-      }
-    });
+  _getSectionElement(sectionId) {
+    return this.elements.sectionsContainer.querySelector(`[data-section-id="${sectionId}"]`);
   }
 }
 
