@@ -14,17 +14,17 @@ class TemplateBuilder {
 
   _getTemplate(templateId) {
     const cacheKey = templateId.replace('-template', '').replace(/-/g, '');
-    
+
     if (!this.templates[cacheKey]) {
       const template = document.getElementById(templateId);
-      
+
       if (!template) {
         throw new Error(`Template with id "${templateId}" not found in DOM`);
       }
-      
+
       this.templates[cacheKey] = template;
     }
-    
+
     return this.templates[cacheKey];
   }
 
@@ -35,8 +35,8 @@ class TemplateBuilder {
 
   renderSection(sectionData, isZigZagLeft) {
     const fragment = this._cloneTemplate('section-template');
-    const section = fragment.querySelector('.portfolio-section');
-    
+    const section = fragment.querySelector('.content-section');
+
     if (!section) {
       throw new Error('Section element not found in template');
     }
@@ -59,13 +59,13 @@ class TemplateBuilder {
       }
     }
 
-    const contentElement = section.querySelector('.section-content');
-    if (contentElement) {
+    const layoutElement = section.querySelector('.section-layout');
+    if (layoutElement) {
       const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
-      contentElement.classList.add(layoutClass);
+      layoutElement.classList.add(layoutClass);
     }
 
-    const textElement = section.querySelector('.content-text');
+    const textElement = section.querySelector('.section-body-content');
     if (textElement) {
       textElement.setAttribute('data-text', sectionData.text);
     }
@@ -83,7 +83,7 @@ class TemplateBuilder {
   renderActionPrompt(sectionId, placeholder) {
     const fragment = this._cloneTemplate('action-prompt-template');
     const actionPrompt = fragment.querySelector('.action-prompt');
-    
+
     if (!actionPrompt) {
       throw new Error('Action prompt element not found in template');
     }
@@ -112,7 +112,7 @@ class TemplateBuilder {
   renderNavigationItem(sectionMetadata) {
     const fragment = this._cloneTemplate('nav-item-template');
     const navItem = fragment.querySelector('.nav-item');
-    
+
     if (!navItem) {
       throw new Error('Navigation item element not found in template');
     }
@@ -139,7 +139,7 @@ class TemplateBuilder {
   renderLoader() {
     const fragment = this._cloneTemplate('loader-template');
     const loader = fragment.querySelector('.loader');
-    
+
     if (!loader) {
       throw new Error('Loader element not found in template');
     }
@@ -149,7 +149,7 @@ class TemplateBuilder {
 
   renderTypingIndicator() {
     const indicator = document.getElementById('typing-indicator');
-    
+
     if (!indicator) {
       throw new Error('Typing indicator element not found in DOM');
     }
@@ -160,7 +160,7 @@ class TemplateBuilder {
   renderPersonalizationModal() {
     const fragment = this._cloneTemplate('personalization-modal-template');
     const modal = fragment.querySelector('.modal-overlay');
-    
+
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
@@ -174,7 +174,7 @@ class TemplateBuilder {
           btn.classList.remove('role-button--selected');
           btn.setAttribute('aria-checked', 'false');
         });
-        
+
         button.classList.add('role-button--selected');
         button.setAttribute('aria-checked', 'true');
       });
@@ -186,32 +186,18 @@ class TemplateBuilder {
   renderRoleChangeModal(currentRole) {
     const fragment = this._cloneTemplate('role-change-modal-template');
     const modal = fragment.querySelector('.modal-overlay');
-    
+
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
 
-    modal.classList.add('modal-overlay--glass');
-
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {
       currentButton.disabled = true;
+      currentButton.style.opacity = '0.5';
+      currentButton.style.cursor = 'not-allowed';
+      currentButton.style.pointerEvents = 'none';
     }
-
-    const roleButtons = modal.querySelectorAll('.role-button');
-    roleButtons.forEach(button => {
-      if (!button.disabled) {
-        button.addEventListener('click', () => {
-          roleButtons.forEach(btn => {
-            btn.classList.remove('role-button--selected');
-            btn.setAttribute('aria-checked', 'false');
-          });
-          
-          button.classList.add('role-button--selected');
-          button.setAttribute('aria-checked', 'true');
-        });
-      }
-    });
 
     return modal;
   }

@@ -23,6 +23,7 @@ $line-height-relaxed: 1.75;
 $line-height-base: 1.6;
 
 // Spacing Scale - Claude-inspired
+$spacing-s: 0.25rem;
 $spacing-xs: 0.5rem;    // 8px
 $spacing-sm: 0.75rem;   // 12px
 $spacing-md: 1rem;      // 16px
@@ -73,7 +74,7 @@ $z-tooltip: 100;
 // Hero Section Constants
 $hero-blob-size: 16rem;
 $hero-blob-blur: 64px;
-$hero-container-max-width: 72rem;
+$hero-container-max-width: 75rem;
 $hero-roles-max-width: 80rem;
 $hero-intro-max-width: 42rem;
 $hero-intro-min-height: 120px;

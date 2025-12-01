@@ -1,4 +1,4 @@
-.portfolio-section {
+.content-section {
   position: relative;
   justify-content: center;
   padding: $spacing-3xl $spacing-lg;
@@ -21,6 +21,96 @@
     pointer-events: none;
   }
 
+  .section-layout {
+    display: grid;
+    width: 100%;
+    gap: $spacing-xl;
+    align-items: start;
+
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+
+    @include desktop {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &.zig-zag-left {
+      .section-visual {
+        @include mobile {
+          order: 1;
+        }
+
+        @include desktop {
+          order: 1;
+        }
+      }
+
+      .section-body {
+        @include mobile {
+          order: 2;
+        }
+
+        @include desktop {
+          order: 2;
+        }
+      }
+    }
+
+    &.zig-zag-right {
+      .section-visual {
+        @include mobile {
+          order: 1;
+        }
+
+        @include desktop {
+          order: 2;
+        }
+      }
+
+      .section-body {
+        @include mobile {
+          order: 2;
+        }
+
+        @include desktop {
+          order: 1;
+        }
+      }
+    }
+  }
+
+  .section-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-width: 50%;
+    max-width: 70%;
+  }
+
+  .section-visual-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+
+    img,
+    .image-container,
+    .generative-image {
+      height: auto;
+      border-radius: $radius-2xl;
+      object-fit: contain;
+    }
+  }
+
+  .section-body {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
   .section-header {
     text-align: start;
 
@@ -39,99 +129,14 @@
     }
   }
 
-  .section-content {
-    display: grid;
-    width: 100%;
-    gap: $spacing-xl;
-    align-items: start;
-
-    @include mobile {
-      grid-template-columns: 1fr;
-    }
-
-    @include desktop {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    &.zig-zag-left {
-      .content-media {
-        @include mobile {
-          order: 1;
-        }
-
-        @include desktop {
-          order: 1;
-        }
-      }
-
-      .content-text {
-        @include mobile {
-          order: 2;
-        }
-
-        @include desktop {
-          order: 2;
-        }
-      }
-    }
-
-    &.zig-zag-right {
-      .content-media {
-        @include mobile {
-          order: 1;
-        }
-
-        @include desktop {
-          order: 2;
-        }
-      }
-
-      .content-text {
-        @include mobile {
-          order: 2;
-        }
-
-        @include desktop {
-          order: 1;
-        }
-      }
-    }
-  }
-
-  .content-media {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-width: 50%;
-  }
-
-  .content-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-
-    img,
-    .image-container,
-    .generative-image {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      border-radius: $radius-2xl;
-      object-fit: contain;
-    }
-  }
-
-  .content-text {
+  .section-body-content {
     display: flex;
     justify-content: center;
     align-items: start;
     font-size: $font-size-lg;
     line-height: $line-height-relaxed;
     color: var(--color-text);
-    min-width: 50%;
+    min-width: 30%;
     width: 100%;
     height: 100%;
 
