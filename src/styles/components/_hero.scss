@@ -1,57 +1,20 @@
-// ============================================================================
-// Hero Section Styles
-// Full-screen hero with profile, intro text, and role selection cards
-// ============================================================================
-
-// Mixins
-// ----------------------------------------------------------------------------
-
-@mixin gradient-text {
-  background: linear-gradient(to right, var(--gradient-blue-purple-from), var(--gradient-blue-purple-to));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-@mixin theme-variant($light-bg, $light-color, $dark-bg, $dark-color) {
-  background-color: $light-bg;
-  color: $light-color;
-
-  [data-theme="dark"] & {
-    background-color: $dark-bg;
-    color: $dark-color;
-  }
-}
-
-// Note: Constants are defined in _variables.scss
-// $hero-blob-size, $hero-blob-blur, $animation-blob, etc.
-
-// Main Section
-// ----------------------------------------------------------------------------
-
 .hero-section {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
   min-height: 100vh;
-  width: 100%;
+  margin: 0 auto;
   padding: $spacing-md;
   background-color: var(--color-bg);
 }
 
-// Background Decorative Elements
-// ----------------------------------------------------------------------------
-
 .hero-background {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: $spacing-s;
+  left: $spacing-s;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 0;
+  z-index: $z-base;
   pointer-events: none;
 }
 
@@ -59,9 +22,9 @@
   position: absolute;
   width: $hero-blob-size;
   height: $hero-blob-size;
-  border-radius: 50%;
+  border-radius: $radius-full;
   filter: blur($hero-blob-blur);
-  opacity: 0.5;
+  opacity: $spacing-xs;
   mix-blend-mode: multiply;
   animation: blob $animation-blob infinite;
 
@@ -70,46 +33,37 @@
   }
 
   &--blue {
-    top: 2.5rem;
-    left: 2.5rem;
-    background-color: rgba(191, 219, 254, 0.4);
+    top: $spacing-2xl;
+    left: $spacing-2xl;
+    background-color: var(--color-blue-200);
 
     [data-theme="dark"] & {
-      background-color: rgba(30, 58, 138, 0.2);
+      background-color: var(--color-blue-900);
     }
   }
 
   &--purple {
-    top: 5rem;
-    right: 2.5rem;
-    background-color: rgba(233, 213, 255, 0.4);
+    top: $spacing-3xl;
+    right: $spacing-2xl;
+    background-color: var(--color-purple-200);
     animation-delay: 2s;
 
     [data-theme="dark"] & {
-      background-color: rgba(88, 28, 135, 0.2);
+      background-color: var(--color-purple-900);
     }
   }
 }
 
-// Main Container
-// ----------------------------------------------------------------------------
-
 .hero-container {
   position: relative;
-  z-index: $z-nav;
-  max-width: $hero-container-max-width;
-  width: 100%;
-  margin: 0 auto;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  text-align: center;
-  padding-top: $spacing-3xl;
+  z-index: $z-nav;
   gap: $spacing-2xl;
+  width: 100%;
 
   > div {
     width: 50%;
-    justify-content: center;
   }
 }
 
@@ -127,69 +81,6 @@
     aspect-ratio: 16 / 9;
   }
 }
-
-// Profile Section
-// ----------------------------------------------------------------------------
-
-.hero-profile {
-  margin-bottom: $spacing-2xl;
-  position: relative;
-
-  &-ring {
-    width: $hero-profile-ring-size;
-    height: $hero-profile-ring-size;
-    padding: 0.25rem;
-    border-radius: 50%;
-    background: linear-gradient(to top right, var(--color-blue-500), var(--color-indigo-600));
-    box-shadow: var(--shadow-xl);
-
-    @include desktop {
-      width: $hero-profile-ring-size-desktop;
-      height: $hero-profile-ring-size-desktop;
-    }
-  }
-
-  &-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: $hero-profile-border-width solid var(--color-surface);
-    overflow: hidden;
-    background-color: var(--color-surface);
-    transition: transform $transition-slower;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  &-badge {
-    position: absolute;
-    bottom: -0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--color-surface);
-    padding: 0.25rem 1rem;
-    border-radius: $radius-full;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--color-border-light);
-  }
-
-  &-name {
-    font-size: $font-size-sm;
-    font-weight: 600;
-    @include gradient-text;
-  }
-}
-
-// Intro Text
-// ----------------------------------------------------------------------------
 
 .hero-intro {
   min-height: $hero-intro-min-height;
@@ -211,6 +102,17 @@
   }
 }
 
+.hero-subtitle {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: $spacing-lg;
+
+  @include desktop {
+    font-size: $font-size-2xl;
+  }
+}
+
 .hero-description {
   font-size: $font-size-lg;
   color: var(--color-text-secondary);
@@ -222,54 +124,19 @@
   }
 }
 
-// Role Selection Cards
-// ----------------------------------------------------------------------------
-
-$role-variants: (
-  'recruiter': (
-    'border': var(--color-blue-500),
-    'bg': var(--color-blue-hover-bg)
-  ),
-  'developer': (
-    'border': var(--color-indigo-500),
-    'bg': var(--color-indigo-hover-bg)
-  ),
-  'friend': (
-    'border': var(--color-teal-500),
-    'bg': var(--color-teal-hover-bg)
-  )
-);
-
-$icon-variants: (
-  'blue': (
-    'light-bg': var(--color-blue-100),
-    'light-color': var(--color-blue-600),
-    'dark-bg': rgba(30, 58, 138, 0.5),
-    'dark-color': var(--color-blue-500)
-  ),
-  'indigo': (
-    'light-bg': var(--color-indigo-100),
-    'light-color': var(--color-indigo-600),
-    'dark-bg': rgba(49, 46, 129, 0.5),
-    'dark-color': var(--color-indigo-500)
-  ),
-  'teal': (
-    'light-bg': var(--color-teal-100),
-    'light-color': var(--color-teal-600),
-    'dark-bg': rgba(19, 78, 74, 0.5),
-    'dark-color': var(--color-teal-500)
-  )
-);
-
 .hero-roles {
   width: 100%;
   max-width: $hero-roles-max-width;
   transition: all $transition-slowest;
   margin-top: $spacing-xl;
 
+  &.invisible {
+    visibility: hidden;
+  }
+
   &.hidden {
-    max-height: 0;
-    opacity: 0;
+    max-height: $spacing-s;
+    opacity: $spacing-s;
     pointer-events: none;
   }
 
@@ -281,35 +148,17 @@ $icon-variants: (
     align-items: center;
     width: 100%;
     margin-top: $spacing-lg;
-    //padding: $spacing-lg $spacing-md $spacing-2xl;
 
     @include desktop {
       flex-direction: row;
     }
   }
-}
 
-.hero-roles-title {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-  font-size: $font-size-lg;
-  opacity: 0.5;
-}
-
-
-
-// Animations
-// ----------------------------------------------------------------------------
-
-@keyframes blob {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
+  &-title {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-size: $font-size-lg;
+    opacity: $spacing-xs;
   }
 }
