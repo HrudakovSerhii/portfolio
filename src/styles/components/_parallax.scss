@@ -1,0 +1,87 @@
+/**
+ * Parallax Background
+ * 
+ * Full-page parallax effect with multiple blob layers
+ * Optimized for performance with GPU acceleration
+ */
+
+.parallax-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 700vh; // Covers ~7 screens
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.parallax-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  will-change: transform;
+  
+  // GPU acceleration
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  
+  @media (prefers-reduced-motion: reduce) {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+// Blob variations with different sizes, positions, and colors
+.parallax-blob--1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  top: 10%;
+  left: -10%;
+  
+  @media (max-width: 768px) {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+.parallax-blob--2 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(225deg, var(--color-secondary), var(--color-primary));
+  top: 40%;
+  right: -5%;
+  
+  @media (max-width: 768px) {
+    width: 350px;
+    height: 350px;
+  }
+}
+
+.parallax-blob--3 {
+  width: 700px;
+  height: 700px;
+  background: linear-gradient(315deg, var(--color-accent), var(--color-secondary));
+  top: 80%;
+  left: 20%;
+  
+  @media (max-width: 768px) {
+    width: 450px;
+    height: 450px;
+  }
+}
+
+.parallax-blob--4 {
+  width: 550px;
+  height: 550px;
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+  top: 120%;
+  right: 15%;
+  
+  @media (max-width: 768px) {
+    width: 380px;
+    height: 380px;
+  }
+}
