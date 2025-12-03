@@ -65,11 +65,24 @@
   }
 }
 
-.header-divider {
-  width: 1px;
-  height: 1rem;
-  background-color: var(--color-border);
+.header-nav-toggle {
+  @include interactive-control;
+  display: none;
+  font-size: $font-size-lg;
+  padding: $spacing-xs;
   flex-shrink: 0;
+
+  @include mobile {
+    display: flex;
+  }
+
+  .nav-toggle-icon {
+    line-height: 1;
+  }
+
+  &[aria-expanded="true"] .nav-toggle-icon {
+    transform: rotate(90deg);
+  }
 }
 
 .header-nav {
@@ -89,6 +102,7 @@
 
   position: relative;
 
+  // Gradient fade for overflow indication
   &::after {
     content: '';
     position: absolute;
@@ -102,97 +116,42 @@
     transition: opacity $transition-base;
   }
 
-  &.has-overflow::after {
-    opacity: 1;
+  // Show gradient when content overflows
+  @media (min-width: 769px) {
+    &:has(.header-nav-item:nth-child(5))::after {
+      opacity: 1;
+    }
   }
 
   @include mobile {
-    display: none;
-  }
-}
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: visible;
+    overflow-y: auto;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: calc(100% + $spacing-xs);
+    left: $spacing-md;
+    right: $spacing-md;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all $transition-base;
+    z-index: 100;
 
-.header-nav-mobile {
-  display: none;
-  position: relative;
+    &.is-open {
+      max-height: 400px;
+      opacity: 1;
+      visibility: visible;
+    }
 
-  @include mobile {
-    display: block;
-  }
-}
-
-.header-nav-dropdown {
-  @include interactive-control;
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: $font-size-xs;
-  font-weight: 500;
-  min-width: 120px;
-  justify-content: space-between;
-
-  .dropdown-icon {
-    font-size: $font-size-xs;
-    transition: transform $transition-base;
-  }
-
-  &.is-open .dropdown-icon {
-    transform: rotate(180deg);
-  }
-}
-
-.header-nav-dropdown-menu {
-  position: absolute;
-  top: calc(100% + $spacing-xs);
-  left: 0;
-  right: 0;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  visibility: hidden;
-  transition: all $transition-base;
-  z-index: 100;
-
-  &.is-open {
-    max-height: 400px;
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-.header-nav-dropdown-item {
-  display: block;
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  font-size: $font-size-xs;
-  font-weight: 500;
-  color: var(--color-text);
-  text-align: left;
-  text-decoration: none;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: background-color $transition-base;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background-color: var(--color-bg-secondary);
-  }
-
-  &:active {
-    background-color: var(--color-bg-tertiary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: -2px;
+    &::after {
+      display: none;
+    }
   }
 }
 
@@ -217,6 +176,22 @@
 
   @include tablet {
     font-size: $font-size-sm;
+  }
+
+  // CSS-based dividers between nav items (desktop only)
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: calc(-#{$spacing-s} / 2);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 1rem;
+    background-color: var(--color-border);
+
+    @include mobile {
+      display: none;
+    }
   }
 
   &:hover {
@@ -250,9 +225,38 @@
     width: calc(100% - #{$spacing-sm * 2});
   }
 
+  &.active::after {
+    width: calc(100% - #{$spacing-sm * 2});
+  }
+
   @for $i from 1 through 10 {
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 50}ms;
+    }
+  }
+
+  // Mobile dropdown styling
+  @include mobile {
+    display: block;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-border);
+    animation: none;
+    opacity: 1;
+    transform: none;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &::after {
+      display: none;
+    }
+
+    &:active {
+      transform: none;
+      background-color: var(--color-bg-tertiary);
     }
   }
 }

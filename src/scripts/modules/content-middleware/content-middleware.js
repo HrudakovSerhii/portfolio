@@ -96,8 +96,8 @@ class ContentMiddleware {
       title: section.metadata.title,
       text: roleContent.text,
       image: {
-        imageUrl: `/images/${imageName}.full.webp`,
-        lowResImageUrl: `/images/${imageName}.low.webp`,
+        imageUrl: `/portfolio/images/${imageName}.full.webp`,
+        lowResImageUrl: `/portfolio/images/${imageName}.low.webp`,
         imageAlt: roleContent.image?.imageAlt || section.metadata.title,
         aspectRatio: roleContent.image?.aspectRatio || 'aspect-portrait',
       },
