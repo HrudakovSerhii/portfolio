@@ -221,12 +221,14 @@
   }
 
   &:hover::after,
-  &:focus-visible::after {
+  &:focus-visible::after,
+  &.active::after {
     width: calc(100% - #{$spacing-sm * 2});
   }
 
-  &.active::after {
-    width: calc(100% - #{$spacing-sm * 2});
+  &.active {
+    color: var(--color-text);
+    font-weight: 600;
   }
 
   @for $i from 1 through 10 {
@@ -250,8 +252,17 @@
       border-bottom: none;
     }
 
+    &::before {
+      display: none;
+    }
+
     &::after {
       display: none;
+    }
+
+    &.active {
+      background-color: var(--color-bg-secondary);
+      font-weight: 600;
     }
 
     &:active {
