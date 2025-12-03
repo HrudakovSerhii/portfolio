@@ -1,6 +1,6 @@
 /**
  * ParallaxController
- *
+ * 
  * Manages parallax scrolling effects with performance optimizations:
  * - Single scroll listener with requestAnimationFrame
  * - Transform-only animations (GPU accelerated)
@@ -10,13 +10,10 @@
 
 const PARALLAX_CONFIG = {
   layers: [
-    { selector: '.parallax-blob--1', speed: -0.2 },
-    { selector: '.parallax-blob--2', speed: -0.35 },
-    { selector: '.parallax-blob--3', speed: -0.5 },
-    { selector: '.parallax-blob--4', speed: -0.15 },
-    { selector: '.parallax-blob--5', speed: -0.25 },
-    { selector: '.parallax-blob--6', speed: -0.4 },
-    { selector: '.parallax-blob--7', speed: -0.3 }
+    { selector: '.parallax-blob--1', speed: 0.2 },
+    { selector: '.parallax-blob--2', speed: 0.35 },
+    { selector: '.parallax-blob--3', speed: 0.5 },
+    { selector: '.parallax-blob--4', speed: 0.15 }
   ],
   throttle: 16 // ~60fps
 };
@@ -31,13 +28,17 @@ class ParallaxController {
   }
 
   init() {
+    // Respect user's motion preferences
     if (this.reducedMotionQuery.matches) {
+      console.log('Parallax disabled: prefers-reduced-motion');
       return;
     }
 
     this.setupLayers();
     this.setupIntersectionObserver();
     this.attachScrollListener();
+
+    console.log('ParallaxController initialized');
   }
 
   setupLayers() {
@@ -48,8 +49,6 @@ class ParallaxController {
           element,
           speed: config.speed
         });
-      } else {
-        console.warn(`Parallax layer not found: ${config.selector}`);
       }
     });
 
@@ -59,6 +58,7 @@ class ParallaxController {
   }
 
   setupIntersectionObserver() {
+    // Only animate when parallax container is visible
     const container = document.querySelector('.parallax-background');
     if (!container) return;
 
@@ -93,7 +93,7 @@ class ParallaxController {
   updateParallax() {
     const scrollY = window.pageYOffset;
 
-    this.layers.forEach((layer, index) => {
+    this.layers.forEach(layer => {
       const translateY = scrollY * layer.speed;
       layer.element.style.transform = `translate3d(0, ${translateY}px, 0)`;
     });
@@ -103,6 +103,8 @@ class ParallaxController {
     if (this.observer) {
       this.observer.disconnect();
     }
+    // Note: We don't remove scroll listener as it uses passive mode
+    // and removing it would require keeping a reference
   }
 }
 
