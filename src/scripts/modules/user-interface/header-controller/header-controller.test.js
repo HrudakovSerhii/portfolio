@@ -254,6 +254,7 @@ describe('HeaderController', () => {
 
     it('should observe section with IntersectionObserver', () => {
       const section = document.createElement('section');
+      section.className = 'content-section';
       section.setAttribute('data-section-id', 'about');
       document.body.appendChild(section);
 
@@ -417,10 +418,11 @@ describe('HeaderController', () => {
     });
 
     it('should set active class when section becomes visible', () => {
-      // Simulate section becoming visible
+      // Simulate section becoming visible with >50% intersection
       mockObserverCallback([
         {
           isIntersecting: true,
+          intersectionRatio: 0.6,
           target: mockSection1
         }
       ]);
@@ -434,18 +436,20 @@ describe('HeaderController', () => {
     });
 
     it('should switch active class when different section becomes visible', () => {
-      // First section visible
+      // First section visible with high ratio
       mockObserverCallback([
         {
           isIntersecting: true,
+          intersectionRatio: 0.8,
           target: mockSection1
         }
       ]);
 
-      // Second section becomes visible
+      // Second section becomes visible with higher ratio
       mockObserverCallback([
         {
           isIntersecting: true,
+          intersectionRatio: 0.9,
           target: mockSection2
         }
       ]);
@@ -462,16 +466,18 @@ describe('HeaderController', () => {
       mockObserverCallback([
         {
           isIntersecting: true,
+          intersectionRatio: 0.7,
           target: mockSection1
         }
       ]);
 
       const setActiveSpy = vi.spyOn(headerController, 'setActiveSection');
 
-      // Same section intersecting again
+      // Same section intersecting again with same ratio
       mockObserverCallback([
         {
           isIntersecting: true,
+          intersectionRatio: 0.7,
           target: mockSection1
         }
       ]);

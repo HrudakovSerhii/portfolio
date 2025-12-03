@@ -210,13 +210,17 @@ class HeaderController {
    * Sets up Intersection Observer to detect which section is currently in view.
    * More performant than scroll event listeners and automatically handles viewport changes.
    * 
-   * Uses a simple approach: section is active when at least 10% is visible in viewport.
-   * The -80px top margin accounts for the fixed header height.
+   * Since sections are 100vh - header-height, we use rootMargin to create a detection zone
+   * that accounts for the header and requires >50% visibility before highlighting.
+   * 
+   * rootMargin: '-80px 0px -50% 0px' means:
+   * - Top: -80px (header height)
+   * - Bottom: -50% (section must be >50% visible to be considered active)
    */
   _setupIntersectionObserver() {
     const options = {
       root: null,
-      rootMargin: '-80px 0px 0px 0px',
+      rootMargin: '-80px 0px -50% 0px',
       threshold: [0, 0.1, 0.5, 1.0]
     };
 
