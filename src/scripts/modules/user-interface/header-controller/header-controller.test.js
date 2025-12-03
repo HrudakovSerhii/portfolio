@@ -373,6 +373,125 @@ describe('HeaderController', () => {
     });
   });
 
+  describe('IntersectionObserver active section tracking', () => {
+    let mockObserverCallback;
+    let mockSection1;
+    let mockSection2;
+
+    beforeEach(() => {
+      // Setup DOM
+      headerController.headerNav = document.createElement('nav');
+      headerController.intersectionObserver = {
+        observe: vi.fn(),
+        disconnect: vi.fn()
+      };
+
+      // Create mock sections
+      mockSection1 = document.createElement('section');
+      mockSection1.setAttribute('data-section-id', 'about');
+      mockSection1.className = 'content-section';
+      document.body.appendChild(mockSection1);
+
+      mockSection2 = document.createElement('section');
+      mockSection2.setAttribute('data-section-id', 'projects');
+      mockSection2.className = 'content-section';
+      document.body.appendChild(mockSection2);
+
+      // Add navigation items
+      headerController.addNavigationItem('about', 'About');
+      headerController.addNavigationItem('projects', 'Projects');
+
+      // Capture the IntersectionObserver callback
+      global.IntersectionObserver = class IntersectionObserver {
+        constructor(callback) {
+          mockObserverCallback = callback;
+          this.callback = callback;
+        }
+        observe = vi.fn();
+        disconnect = vi.fn();
+        unobserve = vi.fn();
+      };
+
+      // Re-setup observer to capture callback
+      headerController._setupIntersectionObserver();
+    });
+
+    it('should set active class when section becomes visible', () => {
+      // Simulate section becoming visible
+      mockObserverCallback([
+        {
+          isIntersecting: true,
+          target: mockSection1
+        }
+      ]);
+
+      const aboutNavItem = headerController.headerNav.querySelector('[data-section-id="about"]');
+      const projectsNavItem = headerController.headerNav.querySelector('[data-section-id="projects"]');
+
+      expect(aboutNavItem.classList.contains('active')).toBe(true);
+      expect(projectsNavItem.classList.contains('active')).toBe(false);
+      expect(headerController.activeSection).toBe('about');
+    });
+
+    it('should switch active class when different section becomes visible', () => {
+      // First section visible
+      mockObserverCallback([
+        {
+          isIntersecting: true,
+          target: mockSection1
+        }
+      ]);
+
+      // Second section becomes visible
+      mockObserverCallback([
+        {
+          isIntersecting: true,
+          target: mockSection2
+        }
+      ]);
+
+      const aboutNavItem = headerController.headerNav.querySelector('[data-section-id="about"]');
+      const projectsNavItem = headerController.headerNav.querySelector('[data-section-id="projects"]');
+
+      expect(aboutNavItem.classList.contains('active')).toBe(false);
+      expect(projectsNavItem.classList.contains('active')).toBe(true);
+      expect(headerController.activeSection).toBe('projects');
+    });
+
+    it('should not change active section if already active', () => {
+      mockObserverCallback([
+        {
+          isIntersecting: true,
+          target: mockSection1
+        }
+      ]);
+
+      const setActiveSpy = vi.spyOn(headerController, 'setActiveSection');
+
+      // Same section intersecting again
+      mockObserverCallback([
+        {
+          isIntersecting: true,
+          target: mockSection1
+        }
+      ]);
+
+      // Should not call setActiveSection again since it's already active
+      expect(setActiveSpy).not.toHaveBeenCalled();
+    });
+
+    it('should ignore non-intersecting entries', () => {
+      mockObserverCallback([
+        {
+          isIntersecting: false,
+          target: mockSection1
+        }
+      ]);
+
+      expect(headerController.activeSection).toBeNull();
+    });
+  });
+
   describe('showRoleChangeModal()', () => {
     beforeEach(() => {
       mockStateManager.setRole('recruiter');
