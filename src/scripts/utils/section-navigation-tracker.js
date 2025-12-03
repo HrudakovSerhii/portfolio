@@ -1,17 +1,21 @@
 class SectionNavigationTracker {
+  /**
+   * @param {string} navContainerId - ID of the container holding nav links
+   * @param {string} sectionContainerId - ID of the container where sections are rendered
+   * @param {Object} options - Configuration options
+   */
   constructor(navContainerId, sectionContainerId, options = {}) {
     this.navContainer = document.getElementById(navContainerId);
     this.sectionContainer = document.getElementById(sectionContainerId);
 
+    // Configuration
     this.activeClass = options.activeClass || 'active';
-    this.minVisibilityThreshold = 0.1;
+    this.threshold = options.threshold || 0.51; // 51% visibility required
     this.sectionSelector = options.sectionSelector || '.content-section';
     this.navItemSelector = options.navItemSelector || '.header-nav-item';
     this.sectionIdAttribute = options.sectionIdAttribute || 'data-section-id';
 
-    this.sectionStates = new Map();
-    this.currentActiveSection = null;
-
+    // Bind methods to keep 'this' context
     this.handleMutations = this.handleMutations.bind(this);
     this.handleIntersections = this.handleIntersections.bind(this);
 
@@ -24,36 +28,32 @@ class SectionNavigationTracker {
       return;
     }
 
-    this.setupIntersectionObserver();
-    this.setupMutationObserver();
-    this.observeExistingSections();
-  }
-
-  setupIntersectionObserver() {
+    // Setup IntersectionObserver (Checks visibility)
+    // rootMargin accounts for fixed header (80px) and requires >50% visibility
     this.observer = new IntersectionObserver(this.handleIntersections, {
       root: null,
       rootMargin: '-80px 0px -50% 0px',
       threshold: [0, 0.1, 0.5, 1.0]
     });
-  }
 
-  setupMutationObserver() {
+    // Setup MutationObserver (Detects new DOM elements)
     this.domWatcher = new MutationObserver(this.handleMutations);
-    this.domWatcher.observe(this.sectionContainer, { childList: true });
-  }
 
-  observeExistingSections() {
-    // Only observe direct children that match the selector to avoid nested elements
-    const existingSections = Array.from(this.sectionContainer.children).filter(
-      child => child.matches(this.sectionSelector)
-    );
+    // Start watching the section container for new child nodes
+    this.domWatcher.observe(this.sectionContainer, { childList: true });
+
+    // Observe any existing sections
+    const existingSections = this.sectionContainer.querySelectorAll(this.sectionSelector);
     existingSections.forEach(section => this.observer.observe(section));
   }
 
+  /**
+   * Called automatically when elements are added to sectionContainer
+   */
   handleMutations(mutations) {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
-        // Only observe direct children that match the selector
+        // Ensure we only observe actual HTML Elements (type 1) that match our selector
         if (node.nodeType === 1 && node.matches(this.sectionSelector)) {
           this.observer.observe(node);
         }
@@ -61,84 +61,45 @@ class SectionNavigationTracker {
     });
   }
 
+  /**
+   * Called automatically when scrolling occurs
+   * Only highlights the section with the highest intersection ratio (>10% threshold)
+   */
   handleIntersections(entries) {
-    this.updateSectionStates(entries);
-    const mostVisibleSectionId = this.findMostVisibleSection();
-    this.updateActiveNavItem(mostVisibleSectionId);
-  }
-
-  updateSectionStates(entries) {
-    entries.forEach(entry => {
-      const sectionId = entry.target.getAttribute(this.sectionIdAttribute);
-      
-      if (entry.isIntersecting && entry.intersectionRatio >= this.minVisibilityThreshold) {
-        this.sectionStates.set(sectionId, {
-          ratio: entry.intersectionRatio,
-          element: entry.target
-        });
-      } else {
-        this.sectionStates.delete(sectionId);
-      }
-    });
-  }
-
-  findMostVisibleSection() {
-    let mostVisibleSectionId = null;
+    // Find the most visible section
+    const MIN_VISIBILITY_THRESHOLD = 0.1;
+    let mostVisibleEntry = null;
     let highestRatio = 0;
 
-    this.sectionStates.forEach((state, sectionId) => {
-      if (state.ratio > highestRatio) {
-        highestRatio = state.ratio;
-        mostVisibleSectionId = sectionId;
+    entries.forEach(entry => {
+      if (entry.isIntersecting && 
+          entry.intersectionRatio >= MIN_VISIBILITY_THRESHOLD && 
+          entry.intersectionRatio > highestRatio) {
+        highestRatio = entry.intersectionRatio;
+        mostVisibleEntry = entry;
       }
     });
 
-    return mostVisibleSectionId;
-  }
-
-  updateActiveNavItem(sectionId) {
-    if (sectionId === this.currentActiveSection) {
-      return;
-    }
-
-    // Always clear previous active state when switching sections
-    if (this.currentActiveSection !== null) {
-      this.clearActiveState(this.currentActiveSection);
-    }
-
-    // Set new active state if a section is visible
-    if (sectionId !== null) {
-      this.setActiveState(sectionId);
-    }
-
-    this.currentActiveSection = sectionId;
-  }
-
-  clearAllActiveStates() {
+    // Clear all active states first
     const allNavItems = this.navContainer.querySelectorAll(this.navItemSelector);
     allNavItems.forEach(item => item.classList.remove(this.activeClass));
-  }
 
-  clearActiveState(sectionId) {
-    const navItem = this.navContainer.querySelector(
-      `${this.navItemSelector}[${this.sectionIdAttribute}="${sectionId}"]`
-    );
+    // Set active state on the most visible section's nav item
+    if (mostVisibleEntry) {
+      const sectionId = mostVisibleEntry.target.getAttribute(this.sectionIdAttribute);
+      const navItem = this.navContainer.querySelector(
+        `${this.navItemSelector}[${this.sectionIdAttribute}="${sectionId}"]`
+      );
 
-    if (navItem) {
-      navItem.classList.remove(this.activeClass);
+      if (navItem) {
+        navItem.classList.add(this.activeClass);
+      }
     }
   }
 
-  setActiveState(sectionId) {
-    const navItem = this.navContainer.querySelector(
-      `${this.navItemSelector}[${this.sectionIdAttribute}="${sectionId}"]`
-    );
-
-    if (navItem) {
-      navItem.classList.add(this.activeClass);
-    }
-  }
-
+  /**
+   * Optional: Cleanup if you destroy the page (SPA navigation)
+   */
   disconnect() {
     this.observer.disconnect();
     this.domWatcher.disconnect();

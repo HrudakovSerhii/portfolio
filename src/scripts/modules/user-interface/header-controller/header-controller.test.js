@@ -27,16 +27,6 @@ describe('HeaderController', () => {
     const doc = parser.parseFromString(htmlContent, 'text/html');
     document.documentElement.innerHTML = doc.documentElement.innerHTML;
 
-    // Mock IntersectionObserver
-    global.IntersectionObserver = class IntersectionObserver {
-      constructor(callback) {
-        this.callback = callback;
-      }
-      observe = vi.fn();
-      disconnect = vi.fn();
-      unobserve = vi.fn();
-    };
-
     // Import modules
     const headerModule = await import('./header-controller.js');
     HeaderController = headerModule.default;
@@ -51,8 +41,8 @@ describe('HeaderController', () => {
     mockStateManager = new StateManager();
     mockTemplateBuilder = new TemplateBuilder();
 
-    // Create controller instance
-    headerController = new HeaderController(mockStateManager, mockTemplateBuilder);
+    // Create controller instance (without section tracker for unit tests)
+    headerController = new HeaderController(mockStateManager, mockTemplateBuilder, null);
   });
 
   describe('Constructor', () => {
@@ -70,8 +60,7 @@ describe('HeaderController', () => {
 
     it('should initialize with empty arrays and default state', () => {
       expect(headerController.visibleSections).toEqual([]);
-      expect(headerController.activeSection).toBeNull();
-      expect(headerController.intersectionObserver).toBeNull();
+      expect(headerController.sectionTracker).toBeNull();
     });
   });
 
@@ -105,15 +94,13 @@ describe('HeaderController', () => {
       expect(languageSelector.value).toBe('es');
     });
 
-    it('should setup IntersectionObserver', () => {
+    it('should setup mobile toggle', () => {
       const ownerName = document.createElement('span');
       const languageSelector = document.createElement('select');
 
       headerController.initialize(ownerName, languageSelector);
 
-      expect(headerController.intersectionObserver).toBeTruthy();
-      expect(headerController.intersectionObserver.observe).toBeDefined();
-      expect(headerController.intersectionObserver.disconnect).toBeDefined();
+      expect(headerController.navToggle).toBeTruthy();
     });
   });
 
@@ -139,13 +126,12 @@ describe('HeaderController', () => {
   describe('updateLanguage()', () => {
     beforeEach(() => {
       const languageSelector = document.createElement('select');
-      // Create option elements for the select
       const option1 = document.createElement('option');
       option1.value = 'en';
       const option2 = document.createElement('option');
-      option2.value = 'de';
+      option2.value = 'fr';
       const option3 = document.createElement('option');
-      option3.value = 'fr';
+      option3.value = 'de';
       languageSelector.appendChild(option1);
       languageSelector.appendChild(option2);
       languageSelector.appendChild(option3);
@@ -224,10 +210,6 @@ describe('HeaderController', () => {
   describe('addNavigationItem()', () => {
     beforeEach(() => {
       headerController.headerNav = document.createElement('nav');
-      headerController.intersectionObserver = {
-        observe: vi.fn(),
-        disconnect: vi.fn()
-      };
     });
 
     it('should add navigation item to header', () => {
@@ -251,64 +233,13 @@ describe('HeaderController', () => {
 
       expect(headerController.visibleSections).toContain('about');
     });
-
-    it('should observe section with IntersectionObserver', () => {
-      const section = document.createElement('section');
-      section.className = 'content-section';
-      section.setAttribute('data-section-id', 'about');
-      document.body.appendChild(section);
-
-      headerController.addNavigationItem('about', 'About Me');
-
-      expect(headerController.intersectionObserver.observe).toHaveBeenCalledWith(section);
-    });
-  });
-
-  describe('setActiveSection()', () => {
-    beforeEach(() => {
-      headerController.headerNav = document.createElement('nav');
-      headerController.navDropdownMenu = document.createElement('div');
-      
-      headerController.addNavigationItem('about', 'About');
-      headerController.addNavigationItem('projects', 'Projects');
-    });
-
-    it('should set active class on correct nav item', () => {
-      headerController.setActiveSection('about');
-
-      const aboutItem = headerController.headerNav.querySelector('[data-section-id="about"]');
-      const projectsItem = headerController.headerNav.querySelector('[data-section-id="projects"]');
-
-      expect(aboutItem.classList.contains('active')).toBe(true);
-      expect(projectsItem.classList.contains('active')).toBe(false);
-    });
-
-    it('should update active section property', () => {
-      headerController.setActiveSection('projects');
-
-      expect(headerController.activeSection).toBe('projects');
-    });
-
-    it('should remove active class from previous section', () => {
-      headerController.setActiveSection('about');
-      headerController.setActiveSection('projects');
-
-      const aboutItem = headerController.headerNav.querySelector('[data-section-id="about"]');
-      expect(aboutItem.classList.contains('active')).toBe(false);
-    });
   });
 
   describe('clearNavigation()', () => {
     beforeEach(() => {
       headerController.headerNav = document.createElement('nav');
-      headerController.intersectionObserver = {
-        observe: vi.fn(),
-        disconnect: vi.fn()
-      };
-      
       headerController.addNavigationItem('about', 'About');
       headerController.addNavigationItem('projects', 'Projects');
-      headerController.setActiveSection('about');
     });
 
     it('should clear all navigation items', () => {
@@ -317,22 +248,10 @@ describe('HeaderController', () => {
       expect(headerController.headerNav.innerHTML).toBe('');
     });
 
-    it('should disconnect IntersectionObserver', () => {
-      headerController.clearNavigation();
-
-      expect(headerController.intersectionObserver.disconnect).toHaveBeenCalled();
-    });
-
     it('should reset visible sections', () => {
       headerController.clearNavigation();
 
       expect(headerController.visibleSections).toEqual([]);
-    });
-
-    it('should reset active section', () => {
-      headerController.clearNavigation();
-
-      expect(headerController.activeSection).toBeNull();
     });
   });
 
@@ -371,130 +290,6 @@ describe('HeaderController', () => {
       navItem.click();
 
       expect(headerController.headerNav.classList.contains('is-open')).toBe(false);
-    });
-  });
-
-  describe('IntersectionObserver active section tracking', () => {
-    let mockObserverCallback;
-    let mockSection1;
-    let mockSection2;
-
-    beforeEach(() => {
-      // Setup DOM
-      headerController.headerNav = document.createElement('nav');
-      headerController.intersectionObserver = {
-        observe: vi.fn(),
-        disconnect: vi.fn()
-      };
-
-      // Create mock sections
-      mockSection1 = document.createElement('section');
-      mockSection1.setAttribute('data-section-id', 'about');
-      mockSection1.className = 'content-section';
-      document.body.appendChild(mockSection1);
-
-      mockSection2 = document.createElement('section');
-      mockSection2.setAttribute('data-section-id', 'projects');
-      mockSection2.className = 'content-section';
-      document.body.appendChild(mockSection2);
-
-      // Add navigation items
-      headerController.addNavigationItem('about', 'About');
-      headerController.addNavigationItem('projects', 'Projects');
-
-      // Capture the IntersectionObserver callback
-      global.IntersectionObserver = class IntersectionObserver {
-        constructor(callback) {
-          mockObserverCallback = callback;
-          this.callback = callback;
-        }
-        observe = vi.fn();
-        disconnect = vi.fn();
-        unobserve = vi.fn();
-      };
-
-      // Re-setup observer to capture callback
-      headerController._setupIntersectionObserver();
-    });
-
-    it('should set active class when section becomes visible', () => {
-      // Simulate section becoming visible with >50% intersection
-      mockObserverCallback([
-        {
-          isIntersecting: true,
-          intersectionRatio: 0.6,
-          target: mockSection1
-        }
-      ]);
-
-      const aboutNavItem = headerController.headerNav.querySelector('[data-section-id="about"]');
-      const projectsNavItem = headerController.headerNav.querySelector('[data-section-id="projects"]');
-
-      expect(aboutNavItem.classList.contains('active')).toBe(true);
-      expect(projectsNavItem.classList.contains('active')).toBe(false);
-      expect(headerController.activeSection).toBe('about');
-    });
-
-    it('should switch active class when different section becomes visible', () => {
-      // First section visible with high ratio
-      mockObserverCallback([
-        {
-          isIntersecting: true,
-          intersectionRatio: 0.8,
-          target: mockSection1
-        }
-      ]);
-
-      // Second section becomes visible with higher ratio
-      mockObserverCallback([
-        {
-          isIntersecting: true,
-          intersectionRatio: 0.9,
-          target: mockSection2
-        }
-      ]);
-
-      const aboutNavItem = headerController.headerNav.querySelector('[data-section-id="about"]');
-      const projectsNavItem = headerController.headerNav.querySelector('[data-section-id="projects"]');
-
-      expect(aboutNavItem.classList.contains('active')).toBe(false);
-      expect(projectsNavItem.classList.contains('active')).toBe(true);
-      expect(headerController.activeSection).toBe('projects');
-    });
-
-    it('should not change active section if already active', () => {
-      mockObserverCallback([
-        {
-          isIntersecting: true,
-          intersectionRatio: 0.7,
-          target: mockSection1
-        }
-      ]);
-
-      const setActiveSpy = vi.spyOn(headerController, 'setActiveSection');
-
-      // Same section intersecting again with same ratio
-      mockObserverCallback([
-        {
-          isIntersecting: true,
-          intersectionRatio: 0.7,
-          target: mockSection1
-        }
-      ]);
-
-      // Should not call setActiveSection again since it's already active
-      expect(setActiveSpy).not.toHaveBeenCalled();
-    });
-
-    it('should ignore non-intersecting entries', () => {
-      mockObserverCallback([
-        {
-          isIntersecting: false,
-          target: mockSection1
-        }
-      ]);
-
-      expect(headerController.activeSection).toBeNull();
     });
   });
 
