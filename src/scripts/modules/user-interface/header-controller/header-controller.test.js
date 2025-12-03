@@ -27,6 +27,16 @@ describe('HeaderController', () => {
     const doc = parser.parseFromString(htmlContent, 'text/html');
     document.documentElement.innerHTML = doc.documentElement.innerHTML;
 
+    // Mock IntersectionObserver
+    global.IntersectionObserver = class IntersectionObserver {
+      constructor(callback) {
+        this.callback = callback;
+      }
+      observe = vi.fn();
+      disconnect = vi.fn();
+      unobserve = vi.fn();
+    };
+
     // Import modules
     const headerModule = await import('./header-controller.js');
     HeaderController = headerModule.default;
@@ -61,7 +71,7 @@ describe('HeaderController', () => {
     it('should initialize with empty arrays and default state', () => {
       expect(headerController.visibleSections).toEqual([]);
       expect(headerController.activeSection).toBeNull();
-      expect(headerController.isDropdownOpen).toBe(false);
+      expect(headerController.intersectionObserver).toBeNull();
     });
   });
 
@@ -70,21 +80,17 @@ describe('HeaderController', () => {
       const ownerName = document.createElement('span');
       const languageSelector = document.createElement('select');
 
-      // Mock window.addEventListener for scroll detection
-      window.addEventListener = vi.fn();
-      window.requestAnimationFrame = vi.fn();
-
       headerController.initialize(ownerName, languageSelector);
 
       expect(headerController.ownerName).toBe(ownerName);
       expect(headerController.languageSelector).toBe(languageSelector);
       expect(headerController.headerNav).toBeTruthy();
       expect(headerController.roleBadge).toBeTruthy();
+      expect(headerController.navToggle).toBeTruthy();
     });
 
     it('should set language selector to current language', () => {
       const languageSelector = document.createElement('select');
-      // Create option elements for the select
       const option1 = document.createElement('option');
       option1.value = 'en';
       const option2 = document.createElement('option');
@@ -92,15 +98,22 @@ describe('HeaderController', () => {
       languageSelector.appendChild(option1);
       languageSelector.appendChild(option2);
       
-      // Mock window.addEventListener for scroll detection
-      window.addEventListener = vi.fn();
-      window.requestAnimationFrame = vi.fn();
-      
       mockStateManager.setLanguage('es');
 
       headerController.initialize(document.createElement('span'), languageSelector);
 
       expect(languageSelector.value).toBe('es');
+    });
+
+    it('should setup IntersectionObserver', () => {
+      const ownerName = document.createElement('span');
+      const languageSelector = document.createElement('select');
+
+      headerController.initialize(ownerName, languageSelector);
+
+      expect(headerController.intersectionObserver).toBeTruthy();
+      expect(headerController.intersectionObserver.observe).toBeDefined();
+      expect(headerController.intersectionObserver.disconnect).toBeDefined();
     });
   });
 
@@ -211,7 +224,10 @@ describe('HeaderController', () => {
   describe('addNavigationItem()', () => {
     beforeEach(() => {
       headerController.headerNav = document.createElement('nav');
-      headerController.navDropdownMenu = document.createElement('div');
+      headerController.intersectionObserver = {
+        observe: vi.fn(),
+        disconnect: vi.fn()
+      };
     });
 
     it('should add navigation item to header', () => {
@@ -220,13 +236,6 @@ describe('HeaderController', () => {
       const navItems = headerController.headerNav.querySelectorAll('.header-nav-item');
       expect(navItems.length).toBe(1);
       expect(navItems[0].textContent).toBe('About Me');
-    });
-
-    it('should add divider before navigation item', () => {
-      headerController.addNavigationItem('about', 'About Me');
-
-      const dividers = headerController.headerNav.querySelectorAll('.header-divider');
-      expect(dividers.length).toBe(1);
     });
 
     it('should not add duplicate navigation items', () => {
@@ -243,11 +252,14 @@ describe('HeaderController', () => {
       expect(headerController.visibleSections).toContain('about');
     });
 
-    it('should add item to mobile dropdown', () => {
+    it('should observe section with IntersectionObserver', () => {
+      const section = document.createElement('section');
+      section.setAttribute('data-section-id', 'about');
+      document.body.appendChild(section);
+
       headerController.addNavigationItem('about', 'About Me');
 
-      const dropdownItems = headerController.navDropdownMenu.querySelectorAll('.header-nav-dropdown-item');
-      expect(dropdownItems.length).toBe(1);
+      expect(headerController.intersectionObserver.observe).toHaveBeenCalledWith(section);
     });
   });
 
@@ -288,7 +300,10 @@ describe('HeaderController', () => {
   describe('clearNavigation()', () => {
     beforeEach(() => {
       headerController.headerNav = document.createElement('nav');
-      headerController.navDropdownMenu = document.createElement('div');
+      headerController.intersectionObserver = {
+        observe: vi.fn(),
+        disconnect: vi.fn()
+      };
       
       headerController.addNavigationItem('about', 'About');
       headerController.addNavigationItem('projects', 'Projects');
@@ -301,10 +316,10 @@ describe('HeaderController', () => {
       expect(headerController.headerNav.innerHTML).toBe('');
     });
 
-    it('should clear mobile dropdown', () => {
+    it('should disconnect IntersectionObserver', () => {
       headerController.clearNavigation();
 
-      expect(headerController.navDropdownMenu.innerHTML).toBe('');
+      expect(headerController.intersectionObserver.disconnect).toHaveBeenCalled();
     });
 
     it('should reset visible sections', () => {
@@ -320,36 +335,41 @@ describe('HeaderController', () => {
     });
   });
 
-  describe('Mobile dropdown', () => {
+  describe('Mobile toggle', () => {
     beforeEach(() => {
-      headerController.headerNavMobile = document.createElement('div');
-      headerController.navDropdownToggle = document.createElement('button');
-      headerController.navDropdownMenu = document.createElement('div');
-      headerController.navDropdownToggle.setAttribute('aria-expanded', 'false');
+      headerController.headerNav = document.createElement('nav');
+      headerController.navToggle = document.createElement('button');
+      headerController.navToggle.setAttribute('aria-expanded', 'false');
     });
 
-    it('should open dropdown on toggle click', () => {
-      headerController._setupMobileDropdown();
-      headerController.navDropdownToggle.click();
+    it('should toggle nav open on button click', () => {
+      headerController._setupMobileToggle();
+      headerController.navToggle.click();
 
-      expect(headerController.isDropdownOpen).toBe(true);
-      expect(headerController.navDropdownToggle.classList.contains('is-open')).toBe(true);
+      expect(headerController.headerNav.classList.contains('is-open')).toBe(true);
+      expect(headerController.navToggle.getAttribute('aria-expanded')).toBe('true');
     });
 
-    it('should close dropdown on second toggle click', () => {
-      headerController._setupMobileDropdown();
-      headerController.navDropdownToggle.click();
-      headerController.navDropdownToggle.click();
+    it('should toggle nav closed on second button click', () => {
+      headerController._setupMobileToggle();
+      headerController.navToggle.click();
+      headerController.navToggle.click();
 
-      expect(headerController.isDropdownOpen).toBe(false);
-      expect(headerController.navDropdownToggle.classList.contains('is-open')).toBe(false);
+      expect(headerController.headerNav.classList.contains('is-open')).toBe(false);
+      expect(headerController.navToggle.getAttribute('aria-expanded')).toBe('false');
     });
 
-    it('should update aria-expanded attribute', () => {
-      headerController._setupMobileDropdown();
-      headerController.navDropdownToggle.click();
+    it('should close nav when clicking a nav item', () => {
+      headerController._setupMobileToggle();
+      headerController.navToggle.click();
 
-      expect(headerController.navDropdownToggle.getAttribute('aria-expanded')).toBe('true');
+      const navItem = document.createElement('a');
+      navItem.className = 'header-nav-item';
+      headerController.headerNav.appendChild(navItem);
+
+      navItem.click();
+
+      expect(headerController.headerNav.classList.contains('is-open')).toBe(false);
     });
   });
 
