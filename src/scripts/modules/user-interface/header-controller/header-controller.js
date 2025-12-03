@@ -27,9 +27,10 @@ const CSS_CLASSES = {
 };
 
 class HeaderController {
-  constructor(stateManager, templateBuilder) {
+  constructor(stateManager, templateBuilder, sectionTracker = null) {
     this.stateManager = stateManager;
     this.templateBuilder = templateBuilder;
+    this.sectionTracker = sectionTracker;
 
     this.ownerName = null;
     this.languageSelector = null;
@@ -39,8 +40,6 @@ class HeaderController {
     this.onRoleSelectCallback = null;
 
     this.visibleSections = [];
-    this.activeSection = null;
-    this.intersectionObserver = null;
   }
 
   initialize(ownerNameElement, languageSelectorElement) {
@@ -58,7 +57,6 @@ class HeaderController {
       }
     }
 
-    this._setupIntersectionObserver();
     this._setupRoleBadgeClick();
     this._setupMobileToggle();
   }
@@ -154,112 +152,15 @@ class HeaderController {
     navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
     this.headerNav.appendChild(navLink);
-
-    // Select the actual section element, not the nav item
-    const section = document.querySelector(`.content-section[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
-    
-    if (section) {
-      const rect = section.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const headerHeight = 80;
-      
-      // Check if section is currently visible in viewport (below header, above bottom)
-      const isVisible = rect.top < viewportHeight && rect.bottom > headerHeight;
-      const isInUpperPart = rect.top >= headerHeight && rect.top < viewportHeight / 2;
-      
-      // If this is the first section and it's visible, or if it's in the upper part of viewport, set it as active
-      if (!this.activeSection && isVisible && isInUpperPart) {
-        this.setActiveSection(sectionId);
-      }
-    }
-    
-    if (section && this.intersectionObserver) {
-      this.intersectionObserver.observe(section);
-    }
-  }
-
-  setActiveSection(sectionId) {
-    if (!this.headerNav) return;
-
-    this.activeSection = sectionId;
-
-    const navItems = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
-    navItems.forEach(item => {
-      const itemSectionId = item.getAttribute(SECTION_ATTRIBUTES.sectionId);
-      if (itemSectionId === sectionId) {
-        item.classList.add(CSS_CLASSES.active);
-      } else {
-        item.classList.remove(CSS_CLASSES.active);
-      }
-    });
+    // Section tracking is handled automatically by SectionNavigationTracker
   }
 
   clearNavigation() {
     if (!this.headerNav) return;
 
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-    }
-
     this.headerNav.innerHTML = '';
     this.visibleSections = [];
-    this.activeSection = null;
-  }
-
-  /**
-   * Sets up Intersection Observer to detect which section is currently in view.
-   * More performant than scroll event listeners and automatically handles viewport changes.
-   * 
-   * Since sections are 100vh - header-height, we use rootMargin to create a detection zone
-   * that accounts for the header and requires >50% visibility before highlighting.
-   * 
-   * rootMargin: '-80px 0px -50% 0px' means:
-   * - Top: -80px (header height)
-   * - Bottom: -50% (section must be >50% visible to be considered active)
-   */
-  _setupIntersectionObserver() {
-    const options = {
-      root: null,
-      rootMargin: '-80px 0px -50% 0px',
-      threshold: [0, 0.1, 0.5, 1.0]
-    };
-
-    this.intersectionObserver = new IntersectionObserver((entries) => {
-      // Find the section with the highest intersection ratio
-      let mostVisibleEntry = null;
-      let highestRatio = 0;
-      
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio > highestRatio) {
-          highestRatio = entry.intersectionRatio;
-          mostVisibleEntry = entry;
-        }
-      });
-      
-      if (mostVisibleEntry) {
-        const sectionId = mostVisibleEntry.target.getAttribute(SECTION_ATTRIBUTES.sectionId);
-        if (sectionId && sectionId !== this.activeSection) {
-          this.setActiveSection(sectionId);
-        }
-      } else {
-        // No section is intersecting - user might be at the top (welcome section)
-        // Clear active state
-        if (this.activeSection !== null) {
-          this.clearActiveSection();
-        }
-      }
-    }, options);
-  }
-
-  clearActiveSection() {
-    this.activeSection = null;
-    
-    if (!this.headerNav) return;
-    
-    const navItems = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
-    navItems.forEach(item => {
-      item.classList.remove(CSS_CLASSES.active);
-    });
+    // Section tracking cleanup is handled by SectionNavigationTracker
   }
 
   showRoleChangeModal(onRoleSelect) {

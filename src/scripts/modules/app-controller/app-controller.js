@@ -6,6 +6,7 @@ import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
 import GenerativeImage from '../user-interface/generative-image/generative-image.js';
+import SectionNavigationTracker from '../../utils/section-navigation-tracker.js';
 
 const MODAL_FADE_DURATION = 300;
 const SCROLL_AFTER_RENDER_DELAY = 100;
@@ -32,8 +33,17 @@ class AppController {
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
 
+    // Initialize section navigation tracker
+    this.sectionTracker = new SectionNavigationTracker('header-nav', 'sections-container', {
+      activeClass: 'active',
+      threshold: 0.51,
+      sectionSelector: '.content-section',
+      navItemSelector: '.header-nav-item',
+      sectionIdAttribute: 'data-section-id'
+    });
+
     this.themeSwitcher = new ThemeSwitcher(this.stateManager);
-    this.headerController = new HeaderController(this.stateManager, this.templateBuilder);
+    this.headerController = new HeaderController(this.stateManager, this.templateBuilder, this.sectionTracker);
     this.sectionRenderer = new SectionRenderer(
       this.stateManager,
       this.contentMiddleware,
