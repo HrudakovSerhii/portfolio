@@ -2,6 +2,7 @@ import StateManager, { SECTION_ORDER } from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
 import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
 import AnimationController from '../animation-controller';
+import ParallaxController from '../parallax-controller';
 import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
@@ -32,6 +33,7 @@ class AppController {
     this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-default-content.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
+    this.parallaxController = new ParallaxController();
 
     // Initialize section navigation tracker
     this.sectionTracker = new SectionNavigationTracker('header-nav', 'sections-container', {
@@ -84,6 +86,7 @@ class AppController {
         this.elements.ownerName,
         this.elements.languageSelector
       );
+      this.parallaxController.init();
 
       await this._loadSectionOrder();
 
