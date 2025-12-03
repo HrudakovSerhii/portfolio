@@ -3,14 +3,10 @@ const MODAL_FOCUS_DELAY = 100;
 
 const HEADER_ELEMENTS = {
   nav: 'header-nav',
-  navMobile: 'header-nav-mobile',
-  navDropdownToggle: 'header-nav-dropdown-toggle',
-  navDropdownLabel: 'header-nav-dropdown-label',
-  navDropdownMenu: 'header-nav-dropdown-menu',
+  navItem: 'header-nav-item',
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
-  navItem: 'header-nav-item',
-  divider: 'header-divider'
+  navToggle: 'header-nav-toggle'
 };
 
 const MODAL_ELEMENTS = {
@@ -27,9 +23,7 @@ const SECTION_ATTRIBUTES = {
 };
 
 const CSS_CLASSES = {
-  active: 'active',
-  hasOverflow: 'has-overflow',
-  isOpen: 'is-open'
+  active: 'active'
 };
 
 class HeaderController {
@@ -40,29 +34,22 @@ class HeaderController {
     this.ownerName = null;
     this.languageSelector = null;
     this.headerNav = null;
-    this.headerNavMobile = null;
-    this.navDropdownToggle = null;
-    this.navDropdownLabel = null;
-    this.navDropdownMenu = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
     this.onRoleSelectCallback = null;
 
     this.visibleSections = [];
     this.activeSection = null;
-    this.isDropdownOpen = false;
+    this.intersectionObserver = null;
   }
 
   initialize(ownerNameElement, languageSelectorElement) {
     this.ownerName = ownerNameElement;
     this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
-    this.headerNavMobile = document.getElementById(HEADER_ELEMENTS.navMobile);
-    this.navDropdownToggle = document.getElementById(HEADER_ELEMENTS.navDropdownToggle);
-    this.navDropdownLabel = document.getElementById(HEADER_ELEMENTS.navDropdownLabel);
-    this.navDropdownMenu = document.getElementById(HEADER_ELEMENTS.navDropdownMenu);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
+    this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
 
     if (this.languageSelector) {
       const currentLanguage = this.stateManager.getLanguage();
@@ -71,9 +58,9 @@ class HeaderController {
       }
     }
 
-    this._setupScrollDetection();
+    this._setupIntersectionObserver();
     this._setupRoleBadgeClick();
-    this._setupMobileDropdown();
+    this._setupMobileToggle();
   }
 
   _setupRoleBadgeClick() {
@@ -84,6 +71,31 @@ class HeaderController {
         }
       });
     }
+  }
+
+  _setupMobileToggle() {
+    if (!this.navToggle || !this.headerNav) return;
+
+    this.navToggle.addEventListener('click', () => {
+      const isOpen = this.headerNav.classList.toggle('is-open');
+      this.navToggle.setAttribute('aria-expanded', isOpen.toString());
+    });
+
+    // Close nav when clicking a nav item on mobile
+    this.headerNav.addEventListener('click', (e) => {
+      if (e.target.classList.contains(HEADER_ELEMENTS.navItem)) {
+        this.headerNav.classList.remove('is-open');
+        this.navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close nav when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!this.headerNav.contains(e.target) && !this.navToggle.contains(e.target)) {
+        this.headerNav.classList.remove('is-open');
+        this.navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
   }
 
   updateOwnerName(name) {
@@ -111,8 +123,6 @@ class HeaderController {
     }
   }
 
-
-
   updateRoleBadge(role, onRoleSelect = null) {
     if (!this.roleBadge || !this.roleBadgeText) return;
 
@@ -120,7 +130,7 @@ class HeaderController {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
       this.roleBadgeText.textContent = `${roleText} View`;
       this.roleBadge.style.display = 'flex';
-      
+
       if (onRoleSelect) {
         this.onRoleSelectCallback = onRoleSelect;
       }
@@ -139,35 +149,19 @@ class HeaderController {
 
     this.visibleSections.push(sectionId);
 
-    const navDivider = this._createNavigationDivider();
-    this.headerNav.appendChild(navDivider);
-
-    const navButton = this._createNavigationButton(sectionId, sectionTitle);
-    this.headerNav.appendChild(navButton);
-
-    // Add to mobile dropdown
-    this._addMobileDropdownItem(sectionId, sectionTitle);
-
-    this._checkNavOverflow();
-    this._checkIfSectionIsActive(sectionId);
-  }
-
-  _createNavigationDivider() {
-    const navDivider = document.createElement('div');
-
-    navDivider.className = HEADER_ELEMENTS.divider;
-
-    return navDivider;
-  }
-
-  _createNavigationButton(sectionId, sectionTitle) {
     const navLink = document.createElement('a');
     navLink.className = HEADER_ELEMENTS.navItem;
     navLink.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
     navLink.setAttribute('href', `#section-${sectionId}`);
     navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
-    return navLink;
+    this.headerNav.appendChild(navLink);
+
+    // Observe the section for intersection
+    const section = document.querySelector(`[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
+    if (section && this.intersectionObserver) {
+      this.intersectionObserver.observe(section);
+    }
   }
 
   setActiveSection(sectionId) {
@@ -189,155 +183,37 @@ class HeaderController {
   clearNavigation() {
     if (!this.headerNav) return;
 
-    this.headerNav.innerHTML = '';
-    
-    if (this.navDropdownMenu) {
-      this.navDropdownMenu.innerHTML = '';
+    // Disconnect observer from all sections
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
     }
-    
+
+    this.headerNav.innerHTML = '';
     this.visibleSections = [];
     this.activeSection = null;
   }
 
-  _checkIfSectionIsActive(sectionId) {
-    const scrollPosition = window.scrollY + 150;
-
-    const section = document.querySelector(`[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
-    if (section) {
-      const sectionTop = section.offsetTop;
-      const sectionBottom = sectionTop + section.offsetHeight;
-
-      if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-        this.setActiveSection(sectionId);
-      }
-    }
-  }
-
   /**
-   * Monitors scroll position to automatically highlight the active section in navigation.
-   * Uses requestAnimationFrame for performance optimization to avoid excessive reflows.
-   * Updates the active nav item based on which section is currently in the viewport.
+   * Sets up Intersection Observer to detect which section is currently in view.
+   * More performant than scroll event listeners and automatically handles viewport changes.
    */
-  _setupScrollDetection() {
-    let ticking = false;
+  _setupIntersectionObserver() {
+    const options = {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    };
 
-    const updateActiveSection = () => {
-      if (!this.headerNav) return;
-
-      const scrollPosition = window.scrollY + 150;
-      let currentSection = null;
-
-      const contentSections = document.querySelectorAll('.content-section');
-      contentSections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          const sectionId = section.getAttribute(SECTION_ATTRIBUTES.sectionId);
-          if (sectionId) {
-            currentSection = sectionId;
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.getAttribute(SECTION_ATTRIBUTES.sectionId);
+          if (sectionId && sectionId !== this.activeSection) {
+            this.setActiveSection(sectionId);
           }
         }
       });
-
-      if (currentSection && currentSection !== this.activeSection) {
-        this.setActiveSection(currentSection);
-      }
-
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateActiveSection);
-        ticking = true;
-      }
-    });
-
-    updateActiveSection();
-  }
-
-  /**
-   * Checks if navigation items overflow the container width and applies a gradient mask.
-   * The mask provides a visual indicator that more items are available via horizontal scroll.
-   * Called after each new navigation item is added to maintain proper overflow state.
-   */
-  _checkNavOverflow() {
-    if (!this.headerNav) return;
-
-    const hasOverflow = this.headerNav.scrollWidth > this.headerNav.clientWidth;
-
-    if (hasOverflow) {
-      this.headerNav.classList.add(CSS_CLASSES.hasOverflow);
-    } else {
-      this.headerNav.classList.remove(CSS_CLASSES.hasOverflow);
-    }
-  }
-
-  _setupMobileDropdown() {
-    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
-
-    this.navDropdownToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this._toggleDropdown();
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      if (this.isDropdownOpen && 
-          !this.headerNavMobile?.contains(e.target)) {
-        this._closeDropdown();
-      }
-    });
-  }
-
-  _toggleDropdown() {
-    if (this.isDropdownOpen) {
-      this._closeDropdown();
-    } else {
-      this._openDropdown();
-    }
-  }
-
-  _openDropdown() {
-    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
-
-    this.isDropdownOpen = true;
-    this.navDropdownToggle.classList.add(CSS_CLASSES.isOpen);
-    this.navDropdownToggle.setAttribute('aria-expanded', 'true');
-    this.navDropdownMenu.classList.add(CSS_CLASSES.isOpen);
-  }
-
-  _closeDropdown() {
-    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
-
-    this.isDropdownOpen = false;
-    this.navDropdownToggle.classList.remove(CSS_CLASSES.isOpen);
-    this.navDropdownToggle.setAttribute('aria-expanded', 'false');
-    this.navDropdownMenu.classList.remove(CSS_CLASSES.isOpen);
-  }
-
-  _addMobileDropdownItem(sectionId, sectionTitle) {
-    if (!this.navDropdownMenu) return;
-
-    const dropdownItem = document.createElement('a');
-    dropdownItem.className = 'header-nav-dropdown-item';
-    dropdownItem.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
-    dropdownItem.setAttribute('href', `#section-${sectionId}`);
-    dropdownItem.setAttribute('role', 'menuitem');
-    dropdownItem.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-
-    dropdownItem.addEventListener('click', () => {
-      this._closeDropdown();
-      this.setActiveSection(sectionId);
-      
-      // Update dropdown label to show selected item
-      if (this.navDropdownLabel) {
-        this.navDropdownLabel.textContent = dropdownItem.textContent;
-      }
-    });
-
-    this.navDropdownMenu.appendChild(dropdownItem);
+    }, options);
   }
 
   showRoleChangeModal(onRoleSelect) {

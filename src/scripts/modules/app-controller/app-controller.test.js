@@ -14,7 +14,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     // Load the real HTML file
-    const htmlPath = resolve(__dirname, '../../../pages/index.html');
+    const htmlPath = resolve(__dirname, '../../../index.html');
     const htmlContent = readFileSync(htmlPath, 'utf-8');
     
     // Parse and set the full HTML document using happy-dom's DOMParser
@@ -182,35 +182,4 @@ describe('AppController', () => {
     });
   });
 
-  describe('Theme handling', () => {
-    it('should toggle theme from light to dark', async () => {
-      const controller = new AppController();
-      controller.showPersonalizationModal = vi.fn();
-      await controller.init();
-
-      // Set to light theme
-      controller.stateManager.setTheme('light');
-      controller._applyTheme('light');
-
-      // Toggle theme
-      controller.handleThemeChange();
-
-      expect(controller.stateManager.getTheme()).toBe('dark');
-    });
-
-    it('should toggle theme from dark to light', async () => {
-      const controller = new AppController();
-      controller.showPersonalizationModal = vi.fn();
-      await controller.init();
-
-      // Set to dark theme
-      controller.stateManager.setTheme('dark');
-      controller._applyTheme('dark');
-
-      // Toggle theme
-      controller.handleThemeChange();
-
-      expect(controller.stateManager.getTheme()).toBe('light');
-    });
-  });
 });

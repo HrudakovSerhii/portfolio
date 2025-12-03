@@ -28,7 +28,7 @@ const ELEMENT_IDS = {
 class AppController {
   constructor() {
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/data/portfolio-default-content.json');
+    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-default-content.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
 
