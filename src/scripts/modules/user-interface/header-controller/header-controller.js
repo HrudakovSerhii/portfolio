@@ -81,7 +81,6 @@ class HeaderController {
       this.navToggle.setAttribute('aria-expanded', isOpen.toString());
     });
 
-    // Close nav when clicking a nav item on mobile
     this.headerNav.addEventListener('click', (e) => {
       if (e.target.classList.contains(HEADER_ELEMENTS.navItem)) {
         this.headerNav.classList.remove('is-open');
@@ -89,7 +88,6 @@ class HeaderController {
       }
     });
 
-    // Close nav when clicking outside
     document.addEventListener('click', (e) => {
       if (!this.headerNav.contains(e.target) && !this.navToggle.contains(e.target)) {
         this.headerNav.classList.remove('is-open');
@@ -157,8 +155,24 @@ class HeaderController {
 
     this.headerNav.appendChild(navLink);
 
-    // Observe the section for intersection
-    const section = document.querySelector(`[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
+    // Select the actual section element, not the nav item
+    const section = document.querySelector(`.content-section[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
+    
+    if (section) {
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const headerHeight = 80;
+      
+      // Check if section is currently visible in viewport (below header, above bottom)
+      const isVisible = rect.top < viewportHeight && rect.bottom > headerHeight;
+      const isInUpperPart = rect.top >= headerHeight && rect.top < viewportHeight / 2;
+      
+      // If this is the first section and it's visible, or if it's in the upper part of viewport, set it as active
+      if (!this.activeSection && isVisible && isInUpperPart) {
+        this.setActiveSection(sectionId);
+      }
+    }
+    
     if (section && this.intersectionObserver) {
       this.intersectionObserver.observe(section);
     }
@@ -183,7 +197,6 @@ class HeaderController {
   clearNavigation() {
     if (!this.headerNav) return;
 
-    // Disconnect observer from all sections
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
@@ -196,24 +209,53 @@ class HeaderController {
   /**
    * Sets up Intersection Observer to detect which section is currently in view.
    * More performant than scroll event listeners and automatically handles viewport changes.
+   * 
+   * Uses a simple approach: section is active when at least 10% is visible in viewport.
+   * The -80px top margin accounts for the fixed header height.
    */
   _setupIntersectionObserver() {
     const options = {
       root: null,
-      rootMargin: '-20% 0px -60% 0px',
-      threshold: 0
+      rootMargin: '-80px 0px 0px 0px',
+      threshold: [0, 0.1, 0.5, 1.0]
     };
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
+      // Find the section with the highest intersection ratio
+      let mostVisibleEntry = null;
+      let highestRatio = 0;
+      
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.getAttribute(SECTION_ATTRIBUTES.sectionId);
-          if (sectionId && sectionId !== this.activeSection) {
-            this.setActiveSection(sectionId);
-          }
+        if (entry.isIntersecting && entry.intersectionRatio > highestRatio) {
+          highestRatio = entry.intersectionRatio;
+          mostVisibleEntry = entry;
         }
       });
+      
+      if (mostVisibleEntry) {
+        const sectionId = mostVisibleEntry.target.getAttribute(SECTION_ATTRIBUTES.sectionId);
+        if (sectionId && sectionId !== this.activeSection) {
+          this.setActiveSection(sectionId);
+        }
+      } else {
+        // No section is intersecting - user might be at the top (welcome section)
+        // Clear active state
+        if (this.activeSection !== null) {
+          this.clearActiveSection();
+        }
+      }
     }, options);
+  }
+
+  clearActiveSection() {
+    this.activeSection = null;
+    
+    if (!this.headerNav) return;
+    
+    const navItems = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
+    navItems.forEach(item => {
+      item.classList.remove(CSS_CLASSES.active);
+    });
   }
 
   showRoleChangeModal(onRoleSelect) {
