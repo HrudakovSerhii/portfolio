@@ -356,13 +356,13 @@ class AppController {
       throw new Error('No role selected. Cannot reveal section.');
     }
 
-    await this.sectionRenderer.reveal(sectionId, role, customQuery);
-
-    // Add navigation item for this section
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+
     if (sectionMetadata && sectionMetadata.title) {
       this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
     }
+
+    await this.sectionRenderer.reveal(sectionId, role, customQuery);
 
     setTimeout(() => {
       const lastSection = this.elements.sectionsContainer.lastElementChild;
