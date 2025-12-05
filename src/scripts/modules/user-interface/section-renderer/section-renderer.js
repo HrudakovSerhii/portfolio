@@ -42,6 +42,8 @@ class SectionRenderer {
       await this._renderActionPrompt(sectionElement, nextSectionId);
     }
 
+    this._scrollToSection(sectionElement);
+
     await this._animateSectionContent(sectionElement, sectionContent);
 
     if (nextSectionId) {
@@ -94,7 +96,7 @@ class SectionRenderer {
   _renderSection(sectionContent, isZigZagLeft) {
     const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft);
     this.sectionsContainer.appendChild(sectionElement);
-    this._scrollToSection(sectionElement);
+
     return sectionElement;
   }
 
