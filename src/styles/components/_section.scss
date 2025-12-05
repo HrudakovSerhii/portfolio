@@ -3,6 +3,7 @@
   justify-content: center;
   min-height: calc(100vh - #{$spacing-3xl});
   margin: 0 auto;
+  background-color: transparent;
 
   .parallax-layer {
     position: absolute;
