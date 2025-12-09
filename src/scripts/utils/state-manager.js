@@ -2,97 +2,48 @@ export const SECTION_ORDER = ['hero', 'about', 'skills', 'experience', 'projects
 
 const VALID_ROLES = ['recruiter', 'developer', 'friend'];
 const VALID_THEMES = ['light', 'dark'];
-
 const DEFAULT_STATE = {
-  userName: null,
   role: null,
   revealedSections: [],
-  scrollPosition: 0,
   language: 'en',
-  theme: 'light',
-  navigationExpanded: true
+  theme: VALID_THEMES[0]
 };
 
 class StorageAdapter {
   constructor(key) {
     this.key = key;
-    this.available = this.checkAvailability();
-  }
-
-  checkAvailability() {
-    try {
-      const testKey = '__storage_test__';
-      sessionStorage.setItem(testKey, 'test');
-      sessionStorage.removeItem(testKey);
-      return true;
-    } catch (error) {
-      console.warn('Session storage is not available. State will not persist across page reloads.');
-      return false;
-    }
   }
 
   load() {
-    if (!this.available) return null;
+    const stored = sessionStorage.getItem(this.key);
+    if (!stored) return null;
 
-    try {
-      const stored = sessionStorage.getItem(this.key);
-      if (!stored) return null;
-
-      const parsed = JSON.parse(stored);
-      if (typeof parsed !== 'object' || parsed === null) {
-        console.warn('Invalid state format in session storage. Using defaults.');
-        return null;
-      }
-
-      return parsed;
-    } catch (error) {
-      console.warn('Failed to load state from session storage:', error.message);
+    const parsed = JSON.parse(stored);
+    if (typeof parsed !== 'object' || parsed === null) {
+      console.warn('Invalid state format in session storage. Using defaults.');
       return null;
     }
+
+    return parsed;
   }
 
   save(state) {
-    if (!this.available) return;
-
-    try {
-      sessionStorage.setItem(this.key, JSON.stringify(state));
-    } catch (error) {
-      if (error.name === 'QuotaExceededError') {
-        console.warn('Session storage quota exceeded. State not persisted.');
-      } else {
-        console.warn('Failed to sync state to session storage:', error.message);
-      }
-    }
+    sessionStorage.setItem(this.key, JSON.stringify(state));
   }
 
   clear() {
-    if (!this.available) return;
-
-    try {
-      sessionStorage.removeItem(this.key);
-    } catch (error) {
-      console.warn('Failed to clear session storage:', error.message);
-    }
+    sessionStorage.removeItem(this.key);
   }
 }
 
 class StateManager {
   constructor() {
     this.storage = new StorageAdapter('portfolioState');
-    this.state = this.storage.load() || { ...DEFAULT_STATE };
+    this.state = this.storage.load() || this.supportMediaQuery() ? {...DEFAULT_STATE, theme: this.getUserTheme() } : DEFAULT_STATE;
   }
 
   sync() {
     this.storage.save(this.state);
-  }
-
-  getUserName() {
-    return this.state.userName;
-  }
-
-  setUserName(name) {
-    this.state.userName = name;
-    this.sync();
   }
 
   getRole() {
@@ -124,15 +75,6 @@ class StateManager {
     this.sync();
   }
 
-  getScrollPosition() {
-    return this.state.scrollPosition;
-  }
-
-  setScrollPosition(position) {
-    this.state.scrollPosition = position;
-    this.sync();
-  }
-
   getLanguage() {
     return this.state.language;
   }
@@ -155,17 +97,24 @@ class StateManager {
     this.sync();
   }
 
-  getNavigationExpanded() {
-    return this.state.navigationExpanded;
+  getUserTheme() {
+    if (this.supportMediaQuery()) {
+      return this.usedDarkTheme() ? 'dark' : 'light';
+    }
+
+    return null;
   }
 
-  setNavigationExpanded(expanded) {
-    this.state.navigationExpanded = expanded;
-    this.sync();
+  supportMediaQuery() {
+    return !!window.matchMedia
+  }
+
+  usedDarkTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
   }
 
   hasCompletedPersonalization() {
-    return this.state.userName !== null && this.state.role !== null;
+    return this.state.role !== null;
   }
 
   hasRevealedAllSections() {
