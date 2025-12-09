@@ -10,8 +10,6 @@ import GenerativeImage from '../user-interface/generative-image/generative-image
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
-const SCROLL_AFTER_RENDER_DELAY = 100;
-const SECTION_SCROLL_DELAY = 100;
 
 const ELEMENT_IDS = {
   initialLoader: 'initial-loader',
@@ -164,11 +162,6 @@ class AppController {
     });
   }
 
-  _reorderByIds(objects, idOrder) {
-    const idMap = new Map(objects.map(obj => [obj.id, obj]));
-    return idOrder.map(id => idMap.get(id)).filter(Boolean);
-  }
-
   async _loadUserProfile() {
     try {
       const profile = await this.contentMiddleware.getUserProfile();
@@ -262,8 +255,13 @@ class AppController {
 
   async _restoreRevealedSections(revealedSections, role) {
     for (const sectionId of revealedSections) {
+      await this._handleRevealNavigationItem(sectionId);
       await this._restoreSingleSection(sectionId, role);
     }
+
+    const lastSection = this._getSectionElement(revealedSections[revealedSections.length - 1])
+
+    lastSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async _restoreSingleSection(sectionId, role) {
@@ -287,8 +285,6 @@ class AppController {
       this.stateManager.setRole(role);
       this.elements.heroRoles.classList.add('invisible');
       this.headerController.updateRoleBadge();
-
-      await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
@@ -303,13 +299,12 @@ class AppController {
 
     this.headerController.clearNavigation();
 
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+    this.revealSection(SECTION_ORDER[0]).catch(error => {
+      console.error('Failed to reveal section after reset:', error);
     });
   }
 
-  async revealSection(sectionId, customQuery = null) {
+  async revealSection(sectionId, customQuery = '') {
     try {
       await this._tryRevealSection(sectionId, customQuery);
     } catch (error) {
@@ -325,20 +320,17 @@ class AppController {
       throw new Error('No role selected. Cannot reveal section.');
     }
 
+    await this._handleRevealNavigationItem(sectionId);
+
+    await this.sectionRenderer.reveal(sectionId, role, customQuery);
+  }
+
+  async _handleRevealNavigationItem(sectionId) {
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
 
     if (sectionMetadata && sectionMetadata.title) {
       this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
     }
-
-    await this.sectionRenderer.reveal(sectionId, role, customQuery);
-
-    setTimeout(() => {
-      const lastSection = this.elements.sectionsContainer.lastElementChild;
-      if (lastSection) {
-        lastSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, SECTION_SCROLL_DELAY);
   }
 
   _handleRevealSectionFailure(sectionId, error) {

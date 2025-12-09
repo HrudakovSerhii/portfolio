@@ -1,7 +1,7 @@
 import { GenerativeImage } from '../generative-image/index.js';
 import {SECTION_ORDER} from "../../../utils/state-manager.js";
 
-const SCROLL_DELAY = 100;
+const SCROLL_DELAY = 30;
 
 const SECTION_ELEMENTS = {
   text: 'section-body-content',
@@ -36,54 +36,46 @@ class SectionRenderer {
     this.sectionsContainer.appendChild(this.actionPromptElement);
   }
 
-  async reveal(sectionId, role, customQuery = null) {
+  async reveal(sectionId, role, customQuery = '') {
     this._showTypingIndicator();
 
-    const sectionElement = await this._renderSectionWithContent(sectionId, {
-      animate: true,
-      customQuery,
-      role
-    });
+    const { sectionContent } = await this._fetchSectionData(sectionId, role, customQuery);
+
+    const sectionElement = await this._renderSectionWithContent(sectionContent);
+
+    this._scrollToSection(sectionElement);
+
+    await this._animateSectionContent(sectionElement, sectionContent);
 
     this._hideTypingIndicator();
-    this._scrollToSection(sectionElement);
-    
+
     this.stateManager.addRevealedSection(sectionId);
-    
+
     await this._updateActionPrompt(sectionId);
   }
 
   async restore(sectionId, role) {
-    await this._renderSectionWithContent(sectionId, {
-      animate: false,
-      role
-    });
-    
+    const { sectionContent } = await this._fetchSectionData(sectionId, role);
+
+    const sectionElement = await this._renderSectionWithContent(sectionContent);
+
+    this._populateTextContent(sectionElement, sectionContent.text);
+    this._populateImageContent(sectionElement, sectionContent.image);
+
     await this._updateActionPrompt(sectionId);
   }
 
-  async _renderSectionWithContent(sectionId, options = {}) {
-    const { animate = false, customQuery = null, role } = options;
-
-    const { sectionContent } = await this._fetchSectionData(sectionId, role, customQuery);
-
+  async _renderSectionWithContent(sectionContent) {
+    const sectionId = sectionContent.sectionId;
     const isZigZagLeft = this._calculateZigZagLayout(sectionId);
-    const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
 
-    if (animate) {
-      await this._animateSectionContent(sectionElement, sectionContent);
-    } else {
-      this._populateTextContent(sectionElement, sectionContent.text);
-      this._populateImageContent(sectionElement, sectionContent.image);
-    }
-
-    return sectionElement;
+    return this._renderSection(sectionContent, isZigZagLeft);
   }
 
   async _updateActionPrompt(currentSectionId) {
     const nextSectionId = this._getNextSectionId(currentSectionId);
     const isLastRevealed = this._isLastRevealedSection(currentSectionId);
-    
+
     if (nextSectionId && isLastRevealed) {
       await this._showActionPrompt(nextSectionId);
     } else {
@@ -105,7 +97,7 @@ class SectionRenderer {
     try {
       const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
       const button = this.actionPromptElement.querySelector('.prompt-button');
-      
+
       if (button) {
         const sectionName = nextSectionId.charAt(0).toUpperCase() + nextSectionId.slice(1);
         const buttonText = `Read next: ${sectionName}`;
@@ -116,11 +108,11 @@ class SectionRenderer {
 
       this.actionPromptElement.setAttribute('data-section-id', nextSectionId);
       this.actionPromptElement.id = `action-prompt-${nextSectionId}`;
-      
+
       this._setupActionPromptHandler(nextSectionId);
-      
+
       this.actionPromptElement.style.display = 'block';
-      
+
       requestAnimationFrame(() => {
         this.actionPromptElement.classList.add('action-prompt--visible');
       });
@@ -167,7 +159,7 @@ class SectionRenderer {
     }
   }
 
-  async _fetchSectionData(sectionId, role, customQuery = null) {
+  async _fetchSectionData(sectionId, role, customQuery = '') {
     const sectionContent = await this.contentMiddleware.fetchSectionContent(
       sectionId,
       role,
