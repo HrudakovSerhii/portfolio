@@ -1,5 +1,4 @@
-const MODAL_FADE_DURATION = 300;
-const MODAL_FOCUS_DELAY = 100;
+import SectionNavigationTracker from "../../../utils/section-navigation-tracker.js";
 
 const HEADER_ELEMENTS = {
   nav: 'header-nav',
@@ -9,40 +8,35 @@ const HEADER_ELEMENTS = {
   navToggle: 'header-nav-toggle'
 };
 
-const MODAL_ELEMENTS = {
-  overlay: 'modal-overlay',
-  content: 'modal-content',
-  close: 'modal-close',
-  roleCard: 'button'
-};
-
 const SECTION_ATTRIBUTES = {
-  sectionId: 'data-section-id',
-  role: 'data-role',
-  escapeHandler: 'data-escape-handler'
-};
-
-const CSS_CLASSES = {
-  active: 'active'
+  sectionId: 'data-section-id'
 };
 
 class HeaderController {
-  constructor(stateManager, templateBuilder, sectionTracker = null) {
+  constructor(stateManager) {
     this.stateManager = stateManager;
-    this.templateBuilder = templateBuilder;
-    this.sectionTracker = sectionTracker;
+    this.roleManager = null;
 
+    this.sectionTracker = null;
     this.ownerName = null;
     this.languageSelector = null;
     this.headerNav = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
-    this.onRoleSelectCallback = null;
 
     this.visibleSections = [];
   }
 
-  initialize(ownerNameElement, languageSelectorElement) {
+  initialize(ownerNameElement, languageSelectorElement, roleManager) {
+    this.roleManager = roleManager;
+    this.sectionTracker = new SectionNavigationTracker('header-nav', 'sections-container', {
+      activeClass: 'active',
+      threshold: 0.51,
+      sectionSelector: '.content-section',
+      navItemSelector: '.header-nav-item',
+      sectionIdAttribute: 'data-section-id'
+    });
+
     this.ownerName = ownerNameElement;
     this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
@@ -64,8 +58,8 @@ class HeaderController {
   _setupRoleBadgeClick() {
     if (this.roleBadge) {
       this.roleBadge.addEventListener('click', () => {
-        if (this.onRoleSelectCallback) {
-          this.showRoleChangeModal(this.onRoleSelectCallback);
+        if (this.roleManager) {
+          this.roleManager.showChangeModal();
         }
       });
     }
@@ -119,20 +113,15 @@ class HeaderController {
     }
   }
 
-  updateRoleBadge(role, onRoleSelect = null) {
-    if (!this.roleBadge || !this.roleBadgeText) return;
+  updateRoleBadge(role) {
+    if (!this.roleBadge || !this.roleBadgeText || !this.roleManager) return;
 
     if (role) {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
       this.roleBadgeText.textContent = `${roleText} View`;
       this.roleBadge.style.display = 'flex';
-
-      if (onRoleSelect) {
-        this.onRoleSelectCallback = onRoleSelect;
-      }
     } else {
       this.roleBadge.style.display = 'none';
-      this.onRoleSelectCallback = null;
     }
   }
 
@@ -161,100 +150,6 @@ class HeaderController {
     this.headerNav.innerHTML = '';
     this.visibleSections = [];
     // Section tracking cleanup is handled by SectionNavigationTracker
-  }
-
-  showRoleChangeModal(onRoleSelect) {
-    const currentRole = this.stateManager.getRole();
-    const existingModal = document.querySelector(`.${MODAL_ELEMENTS.overlay}`);
-
-    if (existingModal) {
-      return;
-    }
-
-    if (!currentRole) {
-      console.warn('No current role found. Cannot show role change modal.');
-      return;
-    }
-
-    const modal = this._renderModal(currentRole);
-    this._setupModalInteractions(modal, currentRole, onRoleSelect);
-  }
-
-  _renderModal(currentRole) {
-    const modal = this.templateBuilder.renderRoleChangeModal(currentRole);
-    document.body.appendChild(modal);
-
-    requestAnimationFrame(() => {
-      modal.classList.add(CSS_CLASSES.active);
-    });
-
-    const modalContent = modal.querySelector(`.${MODAL_ELEMENTS.content}`);
-    setTimeout(() => {
-      modalContent?.focus();
-    }, MODAL_FOCUS_DELAY);
-
-    return modal;
-  }
-
-  _setupModalInteractions(modal, currentRole, onRoleSelect) {
-    this._setupRoleButtons(modal, currentRole, onRoleSelect);
-    this._setupCloseButton(modal);
-    this._setupOutsideClick(modal);
-    this._setupEscapeKey(modal);
-  }
-
-  _setupRoleButtons(modal, currentRole, onRoleSelect) {
-    const roleCards = modal.querySelectorAll(`.${MODAL_ELEMENTS.roleCard}:not([disabled])`);
-
-    roleCards.forEach(card => {
-      card.addEventListener('click', async () => {
-        const newRole = card.getAttribute(SECTION_ATTRIBUTES.role);
-
-        if (newRole && newRole !== currentRole) {
-          this._closeModal(modal);
-
-          if (onRoleSelect) {
-            await onRoleSelect(newRole);
-          }
-        }
-      });
-    });
-  }
-
-  _setupCloseButton(modal) {
-    const closeButton = modal.querySelector(`.${MODAL_ELEMENTS.close}`);
-
-    closeButton?.addEventListener('click', () => {
-      this._closeModal(modal);
-    });
-  }
-
-  _setupOutsideClick(modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        this._closeModal(modal);
-      }
-    });
-  }
-
-  _setupEscapeKey(modal) {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        this._closeModal(modal);
-        document.removeEventListener('keydown', handleEscape);
-      }
-    };
-    document.addEventListener('keydown', handleEscape);
-    modal.setAttribute(SECTION_ATTRIBUTES.escapeHandler, 'attached');
-  }
-
-  _closeModal(modal) {
-    if (!modal) return;
-
-    modal.style.opacity = '0';
-    setTimeout(() => {
-      modal.remove();
-    }, MODAL_FADE_DURATION);
   }
 }
 

@@ -155,8 +155,7 @@ class ContentMiddleware {
       throw new Error('Sections data not found');
     }
 
-    const sections = this._mapSections(this.contentData.sections);
-    return this._sortSections(sections);
+    return this._mapSections(this.contentData.sections);
   }
 
   _mapSections(sectionsData) {
@@ -166,10 +165,6 @@ class ContentMiddleware {
       icon: sectionsData[sectionId].metadata.icon,
       order: sectionsData[sectionId].metadata.order
     }));
-  }
-
-  _sortSections(sections) {
-    return sections.sort((a, b) => a.order - b.order);
   }
 }
 
