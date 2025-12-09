@@ -39,7 +39,13 @@ class StorageAdapter {
 class StateManager {
   constructor() {
     this.storage = new StorageAdapter('portfolioState');
-    this.state = this.storage.load() || this.supportMediaQuery() ? {...DEFAULT_STATE, theme: this.getUserTheme() } : DEFAULT_STATE;
+    let state = this.storage.load();
+
+    if (!state) {
+      state = this.supportMediaQuery() ? {...DEFAULT_STATE, theme: this.getUserTheme() } : DEFAULT_STATE
+    };
+
+    this.state = state;
   }
 
   sync() {
