@@ -7,7 +7,7 @@ import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
 import GenerativeImage from '../user-interface/generative-image/generative-image.js';
-import SectionNavigationTracker from '../../utils/section-navigation-tracker.js';
+import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
 const SCROLL_AFTER_RENDER_DELAY = 100;
@@ -34,18 +34,9 @@ class AppController {
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
     this.parallaxController = new ParallaxController();
-
-    // Initialize section navigation tracker
-    this.sectionTracker = new SectionNavigationTracker('header-nav', 'sections-container', {
-      activeClass: 'active',
-      threshold: 0.51,
-      sectionSelector: '.content-section',
-      navItemSelector: '.header-nav-item',
-      sectionIdAttribute: 'data-section-id'
-    });
-
     this.themeSwitcher = new ThemeSwitcher(this.stateManager);
-    this.headerController = new HeaderController(this.stateManager, this.templateBuilder, this.sectionTracker);
+    this.roleManager = new RoleManager(this.stateManager, this.templateBuilder);
+    this.headerController = new HeaderController(this.stateManager);
     this.sectionRenderer = new SectionRenderer(
       this.stateManager,
       this.contentMiddleware,
@@ -67,13 +58,11 @@ class AppController {
       typingIndicator: null
     };
 
-    this.sectionOrder = [];
     this.initialized = false;
   }
 
   async init() {
     if (this.initialized) {
-      console.warn('AppController already initialized');
       return;
     }
 
@@ -82,34 +71,40 @@ class AppController {
       this._setupEventListeners();
 
       this.themeSwitcher.initialize(this.elements.themeToggle);
+
+      this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
+
       this.headerController.initialize(
         this.elements.ownerName,
-        this.elements.languageSelector
+        this.elements.languageSelector,
+        this.roleManager
       );
-      this.parallaxController.init();
 
-      await this._loadSectionOrder();
+      this.parallaxController.init();
 
       this.sectionRenderer.initialize(
         this.elements.sectionsContainer,
         this.elements.typingIndicator,
-        this.sectionOrder,
+        SECTION_ORDER,
         (nextSectionId) => this.revealSection(nextSectionId, '')
       );
 
-      await this._loadUserProfile();
-
       this._initializeHeroBackgroundImage();
-
-      if (this.stateManager.hasCompletedPersonalization()) {
-        await this.restoreState();
-      }
-
       this._hideInitialLoader();
       this.initialized = true;
     } catch (error) {
       console.error('Failed to initialize application:', error);
       this._showErrorState(error);
+    }
+  }
+
+  async loadAppState() {
+    await this._loadUserProfile();
+
+    if (this.stateManager.hasCompletedPersonalization()) {
+      this.headerController.updateRoleBadge(this.stateManager.getRole());
+
+      await this.restoreState();
     }
   }
 
@@ -163,39 +158,15 @@ class AppController {
         const role = card.getAttribute('data-role');
 
         if (role) {
-          await this.handleRoleSelection(role);
+          await this.roleManager.selectRole(role);
         }
       });
     });
   }
 
-  async handleRoleSelection(role) {
-    try {
-      this.stateManager.setRole(role);
-
-      this.elements.heroRoles.classList.add('invisible');
-
-      this.headerController.updateRoleBadge(role, (newRole) => this.handleRoleChange(newRole));
-
-      await this.revealSection(SECTION_ORDER[0]);
-    } catch (error) {
-      console.error('Failed to handle role selection:', error);
-      this._showErrorState(error);
-    }
-  }
-
-  async _loadSectionOrder() {
-    try {
-      const sections = await this.contentMiddleware.getAllSections();
-      this.sectionOrder = sections.map(section => section.id);
-
-      if (this.sectionOrder.length === 0) {
-        throw new Error('No sections found in content.json');
-      }
-    } catch (error) {
-      console.error('Failed to load section order:', error);
-      this.sectionOrder = ['hero', 'about', 'skills', 'experience', 'projects', 'contact'];
-    }
+  _reorderByIds(objects, idOrder) {
+    const idMap = new Map(objects.map(obj => [obj.id, obj]));
+    return idOrder.map(id => idMap.get(id)).filter(Boolean);
   }
 
   async _loadUserProfile() {
@@ -282,6 +253,10 @@ class AppController {
       return;
     }
 
+    if (role) {
+      this.elements.heroRoles.style.display = 'none';
+    }
+
     await this._restoreRevealedSections(revealedSections, role);
   }
 
@@ -299,20 +274,25 @@ class AppController {
     }
   }
 
-  _applyStoredScrollPosition() {
-    setTimeout(() => {
-      const scrollPosition = this.stateManager.getScrollPosition();
-      if (scrollPosition > 0) {
-        window.scrollTo({
-          top: scrollPosition,
-          behavior: 'instant'
-        });
-      }
-    }, SCROLL_AFTER_RENDER_DELAY);
-  }
-
   _handleRestoreStateFailure(error) {
     console.error('Failed to restore state:', error);
+  }
+
+  async handleRoleSelect(role, isRoleChange) {
+    try {
+      if (isRoleChange) {
+        this._resetPortfolioState();
+      }
+
+      this.stateManager.setRole(role);
+      this.elements.heroRoles.classList.add('invisible');
+      this.headerController.updateRoleBadge();
+
+      await this.revealSection(SECTION_ORDER[0]);
+    } catch (error) {
+      console.error('Failed to handle role selection:', error);
+      this._showErrorState(error);
+    }
   }
 
   _resetPortfolioState() {
@@ -321,26 +301,12 @@ class AppController {
     const sections = this.elements.sectionsContainer.querySelectorAll('.content-section');
     sections.forEach(section => section.remove());
 
-    const actionPrompts = this.elements.sectionsContainer.querySelectorAll('.action-prompt');
-    actionPrompts.forEach(prompt => prompt.remove());
-
     this.headerController.clearNavigation();
-    this.elements.heroRoles.style.display = 'none';
 
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-  }
-
-  async handleRoleChange(newRole) {
-    try {
-      this._resetPortfolioState();
-      await this.handleRoleSelection(newRole);
-    } catch (error) {
-      console.error('Failed to handle role change:', error);
-      throw error;
-    }
   }
 
   async revealSection(sectionId, customQuery = null) {
