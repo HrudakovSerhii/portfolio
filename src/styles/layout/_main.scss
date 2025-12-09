@@ -1,13 +1,29 @@
 // Main layout styles
 
-.main {
+.main-content {
     display: flex;
     flex-direction: column;
+    margin-top: $spacing-3xl;
+
+    @include desktop {
+        margin-top: 0;
+    }
 
     section {
         display: flex;
+        flex-direction: column;
         align-items: center;
         width: 100%;
-        padding: 0 $spacing-md;
+        height: 100%;
+        max-width: $content-max-width;
+        padding: $spacing-lg;
+
+        @include desktop {
+            padding: $spacing-xl;
+        }
+    }
+
+    .sections-container {
+        position: relative;
     }
 }

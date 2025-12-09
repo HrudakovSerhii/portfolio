@@ -9,6 +9,7 @@ inclusion: always
 - **Be concise**: Provide minimal responses for simple tasks that complete successfully
 - **Be detailed when needed**: Offer comprehensive explanations for complex topics or when explicitly requested
 - **Confirm completion**: Simple "Done" or "Completed" responses are sufficient for straightforward implementations
+- **Save tokens**: Avoid verbose outputs, unnecessary documentation, or redundant explanations
 
 ## Code Modification Rules
 
@@ -28,6 +29,13 @@ inclusion: always
 - User is exploring ideas or asking for opinions - engage in discussion only
 - Simple questions about existing code or architecture - explain without modifying
 - Requests for recommendations or best practices - provide guidance without implementation
+
+### Documentation Files
+
+- **NEVER create README.md or documentation files unless explicitly requested by the user**
+- Do not generate example files, usage guides, or documentation automatically
+- Focus on code implementation only
+- If documentation is needed, provide it in responses rather than creating files
 
 ### Testing and Running Applications
 

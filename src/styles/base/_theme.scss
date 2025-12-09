@@ -1,0 +1,140 @@
+// Theme System - CSS Custom Properties
+// Colors extracted from React app Tailwind classes
+
+// Light Theme (Default)
+:root {
+  // Background colors
+  --color-bg: #f9fafb; // gray-50
+  --color-bg-rgb: 249, 250, 251; // RGB for backdrop
+  --color-surface: #ffffff; // white
+  --color-surface-secondary: #f3f4f6; // gray-100
+  --color-surface-dark: #1e1f20; // dark gray for image containers
+
+  // Text colors
+  --color-text: #111827; // gray-900
+  --color-text-secondary: #6b7280; // gray-500
+  --color-text-tertiary: #9ca3af; // gray-400
+
+  // Border colors
+  --color-border: #e5e7eb; // gray-200
+  --color-border-light: #f3f4f6; // gray-100
+
+  // Accent colors - Blue
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-900: #1e3a8a;
+  --color-accent: #2563eb; // blue-600
+  --color-accent-hover: #3b82f6; // blue-500
+
+  // Accent colors - Indigo
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-900: #312e81;
+
+  // Accent colors - Purple
+  --color-purple-200: #e9d5ff;
+  --color-purple-600: #9333ea;
+  --color-purple-900: #581c87;
+
+  // Accent colors - Teal
+  --color-teal-50: #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-teal-900: #134e4a;
+
+  // Semantic colors
+  --color-success: #10b981; // green-500
+  --color-warning: #f59e0b; // amber-500
+  --color-error: #ef4444; // red-500
+
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  // Role card hover backgrounds
+  --color-blue-hover-bg: rgba(239, 246, 255, 1); // blue-50
+  --color-indigo-hover-bg: rgba(238, 242, 255, 1); // indigo-50
+  --color-teal-hover-bg: rgba(240, 253, 250, 1); // teal-50
+
+  // Gradient colors
+  --gradient-blue-purple-from: #2563eb; // blue-600
+  --gradient-blue-purple-to: #9333ea; // purple-600
+}
+
+// Dark Theme
+[data-theme="dark"] {
+  // Background colors
+  --color-bg: #030712; // gray-950
+  --color-bg-rgb: 3, 7, 18; // RGB for backdrop
+  --color-surface: #1f2937; // gray-800
+  --color-surface-secondary: #111827; // gray-900
+  --color-surface-dark: #1e1f20; // dark gray for image containers
+
+  // Text colors
+  --color-text: #ffffff; // white
+  --color-text-secondary: #d1d5db; // gray-300
+  --color-text-tertiary: #9ca3af; // gray-400
+
+  // Border colors
+  --color-border: #374151; // gray-700
+  --color-border-light: #1f2937; // gray-800
+
+  // Accent colors - Blue
+  --color-blue-50: #1e3a8a;
+  --color-blue-100: #1e40af;
+  --color-blue-200: #1e3a8a;
+  --color-blue-300: #93c5fd;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-900: #1e3a8a;
+  --color-accent: #3b82f6; // blue-500
+  --color-accent-hover: #60a5fa; // blue-400
+
+  // Accent colors - Indigo
+  --color-indigo-50: #312e81;
+  --color-indigo-100: #3730a3;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-900: #312e81;
+
+  // Accent colors - Purple
+  --color-purple-200: #581c87;
+  --color-purple-600: #9333ea;
+  --color-purple-900: #581c87;
+
+  // Accent colors - Teal
+  --color-teal-50: #134e4a;
+  --color-teal-100: #115e59;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-teal-900: #134e4a;
+
+  // Semantic colors
+  --color-success: #34d399; // green-400
+  --color-warning: #fbbf24; // amber-400
+  --color-error: #f87171; // red-400
+
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+
+  // Role card hover backgrounds
+  --color-blue-hover-bg: rgba(30, 58, 138, 0.1); // blue-900/10
+  --color-indigo-hover-bg: rgba(49, 46, 129, 0.1); // indigo-900/10
+  --color-teal-hover-bg: rgba(19, 78, 74, 0.1); // teal-900/10
+
+  // Gradient colors (same as light)
+  --gradient-blue-purple-from: #2563eb;
+  --gradient-blue-purple-to: #9333ea;
+}
