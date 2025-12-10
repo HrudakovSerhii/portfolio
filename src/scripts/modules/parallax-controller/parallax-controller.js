@@ -1,6 +1,6 @@
 /**
  * ParallaxController
- * 
+ *
  * Manages parallax scrolling effects with performance optimizations:
  * - Single scroll listener with requestAnimationFrame
  * - Transform-only animations (GPU accelerated)
@@ -31,17 +31,13 @@ class ParallaxController {
   }
 
   init() {
-    // Respect user's motion preferences
     if (this.reducedMotionQuery.matches) {
-      console.log('Parallax disabled: prefers-reduced-motion');
       return;
     }
 
     this.setupLayers();
     this.setupIntersectionObserver();
     this.attachScrollListener();
-
-    console.log('ParallaxController initialized');
   }
 
   setupLayers() {
@@ -52,7 +48,6 @@ class ParallaxController {
           element,
           speed: config.speed
         });
-        console.log(`Parallax layer found: ${config.selector} (speed: ${config.speed})`);
       } else {
         console.warn(`Parallax layer not found: ${config.selector}`);
       }
@@ -60,13 +55,10 @@ class ParallaxController {
 
     if (this.layers.length === 0) {
       console.warn('No parallax layers found');
-    } else {
-      console.log(`Parallax initialized with ${this.layers.length} layers`);
     }
   }
 
   setupIntersectionObserver() {
-    // Only animate when parallax container is visible
     const container = document.querySelector('.parallax-background');
     if (!container) return;
 
@@ -104,11 +96,6 @@ class ParallaxController {
     this.layers.forEach((layer, index) => {
       const translateY = scrollY * layer.speed;
       layer.element.style.transform = `translate3d(0, ${translateY}px, 0)`;
-      
-      // Debug log every 100px of scroll
-      if (index === 0 && scrollY % 100 < 10) {
-        console.log(`Parallax scroll: ${scrollY}px, translateY: ${translateY}px`);
-      }
     });
   }
 
@@ -116,8 +103,6 @@ class ParallaxController {
     if (this.observer) {
       this.observer.disconnect();
     }
-    // Note: We don't remove scroll listener as it uses passive mode
-    // and removing it would require keeping a reference
   }
 }
 
