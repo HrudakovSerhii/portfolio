@@ -1,5 +1,4 @@
 import { GenerativeImage } from '../generative-image/index.js';
-import {SECTION_ORDER} from "../../../utils/state-manager.js";
 
 const SCROLL_DELAY = 30;
 
@@ -95,7 +94,8 @@ class SectionRenderer {
     }
 
     try {
-      const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
+      // TODO: placeholder will be used for custom query input in next version
+      // const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
       const button = this.actionPromptElement.querySelector('.prompt-button');
 
       if (button) {
@@ -111,7 +111,7 @@ class SectionRenderer {
 
       this._setupActionPromptHandler(nextSectionId);
 
-      this.actionPromptElement.style.display = 'block';
+      this.actionPromptElement.style.display = 'flex';
 
       requestAnimationFrame(() => {
         this.actionPromptElement.classList.add('action-prompt--visible');
@@ -177,7 +177,9 @@ class SectionRenderer {
 
   _renderSection(sectionContent, isZigZagLeft) {
     const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft);
-    this.sectionsContainer.appendChild(sectionElement);
+    const lastSectionElement = this.sectionsContainer.lastChild;
+
+    this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
 
     return sectionElement;
   }
