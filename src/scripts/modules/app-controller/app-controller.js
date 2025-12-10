@@ -285,6 +285,8 @@ class AppController {
       this.stateManager.setRole(role);
       this.elements.heroRoles.classList.add('invisible');
       this.headerController.updateRoleBadge();
+
+      await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
