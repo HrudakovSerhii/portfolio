@@ -101,26 +101,29 @@ class ContentMiddleware {
         imageAlt: roleContent.image?.imageAlt || section.metadata.title,
         aspectRatio: roleContent.image?.aspectRatio || 'aspect-portrait',
       },
-      customQuery: customQuery || null
+      customQuery: customQuery || null,
+      emailSubject: roleContent.emailSubject || null,
+      emailBody: roleContent.emailBody || null,
     };
   }
 
-  async getActionPromptPlaceholder(sectionId) {
-    await this._ensureDataLoaded();
-
-    const section = this._getSection(sectionId);
-    return this._extractPlaceholder(section);
-  }
-
-  _extractPlaceholder(section) {
-    const mainItems = section.metadata?.main_items;
-
-    if (mainItems && mainItems.length > 0) {
-      return mainItems.join(', ');
-    }
-
-    return `Ask about ${section.metadata.title}...`;
-  }
+  // TODO: Use when chat AI interface will be included
+  // async getActionPromptPlaceholder(sectionId) {
+  //   await this._ensureDataLoaded();
+  //
+  //   const section = this._getSection(sectionId);
+  //   return this._extractPlaceholder(section);
+  // }
+  //
+  // _extractPlaceholder(section) {
+  //   const mainItems = section.metadata?.main_items;
+  //
+  //   if (mainItems && mainItems.length > 0) {
+  //     return mainItems.join(', ');
+  //   }
+  //
+  //   return `Ask about ${section.metadata.title}...`;
+  // }
 
   async getSectionMetadata(sectionId) {
     await this._ensureDataLoaded();
