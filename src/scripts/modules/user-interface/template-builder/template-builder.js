@@ -62,15 +62,14 @@ class TemplateBuilder {
     const layoutElement = section.querySelector('.section-layout');
     if (layoutElement) {
       const aspectRatio = sectionData.image.aspectRatio;
-      const isSquare = aspectRatio === 'aspect-square';
+      const isLandscape = aspectRatio === 'aspect-landscape';
 
-      if (isSquare) {
-        // Apply zig-zag positioning for square images
+      if (isLandscape) {
+        layoutElement.classList.add('non-square-image');
+      } else {
         const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
         layoutElement.classList.add(layoutClass);
-      } else {
-        // Stack vertically for non-square images (landscape, portrait, wide)
-        layoutElement.classList.add('non-square-image');
+        section.style.justifyContent = 'center';
       }
     }
 
