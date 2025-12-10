@@ -38,13 +38,14 @@ class SectionRenderer {
   async reveal(sectionId, role, customQuery = '') {
     this._showTypingIndicator();
 
-    const { sectionContent } = await this._fetchSectionData(sectionId, role, customQuery);
+    const sectionData = await this._fetchSectionData(sectionId, role, customQuery);
+    const profileData = await this._fetchProfileData();
 
-    const sectionElement = await this._renderSectionWithContent(sectionContent);
+    const sectionElement = await this._renderSectionWithContent(sectionData.sectionContent, profileData);
 
     this._scrollToSection(sectionElement);
 
-    await this._animateSectionContent(sectionElement, sectionContent);
+    await this._animateSectionContent(sectionElement, sectionData.sectionContent);
 
     this._hideTypingIndicator();
 
@@ -54,21 +55,22 @@ class SectionRenderer {
   }
 
   async restore(sectionId, role) {
-    const { sectionContent } = await this._fetchSectionData(sectionId, role);
+    const sectionData = await this._fetchSectionData(sectionId, role);
+    const profileData = await this._fetchProfileData();
 
-    const sectionElement = await this._renderSectionWithContent(sectionContent);
+    const sectionElement = await this._renderSectionWithContent(sectionData.sectionContent, profileData);
 
-    this._populateTextContent(sectionElement, sectionContent.text);
-    this._populateImageContent(sectionElement, sectionContent.image);
+    this._populateTextContent(sectionElement, sectionData.sectionContent.text);
+    this._populateImageContent(sectionElement, sectionData.sectionContent.image);
 
     await this._updateActionPrompt(sectionId);
   }
 
-  async _renderSectionWithContent(sectionContent) {
+  async _renderSectionWithContent(sectionContent, profileData) {
     const sectionId = sectionContent.sectionId;
     const isZigZagLeft = this._calculateZigZagLayout(sectionId);
 
-    return this._renderSection(sectionContent, isZigZagLeft);
+    return this._renderSection(sectionContent, profileData, isZigZagLeft);
   }
 
   async _updateActionPrompt(currentSectionId) {
@@ -159,6 +161,10 @@ class SectionRenderer {
     }
   }
 
+  async _fetchProfileData() {
+    return await this.contentMiddleware.getUserProfile();
+  }
+
   async _fetchSectionData(sectionId, role, customQuery = '') {
     const sectionContent = await this.contentMiddleware.fetchSectionContent(
       sectionId,
@@ -175,8 +181,8 @@ class SectionRenderer {
     return sectionIndex % 2 === 0;
   }
 
-  _renderSection(sectionContent, isZigZagLeft) {
-    const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft);
+  async _renderSection(sectionContent, profileData, isZigZagLeft) {
+    const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft, profileData);
     const lastSectionElement = this.sectionsContainer.lastChild;
 
     this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
