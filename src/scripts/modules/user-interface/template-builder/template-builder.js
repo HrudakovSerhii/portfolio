@@ -61,8 +61,17 @@ class TemplateBuilder {
 
     const layoutElement = section.querySelector('.section-layout');
     if (layoutElement) {
-      const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
-      layoutElement.classList.add(layoutClass);
+      const aspectRatio = sectionData.image.aspectRatio;
+      const isSquare = aspectRatio === 'aspect-square';
+
+      if (isSquare) {
+        // Apply zig-zag positioning for square images
+        const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
+        layoutElement.classList.add(layoutClass);
+      } else {
+        // Stack vertically for non-square images (landscape, portrait, wide)
+        layoutElement.classList.add('non-square-image');
+      }
     }
 
     const textElement = section.querySelector('.section-body-content');
@@ -75,10 +84,6 @@ class TemplateBuilder {
       imageContainer.setAttribute('data-image-url', sectionData.image.imageUrl);
       imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
       imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
-    }
-
-    if (sectionData.image.aspectRatio === 'aspect-landscape' || sectionData.image.aspectRatio === 'aspect-wide') {
-      layoutElement.classList.add('has-wide-image');
     }
 
     return section;
