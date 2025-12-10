@@ -22,10 +22,17 @@ describe('HeaderController', () => {
     const htmlPath = resolve(__dirname, '../../../../index.html');
     const htmlContent = readFileSync(htmlPath, 'utf-8');
     
+    // Remove stylesheet links to prevent 404 errors
+    const cleanedHtml = htmlContent.replace(/<link[^>]*rel="stylesheet"[^>]*>/g, '');
+    
     // Parse and set the full HTML document
     const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlContent, 'text/html');
+    const doc = parser.parseFromString(cleanedHtml, 'text/html');
     document.documentElement.innerHTML = doc.documentElement.innerHTML;
+
+    // Mock window.addEventListener
+    window.addEventListener = vi.fn();
+    window.removeEventListener = vi.fn();
 
     // Import modules
     const headerModule = await import('./header-controller.js');
@@ -41,14 +48,13 @@ describe('HeaderController', () => {
     mockStateManager = new StateManager();
     mockTemplateBuilder = new TemplateBuilder();
 
-    // Create controller instance (without section tracker for unit tests)
-    headerController = new HeaderController(mockStateManager, mockTemplateBuilder, null);
+    // Create controller instance
+    headerController = new HeaderController(mockStateManager);
   });
 
   describe('Constructor', () => {
     it('should initialize with required dependencies', () => {
       expect(headerController.stateManager).toBe(mockStateManager);
-      expect(headerController.templateBuilder).toBe(mockTemplateBuilder);
     });
 
     it('should initialize with null elements', () => {
@@ -175,6 +181,7 @@ describe('HeaderController', () => {
       headerController.roleBadge = document.createElement('div');
       headerController.roleBadgeText = document.createElement('span');
       headerController.roleBadge.style.display = 'none';
+      headerController.roleManager = {}; // Set roleManager so updateRoleBadge doesn't return early
     });
 
     it('should show role badge with correct text', () => {
@@ -196,14 +203,6 @@ describe('HeaderController', () => {
       headerController.updateRoleBadge(null);
 
       expect(headerController.roleBadge.style.display).toBe('none');
-    });
-
-    it('should store callback function', () => {
-      const callback = vi.fn();
-
-      headerController.updateRoleBadge('recruiter', callback);
-
-      expect(headerController.onRoleSelectCallback).toBe(callback);
     });
   });
 
@@ -293,39 +292,22 @@ describe('HeaderController', () => {
     });
   });
 
-  describe('showRoleChangeModal()', () => {
-    beforeEach(() => {
-      mockStateManager.setRole('recruiter');
-      vi.spyOn(mockTemplateBuilder, 'renderRoleChangeModal').mockReturnValue(
-        document.createElement('div')
+  describe('Role Badge Click', () => {
+    it('should call roleManager.showChangeModal when role badge is clicked', () => {
+      const mockRoleManager = {
+        showChangeModal: vi.fn()
+      };
+
+      headerController.initialize(
+        document.createElement('span'),
+        document.createElement('select'),
+        mockRoleManager
       );
-    });
 
-    it('should render modal with current role', () => {
-      headerController.showRoleChangeModal(vi.fn());
-
-      expect(mockTemplateBuilder.renderRoleChangeModal).toHaveBeenCalledWith('recruiter');
-    });
-
-    it('should not show modal if one already exists', () => {
-      const existingModal = document.createElement('div');
-      existingModal.className = 'modal-overlay';
-      document.body.appendChild(existingModal);
-
-      headerController.showRoleChangeModal(vi.fn());
-
-      const modals = document.querySelectorAll('.modal-overlay');
-      expect(modals.length).toBe(1);
-    });
-
-    it('should warn if no current role', () => {
-      mockStateManager.setRole(null);
-      const consoleSpy = vi.spyOn(console, 'warn');
-
-      headerController.showRoleChangeModal(vi.fn());
-
-      expect(consoleSpy).toHaveBeenCalled();
-      expect(consoleSpy.mock.calls[0][0]).toContain('Invalid role');
+      if (headerController.roleBadge) {
+        headerController.roleBadge.click();
+        expect(mockRoleManager.showChangeModal).toHaveBeenCalled();
+      }
     });
   });
 });
