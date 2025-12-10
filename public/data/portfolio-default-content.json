@@ -194,7 +194,9 @@
             "name": "contact.hr",
             "imageAlt": "Contact Serhii Hrudakov",
             "aspectRatio": "aspect-square"
-          }
+          },
+          "emailSubject": "Opportunity Discussion - Lead Frontend Developer Position",
+          "emailBody": "Hi Serhii,\n\nI came across your portfolio and I'm impressed with your experience in frontend development and team leadership.\n\nI'd like to discuss a potential opportunity that aligns with your expertise.\n\nBest regards"
         },
         "developer": {
           "text": "I'm always up for a chat about architecture, new tech stacks, or the latest in frontend development. Drop me a line at hrudakovserhii@gmail.com or find me on LinkedIn as 'serhii-hrudakov' if you want to connect. Whether it's discussing legacy migrations or the newest AI integrations, I'm keen to hear what you're working on.",
@@ -202,7 +204,9 @@
             "name": "contact.developer",
             "imageAlt": "Connect with Serhii",
             "aspectRatio": "aspect-landscape"
-          }
+          },
+          "emailSubject": "Let's Talk Tech - Frontend Architecture & Development",
+          "emailBody": "Hey Serhii,\n\nI checked out your portfolio and would love to connect about frontend development, architecture patterns, or the projects you've been working on.\n\nLooking forward to exchanging ideas!\n\nCheers"
         },
         "friend": {
           "text": "Want to grab a coffee or just chat? You can email me at hrudakovserhii@gmail.com or find me on LinkedIn! I'm always happy to swap stories about coding adventures, hiking trails, or smart home projects. I'm in Amsterdam, so reach out—I'd love to connect! ☕",
@@ -210,7 +214,9 @@
             "name": "contact.friend",
             "imageAlt": "Let's connect",
             "aspectRatio": "aspect-landscape"
-          }
+          },
+          "emailSubject": "Coffee & Chat? ☕",
+          "emailBody": "Hey Serhii!\n\nI really enjoyed your portfolio! Would love to grab a coffee sometime and chat about coding, hiking, or whatever's on your mind.\n\nLet me know when you're free!\n\nCheers"
         }
       }
     }

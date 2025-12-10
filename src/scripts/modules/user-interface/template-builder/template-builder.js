@@ -33,17 +33,41 @@ class TemplateBuilder {
     return template.content.cloneNode(true);
   }
 
-  renderSection(sectionData, isZigZagLeft) {
-    const fragment = this._cloneTemplate('section-template');
+  renderSection(sectionData, isZigZagLeft, profileData = null) {
+    const sectionId = sectionData.sectionId;
+    const templateId = sectionId === 'contact' ? 'contact-section-template' : 'section-template';
+    
+    const section = this._createSectionElement(templateId, sectionData, isZigZagLeft);
+    
+    if (sectionId === 'contact') {
+      this._populateContactActions(section, sectionData, profileData);
+    }
+    
+    return section;
+  }
+
+  _createSectionElement(templateId, sectionData, isZigZagLeft) {
+    const fragment = this._cloneTemplate(templateId);
     const section = fragment.querySelector('.content-section');
 
     if (!section) {
-      throw new Error('Section element not found in template');
+      throw new Error(`Section element not found in template: ${templateId}`);
     }
 
+    this._setSectionAttributes(section, sectionData);
+    this._setSectionHeader(section, sectionData);
+    this._setSectionLayout(section, sectionData, isZigZagLeft);
+    this._setSectionContent(section, sectionData);
+
+    return section;
+  }
+
+  _setSectionAttributes(section, sectionData) {
     section.setAttribute('data-section-id', sectionData.sectionId);
     section.id = `section-${sectionData.sectionId}`;
+  }
 
+  _setSectionHeader(section, sectionData) {
     const titleElement = section.querySelector('.section-title');
     if (titleElement) {
       titleElement.textContent = sectionData.title;
@@ -58,13 +82,25 @@ class TemplateBuilder {
         queryElement.style.display = 'none';
       }
     }
+  }
 
+  _setSectionLayout(section, sectionData, isZigZagLeft) {
     const layoutElement = section.querySelector('.section-layout');
-    if (layoutElement) {
+    if (!layoutElement) return;
+
+    const aspectRatio = sectionData.image.aspectRatio;
+    const isLandscape = aspectRatio === 'aspect-landscape';
+
+    if (isLandscape) {
+      layoutElement.classList.add('non-square-image');
+    } else {
       const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
       layoutElement.classList.add(layoutClass);
+      section.style.justifyContent = 'center';
     }
+  }
 
+  _setSectionContent(section, sectionData) {
     const textElement = section.querySelector('.section-body-content');
     if (textElement) {
       textElement.setAttribute('data-text', sectionData.text);
@@ -76,12 +112,24 @@ class TemplateBuilder {
       imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
       imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
     }
+  }
 
-    if (sectionData.image.aspectRatio === 'aspect-landscape' || sectionData.image.aspectRatio === 'aspect-wide') {
-      layoutElement.classList.add('has-wide-image');
+  _populateContactActions(section, sectionData, profileData) {
+    if (!profileData) return;
+
+    const emailLink = section.querySelector('.contact-email-link');
+    if (emailLink && profileData.email) {
+      const subject = encodeURIComponent(sectionData.emailSubject || 'Hello');
+      const body = encodeURIComponent(sectionData.emailBody || '');
+      emailLink.href = `mailto:${profileData.email}?subject=${subject}&body=${body}`;
+      emailLink.setAttribute('data-email', profileData.email);
+      emailLink.setAttribute('data-name', profileData.name);
     }
 
-    return section;
+    const linkedinLink = section.querySelector('.contact-linkedin-link');
+    if (linkedinLink && profileData.socialLinks?.linkedin) {
+      linkedinLink.href = profileData.socialLinks.linkedin;
+    }
   }
 
   renderActionPrompt(sectionId, placeholder) {

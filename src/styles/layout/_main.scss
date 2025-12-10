@@ -1,9 +1,11 @@
 // Main layout styles
 
 .main-content {
+    position: relative;
     display: flex;
     flex-direction: column;
     margin-top: $spacing-3xl;
+    z-index: 1;
 
     @include desktop {
         margin-top: 0;

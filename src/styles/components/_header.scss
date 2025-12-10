@@ -65,14 +65,28 @@
   }
 }
 
-.header-divider {
-  width: 1px;
-  height: 1rem;
-  background-color: var(--color-border);
+.header-nav-toggle {
+  @include interactive-control;
+  display: none;
+  font-size: $font-size-lg;
+  padding: $spacing-xs;
   flex-shrink: 0;
+
+  @include mobile {
+    display: flex;
+  }
+
+  .nav-toggle-icon {
+    line-height: 1;
+  }
+
+  &[aria-expanded="true"] .nav-toggle-icon {
+    transform: rotate(90deg);
+  }
 }
 
 .header-nav {
+  position: relative;
   display: flex;
   align-items: center;
   gap: $spacing-s;
@@ -87,8 +101,6 @@
     display: none;
   }
 
-  position: relative;
-
   &::after {
     content: '';
     position: absolute;
@@ -102,97 +114,68 @@
     transition: opacity $transition-base;
   }
 
-  &.has-overflow::after {
-    opacity: 1;
+  @media (min-width: 769px) {
+    &:has(.header-nav-item:nth-child(5))::after {
+      opacity: 1;
+    }
   }
 
   @include mobile {
-    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: visible;
+    overflow-y: auto;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: calc(100% + $spacing-xs);
+    left: $spacing-md;
+    right: $spacing-md;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all $transition-base;
+    z-index: 100;
+
+    &.is-open {
+      max-height: 400px;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &::after {
+      display: none;
+    }
   }
 }
 
-.header-nav-mobile {
-  display: none;
-  position: relative;
-
-  @include mobile {
-    display: block;
-  }
-}
-
-.header-nav-dropdown {
-  @include interactive-control;
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: $font-size-xs;
-  font-weight: 500;
-  min-width: 120px;
-  justify-content: space-between;
-
-  .dropdown-icon {
-    font-size: $font-size-xs;
-    transition: transform $transition-base;
-  }
-
-  &.is-open .dropdown-icon {
-    transform: rotate(180deg);
-  }
-}
-
-.header-nav-dropdown-menu {
+.nav-indicator {
   position: absolute;
-  top: calc(100% + $spacing-xs);
+  bottom: 0;
   left: 0;
-  right: 0;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  max-height: 0;
+  height: 2px;
+  background-color: var(--color-text);
+  pointer-events: none;
+  z-index: 10;
+
+  /*
+     Animation Logic:
+     We animate transform (position) and width.
+     cubic-bezier adds a slight "momentum" feel.
+  */
+  transition:
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.2s ease;
+
   opacity: 0;
-  visibility: hidden;
-  transition: all $transition-base;
-  z-index: 100;
+  will-change: transform, width;
 
-  &.is-open {
-    max-height: 400px;
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-.header-nav-dropdown-item {
-  display: block;
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  font-size: $font-size-xs;
-  font-weight: 500;
-  color: var(--color-text);
-  text-align: left;
-  text-decoration: none;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: background-color $transition-base;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background-color: var(--color-bg-secondary);
-  }
-
-  &:active {
-    background-color: var(--color-bg-tertiary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: -2px;
+  @include mobile {
+    display: none !important;
   }
 }
 
@@ -219,13 +202,54 @@
     font-size: $font-size-sm;
   }
 
-  &:hover {
-    color: var(--color-text);
-    background-color: var(--color-bg-secondary);
+  @include mobile {
+    display: block;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-border);
+    animation: none;
+    opacity: 1;
+    transform: none;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &::before {
+      display: none;
+    }
+
+    &.active {
+      background-color: var(--color-bg-secondary);
+      font-weight: 600;
+    }
+
+    &:active {
+      transform: none;
+      background-color: var(--color-bg-tertiary);
+    }
   }
 
-  &:active {
-    transform: scale(0.95);
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: calc(-#{$spacing-s} / 2);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 1rem;
+    background-color: var(--color-border);
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  @include animated-underline(0px, $spacing-sm, $spacing-sm);
+
+  &:hover {
+    transform: scaleY(0.95);
   }
 
   &:focus-visible {
@@ -233,21 +257,10 @@
     outline-offset: 2px;
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: var(--color-text);
-    transform: translateX(-50%);
-    transition: width $transition-base;
-  }
-
-  &:hover::after,
-  &:focus-visible::after {
-    width: calc(100% - #{$spacing-sm * 2});
+  @include mobile {
+    &::after {
+      display: none;
+    }
   }
 
   @for $i from 1 through 10 {

@@ -1,6 +1,6 @@
 import { GenerativeImage } from '../generative-image/index.js';
 
-const SCROLL_DELAY = 100;
+const SCROLL_DELAY = 30;
 
 const SECTION_ELEMENTS = {
   text: 'section-body-content',
@@ -18,6 +18,7 @@ class SectionRenderer {
     this.typingIndicator = null;
     this.sectionOrder = [];
     this.onActionPromptClick = null;
+    this.actionPromptElement = null;
   }
 
   initialize(sectionsContainerElement, typingIndicatorElement, sectionOrder, onActionPromptClick) {
@@ -25,42 +26,127 @@ class SectionRenderer {
     this.typingIndicator = typingIndicatorElement;
     this.sectionOrder = sectionOrder;
     this.onActionPromptClick = onActionPromptClick;
+    this._initializeActionPrompt();
   }
 
-  async reveal(sectionId, role, customQuery = null) {
+  _initializeActionPrompt() {
+    this.actionPromptElement = this.templateBuilder.renderActionPrompt('placeholder', '');
+    this.actionPromptElement.style.display = 'none';
+    this.sectionsContainer.appendChild(this.actionPromptElement);
+  }
+
+  async reveal(sectionId, role, customQuery = '') {
     this._showTypingIndicator();
 
-    const { sectionContent } = await this._fetchSectionData(sectionId, role, customQuery);
+    const sectionData = await this._fetchSectionData(sectionId, role, customQuery);
+    const profileData = await this._fetchProfileData();
+
+    const sectionElement = await this._renderSectionWithContent(sectionData.sectionContent, profileData);
+
+    this._scrollToSection(sectionElement);
+
+    await this._animateSectionContent(sectionElement, sectionData.sectionContent);
 
     this._hideTypingIndicator();
 
-    const isZigZagLeft = this._calculateZigZagLayout(sectionId);
-    const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
-
-    const nextSectionId = this._getNextSectionId(sectionId);
-    if (nextSectionId) {
-      await this._renderActionPrompt(sectionElement, nextSectionId);
-    }
-
-    await this._animateSectionContent(sectionElement, sectionContent);
-
-    if (nextSectionId) {
-      this._revealActionPrompt(sectionElement);
-    }
-
     this.stateManager.addRevealedSection(sectionId);
+
+    await this._updateActionPrompt(sectionId);
   }
 
   async restore(sectionId, role) {
-    const { sectionContent } = await this._fetchSectionData(sectionId, role);
+    const sectionData = await this._fetchSectionData(sectionId, role);
+    const profileData = await this._fetchProfileData();
 
+    const sectionElement = await this._renderSectionWithContent(sectionData.sectionContent, profileData);
+
+    this._populateTextContent(sectionElement, sectionData.sectionContent.text);
+    this._populateImageContent(sectionElement, sectionData.sectionContent.image);
+
+    await this._updateActionPrompt(sectionId);
+  }
+
+  async _renderSectionWithContent(sectionContent, profileData) {
+    const sectionId = sectionContent.sectionId;
     const isZigZagLeft = this._calculateZigZagLayout(sectionId);
-    const sectionElement = this._renderSection(sectionContent, isZigZagLeft);
 
-    this._populateTextContent(sectionElement, sectionContent.text);
+    return this._renderSection(sectionContent, profileData, isZigZagLeft);
+  }
 
-    const imageData = sectionContent.image;
-    this._populateImageContent(sectionElement, imageData);
+  async _updateActionPrompt(currentSectionId) {
+    const nextSectionId = this._getNextSectionId(currentSectionId);
+    const isLastRevealed = this._isLastRevealedSection(currentSectionId);
+
+    if (nextSectionId && isLastRevealed) {
+      await this._showActionPrompt(nextSectionId);
+    } else {
+      this._hideActionPrompt();
+    }
+  }
+
+  _isLastRevealedSection(sectionId) {
+    const revealedSections = this.stateManager.getRevealedSections();
+    const lastRevealedId = revealedSections[revealedSections.length - 1];
+    return lastRevealedId === sectionId;
+  }
+
+  async _showActionPrompt(nextSectionId) {
+    if (!this.actionPromptElement) {
+      return;
+    }
+
+    try {
+      // TODO: placeholder will be used for custom query input in next version
+      // const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
+      const button = this.actionPromptElement.querySelector('.prompt-button');
+
+      if (button) {
+        const sectionName = nextSectionId.charAt(0).toUpperCase() + nextSectionId.slice(1);
+        const buttonText = `Read next: ${sectionName}`;
+        button.textContent = buttonText;
+        button.setAttribute('data-default-text', buttonText);
+        button.setAttribute('data-section-id', nextSectionId);
+      }
+
+      this.actionPromptElement.setAttribute('data-section-id', nextSectionId);
+      this.actionPromptElement.id = `action-prompt-${nextSectionId}`;
+
+      this._setupActionPromptHandler(nextSectionId);
+
+      this.actionPromptElement.style.display = 'flex';
+
+      requestAnimationFrame(() => {
+        this.actionPromptElement.classList.add('action-prompt--visible');
+      });
+    } catch (error) {
+      console.error('Failed to show action prompt:', error);
+    }
+  }
+
+  _hideActionPrompt() {
+    if (!this.actionPromptElement) {
+      return;
+    }
+
+    this.actionPromptElement.classList.remove('action-prompt--visible');
+    this.actionPromptElement.style.display = 'none';
+  }
+
+  _setupActionPromptHandler(nextSectionId) {
+    const button = this.actionPromptElement.querySelector('.prompt-button');
+
+    if (!button || !this.onActionPromptClick) {
+      return;
+    }
+
+    // Remove old listeners by cloning the button
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
+
+    newButton.addEventListener('click', async () => {
+      this._hideActionPrompt();
+      await this.onActionPromptClick(nextSectionId);
+    });
   }
 
   _showTypingIndicator() {
@@ -75,7 +161,11 @@ class SectionRenderer {
     }
   }
 
-  async _fetchSectionData(sectionId, role, customQuery = null) {
+  async _fetchProfileData() {
+    return await this.contentMiddleware.getUserProfile();
+  }
+
+  async _fetchSectionData(sectionId, role, customQuery = '') {
     const sectionContent = await this.contentMiddleware.fetchSectionContent(
       sectionId,
       role,
@@ -91,10 +181,12 @@ class SectionRenderer {
     return sectionIndex % 2 === 0;
   }
 
-  _renderSection(sectionContent, isZigZagLeft) {
-    const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft);
-    this.sectionsContainer.appendChild(sectionElement);
-    this._scrollToSection(sectionElement);
+  async _renderSection(sectionContent, profileData, isZigZagLeft) {
+    const sectionElement = this.templateBuilder.renderSection(sectionContent, isZigZagLeft, profileData);
+    const lastSectionElement = this.sectionsContainer.lastChild;
+
+    this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
+
     return sectionElement;
   }
 
@@ -181,53 +273,6 @@ class SectionRenderer {
   _getNextSectionId(currentSectionId) {
     const currentIndex = this.sectionOrder.indexOf(currentSectionId);
     return this.sectionOrder[currentIndex + 1] || null;
-  }
-
-  async _renderActionPrompt(sectionElement, nextSectionId) {
-    if (!sectionElement || !nextSectionId) {
-      return;
-    }
-
-    try {
-      await this._tryToRenderActionPrompt(sectionElement, nextSectionId);
-    } catch (error) {
-      console.error('Failed to render action prompt:', error);
-    }
-  }
-
-  async _tryToRenderActionPrompt(sectionElement, nextSectionId) {
-    const placeholder = await this.contentMiddleware.getActionPromptPlaceholder(nextSectionId);
-    const actionPrompt = this.templateBuilder.renderActionPrompt(nextSectionId, placeholder);
-
-    this._setupActionPromptHandler(actionPrompt, nextSectionId);
-
-    sectionElement.appendChild(actionPrompt);
-  }
-
-  _setupActionPromptHandler(actionPrompt, nextSectionId) {
-    const button = actionPrompt.querySelector('.prompt-button');
-
-    if (!button || !this.onActionPromptClick) {
-      return;
-    }
-
-    button.addEventListener('click', async () => {
-      actionPrompt.remove();
-      await this.onActionPromptClick(nextSectionId);
-    });
-  }
-
-  _revealActionPrompt(sectionElement) {
-    if (!sectionElement) {
-      return;
-    }
-
-    const actionPrompt = sectionElement.querySelector('.action-prompt');
-    if (actionPrompt) {
-      requestAnimationFrame(() => {
-        actionPrompt.classList.add('action-prompt--visible');
-      });
-    }
   }
 }
 

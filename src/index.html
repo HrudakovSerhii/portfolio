@@ -29,28 +29,19 @@
           <span class="header-brand-sub-text">Portfolio</span>
         </div>
 
+        <button
+          id="header-nav-toggle"
+          class="header-nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="header-nav">
+          <span class="nav-toggle-icon" aria-hidden="true">☰</span>
+        </button>
+
         <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
           <!-- Navigation items will be added dynamically -->
+          <div id="nav-indicator" class="nav-indicator"></div>
         </nav>
-
-        <div class="header-nav-mobile" id="header-nav-mobile">
-          <button
-            id="header-nav-dropdown-toggle"
-            class="header-nav-dropdown"
-            aria-label="Navigation menu"
-            aria-expanded="false"
-            aria-haspopup="true">
-            <span id="header-nav-dropdown-label">Menu</span>
-            <span class="dropdown-icon" aria-hidden="true">▼</span>
-          </button>
-          <div
-            id="header-nav-dropdown-menu"
-            class="header-nav-dropdown-menu"
-            role="menu"
-            aria-labelledby="header-nav-dropdown-toggle">
-            <!-- Dropdown items will be added dynamically -->
-          </div>
-        </div>
       </div>
 
       <div class="header-controls">
@@ -85,12 +76,17 @@
   </header>
 
   <main class="main-content" role="main" id="main-content">
-    <div class="hero-background">
-      <div class="hero-blob hero-blob--blue"></div>
-      <div class="hero-blob hero-blob--purple"></div>
+    <div class="parallax-background" aria-hidden="true">
+      <div class="parallax-blob parallax-blob--1"></div>
+      <div class="parallax-blob parallax-blob--2"></div>
+      <div class="parallax-blob parallax-blob--3"></div>
+      <div class="parallax-blob parallax-blob--4"></div>
+      <div class="parallax-blob parallax-blob--5"></div>
+      <div class="parallax-blob parallax-blob--6"></div>
+      <div class="parallax-blob parallax-blob--7"></div>
     </div>
 
-    <section id="hero" class="hero-section">
+    <section id="welcome-section" class="hero-section">
       <div class="hero-container">
         <div class="hero-intro">
           <h1 class="hero-title"> Hi, I'm <span class="hero-title-gradient">Serhii</span></h1>
@@ -172,6 +168,48 @@
           </div>
           <div class="section-body-content">
             <!-- Text content will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+<!--  TODO: Make template for default section content and then use it with dynamic section elements under 2 different templates-->
+  <template id="contact-section-template">
+    <section class="content-section content-section--contact" id="" data-section-id="">
+      <div class="parallax-layer" aria-hidden="true"></div>
+
+      <div class="section-layout">
+        <div class="section-visual">
+          <div class="section-visual-container">
+            <!-- Image will be inserted here -->
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-header">
+            <h2 class="section-title"></h2>
+            <p class="section-query"></p>
+          </div>
+          <div class="section-body-content">
+            <!-- Text content will be inserted here -->
+          </div>
+          <div class="contact-actions">
+            <a
+              href="mailto:"
+              class="contact-link contact-email-link"
+              data-email=""
+              data-name=""
+              aria-label="Send email">
+              Send me an email
+            </a>
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contact-link contact-linkedin-link"
+              aria-label="Connect on LinkedIn">
+              Connect on LinkedIn
+            </a>
           </div>
         </div>
       </div>

@@ -18,7 +18,10 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
 
   beforeEach(() => {
     const htmlPath = join(process.cwd(), 'src/index.html');
-    const htmlContent = readFileSync(htmlPath, 'utf-8');
+    let htmlContent = readFileSync(htmlPath, 'utf-8');
+
+    // Remove stylesheet links to prevent 404 errors
+    htmlContent = htmlContent.replace(/<link[^>]*rel="stylesheet"[^>]*>/g, '');
 
     // Create a DOM environment with the real HTML
     window = new Window();
@@ -38,9 +41,11 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
         sectionId: 'hero',
         title: 'Welcome',
         text: 'This is the hero section with some introductory text.',
-        imageUrl: '/images/hero.jpg',
-        imageAlt: 'Hero image',
-        aspectRatio: 'aspect-video',
+        image: {
+          imageUrl: '/images/hero.jpg',
+          imageAlt: 'Hero image',
+          aspectRatio: 'aspect-video'
+        },
         customQuery: null
       };
 
@@ -50,7 +55,7 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
       expect(section.getAttribute('data-section-id')).toBe('hero');
       expect(section.id).toBe('section-hero');
       expect(section.querySelector('.section-title').textContent).toBe('Welcome');
-      expect(section.querySelector('.section-content').classList.contains('zig-zag-left')).toBe(true);
+      expect(section.querySelector('.section-layout').classList.contains('zig-zag-left')).toBe(true);
 
       // Snapshot the rendered HTML
       expect(section.outerHTML).toMatchSnapshot();
@@ -61,15 +66,17 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
         sectionId: 'about',
         title: 'About Me',
         text: 'Learn more about my background and experience.',
-        imageUrl: '/images/about.jpg',
-        imageAlt: 'About image',
-        aspectRatio: 'aspect-square',
+        image: {
+          imageUrl: '/images/about.jpg',
+          imageAlt: 'About image',
+          aspectRatio: 'aspect-square'
+        },
         customQuery: null
       };
 
       const section = templateBuilder.renderSection(sectionData, false);
 
-      expect(section.querySelector('.section-content').classList.contains('zig-zag-right')).toBe(true);
+      expect(section.querySelector('.section-layout').classList.contains('zig-zag-right')).toBe(true);
       expect(section.outerHTML).toMatchSnapshot();
     });
 
@@ -78,9 +85,11 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
         sectionId: 'skills',
         title: 'Skills',
         text: 'Here are my technical skills and expertise.',
-        imageUrl: '/images/skills.jpg',
-        imageAlt: 'Skills visualization',
-        aspectRatio: 'aspect-video',
+        image: {
+          imageUrl: '/images/skills.jpg',
+          imageAlt: 'Skills visualization',
+          aspectRatio: 'aspect-video'
+        },
         customQuery: 'What are your top 3 programming languages?'
       };
 
@@ -102,13 +111,11 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
 
       expect(actionPrompt.id).toBe('action-prompt-experience');
       expect(actionPrompt.getAttribute('data-section-id')).toBe('experience');
-      
-      const input = actionPrompt.querySelector('.prompt-input');
-      expect(input.placeholder).toBe('React, Node.js, TypeScript');
-      expect(input.id).toBe('prompt-input-experience');
 
       const button = actionPrompt.querySelector('.prompt-button');
-      expect(button.textContent).toBe('Get to know Experience');
+      expect(button.textContent).toBe('Read next: Experience');
+      expect(button.getAttribute('data-default-text')).toBe('Read next: Experience');
+      expect(button.getAttribute('data-section-id')).toBe('experience');
 
       expect(actionPrompt.outerHTML).toMatchSnapshot();
     });
@@ -191,7 +198,6 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
       const modal = templateBuilder.renderRoleChangeModal('developer');
 
       expect(modal.classList.contains('modal-overlay')).toBe(true);
-      expect(modal.classList.contains('modal-overlay--glass')).toBe(true);
 
       const developerButton = modal.querySelector('[data-role="developer"]');
       expect(developerButton.disabled).toBe(true);

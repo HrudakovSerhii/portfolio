@@ -1,68 +1,54 @@
-const MODAL_FADE_DURATION = 300;
-const MODAL_FOCUS_DELAY = 100;
+import SectionNavigationTracker from "../../../utils/section-navigation-tracker.js";
 
 const HEADER_ELEMENTS = {
   nav: 'header-nav',
-  navMobile: 'header-nav-mobile',
-  navDropdownToggle: 'header-nav-dropdown-toggle',
-  navDropdownLabel: 'header-nav-dropdown-label',
-  navDropdownMenu: 'header-nav-dropdown-menu',
+  navItem: 'header-nav-item',
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
-  navItem: 'header-nav-item',
-  divider: 'header-divider'
-};
-
-const MODAL_ELEMENTS = {
-  overlay: 'modal-overlay',
-  content: 'modal-content',
-  close: 'modal-close',
-  roleCard: 'button'
+  navToggle: 'header-nav-toggle',
+  indicator: 'nav-indicator'
 };
 
 const SECTION_ATTRIBUTES = {
-  sectionId: 'data-section-id',
-  role: 'data-role',
-  escapeHandler: 'data-escape-handler'
-};
-
-const CSS_CLASSES = {
-  active: 'active',
-  hasOverflow: 'has-overflow',
-  isOpen: 'is-open'
+  sectionId: 'data-section-id'
 };
 
 class HeaderController {
-  constructor(stateManager, templateBuilder) {
+  constructor(stateManager) {
     this.stateManager = stateManager;
-    this.templateBuilder = templateBuilder;
+    this.roleManager = null;
 
+    this.sectionTracker = null;
     this.ownerName = null;
     this.languageSelector = null;
     this.headerNav = null;
-    this.headerNavMobile = null;
-    this.navDropdownToggle = null;
-    this.navDropdownLabel = null;
-    this.navDropdownMenu = null;
+    this.navIndicator = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
-    this.onRoleSelectCallback = null;
+    this.navToggle = null;
 
     this.visibleSections = [];
-    this.activeSection = null;
-    this.isDropdownOpen = false;
+    this.activeObserver = null;
+    this._resizeHandler = this._handleResize.bind(this);
   }
 
-  initialize(ownerNameElement, languageSelectorElement) {
+  initialize(ownerNameElement, languageSelectorElement, roleManager) {
+    this.roleManager = roleManager;
     this.ownerName = ownerNameElement;
     this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
-    this.headerNavMobile = document.getElementById(HEADER_ELEMENTS.navMobile);
-    this.navDropdownToggle = document.getElementById(HEADER_ELEMENTS.navDropdownToggle);
-    this.navDropdownLabel = document.getElementById(HEADER_ELEMENTS.navDropdownLabel);
-    this.navDropdownMenu = document.getElementById(HEADER_ELEMENTS.navDropdownMenu);
+    this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
+    this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
+
+    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'sections-container', {
+      activeClass: 'active',
+      threshold: 0.51,
+      sectionSelector: '.content-section',
+      navItemSelector: '.header-nav-item',
+      sectionIdAttribute: 'data-section-id'
+    });
 
     if (this.languageSelector) {
       const currentLanguage = this.stateManager.getLanguage();
@@ -71,19 +57,100 @@ class HeaderController {
       }
     }
 
-    this._setupScrollDetection();
     this._setupRoleBadgeClick();
-    this._setupMobileDropdown();
+    this._setupMobileToggle();
+    this._setupActiveObserver();
+
+    window.addEventListener('resize', this._resizeHandler);
+  }
+
+  _setupActiveObserver() {
+    if (!this.headerNav) return;
+
+    this.activeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'class') {
+              if (mutation.target.classList.contains('active')) {
+                this._moveIndicatorTo(mutation.target);
+              } else {
+                this._hideNavIndicator();
+              }
+        }
+      });
+    });
+
+    this.activeObserver.observe(this.headerNav, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  /**
+   * Calculates position and width to slide the line to the target item
+   */
+  _moveIndicatorTo(targetItem) {
+    if (!this.navIndicator || !targetItem) {
+      this.navIndicator.style.width = '0px';
+      this.navIndicator.style.transform = `translateX(0px)`;
+      this.navIndicator.style.opacity = '0';
+    };
+
+    const paddingOffset = 24; // Approximate sum of left/right padding ($spacing-sm * 2)
+    const itemWidth = targetItem.offsetWidth;
+    const itemLeft = targetItem.offsetLeft;
+
+    // Prevent negative width if item is very small
+    const targetWidth = Math.max(0, itemWidth - paddingOffset);
+    // Center the line within the item
+    const targetLeft = itemLeft + (paddingOffset / 2);
+
+    this.navIndicator.style.width = `${targetWidth}px`;
+    this.navIndicator.style.transform = `translateX(${targetLeft}px)`;
+    this.navIndicator.style.opacity = '1';
+  }
+
+  _handleResize() {
+    const activeItem = this.headerNav?.querySelector(`.${HEADER_ELEMENTS.navItem}.active`);
+
+    if (activeItem) {
+      this._moveIndicatorTo(activeItem);
+    }
   }
 
   _setupRoleBadgeClick() {
     if (this.roleBadge) {
       this.roleBadge.addEventListener('click', () => {
-        if (this.onRoleSelectCallback) {
-          this.showRoleChangeModal(this.onRoleSelectCallback);
+        if (this.roleManager) {
+          this.roleManager.showChangeModal();
         }
       });
     }
+  }
+
+  _setupMobileToggle() {
+    if (!this.navToggle || !this.headerNav) return;
+
+    this.navToggle.addEventListener('click', () => {
+      const isOpen = this.headerNav.classList.toggle('is-open');
+      this.navToggle.setAttribute('aria-expanded', isOpen.toString());
+    });
+
+    this.headerNav.addEventListener('click', (e) => {
+      if (e.target.classList.contains(HEADER_ELEMENTS.navItem)) {
+        this.headerNav.classList.remove('is-open');
+        this.navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!this.headerNav.contains(e.target) && !this.navToggle.contains(e.target)) {
+        this.headerNav.classList.remove('is-open');
+        this.navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
   }
 
   updateOwnerName(name) {
@@ -111,22 +178,15 @@ class HeaderController {
     }
   }
 
-
-
-  updateRoleBadge(role, onRoleSelect = null) {
-    if (!this.roleBadge || !this.roleBadgeText) return;
+  updateRoleBadge(role) {
+    if (!this.roleBadge || !this.roleBadgeText || !this.roleManager) return;
 
     if (role) {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
       this.roleBadgeText.textContent = `${roleText} View`;
       this.roleBadge.style.display = 'flex';
-      
-      if (onRoleSelect) {
-        this.onRoleSelectCallback = onRoleSelect;
-      }
     } else {
       this.roleBadge.style.display = 'none';
-      this.onRoleSelectCallback = null;
     }
   }
 
@@ -139,299 +199,35 @@ class HeaderController {
 
     this.visibleSections.push(sectionId);
 
-    const navDivider = this._createNavigationDivider();
-    this.headerNav.appendChild(navDivider);
-
-    const navButton = this._createNavigationButton(sectionId, sectionTitle);
-    this.headerNav.appendChild(navButton);
-
-    // Add to mobile dropdown
-    this._addMobileDropdownItem(sectionId, sectionTitle);
-
-    this._checkNavOverflow();
-    this._checkIfSectionIsActive(sectionId);
-  }
-
-  _createNavigationDivider() {
-    const navDivider = document.createElement('div');
-
-    navDivider.className = HEADER_ELEMENTS.divider;
-
-    return navDivider;
-  }
-
-  _createNavigationButton(sectionId, sectionTitle) {
     const navLink = document.createElement('a');
     navLink.className = HEADER_ELEMENTS.navItem;
     navLink.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
     navLink.setAttribute('href', `#section-${sectionId}`);
     navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
-    return navLink;
-  }
+    this.headerNav.appendChild(navLink);
 
-  setActiveSection(sectionId) {
-    if (!this.headerNav) return;
-
-    this.activeSection = sectionId;
-
-    const navItems = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
-    navItems.forEach(item => {
-      const itemSectionId = item.getAttribute(SECTION_ATTRIBUTES.sectionId);
-      if (itemSectionId === sectionId) {
-        item.classList.add(CSS_CLASSES.active);
-      } else {
-        item.classList.remove(CSS_CLASSES.active);
-      }
-    });
+    if (this.navIndicator) {
+      this.headerNav.appendChild(this.navIndicator);
+    }
   }
 
   clearNavigation() {
     if (!this.headerNav) return;
 
-    this.headerNav.innerHTML = '';
-    
-    if (this.navDropdownMenu) {
-      this.navDropdownMenu.innerHTML = '';
-    }
-    
+    const items = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
+    items.forEach(el => el.remove());
+
     this.visibleSections = [];
-    this.activeSection = null;
-  }
 
-  _checkIfSectionIsActive(sectionId) {
-    const scrollPosition = window.scrollY + 150;
-
-    const section = document.querySelector(`[${SECTION_ATTRIBUTES.sectionId}="${sectionId}"]`);
-    if (section) {
-      const sectionTop = section.offsetTop;
-      const sectionBottom = sectionTop + section.offsetHeight;
-
-      if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-        this.setActiveSection(sectionId);
-      }
+    if (this.navIndicator) {
+      this._hideNavIndicator();
     }
   }
 
-  /**
-   * Monitors scroll position to automatically highlight the active section in navigation.
-   * Uses requestAnimationFrame for performance optimization to avoid excessive reflows.
-   * Updates the active nav item based on which section is currently in the viewport.
-   */
-  _setupScrollDetection() {
-    let ticking = false;
-
-    const updateActiveSection = () => {
-      if (!this.headerNav) return;
-
-      const scrollPosition = window.scrollY + 150;
-      let currentSection = null;
-
-      const contentSections = document.querySelectorAll('.content-section');
-      contentSections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          const sectionId = section.getAttribute(SECTION_ATTRIBUTES.sectionId);
-          if (sectionId) {
-            currentSection = sectionId;
-          }
-        }
-      });
-
-      if (currentSection && currentSection !== this.activeSection) {
-        this.setActiveSection(currentSection);
-      }
-
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateActiveSection);
-        ticking = true;
-      }
-    });
-
-    updateActiveSection();
-  }
-
-  /**
-   * Checks if navigation items overflow the container width and applies a gradient mask.
-   * The mask provides a visual indicator that more items are available via horizontal scroll.
-   * Called after each new navigation item is added to maintain proper overflow state.
-   */
-  _checkNavOverflow() {
-    if (!this.headerNav) return;
-
-    const hasOverflow = this.headerNav.scrollWidth > this.headerNav.clientWidth;
-
-    if (hasOverflow) {
-      this.headerNav.classList.add(CSS_CLASSES.hasOverflow);
-    } else {
-      this.headerNav.classList.remove(CSS_CLASSES.hasOverflow);
-    }
-  }
-
-  _setupMobileDropdown() {
-    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
-
-    this.navDropdownToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this._toggleDropdown();
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      if (this.isDropdownOpen && 
-          !this.headerNavMobile?.contains(e.target)) {
-        this._closeDropdown();
-      }
-    });
-  }
-
-  _toggleDropdown() {
-    if (this.isDropdownOpen) {
-      this._closeDropdown();
-    } else {
-      this._openDropdown();
-    }
-  }
-
-  _openDropdown() {
-    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
-
-    this.isDropdownOpen = true;
-    this.navDropdownToggle.classList.add(CSS_CLASSES.isOpen);
-    this.navDropdownToggle.setAttribute('aria-expanded', 'true');
-    this.navDropdownMenu.classList.add(CSS_CLASSES.isOpen);
-  }
-
-  _closeDropdown() {
-    if (!this.navDropdownToggle || !this.navDropdownMenu) return;
-
-    this.isDropdownOpen = false;
-    this.navDropdownToggle.classList.remove(CSS_CLASSES.isOpen);
-    this.navDropdownToggle.setAttribute('aria-expanded', 'false');
-    this.navDropdownMenu.classList.remove(CSS_CLASSES.isOpen);
-  }
-
-  _addMobileDropdownItem(sectionId, sectionTitle) {
-    if (!this.navDropdownMenu) return;
-
-    const dropdownItem = document.createElement('a');
-    dropdownItem.className = 'header-nav-dropdown-item';
-    dropdownItem.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
-    dropdownItem.setAttribute('href', `#section-${sectionId}`);
-    dropdownItem.setAttribute('role', 'menuitem');
-    dropdownItem.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-
-    dropdownItem.addEventListener('click', () => {
-      this._closeDropdown();
-      this.setActiveSection(sectionId);
-      
-      // Update dropdown label to show selected item
-      if (this.navDropdownLabel) {
-        this.navDropdownLabel.textContent = dropdownItem.textContent;
-      }
-    });
-
-    this.navDropdownMenu.appendChild(dropdownItem);
-  }
-
-  showRoleChangeModal(onRoleSelect) {
-    const currentRole = this.stateManager.getRole();
-    const existingModal = document.querySelector(`.${MODAL_ELEMENTS.overlay}`);
-
-    if (existingModal) {
-      return;
-    }
-
-    if (!currentRole) {
-      console.warn('No current role found. Cannot show role change modal.');
-      return;
-    }
-
-    const modal = this._renderModal(currentRole);
-    this._setupModalInteractions(modal, currentRole, onRoleSelect);
-  }
-
-  _renderModal(currentRole) {
-    const modal = this.templateBuilder.renderRoleChangeModal(currentRole);
-    document.body.appendChild(modal);
-
-    requestAnimationFrame(() => {
-      modal.classList.add(CSS_CLASSES.active);
-    });
-
-    const modalContent = modal.querySelector(`.${MODAL_ELEMENTS.content}`);
-    setTimeout(() => {
-      modalContent?.focus();
-    }, MODAL_FOCUS_DELAY);
-
-    return modal;
-  }
-
-  _setupModalInteractions(modal, currentRole, onRoleSelect) {
-    this._setupRoleButtons(modal, currentRole, onRoleSelect);
-    this._setupCloseButton(modal);
-    this._setupOutsideClick(modal);
-    this._setupEscapeKey(modal);
-  }
-
-  _setupRoleButtons(modal, currentRole, onRoleSelect) {
-    const roleCards = modal.querySelectorAll(`.${MODAL_ELEMENTS.roleCard}:not([disabled])`);
-
-    roleCards.forEach(card => {
-      card.addEventListener('click', async () => {
-        const newRole = card.getAttribute(SECTION_ATTRIBUTES.role);
-
-        if (newRole && newRole !== currentRole) {
-          this._closeModal(modal);
-
-          if (onRoleSelect) {
-            await onRoleSelect(newRole);
-          }
-        }
-      });
-    });
-  }
-
-  _setupCloseButton(modal) {
-    const closeButton = modal.querySelector(`.${MODAL_ELEMENTS.close}`);
-
-    closeButton?.addEventListener('click', () => {
-      this._closeModal(modal);
-    });
-  }
-
-  _setupOutsideClick(modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        this._closeModal(modal);
-      }
-    });
-  }
-
-  _setupEscapeKey(modal) {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        this._closeModal(modal);
-        document.removeEventListener('keydown', handleEscape);
-      }
-    };
-    document.addEventListener('keydown', handleEscape);
-    modal.setAttribute(SECTION_ATTRIBUTES.escapeHandler, 'attached');
-  }
-
-  _closeModal(modal) {
-    if (!modal) return;
-
-    modal.style.opacity = '0';
-    setTimeout(() => {
-      modal.remove();
-    }, MODAL_FADE_DURATION);
+  _hideNavIndicator() {
+      this.navIndicator.style.opacity = '0';
+      this.navIndicator.style.width = '0';
   }
 }
 
