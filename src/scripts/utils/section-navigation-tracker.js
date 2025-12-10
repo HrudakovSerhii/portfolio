@@ -93,11 +93,13 @@ class SectionNavigationTracker {
   }
 
   updateActiveNavItem(sectionId) {
+    if (sectionId === null && this.currentActiveSection !== null) {
+      this.clearAllActiveStates();
+    }
+
     if (sectionId === this.currentActiveSection) {
       return;
     }
-
-    this.clearAllActiveStates();
 
     if (sectionId) {
       this.setActiveState(sectionId);
