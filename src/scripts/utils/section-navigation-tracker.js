@@ -43,13 +43,17 @@ class SectionNavigationTracker {
   }
 
   observeExistingSections() {
-    const existingSections = this.sectionContainer.querySelectorAll(this.sectionSelector);
+    // Only observe direct children that match the selector to avoid nested elements
+    const existingSections = Array.from(this.sectionContainer.children).filter(
+      child => child.matches(this.sectionSelector)
+    );
     existingSections.forEach(section => this.observer.observe(section));
   }
 
   handleMutations(mutations) {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
+        // Only observe direct children that match the selector
         if (node.nodeType === 1 && node.matches(this.sectionSelector)) {
           this.observer.observe(node);
         }
@@ -93,15 +97,17 @@ class SectionNavigationTracker {
   }
 
   updateActiveNavItem(sectionId) {
-    if (sectionId === null && this.currentActiveSection !== null) {
-      this.clearAllActiveStates();
-    }
-
     if (sectionId === this.currentActiveSection) {
       return;
     }
 
-    if (sectionId) {
+    // Always clear previous active state when switching sections
+    if (this.currentActiveSection !== null) {
+      this.clearActiveState(this.currentActiveSection);
+    }
+
+    // Set new active state if a section is visible
+    if (sectionId !== null) {
       this.setActiveState(sectionId);
     }
 
@@ -111,6 +117,16 @@ class SectionNavigationTracker {
   clearAllActiveStates() {
     const allNavItems = this.navContainer.querySelectorAll(this.navItemSelector);
     allNavItems.forEach(item => item.classList.remove(this.activeClass));
+  }
+
+  clearActiveState(sectionId) {
+    const navItem = this.navContainer.querySelector(
+      `${this.navItemSelector}[${this.sectionIdAttribute}="${sectionId}"]`
+    );
+
+    if (navItem) {
+      navItem.classList.remove(this.activeClass);
+    }
   }
 
   setActiveState(sectionId) {
