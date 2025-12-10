@@ -127,8 +127,7 @@
     display: flex;
     justify-content: center;
     align-items: start;
-    font-size: $font-size-lg;
-    line-height: $line-height-relaxed;
+    font-size: $font-size-2xl;
     color: var(--color-text);
     min-width: 30%;
     width: 100%;
@@ -140,6 +139,39 @@
       &:last-child {
         margin-bottom: 0;
       }
+    }
+  }
+}
+
+.content-section--contact {
+  .contact-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+
+    @include desktop {
+      flex-direction: row;
+      gap: $spacing-2xl;
+    }
+  }
+
+  .contact-link {
+    @include animated-underline(-3px, 0, 0, 100%);
+
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color $transition-medium;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+
+    &:active {
+      color: var(--color-accent-hover);
     }
   }
 }

@@ -246,6 +246,8 @@
     }
   }
 
+  @include animated-underline(0px, $spacing-sm, $spacing-sm);
+
   &:hover {
     transform: scaleY(0.95);
   }
@@ -255,8 +257,10 @@
     outline-offset: 2px;
   }
 
-  &::after {
-    display: none;
+  @include mobile {
+    &::after {
+      display: none;
+    }
   }
 
   @for $i from 1 through 10 {
