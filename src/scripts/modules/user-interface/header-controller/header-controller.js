@@ -5,7 +5,8 @@ const HEADER_ELEMENTS = {
   navItem: 'header-nav-item',
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
-  navToggle: 'header-nav-toggle'
+  navToggle: 'header-nav-toggle',
+  indicator: 'nav-indicator'
 };
 
 const SECTION_ATTRIBUTES = {
@@ -21,28 +22,33 @@ class HeaderController {
     this.ownerName = null;
     this.languageSelector = null;
     this.headerNav = null;
+    this.navIndicator = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
+    this.navToggle = null;
 
     this.visibleSections = [];
+    this.activeObserver = null;
+    this._resizeHandler = this._handleResize.bind(this);
   }
 
   initialize(ownerNameElement, languageSelectorElement, roleManager) {
     this.roleManager = roleManager;
-    this.sectionTracker = new SectionNavigationTracker('header-nav', 'sections-container', {
+    this.ownerName = ownerNameElement;
+    this.languageSelector = languageSelectorElement;
+    this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
+    this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
+    this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
+    this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
+    this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
+
+    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'sections-container', {
       activeClass: 'active',
       threshold: 0.51,
       sectionSelector: '.content-section',
       navItemSelector: '.header-nav-item',
       sectionIdAttribute: 'data-section-id'
     });
-
-    this.ownerName = ownerNameElement;
-    this.languageSelector = languageSelectorElement;
-    this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
-    this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
-    this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
-    this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
 
     if (this.languageSelector) {
       const currentLanguage = this.stateManager.getLanguage();
@@ -53,6 +59,65 @@ class HeaderController {
 
     this._setupRoleBadgeClick();
     this._setupMobileToggle();
+    this._setupActiveObserver();
+
+    window.addEventListener('resize', this._resizeHandler);
+  }
+
+  _setupActiveObserver() {
+    if (!this.headerNav) return;
+
+    this.activeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'class') {
+              if (mutation.target.classList.contains('active')) {
+                this._moveIndicatorTo(mutation.target);
+              } else {
+                this._hideNavIndicator();
+              }
+        }
+      });
+    });
+
+    this.activeObserver.observe(this.headerNav, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  /**
+   * Calculates position and width to slide the line to the target item
+   */
+  _moveIndicatorTo(targetItem) {
+    if (!this.navIndicator || !targetItem) {
+      this.navIndicator.style.width = '0px';
+      this.navIndicator.style.transform = `translateX(0px)`;
+      this.navIndicator.style.opacity = '0';
+    };
+
+    const paddingOffset = 24; // Approximate sum of left/right padding ($spacing-sm * 2)
+    const itemWidth = targetItem.offsetWidth;
+    const itemLeft = targetItem.offsetLeft;
+
+    // Prevent negative width if item is very small
+    const targetWidth = Math.max(0, itemWidth - paddingOffset);
+    // Center the line within the item
+    const targetLeft = itemLeft + (paddingOffset / 2);
+
+    this.navIndicator.style.width = `${targetWidth}px`;
+    this.navIndicator.style.transform = `translateX(${targetLeft}px)`;
+    this.navIndicator.style.opacity = '1';
+  }
+
+  _handleResize() {
+    const activeItem = this.headerNav?.querySelector(`.${HEADER_ELEMENTS.navItem}.active`);
+
+    if (activeItem) {
+      this._moveIndicatorTo(activeItem);
+    }
   }
 
   _setupRoleBadgeClick() {
@@ -141,15 +206,28 @@ class HeaderController {
     navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
     this.headerNav.appendChild(navLink);
-    // Section tracking is handled automatically by SectionNavigationTracker
+
+    if (this.navIndicator) {
+      this.headerNav.appendChild(this.navIndicator);
+    }
   }
 
   clearNavigation() {
     if (!this.headerNav) return;
 
-    this.headerNav.innerHTML = '';
+    const items = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
+    items.forEach(el => el.remove());
+
     this.visibleSections = [];
-    // Section tracking cleanup is handled by SectionNavigationTracker
+
+    if (this.navIndicator) {
+      this._hideNavIndicator();
+    }
+  }
+
+  _hideNavIndicator() {
+      this.navIndicator.style.opacity = '0';
+      this.navIndicator.style.width = '0';
   }
 }
 
