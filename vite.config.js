@@ -16,11 +16,18 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false,
     minify: 'terser',
+    assetsInlineLimit: 4096,
+    reportCompressedSize: false,
     rollupOptions: {
       input: {
         main: './src/index.html'
+      },
+      output: {
+        entryFileNames: '[name].[hash].js',
+        chunkFileNames: '[name].[hash].js',
+        assetFileNames: '[name].[hash][extname]'
       }
     }
   },
