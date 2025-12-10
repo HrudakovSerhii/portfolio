@@ -37,13 +37,13 @@ class RoleManager {
     const isRoleChange = currentRole && currentRole !== role;
 
     if (this.onRoleSelectCallback) {
-      await this.onRoleSelectCallback(role, isRoleChange);
+      await this.onRoleSelectCallback(role, !!isRoleChange);
     }
   }
 
   showChangeModal() {
     const currentRole = this.getCurrentRole();
-    
+
     if (!currentRole) {
       console.warn('No role selected yet. Cannot show role change modal.');
       return;
