@@ -18,7 +18,10 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
 
   beforeEach(() => {
     const htmlPath = join(process.cwd(), 'src/index.html');
-    const htmlContent = readFileSync(htmlPath, 'utf-8');
+    let htmlContent = readFileSync(htmlPath, 'utf-8');
+
+    // Remove stylesheet links to prevent 404 errors
+    htmlContent = htmlContent.replace(/<link[^>]*rel="stylesheet"[^>]*>/g, '');
 
     // Create a DOM environment with the real HTML
     window = new Window();
