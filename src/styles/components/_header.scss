@@ -86,6 +86,7 @@
 }
 
 .header-nav {
+  position: relative;
   display: flex;
   align-items: center;
   gap: $spacing-s;
@@ -100,9 +101,6 @@
     display: none;
   }
 
-  position: relative;
-
-  // Gradient fade for overflow indication
   &::after {
     content: '';
     position: absolute;
@@ -116,7 +114,6 @@
     transition: opacity $transition-base;
   }
 
-  // Show gradient when content overflows
   @media (min-width: 769px) {
     &:has(.header-nav-item:nth-child(5))::after {
       opacity: 1;
@@ -155,6 +152,33 @@
   }
 }
 
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: var(--color-text);
+  pointer-events: none;
+  z-index: 10;
+
+  /*
+     Animation Logic:
+     We animate transform (position) and width.
+     cubic-bezier adds a slight "momentum" feel.
+  */
+  transition:
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.2s ease;
+
+  opacity: 0;
+  will-change: transform, width;
+
+  @include mobile {
+    display: none !important;
+  }
+}
+
 .header-nav-item {
   position: relative;
   display: inline-block;
@@ -178,66 +202,6 @@
     font-size: $font-size-sm;
   }
 
-  // CSS-based dividers between nav items (desktop only)
-  &:not(:first-child)::before {
-    content: '';
-    position: absolute;
-    left: calc(-#{$spacing-s} / 2);
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 1rem;
-    background-color: var(--color-border);
-
-    @include mobile {
-      display: none;
-    }
-  }
-
-  &:hover {
-    color: var(--color-text);
-    background-color: var(--color-bg-secondary);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 2px;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: var(--color-text);
-    transform: translateX(-50%);
-    transition: width $transition-base;
-  }
-
-  &:hover::after,
-  &:focus-visible::after,
-  &.active::after {
-    width: calc(100% - #{$spacing-sm * 2});
-  }
-
-  &.active {
-    color: var(--color-text);
-    font-weight: 600;
-  }
-
-  @for $i from 1 through 10 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{$i * 50}ms;
-    }
-  }
-
-  // Mobile dropdown styling
   @include mobile {
     display: block;
     width: 100%;
@@ -256,10 +220,6 @@
       display: none;
     }
 
-    &::after {
-      display: none;
-    }
-
     &.active {
       background-color: var(--color-bg-secondary);
       font-weight: 600;
@@ -268,6 +228,40 @@
     &:active {
       transform: none;
       background-color: var(--color-bg-tertiary);
+    }
+  }
+
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: calc(-#{$spacing-s} / 2);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 1rem;
+    background-color: var(--color-border);
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  &:hover {
+    transform: scaleY(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  &::after {
+    display: none;
+  }
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 50}ms;
     }
   }
 }
