@@ -1,19 +1,34 @@
 // Main SCSS entry point
 // Import partials and components
 
-// Base styles (variables must come first)
+// Base styles (variables and mixins must come first)
 @import 'base/variables';
+@import 'base/mixins';
+@import 'base/theme';
 @import 'base/reset';
 @import 'base/typography';
 
+// Elements (must come before components that extend them)
+@import "components/elements";
+
 // Components
 @import 'components/header';
-@import 'components/navigation';
 @import 'components/hero';
+@import 'components/parallax';
+
+@import 'components/featured-projects';
 @import 'components/footer';
+//@import 'components/chat-ui';
+@import 'components/generative-image';
+@import 'components/modal-base';
+@import 'components/modal-content';
+@import 'components/section';
+@import 'components/action-prompt';
+@import 'components/loader';
 
 // Layout
+@import 'layout/overlay';
 @import 'layout/main';
 
 // Utilities
-@import 'utilities/helpers';
+@import 'utilities/animations';

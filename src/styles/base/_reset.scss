@@ -1,5 +1,5 @@
-// CSS Reset and normalize
-
+// CSS Reset and Normalize - Enhanced for cross-browser consistency
+// Note: Theme variables are now defined in _theme.scss
 *,
 *::before,
 *::after {
@@ -14,15 +14,21 @@
 html {
     font-size: 100%;
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
+    min-height: 100vh;
     line-height: $line-height-base;
     font-family: $font-family-primary;
-    color: $text-color;
-    background-color: $background-color;
+    color: var(--color-text);
+    background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 img,
@@ -40,12 +46,25 @@ button,
 textarea,
 select {
     font: inherit;
+    color: inherit;
 }
 
 button {
     cursor: pointer;
     border: none;
     background: none;
+}
+
+input,
+textarea {
+    border: none;
+    outline: none;
+}
+
+// Remove default button styles
+button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
 }
 
 a {
@@ -56,4 +75,36 @@ a {
 ul,
 ol {
     list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: inherit;
+    font-size: inherit;
+}
+
+// Accessibility
+
+// Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+// Screen reader only content
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }

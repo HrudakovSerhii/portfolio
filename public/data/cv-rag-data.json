@@ -1,0 +1,162 @@
+{
+  "$schema": "cv-schema.json",
+  "metadata": {
+    "version": "4.0",
+    "lastUpdated": "2025-11-26",
+    "embeddingModel": "Xenova/all-MiniLM-L6-v2",
+    "strategy": "Multi-chunk composition for Small LLM context",
+    "description": "Granular context blocks designed to be retrieved in groups of 3 to form complete answers."
+  },
+  "sections": {
+    "core_identity": {
+      "id": "core_identity",
+      "keywords": ["who is serhii", "summary", "intro", "profile", "bio", "developer"],
+      "embeddingSourceText": "Serhii Hrudakov identity summary. Lead Frontend Developer with 10+ years experience. Master's in Computer Science. Based in Amsterdam, Netherlands. Relocated from Ukraine.",
+      "context_data": {
+        "hr": "Serhii Hrudakov is a Lead Frontend Developer based in Amsterdam with over 10 years of commercial experience and a Master's degree in Computer Science.",
+        "developer": "I am a Lead Frontend Developer with a decade of experience. I hold a Master's in CS and currently work in Amsterdam, specializing in the modern JS stack.",
+        "friend": "I'm Serhii, an engineer by heart who relocated from Ukraine to the Netherlands. I've been coding for over 10 years and love building things that matter."
+      }
+    },
+    "core_philosophy": {
+      "id": "core_philosophy",
+      "keywords": ["philosophy", "mindset", "approach", "learning", "teaching", "mentorship"],
+      "embeddingSourceText": "Engineering philosophy and mindset. Believes you do not know a skill until you can teach it. Focus on collaborative learning, mentorship, and happy teams.",
+      "context_data": {
+        "hr": "His leadership philosophy centers on the belief that teaching is the path to mastery. He focuses on building efficient, happy teams through collaborative learning.",
+        "developer": "I believe you don't truly master a concept until you can explain it to a junior dev. My approach is 'learning by teaching' to raise the whole team's level.",
+        "friend": "I have a simple rule: if you can't teach it, you don't know it. I love building environments where everyone supports each other's growth."
+      }
+    },
+    "skill_react_core": {
+      "id": "skill_react_core",
+      "keywords": ["react", "frontend", "ui", "library", "components", "hooks", "class components"],
+      "embeddingSourceText": "Core React expertise. 10+ years experience. Evolution from class components to Hooks. Component architecture, Virtual DOM, React ecosystem.",
+      "context_data": {
+        "hr": "Serhii possesses expert-level knowledge of React, having worked with it for over a decade. He is proficient in both legacy class components and modern Hooks patterns.",
+        "developer": "I've been using React since the early days. I've migrated legacy class-based codebases to functional components with Hooks and custom context providers.",
+        "friend": "React is my main tool. I've seen it change so much over 10 years, and I love how the modern Hooks API makes code so much cleaner."
+      }
+    },
+    "skill_react_ecosystem": {
+      "id": "skill_react_ecosystem",
+      "keywords": ["next.js", "nextjs", "redux", "saga", "state management", "ssr", "performance"],
+      "embeddingSourceText": "React ecosystem and related tools. Next.js for SSR. Redux and Redux Saga for state management. Performance optimization, rendering strategies.",
+      "context_data": {
+        "hr": "His stack includes Next.js for Server-Side Rendering and Redux/Saga for complex state management. He specializes in performance optimization for high-traffic applications.",
+        "developer": "I use Next.js for SSR/SSG when SEO matters. For state, I've handled massive stores with Redux Saga but prefer lighter Context solutions for simpler apps.",
+        "friend": "I'm deep into the ecosystem—Next.js for speed, Redux when things get complex. I love tweaking performance to get those green Lighthouse scores!"
+      }
+    },
+    "skill_typescript": {
+      "id": "skill_typescript",
+      "keywords": ["typescript", "ts", "types", "type safety", "javascript", "typing"],
+      "embeddingSourceText": "TypeScript proficiency. Strong typing, interfaces, generics. Moving from JavaScript to TypeScript. Type safety in large codebases.",
+      "context_data": {
+        "hr": "He is a strong advocate for TypeScript, utilizing it to ensure type safety and code maintainability across large-scale enterprise applications.",
+        "developer": "TypeScript is non-negotiable for me. I use advanced types and generics to catch bugs at compile time rather than runtime.",
+        "friend": "I can't imagine coding without TypeScript anymore. It saves me so much time by catching silly mistakes before I even run the code."
+      }
+    },
+    "skill_backend": {
+      "id": "skill_backend",
+      "keywords": ["backend", "node", "nodejs", "nest", "nestjs", "express", "api"],
+      "embeddingSourceText": "Backend development skills. Node.js, NestJS, Express. Building APIs and server-side logic. Fullstack capabilities.",
+      "context_data": {
+        "hr": "Beyond frontend, he has strong backend capabilities using Node.js and NestJS, enabling him to contribute to full-stack architecture decisions.",
+        "developer": "On the backend, I reach for Node.js with NestJS. I like keeping the language consistent across the stack, and Nest offers great structure.",
+        "friend": "I'm not just a frontend guy! I actually enjoy building the APIs too. It helps to know how the data is actually getting to the UI."
+      }
+    },
+    "skill_apis": {
+      "id": "skill_apis",
+      "keywords": ["api", "graphql", "rest", "websocket", "communication", "protocol", "apollo"],
+      "embeddingSourceText": "API communication protocols. GraphQL with Apollo. REST API design. WebSocket implementation for real-time features. BFF pattern.",
+      "context_data": {
+        "hr": "Experienced in designing and consuming diverse API protocols including GraphQL, REST, and WebSockets for real-time data communication.",
+        "developer": "I've built complex GraphQL schemas with Apollo and implemented real-time features using WebSockets, specifically for AI agent communication.",
+        "friend": "Whether it's GraphQL or WebSockets, I love connecting systems. There's something cool about seeing data flow instantly across the app."
+      }
+    },
+    "skill_testing": {
+      "id": "skill_testing",
+      "keywords": ["testing", "qa", "jest", "playwright", "cypress", "rtl", "automation"],
+      "embeddingSourceText": "Testing and Quality Assurance. Jest, Playwright, React Testing Library. Unit, Integration, and E2E testing. CI/CD automation.",
+      "context_data": {
+        "hr": "He implements comprehensive testing strategies using Jest and Playwright, ensuring high code coverage and reliable production deployments.",
+        "developer": "I rely on Jest and RTL for unit tests and Playwright for E2E. I set up CI pipelines to block merges if coverage drops or tests fail.",
+        "friend": "I sleep better at night knowing my tests are green. Jest and Playwright are my safety net so I don't break production!"
+      }
+    },
+    "project_chatagent_tech": {
+      "id": "project_chatagent_tech",
+      "keywords": ["chatagent", "ai", "artificial intelligence", "llm", "langchain", "websocket", "hexaware"],
+      "embeddingSourceText": "Technical details of ChatAgent project. AI-powered tools, MCP servers, LangChain, Python, WebSocket API. Custom AI agent integration.",
+      "context_data": {
+        "hr": "Currently developing 'ChatAgent', an enterprise AI system integrating LLMs via LangChain and MCP servers, utilizing WebSockets for real-time agent interaction.",
+        "developer": "ChatAgent is technically interesting—we use WebSockets to stream data from Python/LangChain agents directly to a React frontend.",
+        "friend": "I'm building this sci-fi level AI project where agents use tools to help users. It's cutting edge stuff with LLMs and real-time sockets."
+      }
+    },
+    "project_bonfire_tech": {
+      "id": "project_bonfire_tech",
+      "keywords": ["bonfire", "dating", "nx", "monorepo", "architecture", "white label", "configurability"],
+      "embeddingSourceText": "Technical details of Bonfire dating app. NX Monorepo architecture. White-label solution. Configurable UI per brand. SonarCloud integration.",
+      "context_data": {
+        "hr": "Architected the 'Bonfire' dating platform using an NX monorepo, allowing for a scalable white-label solution that supports multiple distinct brand configurations.",
+        "developer": "For Bonfire, we used an NX monorepo to share UI libraries across multiple brand apps. The challenge was making the UI completely configurable via JSON.",
+        "friend": "The Dating App project was a puzzle—we had to build one app that could look like ten different apps depending on the configuration."
+      }
+    },
+    "project_adam_tech": {
+      "id": "project_adam_tech",
+      "keywords": ["adam", "ecommerce", "revenue", "performance", "optimization", "apollo", "caching"],
+      "embeddingSourceText": "Technical details of A-Dam e-commerce. Revenue growth. Next.js migration. Apollo Caching. Performance optimization for Black Friday.",
+      "context_data": {
+        "hr": "At A-Dam, he led a migration to Next.js and optimized Apollo caching, resulting in a 100% revenue increase and successful expansion to US/China markets.",
+        "developer": "We migrated a CRA app to Next.js for SEO. I wrote custom Apollo cache wrappers to handle the massive load we got during Black Friday sales.",
+        "friend": "We rebuilt the webshop to be super fast, and it literally doubled the company's sales. Seeing the revenue graph go up was an amazing feeling."
+      }
+    },
+    "project_eriks_tech": {
+      "id": "project_eriks_tech",
+      "keywords": ["eriks", "legacy", "migration", "websphere", "headless", "refactoring", "monolith"],
+      "embeddingSourceText": "Technical details of Eriks WebShop. Legacy migration from WebSphere. Headless React architecture. Strangler pattern. Digital archaeology.",
+      "context_data": {
+        "hr": "Led the modernization of a legacy WebSphere monolith, transitioning it to a flexible Headless React architecture to improve agility and performance.",
+        "developer": "This was a textbook 'strangler pattern' migration. We slowly replaced parts of the Java monolith with Headless React apps sharing a Redux state.",
+        "friend": "It was like digital archaeology—digging through old code and replacing it with modern React. Hard work, but satisfying to see the speed boost."
+      }
+    },
+    "personal_garage": {
+      "id": "personal_garage",
+      "keywords": ["garage", "motorcycle", "engineering", "history", "childhood", "tinkering", "passion"],
+      "embeddingSourceText": "Origin story. Started in father's garage fixing motorcycles. 30 years of engineering passion. Rusty tools. Hands-on experience.",
+      "context_data": {
+        "hr": "Serhii has a lifelong passion for engineering, applying the same problem-solving dedication to software that he developed working on mechanical systems.",
+        "developer": "I've been fixing things for 30 years. It started with motorcycles in a garage, and that same 'figure it out' mindset applies to debugging code today.",
+        "friend": "My engineering life started with rusty tools in my dad's garage fixing old bikes. I just love taking things apart and making them work better."
+      }
+    },
+    "personal_smarthome": {
+      "id": "personal_smarthome",
+      "keywords": ["smart home", "automation", "hobby", "llm", "local ai", "cursor", "family"],
+      "embeddingSourceText": "Current hobby projects. Smart home automation. Using Local LLMs and Cursor. Building for family comfort.",
+      "context_data": {
+        "hr": "He actively stays ahead of technology trends, currently experimenting with local LLM integration for advanced home automation systems.",
+        "developer": "Right now, I'm using Cursor and local LLMs to build custom automation for my house. It's a great way to learn AI integration practically.",
+        "friend": "I'm currently obsessed with wiring up my house with AI. I'm building a system to make life easier for my family—it's the ultimate side project!"
+      }
+    },
+    "personal_outdoors": {
+      "id": "personal_outdoors",
+      "keywords": ["hiking", "mountains", "outdoors", "nature", "snowboarding", "hobbies", "recharge"],
+      "embeddingSourceText": "Outdoor interests. Hiking, mountains, snowboarding. Organizing trips. Connection with nature. Work-life balance.",
+      "context_data": {
+        "hr": "Outside of work, he is an avid outdoor enthusiast who organizes multi-day hiking expeditions, demonstrating leadership and resilience.",
+        "developer": "I recharge by getting away from screens. Hiking and snowboarding in the mountains clears my head and helps me solve problems better when I get back.",
+        "friend": "I grew up near mountains, so I need that nature fix! I love organizing hiking trips for friends. There's nothing like reaching a peak to clear your mind."
+      }
+    }
+  }
+}

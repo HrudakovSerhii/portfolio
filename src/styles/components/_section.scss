@@ -1,0 +1,177 @@
+.content-section {
+  position: relative;
+  min-height: calc(100vh - #{$spacing-3xl});
+  margin: 0 auto;
+  background-color: transparent;
+
+  .parallax-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .section-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: $spacing-md;
+
+    @include desktop {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-xl;
+    }
+
+    // Non-square images: always stack vertically (image above text)
+    &.non-square-image {
+      @include desktop {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-lg;
+      }
+    }
+
+    // Square images: use zig-zag positioning on desktop
+    &.zig-zag-left {
+      @include desktop {
+        .section-visual {
+          order: 1;
+        }
+
+        .section-body {
+          order: 2;
+        }
+      }
+    }
+
+    &.zig-zag-right {
+      @include desktop {
+        .section-visual {
+          order: 2;
+        }
+
+        .section-body {
+          order: 1;
+        }
+      }
+    }
+  }
+
+  .section-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    @include desktop {
+      min-width: 50%;
+    }
+  }
+
+  .section-visual-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+
+    img,
+    .image-container,
+    .generative-image {
+      width: 100%;
+      height: auto;
+      border-radius: $radius-2xl;
+      object-fit: contain;
+    }
+  }
+
+  .section-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: normal;
+    height: 100%;
+    width: 100%;
+    background: none;
+
+    @include desktop {
+      gap: $spacing-lg;
+    }
+  }
+
+  .section-header {
+    text-align: start;
+
+    .section-title {
+      font-size: $font-size-3xl;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: $spacing-sm;
+    }
+
+    .section-query {
+      font-size: $font-size-lg;
+      color: var(--color-text-secondary);
+      font-style: italic;
+      margin: 0;
+    }
+  }
+
+  .section-body-content {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    font-size: $font-size-2xl;
+    color: var(--color-text);
+    min-width: 30%;
+    width: 100%;
+    height: 100%;
+
+    p {
+      margin-bottom: $spacing-md;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.content-section--contact {
+  .contact-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+
+    @include desktop {
+      flex-direction: row;
+      gap: $spacing-2xl;
+    }
+  }
+
+  .contact-link {
+    @include animated-underline(-3px, 0, 0, 100%);
+
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color $transition-medium;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+
+    &:active {
+      color: var(--color-accent-hover);
+    }
+  }
+}

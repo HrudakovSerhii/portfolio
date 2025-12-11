@@ -1,13 +1,334 @@
-// Header component styles
-
 .header {
-    background-color: $background-color;
-    border-bottom: 1px solid lighten($dark-gray, 30%);
-    padding: $spacing-md 0;
-    
-    &__title {
-        font-size: $font-size-xl;
-        color: $primary-color;
-        margin-bottom: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $header-height;
+  background-color: var(--color-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  z-index: $z-header;
+  transition: all $transition-base;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+
+  @include mobile {
+    padding: 0 $spacing-md;
+  }
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.header-brand-text {
+  font-size: $font-size-base;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  display: none;
+
+  @include tablet {
+    display: block;
+  }
+}
+
+.header-brand-sub-text {
+  font-size: $font-size-xs;
+  font-weight: 400;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  display: none;
+
+  @include tablet {
+    display: inline-block;
+  }
+}
+
+.header-nav-toggle {
+  @include interactive-control;
+  display: none;
+  font-size: $font-size-lg;
+  padding: $spacing-xs;
+  flex-shrink: 0;
+
+  @include mobile {
+    display: flex;
+  }
+
+  .nav-toggle-icon {
+    line-height: 1;
+  }
+
+  &[aria-expanded="true"] .nav-toggle-icon {
+    transform: rotate(90deg);
+  }
+}
+
+.header-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $spacing-s;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 2rem;
+    background: linear-gradient(to left, var(--color-bg), transparent);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  @media (min-width: 769px) {
+    &:has(.header-nav-item:nth-child(5))::after {
+      opacity: 1;
     }
+  }
+
+  @include mobile {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: visible;
+    overflow-y: auto;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: calc(100% + $spacing-xs);
+    left: $spacing-md;
+    right: $spacing-md;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all $transition-base;
+    z-index: 100;
+
+    &.is-open {
+      max-height: 400px;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: var(--color-text);
+  pointer-events: none;
+  z-index: 10;
+
+  /*
+     Animation Logic:
+     We animate transform (position) and width.
+     cubic-bezier adds a slight "momentum" feel.
+  */
+  transition:
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.2s ease;
+
+  opacity: 0;
+  will-change: transform, width;
+
+  @include mobile {
+    display: none !important;
+  }
+}
+
+.header-nav-item {
+  position: relative;
+  display: inline-block;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-xs;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all $transition-base;
+  animation: slideInNav 300ms ease forwards;
+  opacity: 0;
+  transform: translateX(-10px);
+
+  @include tablet {
+    font-size: $font-size-sm;
+  }
+
+  @include mobile {
+    display: block;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-border);
+    animation: none;
+    opacity: 1;
+    transform: none;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &::before {
+      display: none;
+    }
+
+    &.active {
+      background-color: var(--color-bg-secondary);
+      font-weight: 600;
+    }
+
+    &:active {
+      transform: none;
+      background-color: var(--color-bg-tertiary);
+    }
+  }
+
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: calc(-#{$spacing-s} / 2);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 1rem;
+    background-color: var(--color-border);
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  @include animated-underline(0px, $spacing-sm, $spacing-sm);
+
+  &:hover {
+    transform: scaleY(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  @include mobile {
+    &::after {
+      display: none;
+    }
+  }
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 50}ms;
+    }
+  }
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-s;
+  flex-shrink: 0;
+
+  .header-role-badge {
+    @include interactive-control;
+
+    display: none;
+    gap: $spacing-sm;
+    font-size: $font-size-xs;
+    font-weight: 500;
+
+    @include tablet {
+      display: flex;
+    }
+
+    @include focus-visible;
+
+    .header-role-icon {
+      font-size: $font-size-sm;
+      line-height: 1;
+    }
+
+    .header-role-text {
+      text-transform: capitalize;
+    }
+  }
+
+  .control-button {
+    @include interactive-control;
+    font-size: $font-size-sm;
+
+    .control-icon {
+      font-size: $font-size-lg;
+      line-height: 1;
+
+      @include mobile {
+        font-size: $font-size-base;
+      }
+    }
+  }
+
+  .control-select {
+    @include interactive-control;
+    font-size: $font-size-xs;
+
+    @include mobile {
+      padding: $spacing-xs $spacing-sm;
+
+      &:hover {
+        padding: calc(#{$spacing-xs} - 1px) calc(#{$spacing-sm} - 1px);
+      }
+    }
+
+    option {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+  }
 }

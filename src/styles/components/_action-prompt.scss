@@ -1,0 +1,19 @@
+.action-prompt {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  bottom: $spacing-2xl;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $transition-base, visibility $transition-base;
+
+  @include mobile {
+    padding: $spacing-md 0 0;
+  }
+
+  &.action-prompt--visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}

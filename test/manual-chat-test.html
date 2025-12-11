@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Trigger Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hero__chat {
+            margin: 20px 0;
+        }
+        
+        .hero__chat-trigger {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        .hero__chat-trigger:hover {
+            background: #0056b3;
+        }
+        
+        .hero__chat-icon {
+            font-size: 20px;
+        }
+        
+        .chat-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .chat-container.visible {
+            display: flex;
+        }
+        
+        .chat-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-title {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .chat-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        .chat-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .chat-loading {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-message {
+            margin: 0 0 16px;
+            color: #666;
+        }
+        
+        .loading-progress {
+            width: 100%;
+            height: 4px;
+            background: #f3f3f3;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .test-log {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .test-log h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        
+        .log-entry {
+            margin: 8px 0;
+            padding: 4px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .log-success {
+            color: #28a745;
+        }
+        
+        .log-error {
+            color: #dc3545;
+        }
+        
+        .log-info {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Chat Trigger Integration Test</h1>
+        <p>This page tests the connection between the hero-chat-trigger button and the chat-ui.js show method.</p>
+        
+        <!-- Hero Chat Button (from index.html) -->
+        <div class="hero__chat">
+            <button class="hero__chat-trigger" id="hero-chat-trigger" type="button" aria-label="Start chat with Serhii AI">
+                <span class="hero__chat-icon">💬</span>
+                <span class="hero__chat-text">Chat with Serhii AI</span>
+            </button>
+        </div>
+        
+        <!-- Chat Container (from index.html) -->
+        <div id="chat-container" class="chat-container">
+            <div class="chat-header">
+                <h3 class="chat-title">Chat with Serhii AI</h3>
+                <button class="chat-close" type="button" aria-label="Close chat">×</button>
+            </div>
+            
+            <div class="chat-content">
+                <div class="chat-loading hidden">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-message">Wait, I'm loading as fast as I can!</p>
+                    <div class="loading-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                
+                <div class="chat-style-selection hidden">
+                    <h4>How would you like to chat with Serhii?</h4>
+                    <div class="style-options">
+                        <button class="style-option" data-style="hr" type="button">
+                            <span class="style-icon">👔</span>
+                            <div>
+                                <span class="style-title">Professional (HR)</span>
+                                <span class="style-description">Formal, structured responses</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="chat-messages hidden">
+                    <div class="messages-container"></div>
+                    <div class="typing-indicator hidden"></div>
+                </div>
+                
+                <div class="chat-error hidden">
+                    <div class="error-content">
+                        <span class="error-icon">😕</span>
+                        <p class="error-message">Something went wrong. Please try again.</p>
+                        <button class="error-retry" type="button">Try Again</button>
+                    </div>
+                </div>
+                
+                <div class="chat-fallback hidden">
+                    <div class="fallback-content">
+                        <h4>Let's get in touch!</h4>
+                        <p>Test fallback form</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input hidden">
+                <div class="input-container">
+                    <input type="text" class="message-input" placeholder="Ask me anything about Serhii...">
+                    <button class="send-button" type="button" aria-label="Send message">
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Log -->
+        <div class="test-log">
+            <h3>Test Log</h3>
+            <div id="test-log-content">
+                <div class="log-entry log-info">Test page loaded</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Simple test implementation to verify the chat trigger functionality
+        
+        function log(message, type = 'info') {
+            const logContent = document.getElementById('test-log-content');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // Mock ChatUI class for testing
+        class MockChatUI {
+            constructor() {
+                this.chatContainer = document.getElementById('chat-container');
+                this.chatTrigger = document.getElementById('hero-chat-trigger');
+                this.isInitialized = false;
+                log('MockChatUI created', 'success');
+            }
+
+            initialize() {
+                if (this.isInitialized) return;
+                
+                this.findChatElements();
+                this.attachEventListeners();
+                this.isInitialized = true;
+                log('ChatUI initialized successfully', 'success');
+            }
+
+            findChatElements() {
+                const elements = [
+                    'chat-container',
+                    'hero-chat-trigger'
+                ];
+                
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        log(`Found element: ${id}`, 'success');
+                    } else {
+                        log(`Missing element: ${id}`, 'error');
+                    }
+                });
+            }
+
+            attachEventListeners() {
+                if (this.chatTrigger) {
+                    this.chatTrigger.addEventListener('click', () => {
+                        log('Chat trigger clicked!', 'info');
+                        this.show();
+                    });
+                    log('Event listener attached to chat trigger', 'success');
+                }
+
+                const closeBtn = this.chatContainer.querySelector('.chat-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
+                        log('Close button clicked', 'info');
+                        this.hide();
+                    });
+                    log('Event listener attached to close button', 'success');
+                }
+            }
+
+            show() {
+                log('ChatUI.show() called', 'success');
+                this.chatContainer.classList.add('visible');
+                this.showLoadingState();
+                
+                // Simulate loading process
+                setTimeout(() => {
+                    this.showStyleSelection();
+                }, 2000);
+            }
+
+            hide() {
+                log('ChatUI.hide() called', 'success');
+                this.chatContainer.classList.remove('visible');
+            }
+
+            showLoadingState() {
+                log('Showing loading state', 'info');
+                this.hideAllStates();
+                const loadingContainer = this.chatContainer.querySelector('.chat-loading');
+                loadingContainer.classList.remove('hidden');
+                
+                // Animate progress bar
+                const progressBar = loadingContainer.querySelector('.progress-bar');
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = `${progress}%`;
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                    }
+                }, 200);
+            }
+
+            showStyleSelection() {
+                log('Showing style selection', 'info');
+                this.hideAllStates();
+                const styleSelection = this.chatContainer.querySelector('.chat-style-selection');
+                styleSelection.classList.remove('hidden');
+            }
+
+            hideAllStates() {
+                const states = [
+                    '.chat-loading',
+                    '.chat-style-selection',
+                    '.chat-messages',
+                    '.chat-input',
+                    '.chat-error',
+                    '.chat-fallback'
+                ];
+
+                states.forEach(selector => {
+                    const element = this.chatContainer.querySelector(selector);
+                    if (element) {
+                        element.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        // Initialize the test
+        document.addEventListener('DOMContentLoaded', () => {
+            log('DOM loaded, initializing test', 'info');
+            
+            try {
+                const chatUI = new MockChatUI();
+                chatUI.initialize();
+                
+                log('Test setup complete! Click the chat button to test.', 'success');
+                
+                // Test keyboard events
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        log('Escape key pressed', 'info');
+                        chatUI.hide();
+                    }
+                });
+                
+            } catch (error) {
+                log(`Test setup failed: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+// Modal Base - Structure, Layout & Animations
+
+// Modal Overlay & Positioning
+.modal-overlay {
+  @include absolute-fill;
+  @include flex-center;
+  position: fixed;
+  z-index: $z-modal-overlay;
+  background: rgba(var(--color-bg-rgb), 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $transition-base, visibility $transition-base;
+  cursor: pointer;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  // Prevent body scroll when modal is open
+  &.active ~ body {
+    overflow: hidden;
+  }
+}
+
+// Base Modal Container
+.modal {
+  position: relative;
+  max-width: 90%;
+  width: 500px;
+  padding: $spacing-2xl;
+  border-radius: $radius-2xl;
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: var(--shadow-lg);
+  cursor: default;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform $transition-base, opacity $transition-base;
+
+  @include mobile {
+    max-width: 95%;
+    padding: $spacing-xl;
+  }
+
+  .modal-overlay.active & {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Modal Structure
+.modal-header {
+  margin-bottom: $spacing-xl;
+  text-align: center;
+}
+
+.modal-body {
+  margin-bottom: $spacing-xl;
+}
+
+.modal-close {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+}
+
+// Animations
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modal-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlay-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal {
+    transition: none;
+  }
+
+  .modal {
+    transform: none;
+  }
+}

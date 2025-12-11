@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive portfolio showcasing professional work and skills through a conversational interface">
+  <meta name="keywords" content="portfolio, developer, projects, skills, experience">
+  <meta name="author" content="Portfolio Owner">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Interactive Portfolio">
+  <meta property="og:description" content="Explore my professional journey through an engaging conversational interface">
+
+  <title>Interactive Portfolio of Serhii Hrudakov</title>
+
+  <link rel="stylesheet" href="./styles/styles.scss">
+</head>
+<body>
+  <div id="initial-loader" class="loader-container" role="status" aria-live="polite" aria-label="Loading portfolio">
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Preparing your experience...</p>
+  </div>
+
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-brand">
+          <span class="header-brand-text">Serhii Hrudakov</span>
+          <span class="header-brand-sub-text">Portfolio</span>
+        </div>
+
+        <button
+          id="header-nav-toggle"
+          class="header-nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="header-nav">
+          <span class="nav-toggle-icon" aria-hidden="true">☰</span>
+        </button>
+
+        <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
+          <!-- Navigation items will be added dynamically -->
+          <div id="nav-indicator" class="nav-indicator"></div>
+        </nav>
+      </div>
+
+      <div class="header-controls">
+        <button
+          id="header-role-badge"
+          class="header-role-badge"
+          aria-label="Change role"
+          title="Click to change role"
+          style="display: none;">
+          <span class="header-role-text" id="header-role-text">View</span>
+        </button>
+
+        <button
+          id="theme-toggle"
+          class="control-button control-button--icon"
+          aria-label="Toggle theme"
+          aria-pressed="false"
+          title="Toggle Theme"
+          data-theme="light">
+          <span class="control-icon" aria-hidden="true">🌙</span>
+        </button>
+
+        <select
+          id="language-selector"
+          class="control-select"
+          aria-label="Select language">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content" role="main" id="main-content">
+    <div class="parallax-background" aria-hidden="true">
+      <div class="parallax-blob parallax-blob--1"></div>
+      <div class="parallax-blob parallax-blob--2"></div>
+      <div class="parallax-blob parallax-blob--3"></div>
+      <div class="parallax-blob parallax-blob--4"></div>
+      <div class="parallax-blob parallax-blob--5"></div>
+      <div class="parallax-blob parallax-blob--6"></div>
+      <div class="parallax-blob parallax-blob--7"></div>
+    </div>
+
+    <section id="welcome-section" class="hero-section">
+      <div class="hero-container">
+        <div class="hero-intro">
+          <h1 class="hero-title"> Hi, I'm <span class="hero-title-gradient">Serhii</span></h1>
+          <h2 class="hero-subtitle">Lead Frontend Engineer</h2>
+          <p class="hero-description" id="hero-description">
+            I bridge the gap between Design, Backend, and Product. <br> With 10+ years in Banking, E-Commerce and SaaS, <br>I fix development workflows to ensure teams ship reliable software on time. <br>I believe clear communication is the most important coding tool.
+          </p>
+        </div>
+        <div class="hero-background-image" id="hero-background-image"></div>
+      </div>
+
+      <div class="hero-roles" id="hero-roles">
+        <span class="hero-roles-title">Let's speak the same language. Tell me about you:</span>
+
+        <div class="hero-roles-grid">
+          <button class="button button--recruiter" data-role="recruiter">
+            <p class="button__description">
+              I'll focus on reliability, estimations, and delivery.
+            </p>
+            <div class="button__content">
+              <div class="button__icon button__icon--blue">
+                <span>💼</span>
+              </div>
+              <span class="button__title">I am Recruiter</span>
+            </div>
+          </button>
+
+          <button class="button button--developer" data-role="developer">
+            <p class="button__description">
+              I'll dive into the tech stack, architecture, and tools.
+            </p>
+            <div class="button__content">
+              <div class="button__icon button__icon--indigo">
+                <span>💻</span>
+              </div>
+              <span class="button__title">I am Developer</span>
+            </div>
+          </button>
+
+          <button class="button button--friend" data-role="friend">
+            <p class="button__description">
+              I'll introduce the human side of my work.
+            </p>
+            <div class="button__content">
+              <div class="button__icon button__icon--teal">
+                <span>👋</span>
+              </div>
+              <span class="button__title">I am Friend</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div id="sections-container" class="sections-container"></div>
+
+    <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-text">Generating content...</span>
+    </div>
+  </main>
+
+  <template id="section-template">
+    <section class="content-section" id="" data-section-id="">
+      <div class="parallax-layer" aria-hidden="true"></div>
+
+      <div class="section-layout">
+        <div class="section-visual">
+          <div class="section-visual-container">
+            <!-- Image will be inserted here -->
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-header">
+            <h2 class="section-title"></h2>
+            <p class="section-query"></p>
+          </div>
+          <div class="section-body-content">
+            <!-- Text content will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+<!--  TODO: Make template for default section content and then use it with dynamic section elements under 2 different templates-->
+  <template id="contact-section-template">
+    <section class="content-section content-section--contact" id="" data-section-id="">
+      <div class="parallax-layer" aria-hidden="true"></div>
+
+      <div class="section-layout">
+        <div class="section-visual">
+          <div class="section-visual-container">
+            <!-- Image will be inserted here -->
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-header">
+            <h2 class="section-title"></h2>
+            <p class="section-query"></p>
+          </div>
+          <div class="section-body-content">
+            <!-- Text content will be inserted here -->
+          </div>
+          <div class="contact-actions">
+            <a
+              href="mailto:"
+              class="contact-link contact-email-link"
+              data-email=""
+              data-name=""
+              aria-label="Send email">
+              Send me an email
+            </a>
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contact-link contact-linkedin-link"
+              aria-label="Connect on LinkedIn">
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="action-prompt-template">
+    <div class="action-prompt" role="region" aria-label="Section interaction">
+      <button
+              class="button prompt-button"
+              aria-label="Submit prompt"
+              data-default-text="Get to know">
+        Next:
+      </button>
+    </div>
+  </template>
+
+  <template id="nav-item-template">
+    <a href="#" class="nav-item" data-section-id="" role="menuitem">
+      <span class="nav-icon" aria-hidden="true"></span>
+      <span class="nav-title"></span>
+    </a>
+  </template>
+
+  <template id="loader-template">
+    <div class="loader" role="status" aria-live="polite">
+      <div class="loader-spinner"></div>
+    </div>
+  </template>
+
+  <template id="generative-image-template">
+    <div class="generative-image">
+      <img class="generative-image__high-res" src="" alt="" />
+      <div class="generative-image__overlay" role="presentation"></div>
+      <div class="generative-image__badge">Refining...</div>
+    </div>
+  </template>
+
+  <template id="personalization-modal-template">
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="personalization-title">
+      <div class="modal-content modal-content--personalization">
+        <h2 id="personalization-title" class="modal-title">Welcome! Let's personalize your experience</h2>
+
+        <div class="personalization-form">
+          <div class="form-group">
+            <label for="user-name-input" class="form-label">What's your name?</label>
+            <input
+              type="text"
+              id="user-name-input"
+              class="form-input"
+              placeholder="Enter your name"
+              maxlength="50"
+              required
+              aria-required="true">
+          </div>
+
+          <div class="form-group">
+            <p class="form-label">I'm a...</p>
+            <div class="role-buttons" role="radiogroup" aria-label="Select your role">
+              <button
+                class="role-button"
+                data-role="recruiter"
+                role="radio"
+                aria-checked="false">
+                <span class="role-icon" aria-hidden="true">💼</span>
+                <span class="role-label">Recruiter</span>
+              </button>
+              <button
+                class="role-button"
+                data-role="developer"
+                role="radio"
+                aria-checked="false">
+                <span class="role-icon" aria-hidden="true">💻</span>
+                <span class="role-label">Developer</span>
+              </button>
+              <button
+                class="role-button"
+                data-role="friend"
+                role="radio"
+                aria-checked="false">
+                <span class="role-icon" aria-hidden="true">👋</span>
+                <span class="role-label">Friend</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="role-change-modal-template">
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="role-change-title">
+      <div class="modal-content modal-content--role-change">
+        <button class="modal-close" aria-label="Close modal">
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <h2 id="role-change-title" class="modal-title">Change Your Role</h2>
+        <p class="modal-description">Select a different perspective to see personalized content</p>
+
+        <div class="hero-roles-grid">
+          <button class="button button--recruiter" data-role="recruiter">
+            <p class="button__description">
+              I'll focus on reliability, estimations, and delivery.
+            </p>
+            <div class="button__content">
+              <div class="button__icon button__icon--blue">
+                <span>💼</span>
+              </div>
+              <span class="button__title">I am Recruiter</span>
+            </div>
+          </button>
+
+          <button class="button button--developer" data-role="developer">
+            <p class="button__description">
+              I'll dive into the tech stack, architecture, and tools.
+            </p>
+            <div class="button__content">
+              <div class="button__icon button__icon--indigo">
+                <span>💻</span>
+              </div>
+              <span class="button__title">I am Developer</span>
+            </div>
+          </button>
+
+          <button class="button button--friend" data-role="friend">
+            <p class="button__description">
+              I'll introduce the human side of my work.
+            </p>
+            <div class="button__content">
+              <div class="button__icon button__icon--teal">
+                <span>👋</span>
+              </div>
+              <span class="button__title">I am Friend</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script type="module" src="./scripts/modules/app-controller/index.js"></script>
+</body>
+</html>
