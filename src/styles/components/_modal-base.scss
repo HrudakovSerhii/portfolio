@@ -1,17 +1,20 @@
 // Modal Base - Structure, Layout & Animations
 
+@use '../base/variables';
+@use '../base/mixins';
+
 // Modal Overlay & Positioning
 .modal-overlay {
-  @include absolute-fill;
-  @include flex-center;
+  @include mixins.absolute-fill;
+  @include mixins.flex-center;
   position: fixed;
-  z-index: $z-modal-overlay;
+  z-index: variables.$z-modal-overlay;
   background: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity $transition-base, visibility $transition-base;
+  transition: opacity variables.$transition-base, visibility variables.$transition-base;
   cursor: pointer;
 
   &.active {
@@ -30,8 +33,8 @@
   position: relative;
   max-width: 90%;
   width: 500px;
-  padding: $spacing-2xl;
-  border-radius: $radius-2xl;
+  padding: variables.$spacing-2xl;
+  border-radius: variables.$radius-2xl;
   background: var(--glass-bg-light);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -40,11 +43,11 @@
   cursor: default;
   transform: scale(0.9);
   opacity: 0;
-  transition: transform $transition-base, opacity $transition-base;
+  transition: transform variables.$transition-base, opacity variables.$transition-base;
 
-  @include mobile {
+  @include mixins.mobile {
     max-width: 95%;
-    padding: $spacing-xl;
+    padding: variables.$spacing-xl;
   }
 
   .modal-overlay.active & {
@@ -55,18 +58,18 @@
 
 // Modal Structure
 .modal-header {
-  margin-bottom: $spacing-xl;
+  margin-bottom: variables.$spacing-xl;
   text-align: center;
 }
 
 .modal-body {
-  margin-bottom: $spacing-xl;
+  margin-bottom: variables.$spacing-xl;
 }
 
 .modal-close {
   position: absolute;
-  top: $spacing-md;
-  right: $spacing-md;
+  top: variables.$spacing-md;
+  right: variables.$spacing-md;
 }
 
 // Animations

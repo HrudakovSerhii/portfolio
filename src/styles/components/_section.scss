@@ -1,6 +1,9 @@
+@use '../base/variables';
+@use '../base/mixins';
+
 .content-section {
   position: relative;
-  min-height: calc(100vh - #{$spacing-3xl});
+  min-height: calc(100vh - #{variables.$spacing-3xl});
   margin: 0 auto;
   background-color: transparent;
 
@@ -18,26 +21,26 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: $spacing-md;
+    gap: variables.$spacing-md;
 
-    @include desktop {
+    @include mixins.desktop {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: $spacing-xl;
+      gap: variables.$spacing-xl;
     }
 
     // Non-square images: always stack vertically (image above text)
     &.non-square-image {
-      @include desktop {
+      @include mixins.desktop {
         display: flex;
         flex-direction: column;
-        gap: $spacing-lg;
+        gap: variables.$spacing-lg;
       }
     }
 
     // Square images: use zig-zag positioning on desktop
     &.zig-zag-left {
-      @include desktop {
+      @include mixins.desktop {
         .section-visual {
           order: 1;
         }
@@ -49,7 +52,7 @@
     }
 
     &.zig-zag-right {
-      @include desktop {
+      @include mixins.desktop {
         .section-visual {
           order: 2;
         }
@@ -68,7 +71,7 @@
     width: 100%;
     height: 100%;
 
-    @include desktop {
+    @include mixins.desktop {
       min-width: 50%;
     }
   }
@@ -86,7 +89,7 @@
     .generative-image {
       width: 100%;
       height: auto;
-      border-radius: $radius-2xl;
+      border-radius: variables.$radius-2xl;
       object-fit: contain;
     }
   }
@@ -100,8 +103,8 @@
     width: 100%;
     background: none;
 
-    @include desktop {
-      gap: $spacing-lg;
+    @include mixins.desktop {
+      gap: variables.$spacing-lg;
     }
   }
 
@@ -109,14 +112,14 @@
     text-align: start;
 
     .section-title {
-      font-size: $font-size-3xl;
+      font-size: variables.$font-size-3xl;
       font-weight: 600;
       color: var(--color-text);
-      margin-bottom: $spacing-sm;
+      margin-bottom: variables.$spacing-sm;
     }
 
     .section-query {
-      font-size: $font-size-lg;
+      font-size: variables.$font-size-lg;
       color: var(--color-text-secondary);
       font-style: italic;
       margin: 0;
@@ -127,14 +130,14 @@
     display: flex;
     justify-content: center;
     align-items: start;
-    font-size: $font-size-2xl;
+    font-size: variables.$font-size-2xl;
     color: var(--color-text);
     min-width: 30%;
     width: 100%;
     height: 100%;
 
     p {
-      margin-bottom: $spacing-md;
+      margin-bottom: variables.$spacing-md;
 
       &:last-child {
         margin-bottom: 0;
@@ -148,23 +151,23 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: $spacing-lg;
-    margin-top: $spacing-lg;
+    gap: variables.$spacing-lg;
+    margin-top: variables.$spacing-lg;
 
-    @include desktop {
+    @include mixins.desktop {
       flex-direction: row;
-      gap: $spacing-2xl;
+      gap: variables.$spacing-2xl;
     }
   }
 
   .contact-link {
-    @include animated-underline(-3px, 0, 0, 100%);
+    @include mixins.animated-underline(-3px, 0, 0, 100%);
 
-    font-size: $font-size-xl;
+    font-size: variables.$font-size-xl;
     font-weight: 600;
     color: var(--color-text);
     text-decoration: none;
-    transition: color $transition-medium;
+    transition: color variables.$transition-medium;
 
     &:hover {
       color: var(--color-accent);

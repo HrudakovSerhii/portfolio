@@ -1,11 +1,12 @@
 // Footer component styles
 
 @use 'sass:color';
+@use '../base/variables';
 
 .footer {
     position: relative;
-    max-width: $content-max-width;
-    padding: $spacing-lg $spacing-md;
+    max-width: variables.$content-max-width;
+    padding: variables.$spacing-lg variables.$spacing-md;
     margin-top: auto;
     background-color: var(--color-surface);
     color: var(--color-text);
@@ -19,7 +20,7 @@
             flex-direction: row;
 
             li {
-                padding: 0 $spacing-xs;
+                padding: 0 variables.$spacing-xs;
             }
 
             &__icon {
@@ -27,10 +28,10 @@
                 background-size: contain;
                 background-repeat: no-repeat;
                 background-color: var(--color-primary);
-                padding: $spacing-md;
+                padding: variables.$spacing-md;
                 border: 2px solid var(--color-border);
                 border-radius: 100%;
-                transition: background-color $transition-base;
+                transition: background-color variables.$transition-base;
 
                 &:hover {
                     border: 2px solid var(--color-border);
@@ -58,22 +59,22 @@
 
     &__copyright,
     &__rights {
-        font-size: $font-size-xs;
+        font-size: variables.$font-size-xs;
         margin: 0;
     }
 
     &__bottom {
         display: inline-block;
-        margin-top: $spacing-xs;
+        margin-top: variables.$spacing-xs;
     }
 
     &__text {
         margin-bottom: 0;
-        font-size: $font-size-sm;
+        font-size: variables.$font-size-sm;
     }
 
     &__language {
         position: absolute;
-        right: $spacing-md;
+        right: variables.$spacing-md;
     }
 }

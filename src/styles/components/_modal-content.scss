@@ -1,44 +1,35 @@
 // Modal Content - Specific Modal Variants
 
+@use '../base/variables';
+@use '../base/mixins';
+
 // Modal Typography
 .modal-title {
-  font-size: $font-size-2xl;
+  font-size: variables.$font-size-2xl;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: $spacing-sm;
+  margin-bottom: variables.$spacing-sm;
 }
 
 .modal-subtitle {
-  font-size: $font-size-base;
+  font-size: variables.$font-size-base;
   color: var(--color-text-secondary);
-  line-height: $line-height-normal;
+  line-height: variables.$line-height-normal;
 }
 
 // Personalization Modal Variant
 .personalization-modal {
   .name-input-wrapper {
-    margin-bottom: $spacing-xl;
-
-    label {
-      @extend .label;
-    }
-
-    input {
-      @extend .input;
-    }
+    margin-bottom: variables.$spacing-xl;
   }
 
   .role-selection {
-    .role-label {
-      @extend .label;
-    }
-
     .role-buttons {
       display: flex;
       flex-direction: column;
-      gap: $spacing-md;
+      gap: variables.$spacing-md;
 
-      @include tablet {
+      @include mixins.tablet {
         flex-direction: row;
         justify-content: center;
       }
@@ -49,19 +40,19 @@
 // Role Button (specific to modals)
 .role-button {
   flex: 1;
-  padding: $spacing-md $spacing-lg;
-  font-size: $font-size-base;
+  padding: variables.$spacing-md variables.$spacing-lg;
+  font-size: variables.$font-size-base;
   font-weight: 500;
-  font-family: $font-family-base;
+  font-family: variables.$font-family-base;
   color: var(--color-text);
   background: var(--glass-overlay-light);
   border: 2px solid var(--color-border);
-  border-radius: $radius-lg;
+  border-radius: variables.$radius-lg;
   cursor: pointer;
-  transition: all $transition-fast;
+  transition: all variables.$transition-fast;
   text-transform: capitalize;
 
-  @include focus-visible;
+  @include mixins.focus-visible;
 
   &:hover:not(:disabled) {
     background: var(--glass-overlay-light-hover);
@@ -90,9 +81,9 @@
     &::after {
       content: '✓';
       position: absolute;
-      top: $spacing-xs;
-      right: $spacing-xs;
-      font-size: $font-size-sm;
+      top: variables.$spacing-xs;
+      right: variables.$spacing-xs;
+      font-size: variables.$font-size-sm;
       color: var(--color-accent);
     }
   }
@@ -103,9 +94,9 @@
   .role-buttons {
     display: flex;
     flex-direction: column;
-    gap: $spacing-md;
+    gap: variables.$spacing-md;
 
-    @include tablet {
+    @include mixins.tablet {
       flex-direction: row;
       justify-content: center;
     }
@@ -115,18 +106,18 @@
 .modal-content--role-change {
   max-width: 90%;
   width: auto;
-  padding: $spacing-2xl;
+  padding: variables.$spacing-2xl;
   background-color: var(--color-bg);
-  border-radius: $radius-2xl;
+  border-radius: variables.$radius-2xl;
   box-shadow: var(--shadow-xl);
   cursor: default;
   transform: scale(0.9);
   opacity: 0;
-  transition: transform $transition-base, opacity $transition-base;
+  transition: transform variables.$transition-base, opacity variables.$transition-base;
 
-  @include mobile {
+  @include mixins.mobile {
     max-width: 95%;
-    padding: $spacing-xl;
+    padding: variables.$spacing-xl;
   }
 
   .modal-overlay.active & {
@@ -136,8 +127,8 @@
 
   .modal-close {
     position: absolute;
-    top: $spacing-md;
-    right: $spacing-md;
+    top: variables.$spacing-md;
+    right: variables.$spacing-md;
     width: 2rem;
     height: 2rem;
     display: flex;
@@ -145,13 +136,13 @@
     justify-content: center;
     background: transparent;
     border: none;
-    border-radius: $radius-md;
-    font-size: $font-size-2xl;
+    border-radius: variables.$radius-md;
+    font-size: variables.$font-size-2xl;
     color: var(--color-text-secondary);
     cursor: pointer;
-    transition: all $transition-fast;
+    transition: all variables.$transition-fast;
 
-    @include focus-visible;
+    @include mixins.focus-visible;
 
     &:hover {
       background-color: var(--color-surface-secondary);
@@ -161,26 +152,26 @@
 
   .modal-title {
     text-align: center;
-    margin-bottom: $spacing-sm;
+    margin-bottom: variables.$spacing-sm;
   }
 
   .modal-description {
     text-align: center;
-    font-size: $font-size-base;
+    font-size: variables.$font-size-base;
     color: var(--color-text-secondary);
-    margin-bottom: $spacing-xl;
+    margin-bottom: variables.$spacing-xl;
   }
 
   // Reuse hero-roles styles within modal
   .hero-roles-grid {
     display: flex;
     flex-direction: column;
-    gap: $spacing-lg;
+    gap: variables.$spacing-lg;
     justify-content: center;
     align-items: center;
     width: 100%;
 
-    @include desktop {
+    @include mixins.desktop {
       flex-direction: row;
     }
   }

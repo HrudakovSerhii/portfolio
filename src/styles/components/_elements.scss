@@ -1,18 +1,21 @@
+@use '../base/variables';
+@use '../base/mixins';
+
 .button {
   position: relative;
-  padding: $spacing-md $spacing-xl;
-  font-size: $font-size-base;
+  padding: variables.$spacing-md variables.$spacing-xl;
+  font-size: variables.$font-size-base;
   font-weight: 600;
-  font-family: $font-family-base;
+  font-family: variables.$font-family-base;
   color: var(--color-text);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: $radius-xl;
+  border-radius: variables.$radius-xl;
   box-shadow: var(--shadow-sm);
-  transition: all $transition-medium;
+  transition: all variables.$transition-medium;
   white-space: nowrap;
 
-  @include focus-visible;
+  @include mixins.focus-visible;
 
   &:hover {
     transform: scale(1.08);
@@ -58,15 +61,15 @@
   &__content {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
+    gap: variables.$spacing-sm;
   }
 
   &__icon {
-    border-radius: $radius-lg;
+    border-radius: variables.$radius-lg;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: $font-size-lg;
+    font-size: variables.$font-size-lg;
     flex-shrink: 0;
 
     &--blue {
@@ -95,7 +98,7 @@
   }
 
   &__title {
-    font-size: $font-size-base;
+    font-size: variables.$font-size-base;
     font-weight: 600;
     color: var(--color-text);
     white-space: nowrap;
@@ -108,17 +111,17 @@
     transform: translateX(-50%) translateY(0.5rem);
     background-color: var(--color-surface);
     color: var(--color-text-secondary);
-    font-size: $font-size-sm;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $radius-lg;
+    font-size: variables.$font-size-sm;
+    padding: variables.$spacing-sm variables.$spacing-md;
+    border-radius: variables.$radius-lg;
     box-shadow: var(--shadow-xl);
     border: 1px solid var(--color-border);
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: all $transition-medium;
+    transition: all variables.$transition-medium;
     pointer-events: none;
-    z-index: $z-nav;
+    z-index: variables.$z-nav;
     margin: 0;
 
     &::after {
@@ -139,9 +142,9 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  @include mobile {
-    padding: $spacing-sm $spacing-lg;
-    font-size: $font-size-sm;
+  @include mixins.mobile {
+    padding: variables.$spacing-sm variables.$spacing-lg;
+    font-size: variables.$font-size-sm;
   }
 }
 
@@ -153,13 +156,13 @@
   align-items: center;
   justify-content: center;
   background: var(--glass-button-bg);
-  border-radius: $radius-md;
+  border-radius: variables.$radius-md;
   color: var(--color-text);
-  font-size: $font-size-xl;
+  font-size: variables.$font-size-xl;
   line-height: 1;
-  transition: background $transition-fast, transform $transition-fast;
+  transition: background variables.$transition-fast, transform variables.$transition-fast;
 
-  @include focus-visible;
+  @include mixins.focus-visible;
 
   &:hover {
     background: var(--glass-button-bg-hover);
@@ -189,14 +192,14 @@
 
 .input {
   width: 100%;
-  padding: $spacing-md;
-  font-size: $font-size-base;
-  font-family: $font-family-base;
+  padding: variables.$spacing-md;
+  font-size: variables.$font-size-base;
+  font-family: variables.$font-family-base;
   color: var(--color-text);
   background: var(--glass-overlay-light);
   border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  transition: border-color $transition-fast, background $transition-fast;
+  border-radius: variables.$radius-md;
+  transition: border-color variables.$transition-fast, background variables.$transition-fast;
 
   &::placeholder {
     color: var(--color-text-secondary);
@@ -212,8 +215,8 @@
 
 .label {
   display: block;
-  font-size: $font-size-sm;
+  font-size: variables.$font-size-sm;
   font-weight: 500;
   color: var(--color-text);
-  margin-bottom: $spacing-sm;
+  margin-bottom: variables.$spacing-sm;
 }
