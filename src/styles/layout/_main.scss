@@ -1,13 +1,16 @@
 // Main layout styles
 
+@use '../base/variables';
+@use '../base/mixins';
+
 .main-content {
     position: relative;
     display: flex;
     flex-direction: column;
-    margin-top: $spacing-3xl;
+    margin-top: variables.$spacing-3xl;
     z-index: 1;
 
-    @include desktop {
+    @include mixins.desktop {
         margin-top: 0;
     }
 
@@ -17,11 +20,11 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        max-width: $content-max-width;
-        padding: $spacing-lg;
+        max-width: variables.$content-max-width;
+        padding: variables.$spacing-lg;
 
-        @include desktop {
-            padding: $spacing-xl;
+        @include mixins.desktop {
+            padding: variables.$spacing-xl;
         }
     }
 

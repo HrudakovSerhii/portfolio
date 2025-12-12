@@ -34,7 +34,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "base/_variables.scss"; @import "base/_mixins.scss";`
+        additionalData: `@use "sass:math"; @use "base/variables" as *; @use "base/mixins" as *;`
       }
     }
   }

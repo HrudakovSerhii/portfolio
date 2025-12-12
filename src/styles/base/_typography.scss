@@ -1,33 +1,35 @@
+@use 'variables';
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    line-height: $line-height-tight;
-    margin-bottom: $spacing-md;
+    line-height: variables.$line-height-tight;
+    margin-bottom: variables.$spacing-md;
 }
 
 h1 {
-    font-size: $font-size-2xl;
+    font-size: variables.$font-size-2xl;
 }
 
 h2 {
-    font-size: $font-size-xl;
+    font-size: variables.$font-size-xl;
 }
 
 h3 {
-    font-size: $font-size-lg;
+    font-size: variables.$font-size-lg;
 }
 
 h4, h5, h6 {
-    font-size: $font-size-base;
+    font-size: variables.$font-size-base;
 }
 
 p {
-    margin-bottom: $spacing-md;
-    line-height: $line-height-base;
+    margin-bottom: variables.$spacing-md;
+    line-height: variables.$line-height-base;
 }
 
 a {
     color: var(--color-secondary);
-    transition: color $transition-base;
+    transition: color variables.$transition-base;
 
     &:hover {
         color: var(--color-accent);

@@ -1,3 +1,5 @@
+@use '../base/variables';
+
 .loader-container {
   position: fixed;
   top: 0;
@@ -10,7 +12,7 @@
   justify-content: center;
   background: var(--color-bg);
   z-index: 9999;
-  transition: opacity $transition-slow, visibility $transition-slow;
+  transition: opacity variables.$transition-slow, visibility variables.$transition-slow;
 
   &.hidden {
     opacity: 0;
@@ -20,17 +22,17 @@
 }
 
 .loader-spinner {
-  width: $spacing-3xl;
-  height: $spacing-3xl;
-  border: $hero-profile-border-width solid var(--color-border);
+  width: variables.$spacing-3xl;
+  height: variables.$spacing-3xl;
+  border: variables.$hero-profile-border-width solid var(--color-border);
   border-top-color: var(--color-accent);
-  border-radius: $radius-full;
+  border-radius: variables.$radius-full;
   animation: spin 1s linear infinite;
 }
 
 .loader-text {
-  margin-top: $spacing-lg;
-  font-size: $font-size-base;
+  margin-top: variables.$spacing-lg;
+  font-size: variables.$font-size-base;
   color: var(--color-text-secondary);
   animation: pulse 2s ease-in-out infinite;
 }
@@ -38,23 +40,23 @@
 .typing-indicator {
   display: inline-flex;
   align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-md $spacing-lg;
+  gap: variables.$spacing-sm;
+  padding: variables.$spacing-md variables.$spacing-lg;
   background: var(--color-surface);
-  border-radius: $radius-lg;
-  margin: $spacing-lg 0;
+  border-radius: variables.$radius-lg;
+  margin: variables.$spacing-lg 0;
 
   .typing-text {
-    font-size: $font-size-base;
+    font-size: variables.$font-size-base;
     color: var(--color-text-secondary);
   }
 }
 
 .typing-dot {
-  width: $spacing-xs;
-  height: $spacing-xs;
+  width: variables.$spacing-xs;
+  height: variables.$spacing-xs;
   background: var(--color-accent);
-  border-radius: $radius-full;
+  border-radius: variables.$radius-full;
   animation: pulse 1.4s ease-in-out infinite;
 
   &:nth-child(1) {
