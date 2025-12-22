@@ -6,7 +6,6 @@ import ParallaxController from '../parallax-controller';
 import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
-import GenerativeImage from '../user-interface/generative-image/generative-image.js';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
@@ -20,7 +19,6 @@ const ELEMENT_IDS = {
   mainContent: 'main-content',
   heroSection: 'hero-section',
   heroRoles: 'hero-roles',
-  heroBackgroundImage: 'hero-background-image',
   sectionsContainer: 'sections-container',
   typingIndicator: 'typing-indicator'
 };
@@ -51,7 +49,6 @@ class AppController {
       mainContent: null,
       heroSection: null,
       heroRoles: null,
-      heroBackgroundImage: null,
       sectionsContainer: null,
       typingIndicator: null
     };
@@ -87,7 +84,6 @@ class AppController {
         (nextSectionId) => this.revealSection(nextSectionId, '')
       );
 
-      this._initializeHeroBackgroundImage();
       this._hideInitialLoader();
       this.initialized = true;
     } catch (error) {
@@ -115,7 +111,6 @@ class AppController {
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
     this.elements.heroRoles = document.getElementById(ELEMENT_IDS.heroRoles);
-    this.elements.heroBackgroundImage = document.getElementById(ELEMENT_IDS.heroBackgroundImage);
     this.elements.sectionsContainer = document.getElementById(ELEMENT_IDS.sectionsContainer);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
 
@@ -125,7 +120,6 @@ class AppController {
       'languageSelector',
       'mainContent',
       'heroRoles',
-      'heroBackgroundImage',
       'sectionsContainer'
     ];
 
@@ -171,47 +165,6 @@ class AppController {
     }
   }
 
-  _initializeHeroBackgroundImage() {
-    try {
-      this._tryToInitializeHeroBackgroundImage()
-    } catch (error) {
-      this._handleInitializeHeroBackgroundImageFailure(error)
-    }
-  }
-
-  _tryToInitializeHeroBackgroundImage() {
-    const container = this.elements.heroBackgroundImage;
-
-    if (!container) {
-      console.warn('Hero background image container not found');
-      return;
-    }
-
-    const existingImg = container.querySelector('img');
-    if (existingImg) {
-      existingImg.remove();
-    }
-
-    const generativeHeroImage = new GenerativeImage({
-      highResSrc: './backgrounds/karpaty.full.jpeg',
-      lowResSrc: './backgrounds/karpaty.low.jpeg',
-      alt: 'Hero background image',
-      shouldAnimate: true,
-      aspectClass: 'aspect-portrait',
-      gridConfig: {
-        rows: 8,
-        cols: 8
-      }
-    });
-
-    const imageElement = generativeHeroImage.create();
-    container.appendChild(imageElement);
-  }
-
-  _handleInitializeHeroBackgroundImageFailure(error) {
-    console.error('Failed to initialize hero background image:', error);
-  }
-
   _hideInitialLoader() {
     if (this.elements.initialLoader) {
       this.elements.initialLoader.style.opacity = '0';
@@ -255,8 +208,10 @@ class AppController {
 
   async _restoreRevealedSections(revealedSections, role) {
     for (const sectionId of revealedSections) {
-      await this._handleRevealNavigationItem(sectionId);
-      await this._restoreSingleSection(sectionId, role);
+      await Promise.all([
+        this._handleRevealNavigationItem(sectionId),
+        this._restoreSingleSection(sectionId, role)
+      ]);
     }
 
     const lastSection = this._getSectionElement(revealedSections[revealedSections.length - 1])
@@ -284,7 +239,7 @@ class AppController {
 
       this.stateManager.setRole(role);
       this.elements.heroRoles.classList.add('invisible');
-      this.headerController.updateRoleBadge();
+      this.headerController.updateRoleBadge(role);
 
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
