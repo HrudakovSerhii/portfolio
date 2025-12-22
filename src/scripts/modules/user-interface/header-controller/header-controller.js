@@ -183,7 +183,7 @@ class HeaderController {
 
     if (role) {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
-      this.roleBadgeText.textContent = `${roleText} View`;
+      this.roleBadgeText.textContent = `${roleText === 'Developer' ? 'Engineer' : roleText} View`;
       this.roleBadge.style.display = 'flex';
     } else {
       this.roleBadge.style.display = 'none';
