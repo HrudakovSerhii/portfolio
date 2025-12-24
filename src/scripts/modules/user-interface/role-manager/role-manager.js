@@ -4,7 +4,7 @@ const MODAL_FOCUS_DELAY = 100;
 const MODAL_ELEMENTS = {
   overlay: 'modal-overlay',
   content: 'modal-content',
-  close: 'modal-close',
+  close: 'modal-content-close',
   roleCard: 'button'
 };
 

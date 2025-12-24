@@ -10,6 +10,10 @@
   background-color: var(--color-bg);
   z-index: variables.$z-header;
   transition: all variables.$transition-base;
+
+  @include mixins.mobile {
+    height: variables.$header-mobile-height;
+  }
 }
 
 .header-content {

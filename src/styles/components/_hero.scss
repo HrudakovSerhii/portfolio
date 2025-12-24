@@ -7,11 +7,12 @@
   z-index: variables.$z-nav;
   background-color: transparent;
   gap: variables.$spacing-md;
-  height: variables.$section-height;
+  height: calc(100vh - variables.$header-mobile-height);
 
   @include mixins.desktop {
     flex-direction: row;
     gap: variables.$spacing-xl;
+    height: calc(100vh - variables.$header-height);
   }
 
   &-content {
@@ -71,12 +72,16 @@
   justify-content: center;
   z-index: variables.$z-nav;
   background-color: transparent;
-  gap: variables.$spacing-xl;
-  height: variables.$section-height;
-  transition: max-height 2s ease-out;
+  gap: variables.$spacing-md;
   padding: 0;
   overflow: hidden;
-  max-height: 100%;
+  transition: max-height 1s ease-in-out;
+  max-height: 1000px; // high value to make sure transition works.
+
+  @include mixins.desktop {
+    gap: variables.$spacing-xl;
+    height: variables.$section-height;
+  }
 
   &-description {
     width: 100%;
@@ -84,6 +89,10 @@
     font-size: variables.$font-size-base;
     color: var(--color-text-secondary);
     line-height: variables.$line-height-normal;
+
+    @include mixins.mobile {
+      padding: variables.$spacing-xs variables.$spacing-md;
+    }
 
     @include mixins.desktop {
       font-size: variables.$font-size-xl;
@@ -118,7 +127,12 @@
   }
 
   &-cta--prompt {
+    margin-bottom: variables.$spacing-md;
     font-size: variables.$font-size-lg;
+
+    @include mixins.desktop {
+
+    }
   }
 
   &.invisible {
@@ -129,8 +143,12 @@
 .path-card {
   display: flex;
   flex-direction: column;
-  padding: variables.$spacing-xl;
+  padding: variables.$spacing-md;
   border: 1px solid var(--color-text-secondary);
+
+  @include mixins.desktop {
+    padding: variables.$spacing-xl;
+  }
 
   h3 {
     text-align: center;
