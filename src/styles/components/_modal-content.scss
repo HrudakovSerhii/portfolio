@@ -3,129 +3,14 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-// Modal Typography
-.modal-title {
-  font-size: variables.$font-size-2xl;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: variables.$spacing-sm;
-}
-
-.modal-subtitle {
-  font-size: variables.$font-size-base;
-  color: var(--color-text-secondary);
-  line-height: variables.$line-height-normal;
-}
-
-// Personalization Modal Variant
-.personalization-modal {
-  .name-input-wrapper {
-    margin-bottom: variables.$spacing-xl;
-  }
-
-  .role-selection {
-    .role-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: variables.$spacing-md;
-
-      @include mixins.tablet {
-        flex-direction: row;
-        justify-content: center;
-      }
-    }
-  }
-}
-
-// Role Button (specific to modals)
-.role-button {
-  flex: 1;
-  padding: variables.$spacing-md variables.$spacing-lg;
-  font-size: variables.$font-size-base;
-  font-weight: 500;
-  font-family: variables.$font-family-base;
-  color: var(--color-text);
-  background: var(--glass-overlay-light);
-  border: 2px solid var(--color-border);
-  border-radius: variables.$radius-lg;
-  cursor: pointer;
-  transition: all variables.$transition-fast;
-  text-transform: capitalize;
-
-  @include mixins.focus-visible;
-
-  &:hover:not(:disabled) {
-    background: var(--glass-overlay-light-hover);
-    border-color: var(--color-accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: var(--shadow-sm);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--glass-overlay-light-disabled);
-    border-color: var(--color-border);
-  }
-
-  &.current-role {
-    border-color: var(--color-accent);
-    background: var(--accent-bg-light);
-    position: relative;
-
-    &::after {
-      content: '✓';
-      position: absolute;
-      top: variables.$spacing-xs;
-      right: variables.$spacing-xs;
-      font-size: variables.$font-size-sm;
-      color: var(--color-accent);
-    }
-  }
-}
-
-// Role Change Modal Variant
-.role-change-modal {
-  .role-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: variables.$spacing-md;
-
-    @include mixins.tablet {
-      flex-direction: row;
-      justify-content: center;
-    }
-  }
-}
-
-.modal-content--role-change {
-  max-width: 90%;
+.modal-content {
+  display: flex;
+  flex-direction: column;
   width: auto;
-  padding: variables.$spacing-2xl;
   background-color: var(--color-bg);
-  border-radius: variables.$radius-2xl;
-  box-shadow: var(--shadow-xl);
-  cursor: default;
-  transform: scale(0.9);
-  opacity: 0;
-  transition: transform variables.$transition-base, opacity variables.$transition-base;
+  border-radius: variables.$radius-xl;
 
-  @include mixins.mobile {
-    max-width: 95%;
-    padding: variables.$spacing-xl;
-  }
-
-  .modal-overlay.active & {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  .modal-close {
+  &-close {
     position: absolute;
     top: variables.$spacing-md;
     right: variables.$spacing-md;
@@ -149,21 +34,43 @@
       color: var(--color-text);
     }
   }
+}
 
-  .modal-title {
+.role-change-modal {
+  padding: variables.$spacing-md;
+  gap: variables.$spacing-md;
+  max-width: 90%;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: transform variables.$transition-base, opacity variables.$transition-base;
+
+  @include mixins.desktop {
+    max-width: 95%;
+    padding: variables.$spacing-xl;
+    gap: variables.$spacing-lg;
+  }
+
+  .modal-overlay.active & {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  &-title {
+    font-size: variables.$font-size-2xl;
+    font-weight: 600;
+    color: var(--color-text);
     text-align: center;
     margin-bottom: variables.$spacing-sm;
   }
 
-  .modal-description {
+  &-subtitle {
     text-align: center;
     font-size: variables.$font-size-base;
     color: var(--color-text-secondary);
-    margin-bottom: variables.$spacing-xl;
+    line-height: variables.$line-height-normal;
   }
 
-  // Reuse hero-roles styles within modal
-  .hero-roles-grid {
+  &-selection-grid {
     display: flex;
     flex-direction: column;
     gap: variables.$spacing-lg;

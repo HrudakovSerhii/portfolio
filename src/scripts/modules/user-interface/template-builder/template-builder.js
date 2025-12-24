@@ -36,13 +36,13 @@ class TemplateBuilder {
   renderSection(sectionData, isZigZagLeft, profileData = null) {
     const sectionId = sectionData.sectionId;
     const templateId = sectionId === 'contact' ? 'contact-section-template' : 'section-template';
-    
+
     const section = this._createSectionElement(templateId, sectionData, isZigZagLeft);
-    
+
     if (sectionId === 'contact') {
       this._populateContactActions(section, sectionData, profileData);
     }
-    
+
     return section;
   }
 
@@ -241,9 +241,6 @@ class TemplateBuilder {
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {
       currentButton.disabled = true;
-      currentButton.style.opacity = '0.5';
-      currentButton.style.cursor = 'not-allowed';
-      currentButton.style.pointerEvents = 'none';
     }
 
     return modal;
