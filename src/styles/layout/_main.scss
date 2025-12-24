@@ -8,8 +8,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: variables.$spacing-3xl;
+    margin-top: variables.$spacing-2xl;
     z-index: 1;
+
+    @include mixins.desktop {
+        padding: variables.$spacing-3xl;
+    }
 
     .sections-container {
         position: relative;
