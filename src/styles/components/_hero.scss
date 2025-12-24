@@ -7,12 +7,12 @@
   z-index: variables.$z-nav;
   background-color: transparent;
   gap: variables.$spacing-md;
-  height: calc(100vh - variables.$header-mobile-height);
+  height: calc(100vh - 3rem); // used static value to escape Webstorm error
 
   @include mixins.desktop {
     flex-direction: row;
     gap: variables.$spacing-xl;
-    height: calc(100vh - variables.$header-height);
+    height: calc(100vh - 4rem); // used static value to escape Webstorm error
   }
 
   &-content {
@@ -64,101 +64,5 @@
     @include mixins.desktop {
       font-size: variables.$font-size-xl;
     }
-  }
-}
-
-.path-selection {
-  position: relative;
-  justify-content: center;
-  z-index: variables.$z-nav;
-  background-color: transparent;
-  gap: variables.$spacing-md;
-  padding: 0;
-  overflow: hidden;
-  transition: max-height 1s ease-in-out;
-  max-height: 1000px; // high value to make sure transition works.
-
-  @include mixins.desktop {
-    gap: variables.$spacing-xl;
-    height: variables.$section-height;
-  }
-
-  &-description {
-    width: 100%;
-    text-align: center;
-    font-size: variables.$font-size-base;
-    color: var(--color-text-secondary);
-    line-height: variables.$line-height-normal;
-
-    @include mixins.mobile {
-      padding: variables.$spacing-xs variables.$spacing-md;
-    }
-
-    @include mixins.desktop {
-      font-size: variables.$font-size-xl;
-    }
-  }
-
-  &-cards {
-    display: grid;
-    margin: 0 auto;
-    gap: variables.$spacing-lg;
-    padding: 0 variables.$spacing-md;
-
-    @include mixins.tablet {
-      grid-template-columns: repeat(2, 1fr);
-
-      &:last-child {
-        grid-column: 1 / -1;
-        max-width: 70%;
-        margin: 0 auto;
-      }
-    }
-
-    @include mixins.desktop {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      max-width: variables.$content-max-width;
-      gap: variables.$spacing-xl;
-
-      &:last-child {
-        max-width: variables.$content-max-width;
-      }
-    }
-  }
-
-  &-cta--prompt {
-    margin-bottom: variables.$spacing-md;
-    font-size: variables.$font-size-lg;
-
-    @include mixins.desktop {
-
-    }
-  }
-
-  &.invisible {
-    max-height: 0;
-  }
-}
-
-.path-card {
-  display: flex;
-  flex-direction: column;
-  padding: variables.$spacing-md;
-  border: 1px solid var(--color-text-secondary);
-
-  @include mixins.desktop {
-    padding: variables.$spacing-xl;
-  }
-
-  h3 {
-    text-align: center;
-    font-size: variables.$font-size-2xl;
-    margin-bottom: variables.$spacing-md;
-  }
-
-  p {
-    flex-grow: 1;
-    font-size: variables.$font-size-lg;
-    margin-bottom: variables.$spacing-lg;
   }
 }
