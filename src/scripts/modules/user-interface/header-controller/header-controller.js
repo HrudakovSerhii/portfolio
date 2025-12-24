@@ -42,7 +42,7 @@ class HeaderController {
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
     this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
 
-    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'sections-container', {
+    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'main-content', {
       activeClass: 'active',
       threshold: 0.51,
       sectionSelector: '.content-section',

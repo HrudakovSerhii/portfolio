@@ -8,9 +8,6 @@
   right: 0;
   height: variables.$header-height;
   background-color: var(--color-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
   z-index: variables.$z-header;
   transition: all variables.$transition-base;
 }
@@ -133,7 +130,7 @@
     opacity: 0;
     visibility: hidden;
     position: absolute;
-    top: calc(100% + variables.$spacing-xs);
+    top: calc(100% + 8px); // Used value as WebStorm 2024.3.2 does not recognise variables.$spacing-xs in calc function
     left: variables.$spacing-md;
     right: variables.$spacing-md;
     background-color: var(--color-bg);
@@ -193,7 +190,6 @@
   text-decoration: none;
   background-color: transparent;
   border: none;
-  border-radius: variables.$radius-sm;
   flex-shrink: 0;
   cursor: pointer;
   transition: all variables.$transition-base;
@@ -209,8 +205,6 @@
     display: block;
     width: 100%;
     padding: variables.$spacing-sm variables.$spacing-md;
-    border-radius: 0;
-    border-bottom: 1px solid var(--color-border);
     animation: none;
     opacity: 1;
     transform: none;
@@ -320,14 +314,6 @@
   .control-select {
     @include mixins.interactive-control;
     font-size: variables.$font-size-xs;
-
-    @include mixins.mobile {
-      padding: variables.$spacing-xs variables.$spacing-sm;
-
-      &:hover {
-        padding: calc(#{variables.$spacing-xs} - 1px) calc(#{variables.$spacing-sm} - 1px);
-      }
-    }
 
     option {
       background-color: var(--color-bg);

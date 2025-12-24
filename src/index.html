@@ -77,56 +77,82 @@
   </header>
 
   <main class="main-content" role="main" id="main-content">
-    <div class="parallax-background" aria-hidden="true">
-      <div class="parallax-blob parallax-blob--1"></div>
-      <div class="parallax-blob parallax-blob--2"></div>
-      <div class="parallax-blob parallax-blob--3"></div>
-      <div class="parallax-blob parallax-blob--4"></div>
-      <div class="parallax-blob parallax-blob--5"></div>
-      <div class="parallax-blob parallax-blob--6"></div>
-      <div class="parallax-blob parallax-blob--7"></div>
-    </div>
 
-    <section id="welcome-section" class="hero-section">
-      <div class="hero-container">
-        <div class="hero-content">
-          <h1 class="hero-title"> Hi, I'm <span class="text-gradient">Serhii</span></h1>
-          <h2 class="hero-subtitle">Senior Frontend Engineer</h2>
-        </div>
+<!--    TODO: fix elements positioning for mobile and tablet UI-->
+<!--    <div class="parallax-background" aria-hidden="true">-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;1"></div>-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;2"></div>-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;3"></div>-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;4"></div>-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;5"></div>-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;6"></div>-->
+<!--      <div class="parallax-blob parallax-blob&#45;&#45;7"></div>-->
+<!--    </div>-->
 
-        <p class="hero-description" id="hero-description">
-          I bridge the gap between Design, Backend, and Product. <br> With 10+ years in Banking, E-Commerce and SaaS, <br>I fix development workflows to ensure teams ship reliable software on time. <br>I believe clear communication is the most important coding tool.
+    <section class="hero">
+      <div class="hero-image">
+        <img src="./assets/images/hero.full.webp" alt="Serhii Hrudakov photo">
+      </div>
+      <div class="hero-content">
+        <h1 class="hero-title"> Hi, I'm <span class="text-gradient">Serhii</span></h1>
+        <h2 class="hero-subtitle">Senior Frontend Engineer</h2>
+        <p class="hero-intro">
+          I built this site so you can get to know me <br/> in the way that
+          matters most - to <span class="text-gradient">You.</span>
         </p>
-        <div class="hero-roles" id="hero-roles">
-          <h3 class="hero-roles-title">Let's speak the same <span class="text-gradient">language!</span></h3>
-          <span class="hero-roles-subtitle">Select the role you relate yourself the most</span>
-          <div class="hero-roles-grid">
-            <button class="button button--recruiter" data-role="recruiter">
-              <span class="button__description">
-                I'll focus on reliability, estimations, and delivery experience
-              </span>
-              <span class="button__title">Recruiter</span>
-            </button>
-
-            <button class="button button--developer" data-role="developer">
-              <span class="button__description">
-                I'll dive into the tech stack, architecture, and tools I used in my projects.
-              </span>
-              <span class="button__title">Engineer</span>
-            </button>
-
-            <button class="button button--friend" data-role="friend">
-              <span class="button__description">
-                I'll introduce the human side of my self so you can understand what kind of person I am.
-              </span>
-              <span class="button__title">Friend</span>
-            </button>
-          </div>
-        </div>
       </div>
     </section>
 
-    <div id="sections-container" class="sections-container"></div>
+    <section class="path-selection" id="path-selection">
+      <p class="path-selection-description">
+        Hiring the right person shouldn't mean drowning in hundreds of CVs.<br/>
+        Even with AI's help, you still need to know what you're looking for.<br/>
+        I wanted to solve that problem - by letting you choose your own path.
+      </p>
+
+      <div class="path-selection-cards">
+        <article class="path-card">
+          <h3>For Recruiters</h3>
+          <p>
+            Experience, roles and skills I got through my career path.
+          </p>
+          <button class="button button--recruiter" data-role="recruiter">
+          <span class="button__description" data-role="recruiter-description">
+            Find my experience, skills, and career highlights—everything you need to evaluate fit, fast.
+          </span>
+            <span class="button__title">View as Recruiter</span>
+          </button>
+        </article>
+
+        <article class="path-card">
+          <h3>For Engineers</h3>
+          <p>
+            Projects, technologies and visions I got through my builder path.
+          </p>
+          <button class="button button--developer" data-role="developer">
+          <span class="button__description" data-role="developer-description">
+           Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
+          </span>
+            <span class="button__title">View as Engineer</span>
+          </button>
+        </article>
+
+        <article class="path-card">
+          <h3>For Friends</h3>
+          <p>
+            For friends and thous who want to become one
+          </p>
+          <button class="button button--friend" data-role="friend">
+              <span class="button__description" data-role="friend-description">
+                I'll introduce the human side of my self so you can understand what kind of person I am.
+              </span>
+            <span class="button__title">View as Friend</span>
+          </button>
+        </article>
+      </div>
+
+      <p class="path-selection-cta--prompt">Which path speaks to you?</p>
+    </section>
 
     <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
       <span class="typing-dot"></span>

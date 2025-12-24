@@ -1,9 +1,9 @@
 @use 'variables';
+@use 'mixins';
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: variables.$line-height-tight;
-    margin-bottom: variables.$spacing-md;
 }
 
 h1 {
@@ -23,7 +23,6 @@ h4, h5, h6 {
 }
 
 p {
-    margin-bottom: variables.$spacing-md;
     line-height: variables.$line-height-base;
 }
 
@@ -42,4 +41,8 @@ strong {
 
 em {
     font-style: italic;
+}
+
+.text-gradient {
+    @include mixins.gradient-text;
 }

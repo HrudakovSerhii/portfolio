@@ -18,8 +18,7 @@ const ELEMENT_IDS = {
   languageSelector: 'language-selector',
   mainContent: 'main-content',
   heroSection: 'hero-section',
-  heroRoles: 'hero-roles',
-  sectionsContainer: 'sections-container',
+  pathSelection: 'path-selection',
   typingIndicator: 'typing-indicator'
 };
 
@@ -48,8 +47,7 @@ class AppController {
       languageSelector: null,
       mainContent: null,
       heroSection: null,
-      heroRoles: null,
-      sectionsContainer: null,
+      pathSelection: null,
       typingIndicator: null
     };
 
@@ -78,7 +76,7 @@ class AppController {
       this.parallaxController.init();
 
       this.sectionRenderer.initialize(
-        this.elements.sectionsContainer,
+        this.elements.mainContent,
         this.elements.typingIndicator,
         SECTION_ORDER,
         (nextSectionId) => this.revealSection(nextSectionId, '')
@@ -110,8 +108,7 @@ class AppController {
     this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
-    this.elements.heroRoles = document.getElementById(ELEMENT_IDS.heroRoles);
-    this.elements.sectionsContainer = document.getElementById(ELEMENT_IDS.sectionsContainer);
+    this.elements.pathSelection = document.getElementById(ELEMENT_IDS.pathSelection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
 
     const criticalElementKeys = [
@@ -119,8 +116,7 @@ class AppController {
       'themeToggle',
       'languageSelector',
       'mainContent',
-      'heroRoles',
-      'sectionsContainer'
+      'pathSelection'
     ];
 
     for (const key of criticalElementKeys) {
@@ -143,7 +139,7 @@ class AppController {
   }
 
   _setupHeroRoleCardListeners() {
-    const roleCards = this.elements.heroRoles.querySelectorAll('.button[data-role]');
+    const roleCards = this.elements.pathSelection.querySelectorAll('.button[data-role]');
 
     roleCards.forEach(card => {
       card.addEventListener('click', async () => {
@@ -200,7 +196,7 @@ class AppController {
     }
 
     if (role) {
-      this.elements.heroRoles.style.display = 'none';
+      this.elements.pathSelection.classList.add('invisible');
     }
 
     await this._restoreRevealedSections(revealedSections, role);
@@ -238,7 +234,7 @@ class AppController {
       }
 
       this.stateManager.setRole(role);
-      this.elements.heroRoles.classList.add('invisible');
+      this.elements.pathSelection.classList.add('invisible');
       this.headerController.updateRoleBadge(role);
 
       await this.revealSection(SECTION_ORDER[0]);
@@ -251,14 +247,12 @@ class AppController {
   _resetPortfolioState() {
     this.stateManager.resetRevealedSections();
 
-    const sections = this.elements.sectionsContainer.querySelectorAll('.content-section');
+    const sections = this.elements.mainContent.querySelectorAll('.content-section');
     sections.forEach(section => section.remove());
 
     this.headerController.clearNavigation();
 
-    this.revealSection(SECTION_ORDER[0]).catch(error => {
-      console.error('Failed to reveal section after reset:', error);
-    });
+    this.revealSection(SECTION_ORDER[0]).finally();
   }
 
   async revealSection(sectionId, customQuery = '') {
@@ -299,7 +293,7 @@ class AppController {
   }
 
   _getSectionElement(sectionId) {
-    return this.elements.sectionsContainer.querySelector(`[data-section-id="${sectionId}"]`);
+    return this.elements.mainContent.querySelector(`[data-section-id="${sectionId}"]`);
   }
 }
 
