@@ -107,7 +107,7 @@ class TemplateBuilder {
     }
 
     const imageContainer = section.querySelector('.content-image');
-    if (imageContainer) {
+    if (imageContainer && sectionData.image) {
       imageContainer.setAttribute('data-image-url', sectionData.image.imageUrl);
       imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
       imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
