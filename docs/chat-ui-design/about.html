@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>About Me - Portfolio</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Theme Configuration -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#137fec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+            "surface-dark": "#1e2936",
+            "bubble-dark": "#233648",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display min-h-screen flex flex-col overflow-x-hidden selection:bg-primary/30">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-[#233648] bg-background-light/80 dark:bg-[#111a22]/80 backdrop-blur-md px-6 py-4">
+  <div class="max-w-[960px] mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="size-8 text-primary">
+        <svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_6_319)">
+            <path d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z" fill="currentColor"></path>
+          </g>
+          <defs>
+            <clippath id="clip0_6_319"><rect fill="white" height="48" width="48"></rect></clippath>
+          </defs>
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold tracking-tight">Portfolio</h2>
+    </div>
+    <nav class="hidden md:flex items-center gap-8">
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Work</a>
+      <a class="text-sm font-medium text-primary" href="#">About</a>
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
+    </nav>
+    <button class="hidden md:flex bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-primary/20">
+      Let's Talk
+    </button>
+    <!-- Mobile Menu Icon -->
+    <button class="md:hidden text-white">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-[840px] mx-auto px-4 py-8 md:py-12 flex flex-col gap-8">
+  <!-- Page Heading -->
+  <div class="flex flex-col gap-2 mb-4 px-2 md:px-0">
+    <div class="flex items-center gap-2 text-primary text-sm font-bold uppercase tracking-wider">
+      <span class="material-symbols-outlined text-lg">person</span>
+      <span>Profile Context: Developer</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">About Me</h1>
+    <p class="text-[#92adc9] text-lg max-w-xl">Getting to know the person behind the code.</p>
+  </div>
+  <!-- Chat Container -->
+  <div class="flex flex-col gap-6 w-full relative">
+    <!-- Date/Time Divider -->
+    <div class="flex justify-center py-2">
+      <span class="text-xs font-medium text-gray-500 bg-gray-200 dark:bg-[#1e2936] px-3 py-1 rounded-full">Today, 10:42 AM</span>
+    </div>
+    <!-- Message Group 1 (Intro) -->
+    <div class="flex gap-4 items-end group">
+      <div class="w-10 h-10 rounded-full bg-cover bg-center shrink-0 shadow-inner ring-2 ring-[#233648]" data-alt="Portrait of Alex, the portfolio owner" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKSqaESfB179OgGjbI1Q9NHkl-BJiI6BE2zTXrvW_54wzgXG7evuLoQ7kiFhlJzvZ2p03mkF2qWWjsHla0GO0OMFpn3LtZ0mxAs-foVZBOd0fUcGz_fJEFv0XDdtkOmjoMH-VmrBwz-mz7Lm38Jg5qyu8b6tE0Grv8cPECoDDJ6qN3RMH1OpeZ-OSwT-kJpubuBKFLRoMPvk1QLS_4nQznIn1Ie9KL9lwbZOa8wNf8Zd4r7GBz1Hy3OUiQykf3ezKMu7YvvfcrjTwq");'>
+      </div>
+      <div class="flex flex-col gap-2 max-w-[85%] md:max-w-[70%]">
+        <span class="text-xs text-[#92adc9] font-medium ml-1">Alex (Portfolio Owner)</span>
+        <div class="bg-bubble-dark text-white p-5 rounded-2xl rounded-bl-none shadow-sm border border-white/5">
+          <p class="text-[15px] md:text-base leading-relaxed">
+            Thanks for identifying yourself as a <strong class="text-primary">Developer</strong>! 👋 Here is what you need to know about me...
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Message Group 2 (Expertise) -->
+    <div class="flex gap-4 items-end group">
+      <!-- Spacer for avatar alignment -->
+      <div class="w-10 shrink-0"></div>
+      <div class="flex flex-col gap-2 max-w-[85%] md:max-w-[70%]">
+        <div class="bg-bubble-dark text-white p-5 rounded-2xl shadow-sm border border-white/5">
+          <p class="text-[15px] md:text-base leading-relaxed">
+            I specialize in building scalable frontend architectures that prioritize performance without sacrificing design fidelity.
+          </p>
+        </div>
+        <div class="bg-bubble-dark text-white p-5 rounded-2xl shadow-sm border border-white/5">
+          <p class="text-[15px] md:text-base leading-relaxed">
+            My journey started 5 years ago hacking together WordPress sites, but I quickly fell in love with the React ecosystem and modern web standards.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Message Group 3 (Image Media) -->
+    <div class="flex gap-4 items-end group">
+      <div class="w-10 shrink-0"></div>
+      <div class="flex flex-col gap-2 max-w-[85%] md:max-w-[70%]">
+        <div class="overflow-hidden rounded-2xl border border-white/10 shadow-lg relative group/image cursor-pointer">
+          <img alt="A clean desk setup with code on a monitor screen, showing a modern development environment" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" data-alt="A clean desk setup with code on a monitor screen, showing a modern development environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOm-k8a2I-ZT8tHw_xC-37XYijuV1shwbjo2vtznclhFsC0e-OSdZKfivt2ggpOjk-Nlv3pFPq9SLZ3tXdwGURZBPTzfg-fEP9uTOQSntTCbG6npQnK4zD2TxmpawOqduPYZ1H5qi1_fgPQU6wNzFJ8zcTfiRmGr8PzQtLkxbHMFe04sRqX6B5cFztbxy-dqXP1JmMhLlkeZYf0EPmPNSAqUPcIfo4S0TBlKMlRkEGiEnpnygNfu8F3CCfzPKjAPkBXxNeHT8-UfIW"/>
+          <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
+            <p class="text-white/90 text-xs font-medium flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">image</span>
+              My Workspace
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Message Group 4 (Passion) -->
+    <div class="flex gap-4 items-end group">
+      <div class="w-10 shrink-0"></div>
+      <div class="flex flex-col gap-2 max-w-[85%] md:max-w-[70%]">
+        <div class="bg-bubble-dark text-white p-5 rounded-2xl rounded-bl-none shadow-sm border border-white/5">
+          <p class="text-[15px] md:text-base leading-relaxed">
+            Currently, I'm obsessed with <span class="text-[#92adc9] bg-white/10 px-2 py-0.5 rounded text-sm mx-1">#WebGl</span> and making the web feel more organic.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Typing Indicator -->
+    <div class="flex gap-4 items-end group mt-2">
+      <div class="w-10 h-10 rounded-full bg-cover bg-center shrink-0 shadow-inner ring-2 ring-[#233648]" data-alt="Portrait of Alex, the portfolio owner" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBmsVkgGkLZvmEukrDhcjmSizWYxhIKX6pf7oySozr74UsCoc1lIslJsErV1j0JU85ohLDQ3_YdSWZqjzfKrwIct-pjGnePmdVMKjuovhELCsiKXOo3BWr6LDFke3sywwi5ZejD_4_PBe1qASpOpdhE2x32E_g3fG3QA-UXouf-BcufAOJwnNFJF9NM8N6qXGDIJAqc0azPDbMZkEg8HALXsZd_rfsSDIcSGaxFJm9QYYx1p2Si1P_xVexEEg-S_qD3G4ecDZZIKQij");'>
+      </div>
+      <div class="bg-bubble-dark/50 p-4 rounded-2xl rounded-bl-none flex items-center gap-1 h-12 w-20">
+        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Interactive User Response Area -->
+  <div class="mt-8 flex flex-col items-end gap-4 w-full">
+    <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mr-2">Suggested Replies</p>
+    <div class="flex flex-wrap justify-end gap-3 w-full">
+      <button class="group flex items-center gap-2 bg-transparent border border-primary/30 hover:bg-primary/10 text-primary dark:text-blue-400 px-5 py-3 rounded-full transition-all text-sm font-medium">
+        <span>Tell me about your tech stack</span>
+        <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </button>
+      <button class="group flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg shadow-primary/25 transition-all text-sm font-bold">
+        <span>Show me your projects</span>
+        <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">visibility</span>
+      </button>
+    </div>
+  </div>
+</main>
+<!-- Floating Action Button (Resume) -->
+<div class="fixed bottom-6 right-6 z-40">
+  <button class="flex items-center gap-3 bg-white dark:bg-[#1e2936] hover:bg-gray-50 dark:hover:bg-[#2a3848] text-slate-900 dark:text-white p-2 pr-5 rounded-full shadow-2xl border border-gray-200 dark:border-gray-700 transition-all hover:scale-105 group">
+    <div class="bg-primary text-white p-2.5 rounded-full flex items-center justify-center">
+      <span class="material-symbols-outlined">download</span>
+    </div>
+    <div class="flex flex-col items-start mr-1">
+      <span class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 leading-none mb-0.5">Resume</span>
+      <span class="text-sm font-bold leading-none">PDF (2.4MB)</span>
+    </div>
+  </button>
+</div>
+</body></html>

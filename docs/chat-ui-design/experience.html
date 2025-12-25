@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Experience Section - Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#137fec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+            "chat-bubble": "#1e2936", // Slightly lighter than bg
+            "accent-blue": "#233648",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"],
+            "body": ["Space Grotesk", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Custom scrollbar for chat feel */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #101922;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #233648;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #137fec;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display min-h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation -->
+<header class="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#233648] px-6 lg:px-10 py-3 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md z-50">
+  <div class="flex items-center gap-4">
+    <div class="size-8 text-primary">
+      <svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_6_319)">
+          <path d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z" fill="currentColor"></path>
+        </g>
+        <defs>
+          <clippath id="clip0_6_319"><rect fill="white" height="48" width="48"></rect></clippath>
+        </defs>
+      </svg>
+    </div>
+    <h2 class="text-lg font-bold leading-tight tracking-[-0.015em] hidden sm:block">Alex Dev</h2>
+  </div>
+  <div class="flex items-center gap-4 sm:gap-8">
+    <div class="hidden md:flex items-center gap-6">
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#">About Me</a>
+      <a class="text-sm font-bold text-primary" href="#">Experience</a>
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Skills</a>
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
+    </div>
+    <button class="flex items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary hover:bg-blue-600 transition-colors text-white text-sm font-bold shadow-lg shadow-blue-500/20">
+      <span class="truncate">Download Resume</span>
+    </button>
+  </div>
+</header>
+<!-- Main Chat Area -->
+<main class="flex-1 overflow-y-auto w-full flex flex-col items-center py-6 px-4 pb-32">
+  <div class="w-full max-w-[800px] flex flex-col gap-6">
+    <!-- Context Chip -->
+    <div class="flex w-full justify-center mb-4">
+      <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-[#233648] pl-3 pr-4 shadow-lg border border-slate-700">
+        <span class="material-symbols-outlined text-primary text-[18px]">visibility</span>
+        <p class="text-slate-300 text-xs font-medium tracking-wide uppercase">Viewing as: <span class="text-white font-bold">Recruiter</span></p>
+      </div>
+    </div>
+    <!-- Date Separator -->
+    <div class="flex w-full justify-center">
+      <p class="text-slate-500 text-xs font-medium">Today, 10:42 AM</p>
+    </div>
+    <!-- Intro Message -->
+    <div class="flex items-end gap-3 group animate-fade-in-up">
+      <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 h-10 shrink-0 border-2 border-[#233648] shadow-md" data-alt="Profile picture of a smiling developer with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAarykjF2xPXCzOv_U97z6bvQMALumn5N9XcZDshaoxFpxf6eKnvzytlUpEXsZUmUJSYic8FM9pRDwzH3KFTqH2oCTUYnt0hOuAWZwAYhQGXaNCbios120xNoDa5aleFo04KWsrH8kISsais2_uNS9cjmUbHdPd0-rd1rNkgEsFHpwOOj5hiODUbkQKeSnPydqCm01Z-LG5DMbOM6o8k1RPtkhDoiQg5tfDjRn9VMQa0wCzn6XM3WP28UVzpt4DTu6Mg8ZsgEUfoLSw");'></div>
+      <div class="flex flex-col gap-1 items-start max-w-[85%] sm:max-w-[70%]">
+        <p class="text-slate-400 text-[11px] font-medium ml-1">Portfolio Bot</p>
+        <div class="relative bg-white dark:bg-[#1e2936] p-4 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-800 shadow-sm">
+          <p class="text-sm sm:text-base font-normal leading-relaxed text-slate-700 dark:text-slate-200">
+            Hi there! Since you're viewing as a <span class="text-primary font-bold">Recruiter</span>, I've highlighted my leadership impact and architectural contributions. Here is my professional timeline.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Experience 1 (Latest) -->
+    <div class="flex items-end gap-3 group">
+      <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 h-10 shrink-0 border-2 border-[#233648] shadow-md" data-alt="Profile picture of a smiling developer with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBbWun4HEPLsrOhO6RVELvO9wmPAJRvlWL-PN-ZAPARc-Q0GdPVPGR6kiMQvhAMnwX4e6nmzRrkMH6q71SeMwSKyMX3zD5fDsAXJsHdDLG0UEfHb4cP1jsndu3APRPyTlWMeu-mCrBNRXfB3l_47vud77IiAi2nhULPaJsUE1yjZrpzTMIzif5SKYp3xhcQeCI6mz1B2zFWF8MZMSVkzTcbRkFX2qOwfMrABDXzLUVx7kzfnQsFuvnozD3M9hWoCu1raf30enT5WGTC");'></div>
+      <div class="flex flex-col gap-1 items-start max-w-[90%] sm:max-w-[80%]">
+        <p class="text-slate-400 text-[11px] font-medium ml-1">Portfolio Bot • Just now</p>
+        <div class="relative bg-white dark:bg-[#1e2936] p-5 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-800 shadow-sm w-full">
+          <!-- Header inside bubble -->
+          <div class="flex flex-wrap justify-between items-start gap-2 mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Senior Full Stack Engineer</h3>
+              <p class="text-primary text-sm font-medium">TechFlow Systems</p>
+            </div>
+            <span class="text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-1 rounded">2022 - Present</span>
+          </div>
+          <!-- Content -->
+          <p class="text-sm sm:text-base font-normal leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+            Spearheaded the migration to a micro-frontend architecture, improving build times by <span class="text-primary font-bold">40%</span>. I currently mentor a squad of 5 junior developers and established the new code review standards.
+          </p>
+          <!-- Visual Attachment -->
+          <div class="relative w-full rounded-xl overflow-hidden aspect-video bg-slate-900 border border-slate-700 group/image cursor-pointer">
+            <!-- Image Overlay Gradient -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10"></div>
+            <div class="absolute bottom-3 left-3 z-20 flex items-center gap-2">
+              <div class="bg-white/10 backdrop-blur-md p-1.5 rounded-lg">
+                <span class="material-symbols-outlined text-white text-sm">bar_chart</span>
+              </div>
+              <span class="text-white text-xs font-medium">Performance Metrics Q3</span>
+            </div>
+            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover/image:scale-105" data-alt="Dashboard showing performance charts going up" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDaajBajcuhfIQDyOArP8D9J6MlDHMoUDitKEIZ68yqK1B3cpMb8SIPly62CeILFKvGxBpAKM9wfGXd8qgSyyUhXu4otpI7jio_PX2lz7aUFtyawiGtYiviId7mBxE52mScZVURWqYHPDzZZ8LM_q16QqxdLK3_olg8p9tNsLLfpQo5KFjzHTjrMne5BT8yVCGmMqPvvanX8KNLFIJQ7HuwEz9zL6rwApHTGPFfXNW8LFWvt0i_d5fywiJKvGEo16ossQrl5LwjYBq");'></div>
+          </div>
+          <!-- Tags -->
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-full">React</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-full">Node.js</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-full">AWS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Experience 2 -->
+    <div class="flex items-end gap-3 group">
+      <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 h-10 shrink-0 border-2 border-[#233648] shadow-md opacity-80" data-alt="Profile picture of a smiling developer with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA-qi3IetmpzeBzm-iaTRJGCGDm2K5vS4nAnIYBdtI9ZmGYXrRI_cVso2MIF2pZnQju80oNHAGUr4CbVFJdUdV9SIVmO9u4e57dY5bHuaHIQ747LSmuOjXgniUWpGe-7nWGjAN4daGw7eHCOjqRKTrg9zG5akFBQScWi1QiNlmEz7UcRSOzQpDj-eeYVwciDHTX0pQuNYQM7ScmtvCOFfjpZn1Si70GpfhBmCsPGIAAatSad6ro4ynbQ-t-4tq_8WyprM-1VM1oTo1Y");'></div>
+      <div class="flex flex-col gap-1 items-start max-w-[90%] sm:max-w-[80%]">
+        <p class="text-slate-400 text-[11px] font-medium ml-1">Portfolio Bot • Just now</p>
+        <div class="relative bg-white dark:bg-[#1e2936] p-5 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-800 shadow-sm w-full">
+          <!-- Header inside bubble -->
+          <div class="flex flex-wrap justify-between items-start gap-2 mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Frontend Developer</h3>
+              <p class="text-primary text-sm font-medium">Creative Agency Inc.</p>
+            </div>
+            <span class="text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-1 rounded">2020 - 2022</span>
+          </div>
+          <!-- Content -->
+          <p class="text-sm sm:text-base font-normal leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+            Owned the design system implementation using TypeScript. Collaborated closely with UX designers to ensure pixel-perfect implementation of award-winning marketing sites.
+          </p>
+          <!-- Visual Attachment -->
+          <div class="relative w-full rounded-xl overflow-hidden h-32 bg-slate-900 border border-slate-700 group/image cursor-pointer">
+            <div class="absolute inset-0 bg-black/40 z-10 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity">
+              <span class="material-symbols-outlined text-white text-3xl">open_in_new</span>
+            </div>
+            <div class="w-full h-full bg-cover bg-center" data-alt="Abstract colorful geometric shapes representing a design system" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBkGEmtXB8_6H-ciyjFsmnsCopaKdJyfTnIDTfKaQEdVxMsveob_-5rjCUDQeXAAggsqn7Y9KjoQ4nlfAySG87fZKBnrlhkhszKigdxdXEFjxO_GJ4fKkMzj6Vn3ysS-0b2MzgLWuETXfuauh4QLJU0cPZgU0MBrl_xmRGyjI6q_MfmGyOHELtxdPQmpRWqxT4nNPD3-aULHA3mtTY5r-law9xcI6sHIMX3Bj7ZG2gINf3U4cc-BpG4ZS89Rl-3sZIwASmaMgToN8Z3");'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Experience 3 (Older) -->
+    <div class="flex items-end gap-3 group opacity-90">
+      <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 h-10 shrink-0 border-2 border-[#233648] shadow-md opacity-60" data-alt="Profile picture of a smiling developer with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBVvxvRL1f2FCAytmQS188GJQrr-pAhN6Ia9Iex_-y6zsytc9fdWLcUeCHyYX-W2mulxMuE2_QE-G4__BSXlOkKIkB2Hg-i1br8IbD2rjvDyUsXgN-Q0Cyo-4jWlOvl8coz0sWzNW5ofIYrY6ejicqLk5POW3gj8eDyKLq1FvK-lIWg0iAnP4OU5TpBuW3gLxrZfi0A9aYuMu1Y7kOG8102m-3Ekgt-vVtr23UHghlVLsPud8Yj4ufKTFWOF1TcubRlP_OzZHfEqLMb");'></div>
+      <div class="flex flex-col gap-1 items-start max-w-[90%] sm:max-w-[80%]">
+        <p class="text-slate-400 text-[11px] font-medium ml-1">Portfolio Bot • Just now</p>
+        <div class="relative bg-white dark:bg-[#1e2936] p-5 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-800 shadow-sm w-full">
+          <div class="flex flex-wrap justify-between items-start gap-2 mb-1">
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Junior Web Developer</h3>
+              <p class="text-primary text-sm font-medium">StartUp Hub</p>
+            </div>
+            <span class="text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-1 rounded">2018 - 2020</span>
+          </div>
+          <p class="text-sm sm:text-base font-normal leading-relaxed text-slate-700 dark:text-slate-300 mt-2">
+            Built landing pages and email templates. Learned the fundamentals of responsive design and version control.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Typing Indicator (Mocking the feeling that more is coming) -->
+    <div class="flex items-end gap-3 group">
+      <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 shrink-0 border-2 border-[#233648] shadow-md opacity-40" data-alt="Profile picture of a smiling developer with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBwZ61PozbrrMkhR56EHeL1kV73An4XceXWonm7FhXRt7_wGJbASihhQhaooSI59SJj9AdId5cVHswKlhIo4xRdRKpNHzSu7ExukYmE94e-5qpyycJxH0D6S4SgzG0YsBpgJbErh0e3220U_JlxYhD-1gzKVA8MJNCGjb5N15niy_W2msQQ4cG8L7KaQQuHM2tnQuK2nwJvtpnkCYF09Nj1NWDZ5eyo4IKkQY0Ko-2VCCCoYIN8thBAMS6HOyK879avvcZHdvTY_F6L");'></div>
+      <div class="bg-white dark:bg-[#1e2936] px-4 py-3 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-800 shadow-sm">
+        <div class="flex gap-1">
+          <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+          <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+          <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<!-- Interactive Footer Area -->
+<div class="fixed bottom-0 left-0 w-full px-4 py-4 bg-gradient-to-t from-background-dark via-background-dark to-transparent z-40">
+  <div class="max-w-[800px] mx-auto w-full">
+    <div class="relative flex items-center gap-2 bg-[#1e2936] border border-slate-700 p-2 rounded-full shadow-2xl shadow-black/50 ring-1 ring-white/5">
+      <!-- Plus Icon (Mock file upload) -->
+      <button class="flex items-center justify-center w-10 h-10 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors shrink-0">
+        <span class="material-symbols-outlined">add</span>
+      </button>
+      <!-- Input Field Mock -->
+      <div class="flex-1 px-2">
+        <input class="w-full bg-transparent border-none text-slate-500 text-sm focus:ring-0 cursor-not-allowed" disabled="" placeholder="Ask me anything else..." type="text"/>
+      </div>
+      <!-- Primary Action Button -->
+      <button class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white pl-4 pr-5 py-2.5 rounded-full transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-500/20">
+        <span class="text-sm font-bold whitespace-nowrap">View Skills</span>
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </button>
+    </div>
+    <!-- Helper text -->
+    <div class="text-center mt-2">
+      <p class="text-[10px] text-slate-500">Pressing 'View Skills' will generate the next section.</p>
+    </div>
+  </div>
+</div>
+</body></html>
