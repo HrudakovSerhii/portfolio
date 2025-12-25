@@ -1,5 +1,7 @@
 // CSS Reset and Normalize - Enhanced for cross-browser consistency
 // Note: Theme variables are now defined in _theme.scss
+@use 'variables';
+
 *,
 *::before,
 *::after {
@@ -22,8 +24,8 @@ html {
 
 body {
     min-height: 100vh;
-    line-height: $line-height-base;
-    font-family: $font-family-primary;
+    line-height: variables.$line-height-base;
+    font-family: variables.$font-family-primary;
     color: var(--color-text);
     background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;

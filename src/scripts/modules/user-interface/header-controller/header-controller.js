@@ -42,7 +42,7 @@ class HeaderController {
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
     this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
 
-    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'sections-container', {
+    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'main-content', {
       activeClass: 'active',
       threshold: 0.51,
       sectionSelector: '.content-section',
@@ -183,7 +183,7 @@ class HeaderController {
 
     if (role) {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
-      this.roleBadgeText.textContent = `${roleText} View`;
+      this.roleBadgeText.textContent = `${roleText === 'Developer' ? 'Engineer' : roleText} View`;
       this.roleBadge.style.display = 'flex';
     } else {
       this.roleBadge.style.display = 'none';

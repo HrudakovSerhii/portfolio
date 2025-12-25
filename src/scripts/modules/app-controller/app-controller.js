@@ -6,7 +6,6 @@ import ParallaxController from '../parallax-controller';
 import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
-import GenerativeImage from '../user-interface/generative-image/generative-image.js';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
@@ -19,9 +18,7 @@ const ELEMENT_IDS = {
   languageSelector: 'language-selector',
   mainContent: 'main-content',
   heroSection: 'hero-section',
-  heroRoles: 'hero-roles',
-  heroBackgroundImage: 'hero-background-image',
-  sectionsContainer: 'sections-container',
+  pathSelection: 'path-selection',
   typingIndicator: 'typing-indicator'
 };
 
@@ -50,9 +47,7 @@ class AppController {
       languageSelector: null,
       mainContent: null,
       heroSection: null,
-      heroRoles: null,
-      heroBackgroundImage: null,
-      sectionsContainer: null,
+      pathSelection: null,
       typingIndicator: null
     };
 
@@ -81,13 +76,12 @@ class AppController {
       this.parallaxController.init();
 
       this.sectionRenderer.initialize(
-        this.elements.sectionsContainer,
+        this.elements.mainContent,
         this.elements.typingIndicator,
         SECTION_ORDER,
         (nextSectionId) => this.revealSection(nextSectionId, '')
       );
 
-      this._initializeHeroBackgroundImage();
       this._hideInitialLoader();
       this.initialized = true;
     } catch (error) {
@@ -114,9 +108,7 @@ class AppController {
     this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
-    this.elements.heroRoles = document.getElementById(ELEMENT_IDS.heroRoles);
-    this.elements.heroBackgroundImage = document.getElementById(ELEMENT_IDS.heroBackgroundImage);
-    this.elements.sectionsContainer = document.getElementById(ELEMENT_IDS.sectionsContainer);
+    this.elements.pathSelection = document.getElementById(ELEMENT_IDS.pathSelection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
 
     const criticalElementKeys = [
@@ -124,9 +116,7 @@ class AppController {
       'themeToggle',
       'languageSelector',
       'mainContent',
-      'heroRoles',
-      'heroBackgroundImage',
-      'sectionsContainer'
+      'pathSelection'
     ];
 
     for (const key of criticalElementKeys) {
@@ -149,7 +139,7 @@ class AppController {
   }
 
   _setupHeroRoleCardListeners() {
-    const roleCards = this.elements.heroRoles.querySelectorAll('.button[data-role]');
+    const roleCards = this.elements.pathSelection.querySelectorAll('.button[data-role]');
 
     roleCards.forEach(card => {
       card.addEventListener('click', async () => {
@@ -169,47 +159,6 @@ class AppController {
     } catch (error) {
       console.error('Failed to load user profile:', error);
     }
-  }
-
-  _initializeHeroBackgroundImage() {
-    try {
-      this._tryToInitializeHeroBackgroundImage()
-    } catch (error) {
-      this._handleInitializeHeroBackgroundImageFailure(error)
-    }
-  }
-
-  _tryToInitializeHeroBackgroundImage() {
-    const container = this.elements.heroBackgroundImage;
-
-    if (!container) {
-      console.warn('Hero background image container not found');
-      return;
-    }
-
-    const existingImg = container.querySelector('img');
-    if (existingImg) {
-      existingImg.remove();
-    }
-
-    const generativeHeroImage = new GenerativeImage({
-      highResSrc: './backgrounds/karpaty.full.jpeg',
-      lowResSrc: './backgrounds/karpaty.low.jpeg',
-      alt: 'Hero background image',
-      shouldAnimate: true,
-      aspectClass: 'aspect-portrait',
-      gridConfig: {
-        rows: 8,
-        cols: 8
-      }
-    });
-
-    const imageElement = generativeHeroImage.create();
-    container.appendChild(imageElement);
-  }
-
-  _handleInitializeHeroBackgroundImageFailure(error) {
-    console.error('Failed to initialize hero background image:', error);
   }
 
   _hideInitialLoader() {
@@ -247,7 +196,7 @@ class AppController {
     }
 
     if (role) {
-      this.elements.heroRoles.style.display = 'none';
+      this.elements.pathSelection.classList.add('invisible');
     }
 
     await this._restoreRevealedSections(revealedSections, role);
@@ -255,8 +204,10 @@ class AppController {
 
   async _restoreRevealedSections(revealedSections, role) {
     for (const sectionId of revealedSections) {
-      await this._handleRevealNavigationItem(sectionId);
-      await this._restoreSingleSection(sectionId, role);
+      await Promise.all([
+        this._handleRevealNavigationItem(sectionId),
+        this._restoreSingleSection(sectionId, role)
+      ]);
     }
 
     const lastSection = this._getSectionElement(revealedSections[revealedSections.length - 1])
@@ -283,8 +234,8 @@ class AppController {
       }
 
       this.stateManager.setRole(role);
-      this.elements.heroRoles.classList.add('invisible');
-      this.headerController.updateRoleBadge();
+      this.elements.pathSelection.classList.add('invisible');
+      this.headerController.updateRoleBadge(role);
 
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
@@ -296,14 +247,12 @@ class AppController {
   _resetPortfolioState() {
     this.stateManager.resetRevealedSections();
 
-    const sections = this.elements.sectionsContainer.querySelectorAll('.content-section');
+    const sections = this.elements.mainContent.querySelectorAll('.content-section');
     sections.forEach(section => section.remove());
 
     this.headerController.clearNavigation();
 
-    this.revealSection(SECTION_ORDER[0]).catch(error => {
-      console.error('Failed to reveal section after reset:', error);
-    });
+    this.revealSection(SECTION_ORDER[0]).finally();
   }
 
   async revealSection(sectionId, customQuery = '') {
@@ -344,7 +293,7 @@ class AppController {
   }
 
   _getSectionElement(sectionId) {
-    return this.elements.sectionsContainer.querySelector(`[data-section-id="${sectionId}"]`);
+    return this.elements.mainContent.querySelector(`[data-section-id="${sectionId}"]`);
   }
 }
 

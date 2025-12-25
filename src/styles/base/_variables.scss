@@ -14,6 +14,8 @@ $font-size-lg: 1.125rem;  // 18px
 $font-size-xl: 1.25rem;   // 20px
 $font-size-2xl: 1.5rem;   // 24px
 $font-size-3xl: 2rem;     // 32px
+$font-size-4xl: 2.5rem;   // 40px
+$font-size-5xl: 3rem;     // 48px
 $font-size-6xl: 3.75rem;  // 60px
 
 // Line Heights
@@ -34,10 +36,10 @@ $spacing-3xl: 4rem;     // 64px
 
 // Layout Constants
 $header-height: 4rem;
+$header-mobile-height: 3rem;
 $nav-width-expanded: 16rem;
 $nav-width-collapsed: 4rem;
 $content-max-width: 1200px;
-$section-height: 65vh;
 
 // Breakpoints
 $breakpoint-mobile: 640px;
@@ -76,9 +78,7 @@ $z-tooltip: 100;
 $hero-blob-size: 16rem;
 $hero-blob-blur: 64px;
 $hero-roles-max-width: 80rem;
-$hero-intro-max-width: 42rem;
-$hero-intro-min-height: 120px;
-$hero-background-image-width: 400px;
+$hero-background-image-width: 300px;
 $hero-profile-ring-size: 8rem;
 $hero-profile-ring-size-desktop: 10rem;
 $hero-profile-border-width: 4px;

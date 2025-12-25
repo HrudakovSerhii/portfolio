@@ -1,26 +1,27 @@
 // SCSS Mixins - Claude-inspired Design System
+@use 'variables';
 
 // Responsive Breakpoints
 @mixin mobile {
-  @media (max-width: #{$breakpoint-mobile - 1px}) {
+  @media (max-width: #{variables.$breakpoint-mobile - 1px}) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (min-width: $breakpoint-tablet) {
+  @media (min-width: variables.$breakpoint-tablet) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media (min-width: $breakpoint-desktop) {
+  @media (min-width: variables.$breakpoint-desktop) {
     @content;
   }
 }
 
 @mixin wide {
-  @media (min-width: $breakpoint-wide) {
+  @media (min-width: variables.$breakpoint-wide) {
     @content;
   }
 }
@@ -83,15 +84,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: $spacing-xl;
-  padding: $spacing-s;
+  height: variables.$spacing-xl;
+  padding: variables.$spacing-s;
   background-color: transparent;
   color: var(--color-text-secondary);
   border: 1px solid var(--color-bg);
-  border-radius: $radius-lg;
-  font-family: $font-family-base;
+  border-radius: variables.$radius-lg;
+  font-family: variables.$font-family-base;
   cursor: pointer;
-  transition: all $transition-base;
+  transition: all variables.$transition-base;
 
   @include focus-visible;
 
@@ -128,7 +129,7 @@
     background: linear-gradient(90deg, var(--color-text), var(--color-accent-hover));
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform $transition-medium;
+    transition: transform variables.$transition-medium;
   }
 
   &:hover::after {

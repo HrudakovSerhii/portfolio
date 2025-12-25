@@ -1,15 +1,19 @@
+@use '../base/variables';
+@use '../base/mixins';
+
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: $header-height;
+  height: variables.$header-height;
   background-color: var(--color-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
-  z-index: $z-header;
-  transition: all $transition-base;
+  z-index: variables.$z-header;
+  transition: all variables.$transition-base;
+
+  @include mixins.mobile {
+    height: variables.$header-mobile-height;
+  }
 }
 
 .header-content {
@@ -17,19 +21,19 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  max-width: $content-max-width;
+  max-width: variables.$content-max-width;
   margin: 0 auto;
-  padding: 0 $spacing-lg;
+  padding: 0 variables.$spacing-lg;
 
-  @include mobile {
-    padding: 0 $spacing-md;
+  @include mixins.mobile {
+    padding: 0 variables.$spacing-md;
   }
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: variables.$spacing-sm;
   flex: 1;
   min-width: 0;
 }
@@ -37,42 +41,42 @@
 .header-brand {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: variables.$spacing-sm;
   flex-shrink: 0;
 }
 
 .header-brand-text {
-  font-size: $font-size-base;
+  font-size: variables.$font-size-base;
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: -0.01em;
   display: none;
 
-  @include tablet {
+  @include mixins.tablet {
     display: block;
   }
 }
 
 .header-brand-sub-text {
-  font-size: $font-size-xs;
+  font-size: variables.$font-size-xs;
   font-weight: 400;
   color: var(--color-text);
   letter-spacing: -0.01em;
   display: none;
 
-  @include tablet {
+  @include mixins.tablet {
     display: inline-block;
   }
 }
 
 .header-nav-toggle {
-  @include interactive-control;
+  @include mixins.interactive-control;
   display: none;
-  font-size: $font-size-lg;
-  padding: $spacing-xs;
+  font-size: variables.$font-size-lg;
+  padding: variables.$spacing-xs;
   flex-shrink: 0;
 
-  @include mobile {
+  @include mixins.mobile {
     display: flex;
   }
 
@@ -89,7 +93,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: $spacing-s;
+  gap: variables.$spacing-s;
   overflow-x: auto;
   overflow-y: hidden;
   flex: 1;
@@ -111,7 +115,7 @@
     background: linear-gradient(to left, var(--color-bg), transparent);
     pointer-events: none;
     opacity: 0;
-    transition: opacity $transition-base;
+    transition: opacity variables.$transition-base;
   }
 
   @media (min-width: 769px) {
@@ -120,7 +124,7 @@
     }
   }
 
-  @include mobile {
+  @include mixins.mobile {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
@@ -130,14 +134,14 @@
     opacity: 0;
     visibility: hidden;
     position: absolute;
-    top: calc(100% + $spacing-xs);
-    left: $spacing-md;
-    right: $spacing-md;
+    top: calc(100% + 8px); // Used value as WebStorm 2024.3.2 does not recognise variables.$spacing-xs in calc function
+    left: variables.$spacing-md;
+    right: variables.$spacing-md;
     background-color: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: $radius-md;
+    border-radius: variables.$radius-md;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all $transition-base;
+    transition: all variables.$transition-base;
     z-index: 100;
 
     &.is-open {
@@ -174,7 +178,7 @@
   opacity: 0;
   will-change: transform, width;
 
-  @include mobile {
+  @include mixins.mobile {
     display: none !important;
   }
 }
@@ -182,32 +186,29 @@
 .header-nav-item {
   position: relative;
   display: inline-block;
-  padding: $spacing-xs $spacing-sm;
-  font-size: $font-size-xs;
+  padding: variables.$spacing-xs variables.$spacing-sm;
+  font-size: variables.$font-size-xs;
   font-weight: 500;
   color: var(--color-text);
   white-space: nowrap;
   text-decoration: none;
   background-color: transparent;
   border: none;
-  border-radius: $radius-sm;
   flex-shrink: 0;
   cursor: pointer;
-  transition: all $transition-base;
+  transition: all variables.$transition-base;
   animation: slideInNav 300ms ease forwards;
   opacity: 0;
   transform: translateX(-10px);
 
-  @include tablet {
-    font-size: $font-size-sm;
+  @include mixins.tablet {
+    font-size: variables.$font-size-sm;
   }
 
-  @include mobile {
+  @include mixins.mobile {
     display: block;
     width: 100%;
-    padding: $spacing-sm $spacing-md;
-    border-radius: 0;
-    border-bottom: 1px solid var(--color-border);
+    padding: variables.$spacing-sm variables.$spacing-md;
     animation: none;
     opacity: 1;
     transform: none;
@@ -234,19 +235,19 @@
   &:not(:first-child)::before {
     content: '';
     position: absolute;
-    left: calc(-#{$spacing-s} / 2);
+    left: calc(-#{variables.$spacing-s} / 2);
     top: 50%;
     transform: translateY(-50%);
     width: 1px;
     height: 1rem;
     background-color: var(--color-border);
 
-    @include mobile {
+    @include mixins.mobile {
       display: none;
     }
   }
 
-  @include animated-underline(0px, $spacing-sm, $spacing-sm);
+  @include mixins.animated-underline(0px, variables.$spacing-sm, variables.$spacing-sm);
 
   &:hover {
     transform: scaleY(0.95);
@@ -257,7 +258,7 @@
     outline-offset: 2px;
   }
 
-  @include mobile {
+  @include mixins.mobile {
     &::after {
       display: none;
     }
@@ -273,25 +274,25 @@
 .header-controls {
   display: flex;
   align-items: center;
-  gap: $spacing-s;
+  gap: variables.$spacing-s;
   flex-shrink: 0;
 
   .header-role-badge {
-    @include interactive-control;
+    @include mixins.interactive-control;
 
     display: none;
-    gap: $spacing-sm;
-    font-size: $font-size-xs;
+    gap: variables.$spacing-sm;
+    font-size: variables.$font-size-xs;
     font-weight: 500;
 
-    @include tablet {
+    @include mixins.tablet {
       display: flex;
     }
 
-    @include focus-visible;
+    @include mixins.focus-visible;
 
     .header-role-icon {
-      font-size: $font-size-sm;
+      font-size: variables.$font-size-sm;
       line-height: 1;
     }
 
@@ -301,30 +302,22 @@
   }
 
   .control-button {
-    @include interactive-control;
-    font-size: $font-size-sm;
+    @include mixins.interactive-control;
+    font-size: variables.$font-size-sm;
 
     .control-icon {
-      font-size: $font-size-lg;
+      font-size: variables.$font-size-lg;
       line-height: 1;
 
-      @include mobile {
-        font-size: $font-size-base;
+      @include mixins.mobile {
+        font-size: variables.$font-size-base;
       }
     }
   }
 
   .control-select {
-    @include interactive-control;
-    font-size: $font-size-xs;
-
-    @include mobile {
-      padding: $spacing-xs $spacing-sm;
-
-      &:hover {
-        padding: calc(#{$spacing-xs} - 1px) calc(#{$spacing-sm} - 1px);
-      }
-    }
+    @include mixins.interactive-control;
+    font-size: variables.$font-size-xs;
 
     option {
       background-color: var(--color-bg);
