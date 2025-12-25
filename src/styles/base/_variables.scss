@@ -20,6 +20,11 @@ $font-size-4xl: 2.5rem;    // 40px
 $font-size-5xl: 3rem;      // 48px
 $font-size-6xl: 3.75rem;   // 60px
 
+// Font Weight
+$font-weight-medium: 600;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
 // Line Heights
 $line-height-tight: 1.25;
 $line-height-normal: 1.5;
@@ -80,7 +85,7 @@ $z-tooltip: 100;
 $hero-blob-size: 16rem;
 $hero-blob-blur: 64px;
 $hero-roles-max-width: 80rem;
-$hero-background-image-width: 300px;
+$hero-background-image-width: 250px;
 $hero-profile-ring-size: 8rem;
 $hero-profile-ring-size-desktop: 10rem;
 $hero-profile-border-width: 4px;

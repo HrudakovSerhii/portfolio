@@ -10,7 +10,7 @@
   height: calc(100vh - 3rem); // used static value to escape Webstorm error
 
   @include mixins.desktop {
-    flex-direction: row;
+    max-width: 50%;
     gap: variables.$spacing-xl;
     height: calc(100vh - 4rem); // used static value to escape Webstorm error
   }
@@ -20,13 +20,13 @@
 
     @include mixins.desktop {
       text-align: start;
-      max-width: 50%;
     }
   }
 
   &-image {
     position: relative;
     border-radius: variables.$radius-full;
+    border: solid 8px var(--color-border);
     overflow: hidden;
 
     img {
@@ -63,6 +63,35 @@
 
     @include mixins.desktop {
       font-size: variables.$font-size-xl;
+    }
+  }
+
+  &-start-conversation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border-radius: variables.$radius-full;
+
+    &__text {
+      font-size: variables.$font-size-lg;
+      font-weight: variables.$font-weight-bold;
+    }
+
+    &__icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      padding: variables.$spacing-s 0;
+      background-color: var(--color-accent);
+      color:  var(--color-blue-50);
+      border-radius: variables.$radius-full;
+      transition: background-color variables.$transition-base;
+    }
+
+    &:hover &__icon-wrapper {
+      background-color: var(--color-accent-hover);
     }
   }
 }
