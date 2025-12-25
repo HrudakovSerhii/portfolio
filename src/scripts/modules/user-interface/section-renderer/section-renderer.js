@@ -1,4 +1,6 @@
 import { GenerativeImage } from '../generative-image/index.js';
+import ChatSectionRenderer from '../chat-section-renderer/index.js';
+import { getMessagesForSection } from '../../../../data/chat-content.js';
 
 const SCROLL_DELAY = 30;
 
@@ -7,12 +9,16 @@ const SECTION_ELEMENTS = {
   image: 'section-visual-container'
 };
 
+// Sections that use chat-based layout
+const CHAT_SECTIONS = ['about', 'experience', 'projects', 'skills'];
+
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
     this.stateManager = stateManager;
     this.contentMiddleware = contentMiddleware;
     this.templateBuilder = templateBuilder;
     this.animationController = animationController;
+    this.chatSectionRenderer = new ChatSectionRenderer(templateBuilder, stateManager);
 
     this.sectionsContainer = null;
     this.typingIndicator = null;
@@ -38,6 +44,37 @@ class SectionRenderer {
   async reveal(sectionId, role, customQuery = '') {
     this._showTypingIndicator();
 
+    // Check if this section should use chat layout
+    if (CHAT_SECTIONS.includes(sectionId)) {
+      await this._revealChatSection(sectionId, role);
+    } else {
+      await this._revealTraditionalSection(sectionId, role, customQuery);
+    }
+
+    this._hideTypingIndicator();
+    this.stateManager.addRevealedSection(sectionId);
+    await this._updateActionPrompt(sectionId);
+  }
+
+  async _revealChatSection(sectionId, role) {
+    // Create chat section container using template
+    const sectionElement = this._createChatSectionContainer(sectionId);
+
+    // Get messages for this section and role
+    const messages = getMessagesForSection(sectionId, role);
+
+    // Find messages container within the section
+    const messagesContainer = sectionElement.querySelector('.chat-messages-container');
+
+    if (messagesContainer) {
+      // Render messages using ChatSectionRenderer
+      this.chatSectionRenderer.renderMessages(messagesContainer, messages, role);
+    }
+
+    this._scrollToSection(sectionElement);
+  }
+
+  async _revealTraditionalSection(sectionId, role, customQuery) {
     const sectionData = await this._fetchSectionData(sectionId, role, customQuery);
     const profileData = await this._fetchProfileData();
 
@@ -46,15 +83,36 @@ class SectionRenderer {
     this._scrollToSection(sectionElement);
 
     await this._animateSectionContent(sectionElement, sectionData.sectionContent);
+  }
 
-    this._hideTypingIndicator();
-
-    this.stateManager.addRevealedSection(sectionId);
+  async restore(sectionId, role) {
+    // Check if this section should use chat layout
+    if (CHAT_SECTIONS.includes(sectionId)) {
+      await this._restoreChatSection(sectionId, role);
+    } else {
+      await this._restoreTraditionalSection(sectionId, role);
+    }
 
     await this._updateActionPrompt(sectionId);
   }
 
-  async restore(sectionId, role) {
+  async _restoreChatSection(sectionId, role) {
+    // Create chat section container
+    const sectionElement = this._createChatSectionContainer(sectionId);
+
+    // Get messages for this section and role
+    const messages = getMessagesForSection(sectionId, role);
+
+    // Find messages container within the section
+    const messagesContainer = sectionElement.querySelector('.chat-messages-container');
+
+    if (messagesContainer) {
+      // Render messages without typing animation on restore
+      this.chatSectionRenderer.renderMessages(messagesContainer, messages, role);
+    }
+  }
+
+  async _restoreTraditionalSection(sectionId, role) {
     const sectionData = await this._fetchSectionData(sectionId, role);
     const profileData = await this._fetchProfileData();
 
@@ -62,8 +120,6 @@ class SectionRenderer {
 
     this._populateTextContent(sectionElement, sectionData.sectionContent.text);
     this._populateImageContent(sectionElement, sectionData.sectionContent.image);
-
-    await this._updateActionPrompt(sectionId);
   }
 
   async _renderSectionWithContent(sectionContent, profileData) {
@@ -273,6 +329,65 @@ class SectionRenderer {
   _getNextSectionId(currentSectionId) {
     const currentIndex = this.sectionOrder.indexOf(currentSectionId);
     return this.sectionOrder[currentIndex + 1] || null;
+  }
+
+  /**
+   * Creates a chat section container using the appropriate template
+   * @param {string} sectionId - Section identifier
+   * @returns {HTMLElement} Chat section element
+   * @private
+   */
+  _createChatSectionContainer(sectionId) {
+    // Map section IDs to template IDs
+    const templateIdMap = {
+      about: 'chat-about-section-template',
+      experience: 'chat-experience-section-template',
+      projects: 'chat-projects-section-template',
+      skills: 'chat-skills-section-template'
+    };
+
+    const templateId = templateIdMap[sectionId];
+
+    if (!templateId) {
+      console.error(`No chat template found for section: ${sectionId}`);
+      // Fallback to creating a simple container
+      const section = document.createElement('section');
+      section.className = 'content-section chat-section';
+      section.setAttribute('data-section-id', sectionId);
+      section.id = `section-${sectionId}`;
+
+      const messagesContainer = document.createElement('div');
+      messagesContainer.className = 'chat-messages-container';
+      section.appendChild(messagesContainer);
+
+      const lastSectionElement = this.sectionsContainer.lastChild;
+      this.sectionsContainer.insertBefore(section, lastSectionElement);
+
+      return section;
+    }
+
+    // Use template
+    const template = document.getElementById(templateId);
+    if (!template) {
+      throw new Error(`Template with id "${templateId}" not found in DOM`);
+    }
+
+    const fragment = template.content.cloneNode(true);
+    const section = fragment.querySelector('.content-section');
+
+    if (!section) {
+      throw new Error(`Section element not found in template: ${templateId}`);
+    }
+
+    // Set section ID attributes
+    section.setAttribute('data-section-id', sectionId);
+    section.id = `section-${sectionId}`;
+
+    // Insert before action prompt
+    const lastSectionElement = this.sectionsContainer.lastChild;
+    this.sectionsContainer.insertBefore(section, lastSectionElement);
+
+    return section;
   }
 }
 
