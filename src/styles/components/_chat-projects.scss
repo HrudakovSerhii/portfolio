@@ -1,0 +1,395 @@
+// Chat Projects Section Styles
+// Project showcase cards with sidebar navigation variant
+
+@use '../base/variables' as *;
+
+.chat-projects {
+  // Project card (inside message bubble or as attachment)
+  &__card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface-secondary);
+    border-radius: $radius-2xl;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    margin-top: $spacing-md;
+    transition: all $transition-base;
+
+    &:hover {
+      border-color: rgba(var(--color-accent), 0.4);
+    }
+
+    @media (min-width: $breakpoint-tablet) {
+      flex-direction: row;
+    }
+  }
+
+  &__image-section {
+    position: relative;
+    width: 100%;
+    height: 12rem;
+    background-color: var(--color-surface-dark);
+    overflow: hidden;
+
+    @media (min-width: $breakpoint-tablet) {
+      width: 40%;
+      height: auto;
+    }
+
+    &-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
+      transition: all $transition-slowest;
+    }
+
+    &:hover &-img {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    // Gradient overlay
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--color-surface-secondary), transparent);
+
+      @media (min-width: $breakpoint-tablet) {
+        background: linear-gradient(to right, var(--color-surface-secondary), transparent);
+      }
+    }
+
+    // Tech badges on mobile (visible on image)
+    &-tech-overlay {
+      position: absolute;
+      bottom: $spacing-sm;
+      left: $spacing-sm;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-xs;
+
+      @media (min-width: $breakpoint-tablet) {
+        display: none;
+      }
+
+      span {
+        padding: $spacing-xs $spacing-sm;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        color: #ffffff;
+        font-size: $font-size-2xs;
+        border-radius: $radius-sm;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  &__content-section {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-lg;
+    gap: $spacing-md;
+    width: 100%;
+
+    @media (min-width: $breakpoint-tablet) {
+      width: 60%;
+      padding: $spacing-lg $spacing-xl;
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__title-group {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  &__category {
+    font-size: $font-size-xs;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    margin: 0;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-surface);
+    border-radius: $radius-full;
+    color: var(--color-text);
+    font-size: $font-size-xl;
+  }
+
+  &__description {
+    font-size: $font-size-sm;
+    line-height: $line-height-relaxed;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  &__tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin: $spacing-xs 0;
+  }
+
+  &__tech-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition: all $transition-base;
+
+    &:hover {
+      border-color: rgba(var(--color-accent), 0.5);
+    }
+
+    // Color dot indicator
+    &-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: $radius-full;
+
+      &--react { background-color: #61DAFB; }
+      &--nextjs { background-color: #ffffff; border: 1px solid var(--color-border); }
+      &--tailwind { background-color: #38B2AC; }
+      &--nodejs { background-color: #68A063; }
+      &--graphql { background-color: #E535AB; }
+      &--typescript { background-color: #3178C6; }
+      &--postgresql { background-color: #336791; }
+      &--redis { background-color: #DC382D; }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: auto;
+    padding-top: $spacing-sm;
+  }
+
+  &__action-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-xl;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-base;
+    border: none;
+
+    &--primary {
+      background-color: var(--color-accent);
+      color: #ffffff;
+      box-shadow: var(--shadow-md);
+
+      &:hover {
+        background-color: var(--color-accent-hover);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
+      }
+    }
+
+    &--secondary {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    &-icon {
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+// Sidebar navigation variant (for Projects page from Stitch design)
+.chat-projects-sidebar {
+  position: fixed;
+  left: 0;
+  top: $header-height;
+  bottom: 0;
+  width: $nav-width-collapsed;
+  background-color: var(--color-surface-secondary);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  padding: $spacing-md;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+
+  @media (min-width: $breakpoint-desktop) {
+    display: flex;
+    width: $nav-width-expanded;
+    padding: $spacing-lg $spacing-xl;
+  }
+
+  &__profile {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: $radius-full;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    border: 2px solid rgba(var(--color-accent), 0.2);
+
+    @media (min-width: $breakpoint-desktop) {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  &__name {
+    display: none;
+    flex-direction: column;
+
+    @media (min-width: $breakpoint-desktop) {
+      display: flex;
+    }
+
+    h1 {
+      font-size: $font-size-lg;
+      font-weight: 700;
+      margin: 0;
+      line-height: $line-height-tight;
+    }
+
+    p {
+      font-size: $font-size-xs;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-xl;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    transition: all $transition-base;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--color-text);
+    }
+
+    &--active {
+      background-color: var(--color-accent);
+      color: #ffffff;
+      box-shadow: var(--shadow-lg);
+    }
+
+    &-icon {
+      font-size: $font-size-2xl;
+    }
+
+    &-text {
+      display: none;
+
+      @media (min-width: $breakpoint-desktop) {
+        display: block;
+      }
+    }
+  }
+
+  &__context {
+    display: none;
+    flex-direction: column;
+    gap: $spacing-xs;
+    padding: $spacing-md;
+    background-color: var(--color-surface);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: $radius-2xl;
+
+    @media (min-width: $breakpoint-desktop) {
+      display: flex;
+    }
+
+    &-label {
+      font-size: $font-size-2xs;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-tertiary);
+    }
+
+    &-status {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      font-size: $font-size-sm;
+      font-weight: 500;
+      color: var(--color-text);
+
+      &-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: $radius-full;
+        background-color: var(--color-success);
+        animation: pulse 2s infinite;
+      }
+
+      strong {
+        color: var(--color-accent);
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

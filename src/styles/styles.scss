@@ -20,7 +20,15 @@
 
 @use 'components/featured-projects';
 @use 'components/footer';
-//@use 'components/chat-ui';
+//@use 'components/chat-ui'; // Old chat UI (deprecated)
+
+// New chat-based section components
+@use 'components/chat-section';
+@use 'components/chat-about';
+@use 'components/chat-experience';
+@use 'components/chat-projects';
+@use 'components/chat-skills';
+
 @use 'components/generative-image';
 @use 'components/modal-base';
 @use 'components/modal-content';
