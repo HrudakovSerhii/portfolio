@@ -9,6 +9,7 @@ import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
+const RENDER_TIMEOUT = 100;
 
 const ELEMENT_IDS = {
   initialLoader: 'initial-loader',
@@ -19,7 +20,8 @@ const ELEMENT_IDS = {
   mainContent: 'main-content',
   heroSection: 'hero-section',
   pathSelection: 'path-selection',
-  typingIndicator: 'typing-indicator'
+  typingIndicator: 'typing-indicator',
+  startConversationBtn: 'start-conversation-btn',
 };
 
 class AppController {
@@ -48,7 +50,8 @@ class AppController {
       mainContent: null,
       heroSection: null,
       pathSelection: null,
-      typingIndicator: null
+      typingIndicator: null,
+      startConversationBtn: null,
     };
 
     this.initialized = false;
@@ -110,13 +113,14 @@ class AppController {
     this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
     this.elements.pathSelection = document.getElementById(ELEMENT_IDS.pathSelection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
+    this.elements.startConversationBtn = document.getElementById(ELEMENT_IDS.startConversationBtn);
 
     const criticalElementKeys = [
       'initialLoader',
       'themeToggle',
       'languageSelector',
       'mainContent',
-      'pathSelection'
+      'startConversationBtn'
     ];
 
     for (const key of criticalElementKeys) {
@@ -135,7 +139,65 @@ class AppController {
       this.headerController.updateLanguage(e.target.value);
     });
 
-    this._setupHeroRoleCardListeners();
+    this.elements.startConversationBtn.addEventListener('click', () => {
+      this._startConversation();
+    })
+  }
+
+  _startConversation() {
+    if (this._isPathSelectionRendered()) {
+      this._scrollToElementById('path-selection');
+    } else if (this._isHeroSectionRendered()) {
+      this._scrollToElementById('section-hero');
+      this._updateStartConversationButtonText( 'Read below');
+    } else {
+      this._revealRoleSelectorSection();
+      this._setupHeroRoleCardListeners();
+      this._updateStartConversationButtonText( 'Scroll down to proceed');
+    }
+  }
+
+  _isPathSelectionRendered() {
+    const pathSelection = this.elements.mainContent.querySelector('#path-selection');
+    return pathSelection !== null;
+  }
+
+  _isHeroSectionRendered() {
+    const pathSelection = this.elements.mainContent.querySelector('#section-hero');
+    return pathSelection !== null;
+  }
+
+  _scrollToElementById(id) {
+    const element = this.elements.mainContent.querySelector(`#${id}`);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+  _revealRoleSelectorSection() {
+    const pathSelectionSection = this.templateBuilder.renderPathSelection();
+    this.elements.mainContent.appendChild(pathSelectionSection);
+
+    this.elements.pathSelection = document.getElementById('path-selection');
+
+    setTimeout(() => {
+      this._scrollToElementById('path-selection');
+    }, RENDER_TIMEOUT);
+  }
+
+  _updateStartConversationButtonText(text) {
+    if (!this.elements.startConversationBtn) {
+      return;
+    }
+
+    const textElement = this.elements.startConversationBtn.querySelector('.hero-start-conversation__text');
+    if (textElement) {
+      textElement.textContent = text;
+    }
   }
 
   _setupHeroRoleCardListeners() {
@@ -195,10 +257,6 @@ class AppController {
       return;
     }
 
-    if (role) {
-      this.elements.pathSelection.classList.add('invisible');
-    }
-
     await this._restoreRevealedSections(revealedSections, role);
   }
 
@@ -210,9 +268,9 @@ class AppController {
       ]);
     }
 
-    const lastSection = this._getSectionElement(revealedSections[revealedSections.length - 1])
+    const sectionId = `section-${revealedSections[revealedSections.length - 1]}`;
 
-    lastSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this._scrollToElementById(sectionId);
   }
 
   async _restoreSingleSection(sectionId, role) {
@@ -234,8 +292,20 @@ class AppController {
       }
 
       this.stateManager.setRole(role);
-      this.elements.pathSelection.classList.add('invisible');
       this.headerController.updateRoleBadge(role);
+
+      // TODO: check if removal and reveal of 1st section can be done in parallel using Promise.all
+      if (this.elements.pathSelection) {
+        this.elements.pathSelection.classList.add('invisible');
+
+        // Wait for animation to complete, then remove from DOM
+        setTimeout(() => {
+          if (this.elements.pathSelection) {
+            this.elements.pathSelection.remove();
+            this.elements.pathSelection = null;
+          }
+        }, MODAL_FADE_DURATION);
+      }
 
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
@@ -290,10 +360,6 @@ class AppController {
     if (this.elements.typingIndicator) {
       this.elements.typingIndicator.style.display = 'none';
     }
-  }
-
-  _getSectionElement(sectionId) {
-    return this.elements.mainContent.querySelector(`[data-section-id="${sectionId}"]`);
   }
 }
 

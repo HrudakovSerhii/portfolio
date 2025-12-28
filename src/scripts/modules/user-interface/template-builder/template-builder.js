@@ -22,7 +22,8 @@ class TemplateBuilder {
       chatSkillsSection: null,
       chatSkillGroup: null,
       chatSkillProgress: null,
-      chatActionButtons: null
+      chatActionButtons: null,
+      pathSelection: null
     };
   }
 
@@ -258,6 +259,21 @@ class TemplateBuilder {
     }
 
     return modal;
+  }
+
+  /**
+   * Renders path selection section with role cards
+   * @returns {DocumentFragment} Path selection section element
+   */
+  renderPathSelection() {
+    const fragment = this._cloneTemplate('path-selection-template');
+    const section = fragment.querySelector('.path-selection');
+
+    if (!section) {
+      throw new Error('Path selection section element not found in template');
+    }
+
+    return section;
   }
 
   // ============================================

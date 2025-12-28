@@ -105,58 +105,6 @@
           <span class="material-symbols-outlined">send</span>
         </div>
       </button>
-
-    </section>
-
-    <section class="path-selection" id="path-selection">
-      <p class="path-selection-description">
-        Hiring the right person shouldn't mean drowning in hundreds of CVs.
-        Even with AI's help, you still need to know what you're looking for.
-        I wanted to solve that problem - by letting you choose your own path.
-      </p>
-
-      <div class="path-selection-cards">
-        <article class="path-card">
-          <h3>For Recruiters</h3>
-          <p>
-            Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.
-          </p>
-          <button class="button button--recruiter" data-role="recruiter">
-          <span class="button__description" data-role="recruiter-description">
-            Experience, roles and skills I got through my career path.
-          </span>
-            <span class="button__title">View as Recruiter</span>
-          </button>
-        </article>
-
-        <article class="path-card">
-          <h3>For Engineers</h3>
-          <p>
-            Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
-          </p>
-          <button class="button button--developer" data-role="developer">
-          <span class="button__description" data-role="developer-description">
-            Projects, technologies and visions I got through my builder path.
-          </span>
-            <span class="button__title">View as Engineer</span>
-          </button>
-        </article>
-
-        <article class="path-card">
-          <h3>For Friends</h3>
-          <p>
-            I'll introduce the human side of my self so you can understand what kind of person I am.
-          </p>
-          <button class="button button--friend" data-role="friend">
-              <span class="button__description" data-role="friend-description">
-                For friends and thous who want to become one
-              </span>
-            <span class="button__title">View as Friend</span>
-          </button>
-        </article>
-      </div>
-
-      <p class="path-selection-cta--prompt">Which path speaks to you?</p>
     </section>
 
     <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
@@ -527,6 +475,59 @@
         <!-- Buttons will be inserted dynamically -->
       </div>
     </div>
+  </template>
+
+  <template id="path-selection-template">
+    <section class="path-selection" id="path-selection">
+      <p class="path-selection-description">
+        Hiring the right person shouldn't mean drowning in hundreds of CVs.
+        Even with AI's help, you still need to know what you're looking for.
+        I wanted to solve that problem - by letting you choose your own path.
+      </p>
+
+      <div class="path-selection-cards">
+        <article class="path-card">
+          <h3>For Recruiters</h3>
+          <p>
+            Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.
+          </p>
+          <button class="button button--recruiter" data-role="recruiter">
+            <span class="button__description" data-role="recruiter-description">
+              Experience, roles and skills I got through my career path.
+            </span>
+            <span class="button__title">View as Recruiter</span>
+          </button>
+        </article>
+
+        <article class="path-card">
+          <h3>For Engineers</h3>
+          <p>
+            Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
+          </p>
+          <button class="button button--developer" data-role="developer">
+            <span class="button__description" data-role="developer-description">
+              Projects, technologies and visions I got through my builder path.
+            </span>
+            <span class="button__title">View as Engineer</span>
+          </button>
+        </article>
+
+        <article class="path-card">
+          <h3>For Friends</h3>
+          <p>
+            I'll introduce the human side of my self so you can understand what kind of person I am.
+          </p>
+          <button class="button button--friend" data-role="friend">
+            <span class="button__description" data-role="friend-description">
+              For friends and thous who want to become one
+            </span>
+            <span class="button__title">View as Friend</span>
+          </button>
+        </article>
+      </div>
+
+      <p class="path-selection-cta--prompt">Which path speaks to you?</p>
+    </section>
   </template>
 
   <script type="module" src="./scripts/modules/app-controller/index.js"></script>
