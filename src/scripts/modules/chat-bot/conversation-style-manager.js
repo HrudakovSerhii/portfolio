@@ -1,9 +1,14 @@
 /**
- * StyleManager - Manages conversation styles and their specific behaviors
+ * ConversationStyleManager - Manages conversation styles and their specific behaviors
  * Handles style selection, persistence, greeting messages, and style-specific formatting
+ *
+ * Change History:
+ * 2025-12-30: Renamed from StyleManager to ConversationStyleManager
+ *   - Clarifies purpose: manages conversation style (not CSS/visual styling)
+ *   - File renamed: style-manager.js → conversation-style-manager.js
  */
 
-class StyleManager {
+class ConversationStyleManager {
   constructor() {
     this.currentStyle = null;
     this.availableStyles = ['hr', 'developer', 'friend'];
@@ -374,4 +379,4 @@ class StyleManager {
   }
 }
 
-export default StyleManager;
+export default ConversationStyleManager;

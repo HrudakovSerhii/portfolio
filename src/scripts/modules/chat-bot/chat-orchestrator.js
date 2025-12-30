@@ -84,7 +84,7 @@ class ChatOrchestrator {
       // Initialize managers (no CV data yet)
       this.cvDataService = new this._CVDataService();
       this.conversationManager = new this._ConversationManager();
-      this.styleManager = new this._StyleManager();
+      this.styleManager = new this._ConversationStyleManager();
       this.fallbackHandler = new this._FallbackHandler(this.styleManager, this.conversationManager);
 
       // Check for persisted style
@@ -152,19 +152,19 @@ class ChatOrchestrator {
       const [
         { default: ConversationManager },
         { default: CVDataService },
-        { default: StyleManager },
+        { default: ConversationStyleManager },
         { default: FallbackHandler }
       ] = await Promise.all([
         import('./conversation-manager.js'),
         import('./cv-data-service.js'),
-        import('./style-manager.js'),
+        import('./conversation-style-manager.js'),
         import('./fallback-handler.js')
       ]);
 
       // Store classes for this instance
       this._ConversationManager = ConversationManager;
       this._CVDataService = CVDataService;
-      this._StyleManager = StyleManager;
+      this._ConversationStyleManager = ConversationStyleManager;
       this._FallbackHandler = FallbackHandler;
     } catch (error) {
       throw new Error(`MODULE_LOAD_FAILED: ${error.message}`);
