@@ -12,6 +12,9 @@ tensorboard>=2.14.0
 sentencepiece>=0.1.99
 protobuf>=3.20.0
 
+# For RAG embeddings
+sentence-transformers>=2.2.0
+
 # Optional: for ONNX conversion later
 # optimum[onnxruntime]>=1.16.0
 # onnx>=1.15.0

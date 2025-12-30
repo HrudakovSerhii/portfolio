@@ -1,0 +1,26 @@
+# Generated embeddings (can be regenerated from chunks)
+rag/knowledge_base/embeddings.npy
+
+# Model checkpoints and training artifacts
+*.pth
+*.bin
+*.safetensors
+checkpoint-*/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
