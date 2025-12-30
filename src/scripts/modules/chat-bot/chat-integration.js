@@ -27,11 +27,11 @@ async function initializeChat() {
     // Show initial loading state immediately
     showInitialLoadingState();
 
-    // Lazy load the ChatBot class
-    const { ChatBot } = await import('./chat-bot.js');
+    // Lazy load the ChatOrchestrator class
+    const { ChatOrchestrator } = await import('./chat-orchestrator.js');
 
     // Create and initialize chatbot instance
-    chatBotInstance = new ChatBot();
+    chatBotInstance = new ChatOrchestrator();
 
     const success = await chatBotInstance.initialize();
 
