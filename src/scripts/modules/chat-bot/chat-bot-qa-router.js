@@ -3,6 +3,15 @@
  *
  * Orchestrates intent-based routing for question-answering.
  * Routes queries to specialized workers based on intent classification.
+ *
+ * RAG Architecture Compatibility (2025-12-30):
+ * - precomputeChunkEmbeddings() (line ~299): Already handles precomputed embeddings
+ *   * Filters chunks without embeddings (line 312): chunksNeedingEmbeddings = cvChunks.filter(chunk => !chunk.embedding)
+ *   * When cv-data-service loads embeddings-{role}.json with precomputed embeddings, filter returns empty array
+ *   * No client-side embedding generation occurs (becomes no-op)
+ * - generateEmbedding() (line ~339): Still used for user queries only (correct behavior for RAG)
+ * - Architecture fully supports precomputed embeddings from build-time generation
+ * - No code changes needed for RAG implementation
  */
 
 import { WorkerCommunicator } from './utils/worker-communicator.js';

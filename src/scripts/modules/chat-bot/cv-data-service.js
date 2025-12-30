@@ -1,6 +1,36 @@
 /**
  * CV Data Service Module
  * Handles loading, validation, and management of CV data for the chatbot
+ *
+ * NEEDS REFACTORING FOR RAG IMPLEMENTATION:
+ *
+ * Current Issues (2025-12-30):
+ * - Line 24: Hardcoded fetch from 'public/cv/cv-data.v2.json' (old data source)
+ * - loadCVData(): Does NOT accept role parameter (needs role-based loading)
+ * - Expected format: Complex structure (sections, personality, responseTemplates)
+ * - Validation: Designed for old CV data format with nested structure
+ * - Indexing: Builds complex keyword/section indexes (may be unnecessary)
+ *
+ * Required Changes for RAG Architecture:
+ * 1. Update signature: loadCVData(role) to accept 'hr', 'developer', or 'friend'
+ * 2. Fetch from: public/data/embeddings-{role}.json (precomputed chunks)
+ * 3. Expected format: Array of chunks with precomputed embeddings
+ *    [
+ *      {
+ *        id: "core_identity",
+ *        text: "...",
+ *        embedding: [0.123, 0.456, ...],  // 384-dim precomputed
+ *        keywords: [...],
+ *        metadata: {...}
+ *      }
+ *    ]
+ * 4. Simplify validation: Precomputed data is already validated at build time
+ * 5. Remove keyword indexing: Not needed for vector search
+ * 6. prepareCVChunks(): Should return loaded chunks directly (already prepared)
+ *
+ * Dependencies:
+ * - Requires embeddings-{role}.json files in public/data/ (created at build time)
+ * - Build script: model-training/scripts/generate-embeddings.js (to be created)
  */
 
 class CVDataService {
