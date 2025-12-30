@@ -45,13 +45,8 @@ async function initializeChat() {
   } catch (error) {
     console.error('Chat initialization error:', error);
 
-    // If we have a chatBot instance with UI, use it for error display
-    if (chatBotInstance && chatBotInstance.ui) {
-      chatBotInstance.ui.showError(getErrorMessage(error.message));
-    } else {
-      // Fallback error display
-      showFallbackError(error.message);
-    }
+    // Display error directly in UI
+    showFallbackError(error.message);
   } finally {
     isLoading = false;
   }
@@ -147,9 +142,9 @@ function showInitialLoadingState() {
  * Show the chat interface
  */
 function showChatInterface() {
-  if (chatBotInstance && chatBotInstance.ui) {
-    // Show the chat container
-    chatBotInstance.ui.show();
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.classList.add('visible');
   }
 }
 
@@ -157,9 +152,9 @@ function showChatInterface() {
  * Close the chat overlay
  */
 function closeChatOverlay() {
-  if (chatBotInstance && chatBotInstance.ui) {
-    // Hide the chat container
-    chatBotInstance.ui.hide();
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.classList.remove('visible');
   }
 }
 
