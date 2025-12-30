@@ -1,6 +1,30 @@
 /**
  * Dual Worker Coordinator - Orchestrates embedding and text generation workers
  * for enhanced semantic Q&A with context-aware responses
+ *
+ * @deprecated This module is deprecated as of 2025-12-30
+ *
+ * Reason for Deprecation:
+ * - Legacy implementation from initial 2-worker setup (embedding + text generation)
+ * - Superseded by ChatBotQARouter which provides:
+ *   * 3-worker architecture (embedding + text generation + EQA)
+ *   * Intent-based routing (fact_retrieval vs conversational_synthesis)
+ *   * WorkerCommunicator abstraction for better worker management
+ *   * Specialized fact extraction via EQA worker
+ *
+ * Replacement:
+ * - Use @src/scripts/modules/chat-bot/chat-bot-qa-router.js instead
+ * - Caching functionality ported to ChatBotQARouter using cache-manager.js
+ *
+ * Migration Path:
+ * - ChatBotQARouter provides all functionality of DualWorkerCoordinator
+ * - Plus additional capabilities (intent routing, EQA extraction)
+ * - No migration needed - this file kept for reference only
+ *
+ * Kept for Reference:
+ * - Context indexing pattern (indexContext method)
+ * - Caching integration example with cache-manager.js
+ * - Batch embedding optimization strategies
  */
 
 import * as queryProcessor from './utils/query-processor.js';

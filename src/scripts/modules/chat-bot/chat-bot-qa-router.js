@@ -5,13 +5,23 @@
  * Routes queries to specialized workers based on intent classification.
  *
  * RAG Architecture Compatibility (2025-12-30):
- * - precomputeChunkEmbeddings() (line ~299): Already handles precomputed embeddings
- *   * Filters chunks without embeddings (line 312): chunksNeedingEmbeddings = cvChunks.filter(chunk => !chunk.embedding)
+ * - precomputeChunkEmbeddings() (line ~309): Already handles precomputed embeddings
+ *   * Filters chunks without embeddings (line 322): chunksNeedingEmbeddings = cvChunks.filter(chunk => !chunk.embedding)
  *   * When cv-data-service loads embeddings-{role}.json with precomputed embeddings, filter returns empty array
  *   * No client-side embedding generation occurs (becomes no-op)
- * - generateEmbedding() (line ~339): Still used for user queries only (correct behavior for RAG)
+ * - generateEmbedding() (line ~349): Still used for user queries only (correct behavior for RAG)
+ *   * Implements caching layer via cache-manager.js (lines 351-353, 365)
+ *   * Cache hit avoids worker call, significantly improves response time for repeated queries
  * - Architecture fully supports precomputed embeddings from build-time generation
- * - No code changes needed for RAG implementation
+ *
+ * Performance Optimization (2025-12-30):
+ * - Integrated cache-manager.js for query embedding caching
+ * - Cache configuration: 200 embeddings max, LRU eviction
+ * - Similarity threshold updated to 0.7 (from 0.3) for better precision
+ *
+ * Change History:
+ * - 2025-12-30: Added caching layer for generateEmbedding() method
+ * - 2025-12-30: Updated similarity threshold from 0.3 to 0.7 (experimental tuning)
  */
 
 import { WorkerCommunicator } from './utils/worker-communicator.js';
@@ -21,6 +31,7 @@ import { classifyIntent } from './utils/intent-classifier.js';
 import { buildCVContext } from '../semantic-qa/utils/cv-context-builder.js';
 import { createPrompt } from '../semantic-qa/utils/prompt-builder.js';
 import { validateResponseQuality } from '../semantic-qa/utils/response-validator.js';
+import * as cacheManager from '../semantic-qa/utils/cache-manager.js';
 
 export class ChatBotQARouter {
   constructor(options = {}) {
@@ -30,7 +41,7 @@ export class ChatBotQARouter {
       textGenWorkerPath: options.textGenWorkerPath || './scripts/workers/optimized-ml-worker.js',
       eqaWorkerPath: options.eqaWorkerPath || './scripts/workers/eqa-worker.js',
       maxContextChunks: options.maxContextChunks || 5,
-      similarityThreshold: options.similarityThreshold || 0.3,
+      similarityThreshold: options.similarityThreshold || 0.7,
       eqaConfidenceThreshold: options.eqaConfidenceThreshold || 0.3,
       timeout: options.timeout || 5000,
       onProgress: options.onProgress || null
@@ -341,18 +352,29 @@ export class ChatBotQARouter {
   }
 
   /**
-   * Generate embedding for query using embedding worker
+   * Generate embedding for query using embedding worker with caching
    * @param {string} text - Text to embed
    * @returns {Promise<Float32Array>} Query embedding
    */
   async generateEmbedding(text) {
+    // Check cache first
+    const cachedEmbedding = cacheManager.getCachedEmbedding(text);
+    if (cachedEmbedding) {
+      return cachedEmbedding;
+    }
+
     try {
       const response = await this.embeddingCommunicator.sendMessage('generateBatchEmbeddings', {
         texts: [text]
       });
 
       if (response.success && response.embeddings && response.embeddings.length > 0) {
-        return response.embeddings[0];
+        const embedding = response.embeddings[0];
+
+        // Cache the result
+        cacheManager.cacheEmbedding(text, embedding);
+
+        return embedding;
       } else {
         throw new Error('Failed to generate embedding');
       }
