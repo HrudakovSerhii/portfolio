@@ -113,13 +113,13 @@ def main():
     model = model.to(device)
     print(f"✅ Model loaded on {device}")
 
-    # Configure LoRA with much stronger settings
+    # Configure LoRA - anti-overfitting settings
     print("\n🎯 Configuring LoRA...")
     lora_config = LoraConfig(
-        r=64,  # Much higher rank for stronger adaptation
-        lora_alpha=128,  # Doubled alpha
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],  # More modules
-        lora_dropout=0.05,
+        r=32,  # Lower rank to prevent overfitting
+        lora_alpha=64,
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        lora_dropout=0.1,  # Higher dropout for regularization
         bias="none",
         task_type="CAUSAL_LM"
     )
@@ -156,26 +156,28 @@ def main():
     print(f"   Training samples: {len(train_dataset)}")
     print(f"   Validation samples: {len(eval_dataset)}")
 
-    # Training arguments optimized for M2 Mac
+    # Training arguments - anti-overfitting configuration
     print("\n⚙️  Configuring training arguments...")
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
-        num_train_epochs=10,  # More epochs for better learning
-        per_device_train_batch_size=2,  # Smaller for 16GB RAM
-        per_device_eval_batch_size=2,
-        gradient_accumulation_steps=8,  # Effective batch size = 16
-        learning_rate=5e-4,  # Higher learning rate for stronger adaptation
-        weight_decay=0.01,
+        num_train_epochs=3,  # Reduced from 10 to prevent overfitting
+        per_device_train_batch_size=4,  # Match train_hf_jobs.py
+        per_device_eval_batch_size=4,
+        gradient_accumulation_steps=4,  # Effective batch size = 16
+        learning_rate=2e-4,  # Lower learning rate
+        weight_decay=0.02,  # Weight decay for regularization
+        lr_scheduler_type="cosine",  # Cosine decay
+        warmup_steps=100,
         logging_dir=f"{OUTPUT_DIR}/logs",
         logging_steps=10,
         logging_first_step=True,
         eval_strategy="steps",
-        eval_steps=50,
+        eval_steps=25,  # More frequent evaluation
         save_strategy="steps",
-        save_steps=100,
-        save_total_limit=3,
+        save_steps=50,  # Save checkpoints more often
+        save_total_limit=2,  # Keep only 2 best checkpoints
         load_best_model_at_end=True,
-        warmup_steps=20,  # Much shorter warmup (was 100)
+        metric_for_best_model="eval_loss",
         fp16=False,  # MPS doesn't support fp16
         report_to=["tensorboard"],
         remove_unused_columns=False,
