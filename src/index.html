@@ -88,23 +88,36 @@
     </div>
 
     <section class="hero">
-      <div class="hero-image">
-        <img src="./assets/images/hero.full.webp" alt="Serhii Hrudakov photo">
-      </div>
-      <div class="hero-content">
-        <h1 class="hero-title"> Hi, I'm <span class="text-gradient">Serhii</span></h1>
-        <h2 class="hero-subtitle">Senior Frontend Engineer</h2>
-        <p class="hero-intro">
-          I built this site so you can get to know me <br/> in the way that
-          matters most - to <span class="text-gradient">You.</span>
-        </p>
-      </div>
-      <button class="hero-start-conversation button" id="start-conversation-btn">
-        <span class="hero-start-conversation__text">Start Conversation</span>
-        <div class="hero-start-conversation__icon-wrapper">
-          <span class="material-symbols-outlined">send</span>
+      <div class="hero-layout">
+        <div class="hero-content">
+          <h1 class="hero-title">Hello, I'm <span class="text-gradient">Serhii</span></h1>
+          <p class="hero-intro">
+            I built this site so you can get to know me <br/> in the way that
+            matters most - to <span class="text-gradient">You.</span>
+            <br class="hero-intro__break"/>Ready to discuss a new project?
+          </p>
+          <div class="hero-actions">
+            <button class="hero-start-conversation button" id="start-conversation-btn">
+              <span class="hero-start-conversation__text">Start Conversation</span>
+              <div class="hero-start-conversation__icon-wrapper">
+                <span class="material-symbols-outlined">send</span>
+              </div>
+            </button>
+            <div class="hero-cta-buttons" id="hero-cta-buttons">
+              <!-- CTA buttons will be inserted here dynamically -->
+            </div>
+          </div>
         </div>
-      </button>
+        <div class="hero-image-container">
+          <div class="hero-image-glow"></div>
+          <div class="hero-image">
+            <img src="./assets/images/hero.full.webp" alt="Serhii Hrudakov photo">
+          </div>
+          <div class="hero-online-indicator">
+            <div class="hero-online-indicator__pulse"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
@@ -528,6 +541,13 @@
 
       <p class="path-selection-cta--prompt">Which path speaks to you?</p>
     </section>
+  </template>
+
+  <template id="hero-cta-button-template">
+    <button class="hero-cta-button">
+      <span class="hero-cta-button__icon material-symbols-outlined"></span>
+      <span class="hero-cta-button__text"></span>
+    </button>
   </template>
 
   <script type="module" src="./scripts/modules/app-controller/index.js"></script>

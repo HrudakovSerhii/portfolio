@@ -10,9 +10,10 @@
     align-items: center;
     margin-top: variables.$spacing-2xl;
     z-index: 1;
+    max-width: variables.$breakpoint-desktop;
 
     @include mixins.desktop {
-        padding: variables.$spacing-3xl;
+        margin: 0 auto;
     }
 
     .sections-container {
