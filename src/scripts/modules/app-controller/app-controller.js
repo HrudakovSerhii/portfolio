@@ -296,8 +296,6 @@ class AppController {
     sections.forEach(section => section.remove());
 
     this.headerController.clearNavigation();
-
-    this.revealSection(SECTION_ORDER[0]).finally();
   }
 
   async revealSection(sectionId, customQuery = '') {
