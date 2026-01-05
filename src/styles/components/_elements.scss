@@ -103,12 +103,14 @@
       left: 0;
 
       &::after {
-        left: 23%;
+        right: auto;
+        left: 13%;
       }
     }
 
     &[data-role='developer-description'] {
-      left: -63%;
+      left: -200%;
+      right: -200%;
     }
 
     &[data-role='friend-description'] {
@@ -116,7 +118,7 @@
       right: 0;
 
       &::after {
-        right: 21%;
+        right: 6%;
         left: auto;
       }
     }
