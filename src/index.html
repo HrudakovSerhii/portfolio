@@ -99,13 +99,7 @@
           <div class="hero-actions">
             <button class="hero-start-conversation button" id="start-conversation-btn">
               <span class="hero-start-conversation__text">Start Conversation</span>
-              <div class="hero-start-conversation__icon-wrapper">
-                <span class="material-symbols-outlined">send</span>
-              </div>
             </button>
-            <div class="hero-cta-buttons" id="hero-cta-buttons">
-              <!-- CTA buttons will be inserted here dynamically -->
-            </div>
           </div>
         </div>
         <div class="hero-image-container">
@@ -118,6 +112,48 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="story-path" id="story-path-section">
+      <div class="story-path-content">
+        <h2 class="story-path__title">
+          Hiring the right person shouldn't mean drowning in hundreds of CVs.
+        </h2>
+        <h3 class="story-path__subtitle">
+          Even with <span class="text-gradient">AI's</span> help, you still need to know what you're looking for.
+          I wanted to solve that problem - by letting you choose your own path.
+        </h3>
+        <h3 class="story-path__text">
+          This way you can explore not only my relevant profile information, but also my personal side.
+          Side that important when you work with <span class="text-gradient">humans</span>
+        </h3>
+      </div>
+      <div class="story-path-options">
+        <div class="story-path__option">
+          <p class="story-path__description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
+          <button class="button button--recruiter" data-role="recruiter">
+            I'm a Recruiter
+          </button>
+        </div>
+        <div class="story-path__option">
+          <p class="story-path__description">
+            Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
+          </p>
+          <button class="button button--developer" data-role="developer">
+            I'm an Engineer
+          </button>
+        </div>
+        <div class="story-path__option">
+          <p class="story-path__description">
+            I'll introduce the human side of my self so you can understand what kind of person I am.
+          </p>
+          <button class="button button--friend" data-role="friend">
+            I'm a Friend
+          </button>
+        </div>
+      </div>
+
+      <p class="story-path__cta--prompt">Which path speaks to you?</p>
     </section>
 
     <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
@@ -225,8 +261,9 @@
     </div>
   </template>
 
+  <!--  This is the template for the modal where user can enter custom query to agent-->
   <template id="personalization-modal-template">
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="personalization-title">
+    <div class="modal-overlay overlay" role="dialog" aria-modal="true" aria-labelledby="personalization-title">
       <div class="modal-content modal-content--personalization">
         <h2 id="personalization-title" class="modal-title">Welcome! Let's personalize your experience</h2>
 
@@ -277,8 +314,9 @@
     </div>
   </template>
 
+  <!--  This is the template for the modal to change personalisation role (story path)-->
   <template id="role-change-modal-template">
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="role-change-modal-title">
+    <div class="modal-overlay overlay" role="dialog" aria-modal="true" aria-labelledby="role-change-modal-title">
       <div class="modal-content role-change-modal">
         <button class="modal-content-close" aria-label="Close modal">
           <span aria-hidden="true">×</span>
@@ -479,75 +517,6 @@
         <div class="chat-skills__progress-fill"></div>
       </div>
     </div>
-  </template>
-
-  <template id="chat-action-buttons-template">
-    <div class="chat-actions">
-      <p class="chat-actions__label">Quick Reply</p>
-      <div class="chat-actions__buttons">
-        <!-- Buttons will be inserted dynamically -->
-      </div>
-    </div>
-  </template>
-
-  <template id="path-selection-template">
-    <section class="path-selection" id="path-selection">
-      <p class="path-selection-description">
-        Hiring the right person shouldn't mean drowning in hundreds of CVs.
-        Even with AI's help, you still need to know what you're looking for.
-        I wanted to solve that problem - by letting you choose your own path.
-      </p>
-
-      <div class="path-selection-cards">
-        <article class="path-card">
-          <h3>For Recruiters</h3>
-          <p>
-            Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.
-          </p>
-          <button class="button button--recruiter" data-role="recruiter">
-            <span class="button__description" data-role="recruiter-description">
-              Experience, roles and skills I got through my career path.
-            </span>
-            <span class="button__title">View as Recruiter</span>
-          </button>
-        </article>
-
-        <article class="path-card">
-          <h3>For Engineers</h3>
-          <p>
-            Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
-          </p>
-          <button class="button button--developer" data-role="developer">
-            <span class="button__description" data-role="developer-description">
-              Projects, technologies and visions I got through my builder path.
-            </span>
-            <span class="button__title">View as Engineer</span>
-          </button>
-        </article>
-
-        <article class="path-card">
-          <h3>For Friends</h3>
-          <p>
-            I'll introduce the human side of my self so you can understand what kind of person I am.
-          </p>
-          <button class="button button--friend" data-role="friend">
-            <span class="button__description" data-role="friend-description">
-              For friends and thous who want to become one
-            </span>
-            <span class="button__title">View as Friend</span>
-          </button>
-        </article>
-      </div>
-
-      <p class="path-selection-cta--prompt">Which path speaks to you?</p>
-    </section>
-  </template>
-
-  <template id="hero-cta-button-template">
-    <button class="hero-cta-button">
-      <span class="hero-cta-button__icon material-symbols-outlined"></span>
-      <span class="hero-cta-button__text"></span>
-    </button>
   </template>
 
   <script type="module" src="./scripts/modules/app-controller/index.js"></script>

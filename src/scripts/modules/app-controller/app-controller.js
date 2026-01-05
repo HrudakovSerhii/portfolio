@@ -9,7 +9,6 @@ import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
-const RENDER_TIMEOUT = 100;
 
 const ELEMENT_IDS = {
   initialLoader: 'initial-loader',
@@ -18,11 +17,19 @@ const ELEMENT_IDS = {
   themeToggle: 'theme-toggle',
   languageSelector: 'language-selector',
   mainContent: 'main-content',
-  heroSection: 'hero-section',
-  pathSelection: 'path-selection',
+  storyPathSection: 'story-path-section',
   typingIndicator: 'typing-indicator',
   startConversationBtn: 'start-conversation-btn',
 };
+
+const CRITICAL_ELEMENT_KEYS = [
+  'initialLoader',
+  'themeToggle',
+  'languageSelector',
+  'mainContent',
+  'storyPathSection',
+  'startConversationBtn'
+];
 
 class AppController {
   constructor() {
@@ -48,8 +55,7 @@ class AppController {
       themeToggle: null,
       languageSelector: null,
       mainContent: null,
-      heroSection: null,
-      pathSelection: null,
+      storyPathSection: null,
       typingIndicator: null,
       startConversationBtn: null,
     };
@@ -64,6 +70,7 @@ class AppController {
 
     try {
       this._cacheElements();
+      this._validateCachedElements(CRITICAL_ELEMENT_KEYS);
       this._setupEventListeners();
 
       this.themeSwitcher.initialize(this.elements.themeToggle);
@@ -97,7 +104,11 @@ class AppController {
     await this._loadUserProfile();
 
     if (this.stateManager.hasCompletedPersonalization()) {
-      this.headerController.updateRoleBadge(this.stateManager.getRole());
+      const role = this.stateManager.getRole();
+
+      this.headerController.updateRoleBadge(role);
+      this.elements.storyPathSection.classList.add('hidden');
+      this._updateStartConversationButtonText(`Read ${role} description below`);
 
       await this.restoreState();
     }
@@ -110,19 +121,12 @@ class AppController {
     this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
     this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
-    this.elements.pathSelection = document.getElementById(ELEMENT_IDS.pathSelection);
+    this.elements.storyPathSection = document.getElementById(ELEMENT_IDS.storyPathSection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
     this.elements.startConversationBtn = document.getElementById(ELEMENT_IDS.startConversationBtn);
+  }
 
-    const criticalElementKeys = [
-      'initialLoader',
-      'themeToggle',
-      'languageSelector',
-      'mainContent',
-      'startConversationBtn'
-    ];
-
+  _validateCachedElements(criticalElementKeys) {
     for (const key of criticalElementKeys) {
       if (!this.elements[key]) {
         throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
@@ -141,30 +145,35 @@ class AppController {
 
     this.elements.startConversationBtn.addEventListener('click', () => {
       this._startConversation();
-    })
+    });
+
+    this.elements.storyPathSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+      storyPathBtn.addEventListener('click', async () => {
+        const role = storyPathBtn.getAttribute('data-role');
+
+        if (role) {
+          await this.roleManager.selectRole(role);
+        }
+      });
+    });
   }
 
   _startConversation() {
-    if (this._isPathSelectionRendered()) {
-      this._scrollToElementById('path-selection');
-    } else if (this._isHeroSectionRendered()) {
+     if (this._isHeroSectionRendered()) {
       this._scrollToElementById('section-hero');
-      this._updateStartConversationButtonText( 'Read below');
-    } else {
-      this._revealRoleSelectorSection();
-      this._setupHeroRoleCardListeners();
-      this._updateStartConversationButtonText( 'Scroll down to proceed');
-    }
+    } else if (this._isStoryPathSectionRendered()) {
+       this._scrollToElementById(ELEMENT_IDS.storyPathSection);
+     }
   }
 
-  _isPathSelectionRendered() {
-    const pathSelection = this.elements.mainContent.querySelector('#path-selection');
-    return pathSelection !== null;
+  _isStoryPathSectionRendered() {
+    const storyPathSection = this.elements.mainContent.querySelector(`#${ELEMENT_IDS.storyPathSection}`);
+    return storyPathSection !== null;
   }
 
   _isHeroSectionRendered() {
-    const pathSelection = this.elements.mainContent.querySelector('#section-hero');
-    return pathSelection !== null;
+    const storyPathSection = this.elements.mainContent.querySelector(`#section-hero`);
+    return storyPathSection !== null;
   }
 
   _scrollToElementById(id) {
@@ -178,17 +187,6 @@ class AppController {
     }
   }
 
-  _revealRoleSelectorSection() {
-    const pathSelectionSection = this.templateBuilder.renderPathSelection();
-    this.elements.mainContent.appendChild(pathSelectionSection);
-
-    this.elements.pathSelection = document.getElementById('path-selection');
-
-    setTimeout(() => {
-      this._scrollToElementById('path-selection');
-    }, RENDER_TIMEOUT);
-  }
-
   _updateStartConversationButtonText(text) {
     if (!this.elements.startConversationBtn) {
       return;
@@ -198,20 +196,6 @@ class AppController {
     if (textElement) {
       textElement.textContent = text;
     }
-  }
-
-  _setupHeroRoleCardListeners() {
-    const roleCards = this.elements.pathSelection.querySelectorAll('.button[data-role]');
-
-    roleCards.forEach(card => {
-      card.addEventListener('click', async () => {
-        const role = card.getAttribute('data-role');
-
-        if (role) {
-          await this.roleManager.selectRole(role);
-        }
-      });
-    });
   }
 
   async _loadUserProfile() {
@@ -294,17 +278,8 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      // TODO: check if removal and reveal of 1st section can be done in parallel using Promise.all
-      if (this.elements.pathSelection) {
-        this.elements.pathSelection.classList.add('invisible');
-
-        // Wait for animation to complete, then remove from DOM
-        setTimeout(() => {
-          if (this.elements.pathSelection) {
-            this.elements.pathSelection.remove();
-            this.elements.pathSelection = null;
-          }
-        }, MODAL_FADE_DURATION);
+      if (this.elements.storyPathSection) {
+        this.elements.storyPathSection.classList.add('invisible');
       }
 
       await this.revealSection(SECTION_ORDER[0]);

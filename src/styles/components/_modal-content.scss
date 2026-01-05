@@ -37,15 +37,19 @@
 }
 
 .role-change-modal {
-  padding: variables.$spacing-md;
+  padding: variables.$spacing-lg;
   gap: variables.$spacing-md;
-  max-width: 90%;
   opacity: 0;
   transform: scale(0.9);
   transition: transform variables.$transition-base, opacity variables.$transition-base;
+  width: 100%;
+  max-width: variables.$change-role-modal-min-width;
+
+  @include mixins.mobile-max {
+    width: 90%;
+  }
 
   @include mixins.desktop {
-    max-width: 95%;
     padding: variables.$spacing-xl;
     gap: variables.$spacing-lg;
   }
@@ -77,6 +81,10 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+
+    .button {
+      width: 100%;
+    }
 
     @include mixins.desktop {
       flex-direction: row;
