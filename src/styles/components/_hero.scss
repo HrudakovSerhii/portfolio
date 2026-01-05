@@ -3,66 +3,91 @@
 
 .hero {
   position: relative;
-  justify-content: center;
   z-index: variables.$z-nav;
   background-color: transparent;
-  gap: variables.$spacing-md;
-  height: calc(100vh - 3rem); // used static value to escape Webstorm error
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: variables.$spacing-2xl variables.$spacing-md;
+  min-height: calc(100vh - 3rem); // used static value to escape Webstorm error
 
   @include mixins.desktop {
-    max-width: 50%;
-    gap: variables.$spacing-xl;
-    height: calc(100vh - 4rem); // used static value to escape Webstorm error
+    min-height: calc(100vh - 4rem); // used static value to escape Webstorm error
+    padding: variables.$spacing-3xl variables.$spacing-xl;
   }
 
-  &-content {
-    text-align: center;
+  &-layout {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: variables.$spacing-xl;
+    max-width: variables.$content-max-width;
+    width: 100%;
 
     @include mixins.desktop {
-      text-align: start;
+      flex-direction: row;
+      gap: variables.$spacing-3xl;
     }
   }
 
-  &-image {
-    position: relative;
-    border-radius: variables.$radius-full;
-    border: solid 8px var(--color-border);
-    overflow: hidden;
+  &-content {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-lg;
+    flex: 1;
+    align-items: center;
 
-    img {
-      height: auto;
-      width: variables.$hero-background-image-width;
+    @include mixins.desktop {
+      align-items: flex-start;
     }
   }
 
   &-title {
-    font-size: variables.$font-size-3xl;
+    font-size: variables.$font-size-4xl;
     color: var(--color-text);
     letter-spacing: -0.025em;
+    font-weight: variables.$font-weight-bold;
+    line-height: variables.$line-height-tight;
+    text-align: center;
+    margin: 0;
 
     @include mixins.desktop {
       font-size: variables.$font-size-6xl;
-    }
-  }
-
-  &-subtitle {
-    font-size: variables.$font-size-2xl;
-    color: var(--color-text-secondary);
-
-    @include mixins.desktop {
-      font-size: variables.$font-size-3xl;
+      text-align: left;
     }
   }
 
   &-intro {
-    margin-top: variables.$spacing-md;
     font-size: variables.$font-size-lg;
     color: var(--color-text-secondary);
-    line-height: variables.$line-height-tight;
-    text-align: left;
+    line-height: variables.$line-height-relaxed;
+    text-align: center;
+    margin: 0;
+    max-width: 32rem;
 
     @include mixins.desktop {
       font-size: variables.$font-size-xl;
+      text-align: left;
+    }
+
+    &__break {
+      display: none;
+
+      @include mixins.tablet {
+        display: block;
+      }
+    }
+  }
+
+  &-actions {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-lg;
+    width: 100%;
+    align-items: center;
+
+    @include mixins.desktop {
+      align-items: flex-start;
     }
   }
 
@@ -71,7 +96,20 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    max-width: 320px;
+    height: 3.5rem;
     border-radius: variables.$radius-full;
+    padding-left: variables.$spacing-lg;
+    padding-right: variables.$spacing-xs;
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    border: none;
+    box-shadow: var(--shadow-xl), 0 0 0 1px var(--custom-hero-shadow-primary);
+    transition: transform variables.$transition-base;
+
+    &:hover {
+      transform: scale(1.02);
+    }
 
     &__text {
       font-size: variables.$font-size-lg;
@@ -82,10 +120,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 70px;
-      padding: variables.$spacing-s 0;
+      width: 2.5rem;
+      height: 2.5rem;
       background-color: var(--color-accent);
-      color:  var(--color-blue-50);
+      color: var(--color-bg);
       border-radius: variables.$radius-full;
       transition: background-color variables.$transition-base;
     }
@@ -93,5 +131,132 @@
     &:hover &__icon-wrapper {
       background-color: var(--color-accent-hover);
     }
+  }
+
+  &-cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: variables.$spacing-sm;
+    justify-content: center;
+
+    @include mixins.desktop {
+      justify-content: flex-start;
+    }
+  }
+
+  &-image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &-image-glow {
+    position: absolute;
+    inset: -0.2rem;
+    background: radial-gradient(circle, var(--color-accent), var(--color-blue-300));
+    border-radius: variables.$radius-full;
+    opacity: var(--custom-hero-glow-opacity);
+    filter: blur(64px);
+    transition: opacity variables.$transition-slow;
+  }
+
+  &-image-container:hover &-image-glow {
+    opacity: calc(var(--custom-hero-glow-opacity) + 0.2);
+  }
+
+  &-image {
+    position: relative;
+    border-radius: variables.$radius-full;
+    overflow: hidden;
+    width: 12rem;
+    height: 12rem;
+    box-shadow: var(--shadow-2xl);
+
+    @include mixins.tablet {
+      width: 16rem;
+      height: 16rem;
+    }
+
+    @include mixins.desktop {
+      width: 24rem;
+      height: 24rem;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &-online-indicator {
+    position: absolute;
+    bottom: 0.25rem;
+    right: calc(50% - 0.75rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--color-bg);
+    border-radius: variables.$radius-full;
+    border: 4px solid var(--color-bg);
+
+    @include mixins.desktop {
+      bottom: 0.75rem;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    &__pulse {
+      width: 1rem;
+      height: 1rem;
+      background-color: var(--color-success);
+      border-radius: variables.$radius-full;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+      @include mixins.desktop {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+  }
+}
+
+.hero-cta-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: variables.$spacing-xs;
+  height: 2.25rem;
+  padding: 0 variables.$spacing-md;
+  background-color: var(--custom-hero-cta-bg);
+  color: var(--color-text);
+  border: 1px solid transparent;
+  border-radius: variables.$radius-full;
+  font-size: variables.$font-size-sm;
+  font-weight: variables.$font-weight-medium;
+  cursor: pointer;
+  transition: all variables.$transition-base;
+
+  &:hover {
+    background-color: var(--custom-hero-cta-hover-bg);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  &__icon {
+    font-size: 18px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }

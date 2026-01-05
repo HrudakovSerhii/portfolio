@@ -9,6 +9,8 @@ class TemplateBuilder {
       generativeImage: null,
       personalizationModal: null,
       roleChangeModal: null,
+      pathSelection: null,
+      heroCtaButton: null,
       // Chat templates
       chatMessage: null,
       chatDivider: null,
@@ -22,8 +24,7 @@ class TemplateBuilder {
       chatSkillsSection: null,
       chatSkillGroup: null,
       chatSkillProgress: null,
-      chatActionButtons: null,
-      pathSelection: null
+      chatActionButtons: null
     };
   }
 
@@ -274,6 +275,31 @@ class TemplateBuilder {
     }
 
     return section;
+  }
+
+  renderHeroCtaButton(buttonData) {
+    const fragment = this._cloneTemplate('hero-cta-button-template');
+    const button = fragment.querySelector('.hero-cta-button');
+
+    if (!button) {
+      throw new Error('Hero CTA button element not found in template');
+    }
+
+    const iconElement = button.querySelector('.hero-cta-button__icon');
+    if (iconElement && buttonData.icon) {
+      iconElement.textContent = buttonData.icon;
+    }
+
+    const textElement = button.querySelector('.hero-cta-button__text');
+    if (textElement && buttonData.text) {
+      textElement.textContent = buttonData.text;
+    }
+
+    if (buttonData.onClick) {
+      button.addEventListener('click', buttonData.onClick);
+    }
+
+    return fragment;
   }
 
   // ============================================
