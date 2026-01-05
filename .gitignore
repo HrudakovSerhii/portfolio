@@ -48,3 +48,16 @@ coverage/
 tmp/
 temp/
 /PULL_REQUEST.md
+
+# Model training artifacts (large files for resuming training)
+**/checkpoint-*/optimizer.pt
+**/checkpoint-*/scheduler.pt
+**/checkpoint-*/rng_state.pth
+**/checkpoint-*/training_args.bin
+
+# TensorBoard logs (event files)
+**/logs/events.out.tfevents.*
+
+# Model weights (too large for git)
+**/checkpoint-*/adapter_model.safetensors
+**/adapter_model.safetensors

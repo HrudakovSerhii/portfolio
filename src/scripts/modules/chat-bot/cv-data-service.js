@@ -1,437 +1,202 @@
 /**
  * CV Data Service Module
- * Handles loading, validation, and management of CV data for the chatbot
+ * Handles loading, validation, and management of precomputed CV embeddings for RAG
+ *
+ * Architecture:
+ * - Loads role-specific precomputed embeddings from public/data/embeddings-{role}.json
+ * - Expected format: Array of chunks with precomputed 384-dim embeddings
+ * - No client-side embedding generation for CV data (done at build time)
+ * - Supports role switching by loading different embedding files
+ *
+ * Change History:
+ * 2025-12-30: Refactored for RAG architecture (457 lines → 163 lines, 64% reduction)
+ *   - Added role parameter to loadCVData(role)
+ *   - Fetch from public/data/embeddings-{role}.json
+ *   - Simplified validation (chunks are pre-validated at build time)
+ *   - Removed complex keyword/section indexing (not needed for vector search)
+ *   - prepareCVChunks() returns loaded chunks directly
+ *
+ * Removed Methods (no longer needed for RAG):
+ *   - validateCVData() - Complex validation for old nested CV data format
+ *   - validateSection() - Per-section validation for old format
+ *   - buildSectionsIndex() - Keyword/section indexing (replaced by vector search)
+ *   - getSectionById() - Section lookup (chunks accessed via prepareCVChunks())
+ *   - getSectionsByCategory() - Category filtering (not applicable to flat chunks)
+ *   - findSectionsByKeywords() - Keyword search (replaced by vector similarity)
+ *   - getEmbeddings() - Direct embedding access (chunks have embeddings property)
+ *   - cacheEmbeddings() - Embedding cache (embeddings precomputed, no runtime caching)
+ *   - getCachedEmbeddings() - Cache retrieval (not needed)
+ *   - getPersonality() - Personality config (not used in RAG approach)
+ *   - getResponseTemplates() - Response templates (handled by LLM)
+ *   - getCommunicationStyle() - Style config (managed by ConversationStyleManager)
+ *   - getAllSections() - Section enumeration (use prepareCVChunks() instead)
  */
+
+// Constants
+const VALID_ROLES = ['hr', 'developer', 'friend'];
+const EXPECTED_EMBEDDING_DIM = 384; // all-MiniLM-L6-v2 dimension
 
 class CVDataService {
   constructor() {
-    this.cvData = null;
-    this.isLoaded = false;
-    this.embeddingsCache = new Map();
-    this.sectionsIndex = new Map();
+    // Store loaded data as object with role metadata
+    this.cvData = null; // { role: string, chunks: Array }
   }
 
   /**
-   * Load CV data from JSON file
-   * @returns {Promise<Object>} Loaded and validated CV data
+   * Load role-specific CV embeddings from precomputed file
+   * @param {string} role - Conversation role: 'hr', 'developer', or 'friend'
+   * @returns {Promise<Array>} Loaded CV chunks with embeddings
    */
-  async loadCVData() {
+  async loadCVData(role) {
+    this.validateRole(role);
+
+    // Return cached data if already loaded for this role
+    if (this.cvData && this.cvData.role === role) {
+      return this.cvData.chunks;
+    }
+
     try {
-      if (this.isLoaded && this.cvData) {
-        return this.cvData;
-      }
+      const chunks = await this.fetchEmbeddings(role);
+      this.validateChunks(chunks);
 
-      const response = await fetch('public/cv/cv-data.v2.json');
+      // Store with role metadata
+      this.cvData = { role, chunks };
 
-      if (!response.ok) {
-        throw new Error(`Failed to load CV data: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      // Validate the loaded data
-      this.validateCVData(data);
-
-      this.cvData = data;
-      this.isLoaded = true;
-
-      // Build sections index for faster lookups
-      this.buildSectionsIndex();
-
-      return this.cvData;
+      return chunks;
     } catch (error) {
-      throw new Error(`CV data loading failed: ${error.message}`);
+      this.handleLoadError(error, role);
     }
   }
 
   /**
-   * Validate CV data structure against schema requirements
-   * @param {Object} data - CV data to validate
+   * Validate role parameter
+   * @param {string} role - Role to validate
+   * @throws {Error} If role is invalid
+   */
+  validateRole(role) {
+    if (!VALID_ROLES.includes(role)) {
+      throw new Error(`Invalid role: ${role}. Must be one of: ${VALID_ROLES.join(', ')}`);
+    }
+  }
+
+  /**
+   * Fetch embeddings file for specific role
+   * @param {string} role - Role to fetch embeddings for
+   * @returns {Promise<Array>} Parsed chunks array
+   * @throws {Error} If fetch fails
+   */
+  async fetchEmbeddings(role) {
+    const embeddingsPath = `public/data/embeddings-${role}.json`;
+    const response = await fetch(embeddingsPath);
+
+    if (!response.ok) {
+      throw new Error(`Failed to load embeddings: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Handle load errors with context
+   * @param {Error} error - Original error
+   * @param {string} role - Role that failed to load
+   * @throws {Error} Enhanced error with context
+   */
+  handleLoadError(error, role) {
+    console.error(`[CVDataService] Failed to load CV data for role ${role}:`, error);
+    throw new Error(`CV data loading failed: ${error.message}`);
+  }
+
+  /**
+   * Validate chunks array structure
+   * @param {Array} chunks - Chunks to validate
    * @throws {Error} If validation fails
    */
-  validateCVData(data) {
-    // Check required top-level properties
-    const requiredProps = ['metadata', 'sections', 'personality', 'responseTemplates'];
+  validateChunks(chunks) {
+    this.validateChunksArray(chunks);
+    this.validateChunkStructure(chunks[0]);
+  }
 
+  /**
+   * Validate that chunks is a non-empty array
+   * @param {Array} chunks - Chunks to validate
+   * @throws {Error} If not a valid array
+   */
+  validateChunksArray(chunks) {
+    if (!Array.isArray(chunks)) {
+      throw new Error('CV data must be an array of chunks');
+    }
+
+    if (chunks.length === 0) {
+      throw new Error('CV data array is empty');
+    }
+  }
+
+  /**
+   * Validate chunk structure using first chunk as sample
+   * @param {Object} sampleChunk - First chunk to validate
+   * @throws {Error} If structure is invalid
+   */
+  validateChunkStructure(sampleChunk) {
+    // Validate required properties
+    const requiredProps = ['id', 'text', 'embedding'];
     for (const prop of requiredProps) {
-      if (!data[prop]) {
-        throw new Error(`Missing required property: ${prop}`);
+      if (!(prop in sampleChunk)) {
+        throw new Error(`Chunk missing required property: ${prop}`);
       }
     }
 
-    // Validate metadata
-    const metadata = data.metadata;
-
-    if (!metadata.version || !metadata.lastUpdated || !metadata.totalSections) {
-      throw new Error('Invalid metadata structure');
+    // Validate ID
+    if (typeof sampleChunk.id !== 'string' || sampleChunk.id.length === 0) {
+      throw new Error('Chunk ID must be a non-empty string');
     }
 
-    if (typeof metadata.totalSections !== 'number' || metadata.totalSections < 1) {
-      throw new Error('Invalid totalSections in metadata');
+    // Validate text
+    if (typeof sampleChunk.text !== 'string' || sampleChunk.text.length === 0) {
+      throw new Error('Chunk text must be a non-empty string');
     }
 
-    // Validate sections structure
-    if (typeof data.sections !== 'object') {
-      throw new Error('Sections must be an object');
-    }
-
-    let sectionCount = 0;
-    for (const [categoryName, category] of Object.entries(data.sections)) {
-      if (typeof category !== 'object') {
-        throw new Error(`Category ${categoryName} must be an object`);
-      }
-
-      for (const [sectionName, section] of Object.entries(category)) {
-        this.validateSection(section, `${categoryName}.${sectionName}`);
-        sectionCount++;
-      }
-    }
-
-    // Validate section count matches metadata
-    if (sectionCount !== metadata.totalSections) {
-      // Section count mismatch - metadata may be outdated
-    }
-
-    // Validate personality structure
-    const personality = data.personality;
-    const requiredPersonalityProps = ['traits', 'values', 'workStyle', 'interests', 'communication_style'];
-    for (const prop of requiredPersonalityProps) {
-      if (!personality[prop]) {
-        throw new Error(`Missing personality property: ${prop}`);
-      }
-    }
-
-    // Validate communication styles
-    const styles = ['hr', 'developer', 'friend'];
-    for (const style of styles) {
-      if (!personality.communication_style[style]) {
-        throw new Error(`Missing communication style: ${style}`);
-      }
-    }
-
-    // Validate response templates
-    const templates = data.responseTemplates;
-    const requiredTemplates = ['noMatch', 'lowConfidence', 'fallbackRequest', 'emailFallback'];
-    for (const template of requiredTemplates) {
-      if (!templates[template]) {
-        throw new Error(`Missing response template: ${template}`);
-      }
-
-      for (const style of styles) {
-        if (!templates[template][style]) {
-          throw new Error(`Missing ${style} response for template: ${template}`);
-        }
-      }
-    }
+    // Validate embedding array
+    this.validateEmbedding(sampleChunk.embedding);
   }
 
   /**
-   * Validate individual CV section
-   * @param {Object} section - Section to validate
-   * @param {string} path - Section path for error reporting
+   * Validate embedding array
+   * @param {Array} embedding - Embedding to validate
+   * @throws {Error} If embedding is invalid
    */
-  validateSection(section, path) {
-    const requiredProps = ['id', 'keywords', 'embeddings', 'responses', 'details'];
-    for (const prop of requiredProps) {
-      if (section[prop] === undefined) {
-        throw new Error(`Missing property ${prop} in section: ${path}`);
-      }
+  validateEmbedding(embedding) {
+    if (!Array.isArray(embedding)) {
+      throw new Error('Chunk embedding must be an array');
     }
 
-    // Validate ID format
-    if (typeof section.id !== 'string' || !/^[a-zA-Z0-9_]+$/.test(section.id)) {
-      throw new Error(`Invalid ID format in section: ${path}`);
+    if (embedding.length === 0) {
+      throw new Error('Chunk embedding array is empty');
     }
 
-    // Validate keywords
-    if (!Array.isArray(section.keywords) || section.keywords.length === 0) {
-      throw new Error(`Invalid keywords in section: ${path}`);
+    if (!embedding.every(val => typeof val === 'number')) {
+      throw new Error('Chunk embedding must contain only numbers');
     }
 
-    // Validate embeddings (can be null or array of numbers)
-    if (section.embeddings !== null && (!Array.isArray(section.embeddings) ||
-        !section.embeddings.every(e => typeof e === 'number'))) {
-      throw new Error(`Invalid embeddings in section: ${path}`);
-    }
-
-    // Validate responses
-    const styles = ['hr', 'developer', 'friend'];
-    for (const style of styles) {
-      if (!section.responses[style] || typeof section.responses[style] !== 'string' ||
-          section.responses[style].length < 10) {
-        throw new Error(`Invalid ${style} response in section: ${path}`);
-      }
-    }
-
-    // Validate details (must be object)
-    if (typeof section.details !== 'object') {
-      throw new Error(`Invalid details in section: ${path}`);
+    // Warn if dimension doesn't match expected
+    if (embedding.length !== EXPECTED_EMBEDDING_DIM) {
+      console.warn(`[CVDataService] Warning: Expected embedding dimension ${EXPECTED_EMBEDDING_DIM}, got ${embedding.length}`);
     }
   }
 
   /**
-   * Build internal index for faster section lookups
-   */
-  buildSectionsIndex() {
-    this.sectionsIndex.clear();
-
-    if (!this.cvData || !this.cvData.sections) {
-      return;
-    }
-
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        const fullPath = `${categoryName}.${sectionName}`;
-        this.sectionsIndex.set(section.id, {
-          path: fullPath,
-          category: categoryName,
-          name: sectionName,
-          section: section
-        });
-
-        // Also index by keywords for faster searching
-        section.keywords.forEach(keyword => {
-          const normalizedKeyword = keyword.toLowerCase();
-          if (!this.sectionsIndex.has(`keyword:${normalizedKeyword}`)) {
-            this.sectionsIndex.set(`keyword:${normalizedKeyword}`, []);
-          }
-          this.sectionsIndex.get(`keyword:${normalizedKeyword}`).push({
-            path: fullPath,
-            section: section
-          });
-        });
-      }
-    }
-  }
-
-  /**
-   * Get section by ID
-   * @param {string} sectionId - Section ID to retrieve
-   * @returns {Object|null} Section data or null if not found
-   */
-  getSectionById(sectionId) {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-
-    const indexEntry = this.sectionsIndex.get(sectionId);
-    return indexEntry ? indexEntry.section : null;
-  }
-
-  /**
-   * Get sections by category
-   * @param {string} category - Category name (e.g., 'experience', 'skills')
-   * @returns {Array} Array of sections in the category
-   */
-  getSectionsByCategory(category) {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-
-    if (!this.cvData.sections[category]) {
-      return [];
-    }
-
-    return Object.entries(this.cvData.sections[category]).map(([name, section]) => ({
-      name,
-      ...section
-    }));
-  }
-
-  /**
-   * Find sections by keywords
-   * @param {Array<string>} keywords - Keywords to search for
-   * @returns {Array} Array of matching sections with relevance scores
-   */
-  findSectionsByKeywords(keywords) {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-
-    const matches = new Map();
-
-    keywords.forEach(keyword => {
-      const normalizedKeyword = keyword.toLowerCase();
-      const keywordMatches = this.sectionsIndex.get(`keyword:${normalizedKeyword}`);
-
-      if (keywordMatches) {
-        keywordMatches.forEach(match => {
-          const existing = matches.get(match.path);
-          if (existing) {
-            existing.score += 1;
-            existing.matchedKeywords.push(keyword);
-          } else {
-            matches.set(match.path, {
-              ...match,
-              score: 1,
-              matchedKeywords: [keyword]
-            });
-          }
-        });
-      }
-    });
-
-    // Convert to array and sort by relevance score
-    return Array.from(matches.values())
-      .sort((a, b) => b.score - a.score)
-      .map(match => ({
-        section: match.section,
-        path: match.path,
-        relevanceScore: match.score / keywords.length,
-        matchedKeywords: match.matchedKeywords
-      }));
-  }
-
-  /**
-   * Get embeddings for a section
-   * @param {string} sectionId - Section ID
-   * @returns {Array<number>|null} Embeddings array or null if not available
-   */
-  getEmbeddings(sectionId) {
-    const section = this.getSectionById(sectionId);
-
-    return section ? section.embeddings : null;
-  }
-
-  /**
-   * Cache embeddings for a section
-   * @param {string} sectionId - Section ID
-   * @param {Array<number>} embeddings - Computed embeddings
-   */
-  cacheEmbeddings(sectionId, embeddings) {
-    if (!Array.isArray(embeddings) || !embeddings.every(e => typeof e === 'number')) {
-      throw new Error('Invalid embeddings format');
-    }
-
-    this.embeddingsCache.set(sectionId, embeddings);
-
-    // Also update the section data if it exists
-    const section = this.getSectionById(sectionId);
-    if (section) {
-      section.embeddings = embeddings;
-    }
-  }
-
-  /**
-   * Get cached embeddings
-   * @param {string} sectionId - Section ID
-   * @returns {Array<number>|null} Cached embeddings or null
-   */
-  getCachedEmbeddings(sectionId) {
-    return this.embeddingsCache.get(sectionId) || null;
-  }
-
-  /**
-   * Get personality data
-   * @returns {Object} Personality configuration
-   */
-  getPersonality() {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-    return this.cvData.personality;
-  }
-
-  /**
-   * Get response templates
-   * @returns {Object} Response templates for different scenarios
-   */
-  getResponseTemplates() {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-    return this.cvData.responseTemplates;
-  }
-
-  /**
-   * Get communication style for a specific style
-   * @param {string} style - Communication style ('hr', 'developer', 'friend')
-   * @returns {Object} Communication style configuration
-   */
-  getCommunicationStyle(style) {
-    const personality = this.getPersonality();
-    if (!personality.communication_style[style]) {
-      throw new Error(`Invalid communication style: ${style}`);
-    }
-    return personality.communication_style[style];
-  }
-
-  /**
-   * Get all available sections as a flat array
-   * @returns {Array} All sections with metadata
-   */
-  getAllSections() {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-
-    const sections = [];
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        sections.push({
-          id: section.id,
-          category: categoryName,
-          name: sectionName,
-          path: `${categoryName}.${sectionName}`,
-          ...section
-        });
-      }
-    }
-    return sections;
-  }
-
-  /**
-   * Get metadata about the CV data
-   * @returns {Object} CV data metadata
-   */
-  getMetadata() {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
-    }
-    return this.cvData.metadata;
-  }
-
-  /**
-   * Prepare CV data chunks for semantic processing
-   * Transforms CV sections into standardized chunks for embedding and search
+   * Prepare CV chunks for semantic processing
+   * For precomputed embeddings, this returns the loaded chunks directly
    * @returns {Array} Array of CV chunks ready for semantic processing
+   * @throws {Error} If data not loaded
    */
   prepareCVChunks() {
-    if (!this.isLoaded) {
-      throw new Error('CV data not loaded. Call loadCVData() first.');
+    if (!this.isDataLoaded()) {
+      throw new Error('CV data not loaded. Call loadCVData(role) first.');
     }
 
-    const chunks = [];
-
-    // Process all sections from all categories
-    for (const [categoryName, category] of Object.entries(this.cvData.sections)) {
-      for (const [sectionName, section] of Object.entries(category)) {
-        // Use embeddingSourceText as the primary text content for chunks
-        const text = section.embeddingSourceText || section.details?.summary || '';
-
-        if (text.trim()) {
-          chunks.push({
-            id: section.id,
-            text: text,
-            keywords: section.keywords || [],
-            metadata: {
-              type: 'cv_section',
-              category: categoryName,
-              sectionName: sectionName,
-              path: `${categoryName}.${sectionName}`,
-              priority: section.priority || 0,
-              confidence: section.confidence || 0.5,
-              details: section.details || {},
-              relatedSections: section.relatedSections || []
-            },
-            // Include existing embeddings if available (only if valid array)
-            embedding: (section.embeddings && Array.isArray(section.embeddings) && section.embeddings.length > 0) ? section.embeddings : null
-          });
-        }
-      }
-    }
-
-    return chunks;
+    // Chunks are already prepared with embeddings from build time
+    return this.cvData.chunks;
   }
 
   /**
@@ -439,7 +204,25 @@ class CVDataService {
    * @returns {boolean} True if data is loaded
    */
   isDataLoaded() {
-    return this.isLoaded && this.cvData !== null;
+    return this.cvData !== null && Array.isArray(this.cvData.chunks);
+  }
+
+  /**
+   * Get metadata about loaded data
+   * @returns {Object} Metadata including role, chunk count, embedding dimension
+   * @throws {Error} If data not loaded
+   */
+  getMetadata() {
+    if (!this.isDataLoaded()) {
+      throw new Error('CV data not loaded. Call loadCVData(role) first.');
+    }
+
+    return {
+      role: this.cvData.role,
+      chunkCount: this.cvData.chunks.length,
+      embeddingDimension: this.cvData.chunks[0]?.embedding?.length || 0,
+      isLoaded: true
+    };
   }
 
   /**
@@ -447,9 +230,6 @@ class CVDataService {
    */
   reset() {
     this.cvData = null;
-    this.isLoaded = false;
-    this.embeddingsCache.clear();
-    this.sectionsIndex.clear();
   }
 }
 

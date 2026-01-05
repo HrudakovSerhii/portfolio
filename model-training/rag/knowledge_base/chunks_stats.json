@@ -1,0 +1,32 @@
+{
+  "total_chunks": 569,
+  "categories": {
+    "category_professional_leadership": 56,
+    "category_technical_project": 60,
+    "category_personal_outdoor": 88,
+    "category_professional_impact": 50,
+    "category_technical_general": 130,
+    "category_professional_career": 13,
+    "category_personal_interests": 22,
+    "category_professional_general": 55,
+    "category_personal_general": 59,
+    "category_technical_testing": 36
+  },
+  "roles": {
+    "role_Recruiter (HR)": 174,
+    "role_Senior Engineer": 226,
+    "role_Friend": 169
+  },
+  "companies": {
+    "company_EriksDigital": 30,
+    "company_A-Dam": 25,
+    "company_Mobiquity": 67,
+    "company_Purina": 7,
+    "company_DigitalChefs": 23,
+    "company_ABiggerCircle": 21,
+    "company_IT-Transit": 14,
+    "company_Hexaware": 4,
+    "company_Nestle": 14,
+    "company_Luxoft": 2
+  }
+}
