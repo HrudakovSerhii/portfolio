@@ -24,8 +24,8 @@ print("=" * 60)
 
 # Configuration
 BASE_MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
-DATA_FILE = "./data/cv-training-data.jsonl"
-OUTPUT_DIR = "./serhii-qwen-lora-v2"
+DATA_FILE = "../data/cv-training-data.jsonl"
+OUTPUT_DIR = "../serhii-qwen-lora-v2"
 MAX_LENGTH = 512
 
 # Check if MPS is available
