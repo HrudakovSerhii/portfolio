@@ -121,16 +121,6 @@ class ChatSectionRenderer {
   }
 
   /**
-   * Renders action buttons for a section
-   * @param {HTMLElement} container - Container to add buttons to
-   * @param {Array} buttons - Button configuration objects
-   */
-  renderActionButtons(container, buttons) {
-    const actionsFragment = this.templateBuilder.renderChatActionButtons(buttons);
-    container.appendChild(actionsFragment);
-  }
-
-  /**
    * Gets current time as formatted string
    * @returns {string} Formatted time string
    * @private

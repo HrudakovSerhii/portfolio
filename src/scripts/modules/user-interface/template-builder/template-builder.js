@@ -9,8 +9,6 @@ class TemplateBuilder {
       generativeImage: null,
       personalizationModal: null,
       roleChangeModal: null,
-      pathSelection: null,
-      heroCtaButton: null,
       // Chat templates
       chatMessage: null,
       chatDivider: null,
@@ -148,7 +146,7 @@ class TemplateBuilder {
     }
   }
 
-  renderActionPrompt(sectionId, placeholder) {
+  renderActionPrompt(sectionId) {
     // TODO: move usage of placeholder to chat feature that can be called on each section.
     const fragment = this._cloneTemplate('action-prompt-template');
     const actionPrompt = fragment.querySelector('.action-prompt');
@@ -262,46 +260,6 @@ class TemplateBuilder {
     return modal;
   }
 
-  /**
-   * Renders path selection section with role cards
-   * @returns {DocumentFragment} Path selection section element
-   */
-  renderPathSelection() {
-    const fragment = this._cloneTemplate('path-selection-template');
-    const section = fragment.querySelector('.path-selection');
-
-    if (!section) {
-      throw new Error('Path selection section element not found in template');
-    }
-
-    return section;
-  }
-
-  renderHeroCtaButton(buttonData) {
-    const fragment = this._cloneTemplate('hero-cta-button-template');
-    const button = fragment.querySelector('.hero-cta-button');
-
-    if (!button) {
-      throw new Error('Hero CTA button element not found in template');
-    }
-
-    const iconElement = button.querySelector('.hero-cta-button__icon');
-    if (iconElement && buttonData.icon) {
-      iconElement.textContent = buttonData.icon;
-    }
-
-    const textElement = button.querySelector('.hero-cta-button__text');
-    if (textElement && buttonData.text) {
-      textElement.textContent = buttonData.text;
-    }
-
-    if (buttonData.onClick) {
-      button.addEventListener('click', buttonData.onClick);
-    }
-
-    return fragment;
-  }
-
   // ============================================
   // Chat Section Rendering Methods
   // ============================================
@@ -365,49 +323,6 @@ class TemplateBuilder {
 
     if (divider) {
       divider.textContent = text;
-    }
-
-    return fragment;
-  }
-
-  /**
-   * Renders role context badge
-   * @param {string} role - Current user role (recruiter, developer, friend)
-   * @returns {DocumentFragment} Context badge element
-   */
-  renderChatContextBadge(role) {
-    const fragment = this._cloneTemplate('chat-context-badge-template');
-    const badge = fragment.querySelector('.chat-context-badge');
-
-    if (!badge) {
-      throw new Error('Chat context badge element not found in template');
-    }
-
-    const roleText = badge.querySelector('strong');
-    if (roleText) {
-      const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
-      roleText.textContent = roleLabel;
-    }
-
-    return fragment;
-  }
-
-  /**
-   * Renders typing indicator
-   * @param {string} avatarUrl - Avatar image URL
-   * @returns {DocumentFragment} Typing indicator element
-   */
-  renderChatTypingIndicator(avatarUrl) {
-    const fragment = this._cloneTemplate('chat-typing-template');
-    const typing = fragment.querySelector('.chat-typing');
-
-    if (!typing) {
-      throw new Error('Chat typing element not found in template');
-    }
-
-    const avatar = typing.querySelector('.chat-typing__avatar');
-    if (avatar && avatarUrl) {
-      avatar.style.backgroundImage = `url(${avatarUrl})`;
     }
 
     return fragment;
@@ -713,52 +628,6 @@ class TemplateBuilder {
       if (skillData.percentage) {
         progressFill.style.width = `${skillData.percentage}%`;
       }
-    }
-
-    return fragment;
-  }
-
-  /**
-   * Renders action buttons for chat sections
-   * @param {Array} buttons - Array of button objects
-   * @param {string} buttons[].text - Button text
-   * @param {boolean} buttons[].primary - Whether this is primary button
-   * @param {Function} buttons[].onClick - Click handler
-   * @returns {DocumentFragment} Action buttons element
-   */
-  renderChatActionButtons(buttons) {
-    const fragment = this._cloneTemplate('chat-action-buttons-template');
-    const actionsElement = fragment.querySelector('.chat-actions');
-
-    if (!actionsElement) {
-      throw new Error('Chat actions element not found in template');
-    }
-
-    const buttonsContainer = actionsElement.querySelector('.chat-actions__buttons');
-    if (buttonsContainer && buttons) {
-      buttons.forEach(buttonData => {
-        const button = document.createElement('button');
-        button.className = buttonData.primary
-          ? 'chat-action-button chat-action-button--primary'
-          : 'chat-action-button';
-
-        const text = document.createElement('span');
-        text.textContent = buttonData.text;
-        button.appendChild(text);
-
-        if (buttonData.icon) {
-          const icon = document.createElement('span');
-          icon.className = 'chat-action-button__icon';
-          icon.textContent = buttonData.icon;
-          button.appendChild(icon);
-        }
-
-        if (buttonData.onClick) {
-          button.onclick = buttonData.onClick;
-        }
-
-        buttonsContainer.appendChild(button);
-      });
     }
 
     return fragment;

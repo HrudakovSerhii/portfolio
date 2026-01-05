@@ -3,26 +3,7 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-// Modal Overlay & Positioning
 .modal-overlay {
-  @include mixins.absolute-fill;
-  @include mixins.flex-center;
-  position: fixed;
-  z-index: variables.$z-modal-overlay;
-  background: rgba(var(--color-bg-rgb), 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity variables.$transition-base, visibility variables.$transition-base;
-  cursor: pointer;
-
-  &.active {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  // Prevent body scroll when modal is open
   &.active ~ body {
     overflow: hidden;
   }

@@ -94,17 +94,15 @@
   &-start-conversation {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
     max-width: 320px;
     height: 3.5rem;
     border-radius: variables.$radius-full;
-    padding-left: variables.$spacing-lg;
-    padding-right: variables.$spacing-xs;
+    padding: 0 variables.$spacing-lg;
     background-color: var(--color-text);
     color: var(--color-bg);
     border: none;
-    box-shadow: var(--shadow-xl), 0 0 0 1px var(--custom-hero-shadow-primary);
     transition: transform variables.$transition-base;
 
     &:hover {
@@ -114,22 +112,6 @@
     &__text {
       font-size: variables.$font-size-lg;
       font-weight: variables.$font-weight-bold;
-    }
-
-    &__icon-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      background-color: var(--color-accent);
-      color: var(--color-bg);
-      border-radius: variables.$radius-full;
-      transition: background-color variables.$transition-base;
-    }
-
-    &:hover &__icon-wrapper {
-      background-color: var(--color-accent-hover);
     }
   }
 

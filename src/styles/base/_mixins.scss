@@ -14,6 +14,12 @@
   }
 }
 
+@mixin mobile-max {
+  @media (max-width: variables.$breakpoint-tablet - 1) {
+    @content;
+  }
+}
+
 @mixin desktop {
   @media (min-width: variables.$breakpoint-desktop) {
     @content;
@@ -54,15 +60,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-// Absolute positioning fill
-@mixin absolute-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
 
 // Truncate text with ellipsis
