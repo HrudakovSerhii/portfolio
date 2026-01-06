@@ -137,7 +137,8 @@ class ContentMiddleware {
       id: sectionId,
       title: section.metadata.title,
       icon: section.metadata.icon,
-      order: section.metadata.order
+      order: section.metadata.order,
+      mainItems: section.metadata.main_items,
     };
   }
 
