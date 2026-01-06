@@ -418,7 +418,7 @@ class TemplateBuilder {
     const item = fragment.querySelector(`.${sectionId}-item`);
 
     if (!item) {
-      throw new Error('Experience item element not found in template');
+      throw new Error(`${sectionId} item element not found in template`);
     }
 
     const titleElement = item.querySelector(`.${sectionId}-item__title`);
@@ -427,20 +427,37 @@ class TemplateBuilder {
     }
 
     const dateElement = item.querySelector(`.${sectionId}-item__date`);
-    if (dateElement) {
+    if (dateElement && itemData.date) {
       const dateText = dateElement.querySelector('span:last-child') || dateElement;
       dateText.textContent = itemData.date;
     }
 
+    if (sectionId === 'projects') {
+      const descriptionElement = item.querySelector(`.${sectionId}-item__description`);
+      if (descriptionElement && itemData.description) {
+        descriptionElement.textContent = itemData.description;
+      }
+    }
+
     const detailsContainer = item.querySelector(`#${sectionId}-detail-items`);
 
-    if (detailsContainer && itemData.details) {
-      itemData.details.forEach(detail => {
-        const tag = document.createElement('span');
-        tag.className = 'experience-item__detail-tag';
-        tag.textContent = detail;
-        detailsContainer.appendChild(tag);
-      });
+    if (detailsContainer) {
+      const itemsList = itemData.details || itemData.stack;
+      const tagClass = `${sectionId}-item__detail-tag`;
+
+      if (itemsList) {
+        itemsList.forEach(detail => {
+          const tag = document.createElement('span');
+          tag.className = tagClass;
+
+          if (sectionId === 'projects') {
+            tag.setAttribute('data-tech', detail.toLowerCase().replace(/\s+/g, '-'));
+          }
+
+          tag.textContent = detail;
+          detailsContainer.appendChild(tag);
+        });
+      }
     }
 
     return fragment;
