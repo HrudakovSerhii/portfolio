@@ -21,7 +21,6 @@ class Carousel {
 
     this.track = document.createElement('div');
     this.track.className = 'carousel__track';
-    this.track.style.gap = `${this.options.gap}px`;
 
     this.items.forEach(item => {
       const wrapper = document.createElement('div');
@@ -40,7 +39,10 @@ class Carousel {
       this._createNavigationButtons();
     }
 
-    this._updateNavigation();
+    requestAnimationFrame(() => {
+      this._updatePosition(false);
+      this._updateNavigation();
+    });
   }
 
   _setupInfiniteLoop() {
@@ -115,9 +117,15 @@ class Carousel {
   }
 
   _updatePosition(animate = true) {
-    const itemWidth = this.track.querySelector('.carousel__item')?.offsetWidth || 0;
-    const gap = this.options.gap;
-    const offset = -(this.currentIndex * (itemWidth + gap));
+    const firstItem = this.track.querySelector('.carousel__item');
+    if (!firstItem) return;
+
+    const itemWidth = firstItem.offsetWidth;
+    const itemStyle = window.getComputedStyle(firstItem);
+    const itemMargin = parseFloat(itemStyle.marginRight) || 0;
+    const totalItemWidth = itemWidth + itemMargin;
+
+    const offset = -(this.currentIndex * totalItemWidth);
 
     if (animate) {
       this.track.style.transition = 'transform 300ms ease-in-out';

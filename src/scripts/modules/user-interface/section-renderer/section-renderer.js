@@ -78,11 +78,17 @@ class SectionRenderer {
     const itemsContainer = sectionElement.querySelector(`#${sectionId}-items`);
     const items = await this._renderSectionItems(sectionId);
 
+    if (!items || items.length === 0) return;
+
     if (sectionId === 'projects') {
-      const carousel = new Carousel(itemsContainer, items, {
-        loop: false,
-        navigation: true,
-        gap: 16
+      const elements = items.map(fragment => {
+        const element = fragment.querySelector(`.${sectionId}-item`);
+        return element;
+      }).filter(Boolean);
+
+      const carousel = new Carousel(itemsContainer, elements, {
+        loop: true,
+        navigation: true
       });
 
       carousel.render();

@@ -5,23 +5,28 @@
   position: relative;
   width: 100%;
   overflow: hidden;
+  padding: 0 variables.$spacing-md;
 
   &__track {
     display: flex;
-    gap: variables.$spacing-md;
     transition: transform 300ms ease-in-out;
+    will-change: transform;
   }
 
   &__item {
     flex-shrink: 0;
-    width: 100%;
+    width: calc(100vw - #{variables.$spacing-md * 4});
+    max-width: 400px;
+    margin-right: variables.$spacing-md;
 
     @include mixins.tablet {
-      width: calc(50% - variables.$spacing-md / 2);
+      width: calc(50vw - #{variables.$spacing-md * 3});
+      max-width: 420px;
     }
 
     @include mixins.desktop {
-      width: calc(33.333% - variables.$spacing-md * 2 / 3);
+      width: calc(33.333vw - #{variables.$spacing-md * 2.5});
+      max-width: 450px;
     }
 
     &--clone {
