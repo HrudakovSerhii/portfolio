@@ -57,18 +57,17 @@ class SectionRenderer {
   }
 
   async _revealChatSection(sectionId, role) {
-    // Create chat section container using template
     const sectionElement = this._createChatSectionContainer(sectionId);
-
-    // Get messages for this section and role
     const messages = getMessagesForSection(sectionId, role);
-
-    // Find messages container within the section
     const messagesContainer = sectionElement.querySelector('.chat-messages-container');
 
     if (messagesContainer) {
-      // Render messages using ChatSectionRenderer
       this.chatSectionRenderer.renderMessages(messagesContainer, messages, role);
+    }
+
+    if (sectionElement && sectionId === 'experience') {
+      // TODO: explore option to make generic function to render metadata.mainItems list using section id as type of item view
+      await this._renderSectionItems(sectionId, sectionElement);
     }
 
     this._scrollToSection(sectionElement);
@@ -97,18 +96,16 @@ class SectionRenderer {
   }
 
   async _restoreChatSection(sectionId, role) {
-    // Create chat section container
     const sectionElement = this._createChatSectionContainer(sectionId);
-
-    // Get messages for this section and role
     const messages = getMessagesForSection(sectionId, role);
-
-    // Find messages container within the section
     const messagesContainer = sectionElement.querySelector('.chat-messages-container');
 
     if (messagesContainer) {
-      // Render messages without typing animation on restore
       this.chatSectionRenderer.renderMessages(messagesContainer, messages, role);
+    }
+
+    if (sectionId === 'experience') {
+      await this._renderSectionItems(sectionId, sectionElement);
     }
   }
 
@@ -329,6 +326,29 @@ class SectionRenderer {
   _getNextSectionId(currentSectionId) {
     const currentIndex = this.sectionOrder.indexOf(currentSectionId);
     return this.sectionOrder[currentIndex + 1] || null;
+  }
+
+  /**
+   * Renders section items from metadata main_items
+   * @param {String} sectionId - Section id
+   * @param {HTMLElement} sectionElement - Section element
+   * @private
+   */
+  async _renderSectionItems(sectionId, sectionElement) {
+    const itemsContainer = sectionElement.querySelector(`#${sectionId}-items`);
+
+    if (!itemsContainer) return;
+
+    const metadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+    if (!metadata?.mainItems) return;
+
+    metadata.mainItems.forEach(item => {
+      if (item.type === sectionId) {
+        const itemFragment = this.templateBuilder.renderSectionItem(sectionId, item);
+
+        itemsContainer.appendChild(itemFragment);
+      }
+    });
   }
 
   /**

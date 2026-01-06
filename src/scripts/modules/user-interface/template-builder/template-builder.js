@@ -413,6 +413,39 @@ class TemplateBuilder {
     return fragment;
   }
 
+  renderSectionItem(sectionId, itemData) {
+    const fragment = this._cloneTemplate(`${sectionId}-item-template`);
+    const item = fragment.querySelector(`.${sectionId}-item`);
+
+    if (!item) {
+      throw new Error('Experience item element not found in template');
+    }
+
+    const titleElement = item.querySelector(`.${sectionId}-item__title`);
+    if (titleElement) {
+      titleElement.textContent = itemData.title;
+    }
+
+    const dateElement = item.querySelector(`.${sectionId}-item__date`);
+    if (dateElement) {
+      const dateText = dateElement.querySelector('span:last-child') || dateElement;
+      dateText.textContent = itemData.date;
+    }
+
+    const detailsContainer = item.querySelector(`#${sectionId}-detail-items`);
+
+    if (detailsContainer && itemData.details) {
+      itemData.details.forEach(detail => {
+        const tag = document.createElement('span');
+        tag.className = 'experience-item__detail-tag';
+        tag.textContent = detail;
+        detailsContainer.appendChild(tag);
+      });
+    }
+
+    return fragment;
+  }
+
   /**
    * Renders project card
    * @param {Object} projectData - Project details
