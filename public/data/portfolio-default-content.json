@@ -174,10 +174,10 @@
             "title": "Mobiquity (Hexaware)",
             "date": "Jul 2023 - Oct 2025",
             "details": [
-              "Banking AI Chat UI (React, LangChain)",
-              "Dating Platform Middleware & Onboarding",
-              "Notification Platform (Azure, BFF)",
-              "Hiring & Technical Leadership"
+              "Lead: 60% Coding / 40% Management",
+              "Banking AI Agents (LangChain/Python)",
+              "Dating Platform (NX Monorepo/Zod)",
+              "Safety Notification System (Azure/BFF)"
             ]
           },
           {
@@ -185,10 +185,10 @@
             "title": "Erics Digital",
             "date": "Jun 2021 - Jun 2023",
             "details": [
-              "Migration: Monolith to Micro Frontends",
-              "Checkout & Shopping Cart Optimization",
-              "Team Leadership & Senior Hiring",
-              "Stakeholder Management"
+              "Migration: WebSphere to Headless React",
+              "Google Lighthouse Optimization",
+              "Redux Saga State Management",
+              "Team Leadership & Senior Hiring"
             ]
           },
           {
@@ -196,10 +196,10 @@
             "title": "A-Dam",
             "date": "Jan 2020 - Feb 2021",
             "details": [
-              "Web-shop Platform (Revenue +100%)",
-              "Migration to NestJS (+75% Retention)",
+              "Saleor.io Platform Fork & Customization",
+              "Revenue Growth (+100% YoY)",
               "B2B Bulk Purchase System",
-              "Marketing Campaign Integration"
+              "Migration to NestJS (+Performance)"
             ]
           },
           {
@@ -207,10 +207,10 @@
             "title": "DigitalChefs",
             "date": "Sep 2018 - Jan 2020",
             "details": [
-              "React Native Apps (iOS/Android)",
-              "Offline-first Architecture",
-              "Component Library Development",
-              "App Store Deployments"
+              "KLM In-Flight iPad App",
+              "Offline-first React Native",
+              "Tax Adviser App (Multi-user)",
+              "Component Library Development"
             ]
           },
           {
@@ -218,10 +218,10 @@
             "title": "ABiggerCircle",
             "date": "Feb 2017 - Sep 2018",
             "details": [
-              "Marketing Campaign Builder",
-              "Drag & Drop Components Wrapper",
+              "SODA Social Media Monitor",
+              "Drag & Drop Campaign Builder",
               "Embedded Entertainment Systems",
-              "Automotive Network Modules"
+              "Laravel & BackboneJS Legacy Support"
             ]
           },
           {
@@ -229,10 +229,10 @@
             "title": "IT-Transit",
             "date": "Mar 2015 - Nov 2017",
             "details": [
-              "Engineering CMS Platform",
-              "Landscape Measurement Tools",
               "Oil & Gas Inspection Software",
-              "Data Visualization API"
+              "Landscape Measurement Tools",
+              "Data Visualization APIs",
+              "Flex/ActionScript to JS Transition"
             ]
           },
           {
@@ -281,81 +281,104 @@
         "order": 5,
         "main_items": [
           {
-            "type": "project",
+            "type": "projects",
             "title": "ChatAgent AI (Banking)",
-            "description": "Developed a React application for integration via WebSocket with a Python-based LangChain chat service. Configured backend prompts and complex data visualization for charts and tables.",
+            "date": "Jun 2025 - Oct 2025",
+            "description": "Developed a custom UI for an AI-powered banking assistant. Integrated WebSocket communication with a Python/LangChain backend and used AgGrid for complex data rendering.",
             "stack": [
               "React",
               "Python",
               "LangChain",
               "WebSocket",
-              "Playwright",
-              "Micro Frontends"
+              "AgGrid",
+              "Keycloak"
             ]
           },
           {
-            "type": "project",
-            "title": "Dating Platform",
-            "description": "Designed client middleware using Axios Interceptors to steer user stories based on browser properties. Delivered User Onboarding features and migrated routing to React Router v7.",
+            "type": "projects",
+            "title": "Bonfire Dating Platform",
+            "date": "Aug 2024 - May 2025",
+            "description": "Led the frontend for a white-label dating app using an NX monorepo. Implemented Zod for validation, Axios interceptors for middleware routing, and SonarCloud for code quality.",
             "stack": [
               "React",
+              "NX Monorepo",
+              "Zod",
               "React Router v7",
-              "Axios",
-              "GitLab",
-              "Confluence"
+              "SonarCloud",
+              "Playwright"
             ]
           },
           {
-            "type": "project",
-            "title": "Notification Platform",
-            "description": "Designed and developed React applications for 3 notification control management systems with dynamic Azure configuration and BFF strategy integration.",
+            "type": "projects",
+            "title": "Safety Notification System",
+            "date": "Jul 2023 - Jun 2024",
+            "description": "Built a safety management dashboard for 6000+ employees. Implemented a BFF (Backend-for-Frontend) strategy to streamline API responses and managed Azure DevOps pipelines.",
             "stack": [
               "React",
-              "Azure",
+              "Azure DevOps",
+              "BFF Pattern",
               "TypeScript",
-              "RestAPI",
-              "BFF Strategy"
+              "Jest"
             ]
           },
           {
-            "type": "project",
-            "title": "A-Dam E-commerce",
-            "description": "Developed a web-shop platform increasing brand yearly revenue by over 100%. Successfully migrated the application stack to NestJS, resulting in a performance boost and ~75% client retention.",
+            "type": "projects",
+            "title": "Erics WebShop Migration",
+            "date": "Jun 2021 - Jun 2023",
+            "description": "Migrated a legacy WebSphere monolith to a headless React architecture. Improved SEO scores (Lighthouse) and implemented a custom translation tool with Localise.",
             "stack": [
               "React",
-              "GraphQL",
-              "Apollo",
+              "Redux Saga",
+              "WebSphere (Legacy)",
+              "Localise",
+              "JSP",
+              "Google Analytics"
+            ]
+          },
+          {
+            "type": "projects",
+            "title": "A-Dam E-commerce",
+            "date": "Jan 2020 - Feb 2021",
+            "description": "Forked and customized the Saleor.io platform to drive 100% revenue growth. Optimized Apollo caching to handle high-traffic events like Black Friday.",
+            "stack": [
+              "React",
               "NextJS",
-              "Tailwind"
+              "Saleor.io",
+              "Apollo GraphQL",
+              "Redis",
+              "Python"
             ]
           },
           {
-            "type": "project",
-            "title": "KLM Flight Attendant",
-            "description": "Developed a native IOS application to support World Business Class cabin crew during the rollout of a new meal service concept, moving away from traditional classroom training to on-the-job support. ",
+            "type": "projects",
+            "title": "KLM Flight Assistant",
+            "date": "May 2019 - Jan 2020",
+            "description": "Built an offline-first iPad app for cabin crew to replace classroom training with on-the-job performance support. Replaced paper manuals with rich media instructions.",
             "stack": [
-              "ReactNative",
+              "React Native",
               "Express",
-              "StyledComponents",
               "MySQL",
-              "X-Code & Android Studio"
+              "Android Studio",
+              "XCode"
             ]
           },
           {
-            "type": "project",
+            "type": "projects",
             "title": "Taxafax",
-            "description": "Developed a native IOS/Android application to help small tax adviser agency to share tax-related information and important updates with their clients. ",
+            "date": "Sep 2018 - May 2019",
+            "description": "Developed a React Native app for tax advisors to share real-time updates and reports with clients. Included multi-user login flow and secure document sharing.",
             "stack": [
-              "ReactNative",
+              "React Native",
               "Express",
-              "WordPress",
-              "RestAPI"
+              "RestAPI",
+              "Mobile Security"
             ]
           },
           {
-            "type": "project",
+            "type": "projects",
             "title": "Soda",
-            "description": "A subsidiary platform of ABiggerCircle. Comprehensive suite of social media tools designed to help media agencies measure, manage, and research the social presence of brands.",
+            "date": "Feb 2017 - Sep 2018",
+            "description": "Build and managed a subsidiary platform of a comprehensive suite of social media tools designed to help media agencies measure, manage, and research the social presence of brands.",
             "stack": [
               "Laravel",
               "VanillaJS",
@@ -367,9 +390,10 @@
             ]
           },
           {
-            "type": "project",
+            "type": "projects",
             "title": "NDA protected name",
-            "description": "Multimedia web application running on edge device with access to local data sources and services such as notifications, audio, radio and satellite TV",
+            "date": "Feb 2017 - Sep 2018",
+            "description": "Build multimedia web application running on edge device with access to local data sources and services such as notifications, audio, radio and satellite TV",
             "stack": [
               "VanillaJS",
               "BackboneJS",

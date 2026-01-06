@@ -1,9 +1,11 @@
 import { GenerativeImage } from '../generative-image/index.js';
+import { Carousel } from '../carousel/index.js';
 import ChatSectionRenderer from '../chat-section-renderer/index.js';
 import { getMessagesForSection } from '../../../../data/chat-content.js';
 
 const SCROLL_DELAY = 30;
 
+const SECTIONS_WITH_ITEMS = ["experience", "projects"];
 const SECTION_ELEMENTS = {
   text: 'section-body-content',
   image: 'section-visual-container'
@@ -65,12 +67,28 @@ class SectionRenderer {
       this.chatSectionRenderer.renderMessages(messagesContainer, messages, role);
     }
 
-    if (sectionElement && sectionId === 'experience') {
-      // TODO: explore option to make generic function to render metadata.mainItems list using section id as type of item view
-      await this._renderSectionItems(sectionId, sectionElement);
+    if (sectionElement && SECTIONS_WITH_ITEMS.includes(sectionId)) {
+      await this._renderSectionDetails(sectionId, sectionElement);
     }
 
     this._scrollToSection(sectionElement);
+  }
+
+  async _renderSectionDetails(sectionId, sectionElement) {
+    const itemsContainer = sectionElement.querySelector(`#${sectionId}-items`);
+    const items = await this._renderSectionItems(sectionId);
+
+    if (sectionId === 'projects') {
+      const carousel = new Carousel(itemsContainer, items, {
+        loop: false,
+        navigation: true,
+        gap: 16
+      });
+
+      carousel.render();
+    } else {
+      itemsContainer.append(items);
+    }
   }
 
   async _revealTraditionalSection(sectionId, role, customQuery) {
@@ -87,26 +105,12 @@ class SectionRenderer {
   async restore(sectionId, role) {
     // Check if this section should use chat layout
     if (CHAT_SECTIONS.includes(sectionId)) {
-      await this._restoreChatSection(sectionId, role);
+      await this._revealChatSection(sectionId, role);
     } else {
       await this._restoreTraditionalSection(sectionId, role);
     }
 
     await this._updateActionPrompt(sectionId);
-  }
-
-  async _restoreChatSection(sectionId, role) {
-    const sectionElement = this._createChatSectionContainer(sectionId);
-    const messages = getMessagesForSection(sectionId, role);
-    const messagesContainer = sectionElement.querySelector('.chat-messages-container');
-
-    if (messagesContainer) {
-      this.chatSectionRenderer.renderMessages(messagesContainer, messages, role);
-    }
-
-    if (sectionId === 'experience') {
-      await this._renderSectionItems(sectionId, sectionElement);
-    }
   }
 
   async _restoreTraditionalSection(sectionId, role) {
@@ -331,24 +335,23 @@ class SectionRenderer {
   /**
    * Renders section items from metadata main_items
    * @param {String} sectionId - Section id
-   * @param {HTMLElement} sectionElement - Section element
+   * @return {Promise<Array[HTMLElement]>} items - List of HTML elements
    * @private
    */
-  async _renderSectionItems(sectionId, sectionElement) {
-    const itemsContainer = sectionElement.querySelector(`#${sectionId}-items`);
-
-    if (!itemsContainer) return;
-
+  async _renderSectionItems(sectionId) {
     const metadata = await this.contentMiddleware.getSectionMetadata(sectionId);
     if (!metadata?.mainItems) return;
+
+    const items = [];
 
     metadata.mainItems.forEach(item => {
       if (item.type === sectionId) {
         const itemFragment = this.templateBuilder.renderSectionItem(sectionId, item);
-
-        itemsContainer.appendChild(itemFragment);
+        items.push(itemFragment);
       }
     });
+
+    return items;
   }
 
   /**
