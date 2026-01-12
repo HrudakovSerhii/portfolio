@@ -1,0 +1,146 @@
+@use '../base/variables';
+@use '../base/mixins';
+
+.experience-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  background-color: #1a1d24;
+  padding: 1.5rem;
+  border: 1px solid #282e39;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: rgba(19, 91, 236, 0.5);
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+
+    @include mixins.desktop {
+      flex-direction: row;
+    }
+  }
+
+  &__info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  &__logo-wrapper {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    padding: 0.25rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &__role {
+    color: #ffffff;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__company {
+    color: #135bec;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0.25rem 0 0 0;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+
+    @include mixins.desktop {
+      align-items: flex-end;
+    }
+  }
+
+  &__period {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  &__impact-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    background-color: rgba(19, 91, 236, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(19, 91, 236, 0.2);
+  }
+
+  &__impact-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #135bec;
+    letter-spacing: 0.05em;
+  }
+
+  &__stars {
+    display: flex;
+    color: #135bec;
+  }
+
+  &__star {
+    font-size: 16px;
+
+    &--inactive {
+      opacity: 0.3;
+    }
+  }
+
+  &__description {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    margin: 0;
+  }
+
+  &__tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  &__tech-tag {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: #282e39;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      border-color: rgba(19, 91, 236, 0.3);
+      color: #ffffff;
+    }
+  }
+}

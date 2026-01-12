@@ -1,15 +1,5 @@
 import { GenerativeImage } from '../generative-image/index.js';
-
-const SECTION_ELEMENTS = {
-  text: 'section-body-content',
-  image: 'section-visual-container'
-};
-
-const DEFAULT_GRID_CONFIG = {
-  rows: 4,
-  cols: 4,
-  delay: 500
-};
+import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG } from './constants.js';
 
 class SectionAnimator {
   constructor(animationController) {
