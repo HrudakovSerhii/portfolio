@@ -5,10 +5,15 @@
 :root {
   // Background colors
   --color-bg: #f9fafb; // gray-50
-  --color-bg-rgb: 89, 100, 112; // RGB for backdrop
+  --color-bg-rgb: 249, 250, 251; // RGB for backdrop blur
+  --color-bg-secondary: #e5e7eb; // gray-200 - for button backgrounds
+  --color-bg-tertiary: #d1d5db; // gray-300 - for button hover
   --color-surface: #ffffff; // white
   --color-surface-secondary: #f3f4f6; // gray-100
   --color-surface-dark: #1e1f20; // dark gray for image containers
+
+  // Primary color (alias for accent)
+  --color-primary: #3b82f6; // blue-500
 
   // Text colors
   --color-text: #111827; // gray-900
@@ -83,10 +88,15 @@
 [data-theme="dark"] {
   // Background colors
   --color-bg: #030712; // gray-950
-  --color-bg-rgb: 3, 7, 18; // RGB for backdrop
+  --color-bg-rgb: 3, 7, 18; // RGB for backdrop blur
+  --color-bg-secondary: #1f2937; // gray-800 - for button backgrounds
+  --color-bg-tertiary: #374151; // gray-700 - for button hover
   --color-surface: #1f2937; // gray-800
   --color-surface-secondary: #111827; // gray-900
   --color-surface-dark: #1e1f20; // dark gray for image containers
+
+  // Primary color (alias for accent)
+  --color-primary: #3b82f6; // blue-500
 
   // Text colors
   --color-text: #ffffff; // white

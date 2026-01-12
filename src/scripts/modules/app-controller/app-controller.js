@@ -18,7 +18,7 @@ const ELEMENT_IDS = {
   languageSelector: 'language-selector',
   mainContent: 'main-content',
   typingIndicator: 'typing-indicator',
-  heroSection: 'section-hero',
+  introSection: 'section-intro',
 };
 
 const CRITICAL_ELEMENT_KEYS = [
@@ -26,7 +26,7 @@ const CRITICAL_ELEMENT_KEYS = [
   'themeToggle',
   'languageSelector',
   'mainContent',
-  'heroSection',
+  'introSection',
 ];
 
 class AppController {
@@ -53,7 +53,7 @@ class AppController {
       themeToggle: null,
       languageSelector: null,
       mainContent: null,
-      heroSection: null,
+      introSection: null,
       typingIndicator: null,
     };
 
@@ -104,7 +104,7 @@ class AppController {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
-      this.elements.heroSection.classList.add('hidden');
+      this.elements.introSection.classList.add('hidden');
 
       await this.restoreState();
     }
@@ -117,7 +117,7 @@ class AppController {
     this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
     this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
+    this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
   }
 
@@ -138,7 +138,7 @@ class AppController {
       this.headerController.updateLanguage(e.target.value);
     });
 
-    this.elements.heroSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+    this.elements.introSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
         const role = storyPathBtn.getAttribute('data-role');
 
@@ -240,8 +240,8 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      if (this.elements.heroSection) {
-        this.elements.heroSection.classList.add('hidden');
+      if (this.elements.introSection) {
+        this.elements.introSection.classList.add('hidden');
       }
 
       await this.revealSection(SECTION_ORDER[0]);

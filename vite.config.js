@@ -5,7 +5,7 @@ export default defineConfig({
   root: 'src',
   publicDir: '../public',
   server: {
-    port: 3000,
+    port: 4000,
     open: true,
     watch: {
       // Watch for changes in public directory
