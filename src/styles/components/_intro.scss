@@ -1,7 +1,7 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-.hero {
+.intro {
   position: relative;
   z-index: variables.$z-nav;
   background-color: transparent;
@@ -68,7 +68,7 @@
     }
   }
 
-  &-intro {
+  &-lead {
     font-size: variables.$font-size-lg;
     color: var(--color-text-secondary);
     line-height: variables.$line-height-relaxed;
@@ -217,7 +217,7 @@
   }
 }
 
-.hero-cta-button {
+.intro-cta-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,16 +253,16 @@
   }
 }
 
-// Story path elements within hero section
-.hero-heading {
+// Story path elements within intro section
+.intro-heading {
   text-align: center;
 }
 
-.hero-subheading {
+.intro-subheading {
   text-align: center;
 }
 
-.hero-text {
+.intro-text {
   text-align: center;
 
   .text-gradient {
@@ -270,7 +270,7 @@
   }
 }
 
-.hero-options {
+.intro-options {
   display: grid;
   margin: 0 auto;
   gap: variables.$spacing-lg;
@@ -296,14 +296,14 @@
   }
 }
 
-.hero-option {
+.intro-option {
   display: flex;
   flex-direction: column;
   justify-content: start;
   gap: 1rem;
 }
 
-.hero-description {
+.intro-description {
   width: 100%;
   text-align: center;
   font-size: variables.$font-size-base;
@@ -319,7 +319,7 @@
   }
 }
 
-.hero-cta-prompt {
+.intro-cta-prompt {
   margin-bottom: variables.$spacing-md;
   font-size: variables.$font-size-lg;
 }
