@@ -4,63 +4,44 @@
 @use '../base/mixins';
 
 .footer {
-  position: relative;
-  z-index: variables.$z-nav;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: variables.$spacing-lg;
   padding: variables.$spacing-2xl variables.$spacing-md;
-  margin-top: auto;
-  background-color: transparent;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+}
 
-  &__container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: variables.$spacing-lg;
-    max-width: variables.$content-max-width;
-    margin: 0 auto;
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: variables.$spacing-xl;
+}
+
+.footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  transition: color variables.$transition-base;
+
+  &:hover {
+    color: var(--color-primary);
   }
 
-  &__social {
-    display: flex;
-    justify-content: center;
+  .material-symbols-outlined {
+    font-size: 24px;
   }
+}
 
-  &__social-links {
-    display: flex;
-    gap: variables.$spacing-lg;
-    align-items: center;
-
-    @include mixins.mobile {
-      gap: variables.$spacing-md;
-    }
-  }
-
-  &__social-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-tertiary);
-    transition: color variables.$transition-base;
-    text-decoration: none;
-
-    &:hover {
-      color: var(--color-accent);
-    }
-
-    .material-symbols-outlined {
-      font-size: variables.$font-size-2xl;
-    }
-  }
-
-  &__copyright {
-    text-align: center;
-  }
-
-  &__copyright-text {
-    font-size: variables.$font-size-sm;
-    color: var(--color-text-tertiary);
-    margin: 0;
-    font-weight: variables.$font-weight-normal;
-  }
+.footer-copyright {
+  font-size: variables.$font-size-sm;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
 }
