@@ -1,14 +1,9 @@
 import { GenerativeImage } from '../generative-image/index.js';
+import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
 import TypingIndicator from './typing-indicator.js';
 import ActionPromptManager from './action-prompt-manager.js';
 import SectionAnimator from './section-animator.js';
-
-const SCROLL_DELAY = 30;
-
-const SECTION_ELEMENTS = {
-  text: 'section-body-content',
-  image: 'section-visual-container'
-};
+import MetaItemRenderer from './meta-item-renderer.js';
 
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
@@ -33,10 +28,12 @@ class SectionRenderer {
     this.typingIndicator.show();
 
     try {
-      const { sectionContent } = await this._fetchSectionData(sectionId, role, customQuery);
+      const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role, customQuery);
       const profileData = await this._fetchProfileData();
 
-      const sectionElement = this._renderSection(sectionContent, profileData);
+      const sectionElement = this._renderSection(sectionContent);
+
+      this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 
       this._scrollToSection(sectionElement);
 
@@ -53,13 +50,14 @@ class SectionRenderer {
   }
 
   async restore(sectionId, role) {
-    const { sectionContent } = await this._fetchSectionData(sectionId, role);
+    const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role);
     const profileData = await this._fetchProfileData();
 
-    const sectionElement = this._renderSection(sectionContent, profileData);
+    const sectionElement = this._renderSection(sectionContent);
 
     this._populateText(sectionElement, sectionContent.text);
     this._populateImage(sectionElement, sectionContent.image);
+    this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 
     this._updateActionPrompt(sectionId);
   }
@@ -71,6 +69,21 @@ class SectionRenderer {
     this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
 
     return sectionElement;
+  }
+
+  _renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role) {
+    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
+
+    if (!metaItemsContainer || !sectionMetadata?.mainItems) {
+      return;
+    }
+
+    const metaItemRenderer = new MetaItemRenderer(this.templateBuilder, profileData);
+    const renderedItems = metaItemRenderer.render(sectionId, sectionMetadata.mainItems, role);
+
+    if (renderedItems) {
+      metaItemsContainer.appendChild(renderedItems);
+    }
   }
 
   _updateActionPrompt(sectionId) {
@@ -127,7 +140,7 @@ class SectionRenderer {
       alt: imageData.imageAlt,
       aspectClass: imageData.aspectRatio,
       shouldAnimate: false,
-      gridConfig: { rows: 4, cols: 4, delay: 500 }
+      gridConfig: DEFAULT_GRID_CONFIG
     });
 
     const imageElement = generativeImage.create();

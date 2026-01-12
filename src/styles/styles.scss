@@ -25,6 +25,9 @@
 @use 'components/section';
 @use 'components/action-prompt';
 @use 'components/loader';
+@use 'components/experience-card';
+@use 'components/project-card';
+@use 'components/meta-items';
 
 // Layout
 @use 'layout/overlay';

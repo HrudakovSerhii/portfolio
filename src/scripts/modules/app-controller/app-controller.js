@@ -32,7 +32,7 @@ const CRITICAL_ELEMENT_KEYS = [
 class AppController {
   constructor() {
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-default-content.json');
+    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-content.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
     this.parallaxController = new ParallaxController();

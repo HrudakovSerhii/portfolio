@@ -34,16 +34,9 @@ class TemplateBuilder {
     return template.content.cloneNode(true);
   }
 
-  renderSection(sectionData, profileData = null) {
-    const sectionId = sectionData.sectionId;
-    const templateId = sectionId === 'contact' ? 'contact-section-template' : 'section-template';
-
+  renderSection(sectionData) {
+    const templateId = 'section-template';
     const section = this._createSectionElement(templateId, sectionData);
-
-    // TODO: this should be a part of section metadata render
-    if (sectionId === 'contact') {
-      this._populateContactActions(section, sectionData, profileData);
-    }
 
     return section;
   }
@@ -112,24 +105,6 @@ class TemplateBuilder {
       imageContainer.setAttribute('data-image-url', sectionData.image.imageUrl);
       imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
       imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
-    }
-  }
-
-  _populateContactActions(section, sectionData, profileData) {
-    if (!profileData) return;
-
-    const emailLink = section.querySelector('.contact-email-link');
-    if (emailLink && profileData.email) {
-      const subject = encodeURIComponent(sectionData.emailSubject || 'Hello');
-      const body = encodeURIComponent(sectionData.emailBody || '');
-      emailLink.href = `mailto:${profileData.email}?subject=${subject}&body=${body}`;
-      emailLink.setAttribute('data-email', profileData.email);
-      emailLink.setAttribute('data-name', profileData.name);
-    }
-
-    const linkedinLink = section.querySelector('.contact-linkedin-link');
-    if (linkedinLink && profileData.socialLinks?.linkedin) {
-      linkedinLink.href = profileData.socialLinks.linkedin;
     }
   }
 
@@ -245,6 +220,15 @@ class TemplateBuilder {
     }
 
     return modal;
+  }
+
+  cloneMetaItemTemplate(templateId) {
+    try {
+      return this._cloneTemplate(templateId);
+    } catch {
+      console.warn(`Meta item template "${templateId}" not found`);
+      return null;
+    }
   }
 }
 
