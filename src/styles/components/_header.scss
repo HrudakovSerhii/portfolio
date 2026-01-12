@@ -170,6 +170,22 @@
   }
 }
 
+.header-role-badge {
+  width: auto;
+  gap: variables.$spacing-xs;
+  padding: 0 variables.$spacing-sm;
+
+  .header-role-icon {
+    font-size: 18px;
+  }
+
+  .header-role-text {
+    font-size: variables.$font-size-xs;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+}
+
 .header-language-select {
   position: relative;
   display: flex;

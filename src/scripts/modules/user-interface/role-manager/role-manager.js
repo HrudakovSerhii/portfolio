@@ -62,10 +62,6 @@ class RoleManager {
     return this.stateManager.getRole();
   }
 
-  hasRole() {
-    return this.getCurrentRole() !== null;
-  }
-
   _renderModal(currentRole) {
     const modal = this.templateBuilder.renderRoleChangeModal(currentRole);
     document.body.appendChild(modal);
