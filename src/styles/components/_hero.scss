@@ -10,10 +10,21 @@
   justify-content: center;
   padding: variables.$spacing-2xl variables.$spacing-md;
   min-height: calc(100vh - 3rem); // used static value to escape Webstorm error
+  overflow: hidden;
+  transition: max-height 1s ease-in-out;
 
   @include mixins.desktop {
     min-height: calc(100vh - 4rem); // used static value to escape Webstorm error
     padding: variables.$spacing-3xl variables.$spacing-xl;
+  }
+
+  &.invisible {
+    max-height: 0;
+    min-height: 0;
+  }
+
+  &.hidden {
+    display: none;
   }
 
   &-layout {
@@ -63,7 +74,6 @@
     line-height: variables.$line-height-relaxed;
     text-align: center;
     margin: 0;
-    max-width: 32rem;
 
     @include mixins.desktop {
       font-size: variables.$font-size-xl;
@@ -241,4 +251,75 @@
   50% {
     opacity: 0.5;
   }
+}
+
+// Story path elements within hero section
+.hero-heading {
+  text-align: center;
+}
+
+.hero-subheading {
+  text-align: center;
+}
+
+.hero-text {
+  text-align: center;
+
+  .text-gradient {
+    font-size: 24px;
+  }
+}
+
+.hero-options {
+  display: grid;
+  margin: 0 auto;
+  gap: variables.$spacing-lg;
+  padding: 0 variables.$spacing-md;
+
+  @include mixins.tablet {
+    grid-template-columns: repeat(3, 1fr);
+
+    &:last-child {
+      grid-column: 1 / 2;
+      max-width: 50%;
+    }
+  }
+
+  @include mixins.desktop {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    max-width: variables.$content-max-width;
+    gap: variables.$spacing-xl;
+
+    &:last-child {
+      max-width: variables.$content-max-width;
+    }
+  }
+}
+
+.hero-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 1rem;
+}
+
+.hero-description {
+  width: 100%;
+  text-align: center;
+  font-size: variables.$font-size-base;
+  color: var(--color-text-secondary);
+  line-height: variables.$line-height-normal;
+
+  @include mixins.mobile {
+    padding: variables.$spacing-xs variables.$spacing-md;
+  }
+
+  @include mixins.desktop {
+    font-size: variables.$font-size-xl;
+  }
+}
+
+.hero-cta-prompt {
+  margin-bottom: variables.$spacing-md;
+  font-size: variables.$font-size-lg;
 }

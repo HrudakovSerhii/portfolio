@@ -17,9 +17,8 @@ const ELEMENT_IDS = {
   themeToggle: 'theme-toggle',
   languageSelector: 'language-selector',
   mainContent: 'main-content',
-  storyPathSection: 'story-path-section',
   typingIndicator: 'typing-indicator',
-  startConversationBtn: 'start-conversation-btn',
+  heroSection: 'section-hero',
 };
 
 const CRITICAL_ELEMENT_KEYS = [
@@ -27,8 +26,7 @@ const CRITICAL_ELEMENT_KEYS = [
   'themeToggle',
   'languageSelector',
   'mainContent',
-  'storyPathSection',
-  'startConversationBtn'
+  'heroSection',
 ];
 
 class AppController {
@@ -55,9 +53,8 @@ class AppController {
       themeToggle: null,
       languageSelector: null,
       mainContent: null,
-      storyPathSection: null,
+      heroSection: null,
       typingIndicator: null,
-      startConversationBtn: null,
     };
 
     this.initialized = false;
@@ -107,8 +104,7 @@ class AppController {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
-      this.elements.storyPathSection.classList.add('hidden');
-      this._updateStartConversationButtonText(`Read ${role} description below`);
+      this.elements.heroSection.classList.add('hidden');
 
       await this.restoreState();
     }
@@ -121,9 +117,8 @@ class AppController {
     this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
     this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.storyPathSection = document.getElementById(ELEMENT_IDS.storyPathSection);
+    this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
-    this.elements.startConversationBtn = document.getElementById(ELEMENT_IDS.startConversationBtn);
   }
 
   _validateCachedElements(criticalElementKeys) {
@@ -143,11 +138,7 @@ class AppController {
       this.headerController.updateLanguage(e.target.value);
     });
 
-    this.elements.startConversationBtn.addEventListener('click', () => {
-      this._startConversation();
-    });
-
-    this.elements.storyPathSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+    this.elements.heroSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
         const role = storyPathBtn.getAttribute('data-role');
 
@@ -158,24 +149,6 @@ class AppController {
     });
   }
 
-  _startConversation() {
-     if (this._isHeroSectionRendered()) {
-      this._scrollToElementById('section-hero');
-    } else if (this._isStoryPathSectionRendered()) {
-       this._scrollToElementById(ELEMENT_IDS.storyPathSection);
-     }
-  }
-
-  _isStoryPathSectionRendered() {
-    const storyPathSection = this.elements.mainContent.querySelector(`#${ELEMENT_IDS.storyPathSection}`);
-    return storyPathSection !== null;
-  }
-
-  _isHeroSectionRendered() {
-    const storyPathSection = this.elements.mainContent.querySelector(`#section-hero`);
-    return storyPathSection !== null;
-  }
-
   _scrollToElementById(id) {
     const element = this.elements.mainContent.querySelector(`#${id}`);
 
@@ -184,17 +157,6 @@ class AppController {
         behavior: 'smooth',
         block: 'start'
       });
-    }
-  }
-
-  _updateStartConversationButtonText(text) {
-    if (!this.elements.startConversationBtn) {
-      return;
-    }
-
-    const textElement = this.elements.startConversationBtn.querySelector('.hero-start-conversation__text');
-    if (textElement) {
-      textElement.textContent = text;
     }
   }
 
@@ -278,8 +240,8 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      if (this.elements.storyPathSection) {
-        this.elements.storyPathSection.classList.add('invisible');
+      if (this.elements.heroSection) {
+        this.elements.heroSection.classList.add('hidden');
       }
 
       await this.revealSection(SECTION_ORDER[0]);
