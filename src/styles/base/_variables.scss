@@ -6,17 +6,18 @@ $font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
 $font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 $font-family-secondary: Georgia, 'Times New Roman', serif;
 
-// Font Sizes
+// Font Sizes (Tailwind scale)
 $font-size-xs: 0.75rem;   // 12px
 $font-size-sm: 0.875rem;  // 14px
 $font-size-base: 1rem;    // 16px
 $font-size-lg: 1.125rem;  // 18px
 $font-size-xl: 1.25rem;   // 20px
 $font-size-2xl: 1.5rem;   // 24px
-$font-size-3xl: 2rem;     // 32px
-$font-size-4xl: 2.5rem;   // 40px
+$font-size-3xl: 1.875rem; // 30px
+$font-size-4xl: 2.25rem;  // 36px
 $font-size-5xl: 3rem;     // 48px
-$font-size-6xl: 3.75rem;  // 60px
+$font-size-6xl: 3.25rem;  // 52px
+$font-size-7xl: 3.75rem;  // 60px
 
 // Font Weight
 $font-weight-medium: 600;

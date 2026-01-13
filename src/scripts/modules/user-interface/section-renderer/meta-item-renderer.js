@@ -1,9 +1,32 @@
+import { Carousel } from "../carousel/index.js";
+
 const LINK_TYPES = ['link', 'email-link'];
 
 class MetaItemRenderer {
   constructor(templateBuilder, profileData) {
     this.templateBuilder = templateBuilder;
     this.profileData = profileData;
+  }
+
+  renderInCarousel(container, sectionId, items) {
+    const elements = [];
+
+    items.forEach(item => {
+      const renderedItem = this._renderItem(sectionId, item);
+
+      if (renderedItem) {
+        elements.push(renderedItem);
+      }
+    });
+
+    if (elements.length > 0) {
+      const carousel = new Carousel(container, elements, {
+        loop: true,
+        navigation: true
+      });
+
+      carousel.render();
+    }
   }
 
   render(sectionId, mainItems, currentRole) {
@@ -18,6 +41,7 @@ class MetaItemRenderer {
 
     itemsToRender.forEach(item => {
       const renderedItem = this._renderItem(sectionId, item);
+
       if (renderedItem) {
         container.appendChild(renderedItem);
       }
@@ -58,8 +82,6 @@ class MetaItemRenderer {
         return this._populateExperienceItem(fragment, item);
       case 'projects':
         return this._populateProjectItem(fragment, item);
-      case 'contact':
-        return this._populateLinkItem(fragment, item);
       default:
         return fragment.firstElementChild;
     }
@@ -118,7 +140,7 @@ class MetaItemRenderer {
     const iconElement = element.querySelector('.skills-item__icon');
 
     if (nameElement) nameElement.textContent = item.name;
-    if (yearsElement) yearsElement.textContent = item.years;
+    if (yearsElement) yearsElement.textContent = item.years + " Years";
     if (iconElement) iconElement.textContent = item.icon;
 
     return element;

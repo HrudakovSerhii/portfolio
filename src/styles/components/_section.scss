@@ -6,6 +6,7 @@
   min-height: calc(100vh - #{variables.$spacing-3xl});
   margin: 0 auto;
   background-color: transparent;
+  justify-content: center;
 
   .parallax-layer {
     position: absolute;
@@ -89,7 +90,7 @@
     .generative-image {
       width: 100%;
       height: auto;
-      border-radius: variables.$radius-2xl;
+      border-radius: variables.$radius-md;
       object-fit: contain;
     }
   }
@@ -116,6 +117,10 @@
       font-weight: 600;
       color: var(--color-text);
       margin-bottom: variables.$spacing-sm;
+
+      @include mixins.desktop {
+        font-size: variables.$font-size-4xl;
+      }
     }
 
     .section-query {
@@ -130,13 +135,14 @@
     display: flex;
     justify-content: center;
     align-items: start;
-    font-size: variables.$font-size-2xl;
+    font-size: variables.$font-size-xl;
     color: var(--color-text);
     min-width: 30%;
     width: 100%;
     height: 100%;
 
-    p {
+    & > p {
+      font-size: inherit;
       margin-bottom: variables.$spacing-md;
 
       &:last-child {
@@ -144,9 +150,50 @@
       }
     }
   }
+
+  .section-carousel {
+    position: relative;
+    padding: variables.$spacing-xl;
+    max-width: variables.$content-max-width;
+  }
 }
 
 .content-section--contact {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-lg;
+  padding-top: variables.$spacing-xl;
+  animation: fadeIn variables.$transition-slowest ease-out 0.2s both;
+
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-s;
+  }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: variables.$font-weight-bold;
+    line-height: variables.$line-height-tight;
+    letter-spacing: -0.025em;
+  }
+
+  .section-query {
+    color: var(--color-text-muted);
+    font-size: variables.$font-size-lg;
+    font-style: normal;
+  }
+
+  .section-meta-items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: variables.$spacing-md;
+
+    @include mixins.tablet {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   .contact-actions {
     display: flex;
     flex-direction: column;
@@ -175,6 +222,91 @@
 
     &:active {
       color: var(--color-accent-hover);
+    }
+  }
+}
+
+// Contact Card Component (BEM)
+.contact-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-md;
+  padding: variables.$spacing-lg;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-xl;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  transition:
+    border-color variables.$transition-medium,
+    box-shadow variables.$transition-medium;
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+    .contact-card__icon {
+      background-color: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .contact-card__link {
+      text-decoration: underline;
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--color-primary-subtle);
+    color: var(--color-primary);
+    border-radius: variables.$radius-lg;
+    transition:
+      background-color variables.$transition-medium,
+      color variables.$transition-medium;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: variables.$font-size-lg;
+    font-weight: variables.$font-weight-bold;
+    color: var(--color-text);
+  }
+
+  &__subtitle {
+    font-size: variables.$font-size-sm;
+    color: var(--color-text-muted);
+    margin-top: variables.$spacing-s;
+    margin-bottom: variables.$spacing-sm;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-s;
+    font-size: variables.$font-size-sm;
+    font-weight: variables.$font-weight-medium;
+    color: var(--color-primary);
+
+    .material-symbols-outlined {
+      font-size: 16px;
     }
   }
 }

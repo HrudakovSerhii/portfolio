@@ -2,7 +2,8 @@ export const SECTION_ELEMENTS = {
   text: 'section-body-content',
   subText: 'section-subtext-content',
   image: 'section-visual-container',
-  metaItems: 'section-meta-items'
+  metaItems: 'section-meta-items',
+  carouselMetaItems: 'section-carousel-meta-items'
 };
 
 export const DEFAULT_GRID_CONFIG = {

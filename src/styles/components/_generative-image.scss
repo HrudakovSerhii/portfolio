@@ -3,7 +3,7 @@
 .generative-image {
   position: relative;
   overflow: hidden;
-  border-radius: variables.$radius-2xl;
+  border-radius: variables.$radius-md;
   background: var(--color-surface-dark);
   width: 100%;
   margin: 0 auto;
@@ -72,7 +72,7 @@
   right: variables.$spacing-sm;
   padding: variables.$spacing-xs variables.$spacing-sm;
   background: rgba(0, 0, 0, 0.6);
-  border-radius: variables.$radius-sm;
+  border-radius: variables.$radius-md;
   font-size: variables.$font-size-xs;
   text-transform: uppercase;
   letter-spacing: 0.15em;
