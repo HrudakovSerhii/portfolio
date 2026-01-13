@@ -45,6 +45,22 @@ class TemplateBuilder {
       return this._createSectionElement('hero-section-template', sectionData);
     }
 
+    if (sectionId === 'experience') {
+      return this._createSectionElement('experience-section-template', sectionData);
+    }
+
+    if (sectionId === 'skills') {
+      return this._createSectionElement('skills-section-template', sectionData);
+    }
+
+    if (sectionId === 'projects') {
+      return this._createSectionElement('projects-section-template', sectionData);
+    }
+
+    if (sectionId === 'contact') {
+      return this._createSectionElement('contact-section-template', sectionData);
+    }
+
     return this._createSectionElement('section-template', sectionData);
   }
 

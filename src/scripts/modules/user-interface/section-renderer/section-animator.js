@@ -13,10 +13,17 @@ class SectionAnimator {
 
     this._createAnimatedImage(imageContainer, sectionContent.image);
 
-    const textPromise = this._animateText(textElement);
-    const imagePromise = this._animateImage(imageContainer);
+    const animations = [];
 
-    await Promise.all([textPromise, imagePromise]);
+    if (textElement && sectionContent.text) {
+      animations.push(this._animateText(textElement))
+    }
+
+    if (imageContainer && sectionContent.image) {
+      animations.push(this._animateImage(imageContainer));
+    }
+
+    await Promise.all(animations);
   }
 
   async _animateText(textElement) {
@@ -41,7 +48,7 @@ class SectionAnimator {
   }
 
   _createAnimatedImage(imageContainer, imageData) {
-    if (!imageContainer) {
+    if (!imageContainer || !imageData) {
       return;
     }
 
