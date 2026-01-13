@@ -2,6 +2,7 @@ class TemplateBuilder {
   constructor() {
     this.templates = {
       section: null,
+      heroSection: null,
       actionPrompt: null,
       navItem: null,
       loader: null,
@@ -12,8 +13,13 @@ class TemplateBuilder {
     };
   }
 
+  kebabToCamel(str) {
+    return str.replace(/-./g, match => match[1].toUpperCase());
+  }
+
   _getTemplate(templateId) {
-    const cacheKey = templateId.replace('-template', '').replace(/-/g, '');
+    const templateName = templateId.replace('-template', '');
+    const cacheKey = this.kebabToCamel(templateName)
 
     if (!this.templates[cacheKey]) {
       const template = document.getElementById(templateId);
@@ -34,11 +40,12 @@ class TemplateBuilder {
     return template.content.cloneNode(true);
   }
 
-  renderSection(sectionData) {
-    const templateId = 'section-template';
-    const section = this._createSectionElement(templateId, sectionData);
+  renderSection(sectionId, sectionData) {
+    if (sectionId === 'hero') {
+      return this._createSectionElement('hero-section-template', sectionData);
+    }
 
-    return section;
+    return this._createSectionElement('section-template', sectionData);
   }
 
   _createSectionElement(templateId, sectionData) {
@@ -98,6 +105,11 @@ class TemplateBuilder {
     const textElement = section.querySelector('.section-body-content');
     if (textElement) {
       textElement.setAttribute('data-text', sectionData.text);
+    }
+
+    const subTextElement = section.querySelector('.section-subtext-content');
+    if (subTextElement) {
+      subTextElement.setAttribute('data-text', sectionData.subText);
     }
 
     const imageContainer = section.querySelector('.content-image');

@@ -31,8 +31,9 @@ class SectionRenderer {
       const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role, customQuery);
       const profileData = await this._fetchProfileData();
 
-      const sectionElement = this._renderSection(sectionContent);
+      const sectionElement = this._renderSection(sectionId, sectionContent);
 
+      this._populateSubText(sectionElement, sectionContent.subText);
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 
       this._scrollToSection(sectionElement);
@@ -53,17 +54,18 @@ class SectionRenderer {
     const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role);
     const profileData = await this._fetchProfileData();
 
-    const sectionElement = this._renderSection(sectionContent);
+    const sectionElement = this._renderSection(sectionId, sectionContent);
 
     this._populateText(sectionElement, sectionContent.text);
+    this._populateSubText(sectionElement, sectionContent.subText);
     this._populateImage(sectionElement, sectionContent.image);
     this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 
     this._updateActionPrompt(sectionId);
   }
 
-  _renderSection(sectionContent, profileData) {
-    const sectionElement = this.templateBuilder.renderSection(sectionContent, profileData);
+  _renderSection(sectionId, sectionContent) {
+    const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
     const lastSectionElement = this.sectionsContainer.lastChild;
 
     this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
@@ -121,6 +123,14 @@ class SectionRenderer {
 
   _populateText(sectionElement, text) {
     const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.text}`);
+
+    if (textElement) {
+      textElement.textContent = text;
+    }
+  }
+
+  _populateSubText(sectionElement, text) {
+    const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.subText}`);
 
     if (textElement) {
       textElement.textContent = text;

@@ -206,8 +206,6 @@
 
   <template id="section-template">
     <section class="content-section">
-      <div class="parallax-layer" aria-hidden="true"></div>
-
       <div class="section-layout">
         <div class="section-visual">
           <div class="section-visual-container">
@@ -219,12 +217,48 @@
             <h2 class="section-title"></h2>
             <p class="section-query"></p>
           </div>
-          <div class="section-body-content">
+          <p class="section-body-content">
             <!-- Text content will be inserted here -->
-          </div>
+          </p>
           <div class="section-meta-items">
             <!-- Meta items will be inserted here based on section type -->
           </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="hero-section-template">
+    <section class="content-section hero">
+      <div class="hero__container">
+        <div class="hero__content">
+          <div class="hero__text">
+            <h1 class="hero__title section-body-content">
+              <!-- Text content will be inserted here -->
+            </h1>
+            <h3 class="hero__subtitle section-subtext-content">
+              <!-- Subtext content will be inserted here -->
+            </h3>
+          </div>
+          <div class="hero__meta section-meta-items">
+            <!-- Meta items will be inserted here based on section type -->
+          </div>
+        </div>
+
+        <div class="hero__visual">
+          <div class="hero__image-wrapper">
+            <div class="section-visual-container">
+              <!-- Image will be inserted here -->
+            </div>
+            <div class="hero__status">
+              <div class="hero__status-badge">
+                <span class="hero__status-indicator"></span>
+                <span class="hero__status-text">Open to work</span>
+              </div>
+            </div>
+          </div>
+          <!-- Visual Accent -->
+          <div class="hero__accent"></div>
         </div>
       </div>
     </section>
