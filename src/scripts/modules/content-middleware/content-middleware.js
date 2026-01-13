@@ -95,6 +95,7 @@ class ContentMiddleware {
       sectionId,
       title: section.metadata.title,
       text: roleContent.text,
+      subText: roleContent.subText,
       image: {
         imageUrl: `/portfolio/images/${imageName}.full.webp`,
         lowResImageUrl: `/portfolio/images/${imageName}.low.webp`,

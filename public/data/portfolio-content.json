@@ -28,7 +28,8 @@
       },
       "content": {
         "recruiter": {
-          "text": "I am a result-driven Senior Frontend Engineer with over 10 years of experience delivering high-value technical solutions. My track record includes doubling e-commerce revenue through strategic platform optimizations and leading complex legacy migrations from WebSphere to Headless React. I focus on accurate project planning and team efficiency to ensure business goals are consistently met.",
+          "text": "Helping to build scalable Frontend and happy Teams",
+          "subText": "Result-driven Senior Frontend Developer with over 10 years of experience delivering high-value technical solutions.",
           "image": {
             "name": "hero.hr",
             "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
@@ -36,7 +37,8 @@
           }
         },
         "developer": {
-          "text": "I specialize in modern web architecture, moving monoliths to Micro Frontends and building real-time AI agents. My core stack relies on TypeScript, React, and NestJS, managed within NX monorepos and validated with Zod. I'm passionate about automating workflows with CI/CD pipelines and implementing robust BFF patterns to keep complex codebases scalable and maintainable.",
+          "text": "On a mission to keep complex codebases scalable and maintainable",
+          "subText": "Passionate Software Engineer with expertise in modern web architecture, system migrations and best UX/UI practices.",
           "image": {
             "name": "hero.developer",
             "imageAlt": "Serhii Hrudakov - Software Engineer",
@@ -44,7 +46,8 @@
           }
         },
         "friend": {
-          "text": "I'm an engineer at heart. It all started 30 years ago with an old motorcycle and a rusty set of tools in my father's garage. Today, I'm still building—whether it's fine-tuning a local LLM for my smart home or organizing multi-day hiking trips for friends. I believe that mastering a skill means being able to teach it, a belief that took on new meaning when I became a father.",
+          "text": "Designing imagination always been my dream. With code it's became reality",
+          "subText": "An engineer at heart ready to tackle tasks with head and hands. <Rusty set of tools in garage and keyboard has a lot of in commot. It's an instrument to create. It's a tool to do what you love.>",
           "image": {
             "name": "hero.friend",
             "imageAlt": "Serhii Hrudakov",

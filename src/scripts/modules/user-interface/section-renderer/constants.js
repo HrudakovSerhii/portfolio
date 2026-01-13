@@ -1,5 +1,6 @@
 export const SECTION_ELEMENTS = {
   text: 'section-body-content',
+  subText: 'section-subtext-content',
   image: 'section-visual-container',
   metaItems: 'section-meta-items'
 };
