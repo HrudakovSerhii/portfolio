@@ -41,32 +41,21 @@ class TemplateBuilder {
   }
 
   renderSection(sectionId, sectionData) {
-    if (sectionId === 'hero') {
-      return this._createSectionElement('hero-section-template', sectionData);
-    }
-
-    if (sectionId === 'experience') {
-      return this._createSectionElement('experience-section-template', sectionData);
-    }
-
-    if (sectionId === 'skills') {
-      return this._createSectionElement('skills-section-template', sectionData);
-    }
-
-    if (sectionId === 'projects') {
-      return this._createSectionElement('projects-section-template', sectionData);
-    }
-
-    if (sectionId === 'contact') {
-      return this._createSectionElement('contact-section-template', sectionData);
-    }
-
-    return this._createSectionElement('section-template', sectionData);
+    return this._createSectionElement(sectionId, sectionData);
   }
 
-  _createSectionElement(templateId, sectionData) {
+  _createSectionElement(id, sectionData) {
+    const EXCEPTIONS = ['hero', 'experience', 'skills', 'projects', 'contact'];
+    let templateId = 'section-template';
+    let sectionId = 'default-section';
+
+    if (EXCEPTIONS.includes(id)) {
+      templateId = `${id}-`+ templateId;
+      sectionId = `${id}-section`;
+    }
+
     const fragment = this._cloneTemplate(templateId);
-    const section = fragment.querySelector('.content-section');
+    const section = fragment.querySelector(`#${sectionId}`);
 
     if (!section) {
       throw new Error(`Section element not found in template: ${templateId}`);

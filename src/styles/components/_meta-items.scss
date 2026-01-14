@@ -3,6 +3,36 @@
 
 .section-meta-items {
   margin-top: variables.$spacing-lg;
+
+  &.default-meta-items {
+    display: flex;
+    gap: variables.$spacing-xs;
+    flex-wrap: wrap;
+  }
+
+  &.experience-meta-items {
+    margin-top: variables.$spacing-lg;
+  }
+
+  &.hero-meta-items {
+    margin-top: 0;
+  }
+
+  &.skills-meta-items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: variables.$spacing-xs;
+
+    @include mixins.tablet {
+      grid-template-columns: repeat(3, 1fr);
+      gap: variables.$spacing-md;
+    }
+  }
+
+  &.contact-meta-items {
+    display: flex;
+    gap: variables.$spacing-md;
+  }
 }
 
 .meta-tag {
@@ -96,23 +126,5 @@
     font-size: variables.$font-size-xs;
     color: var(--color-text-tertiary);
     text-transform: capitalize;
-  }
-}
-
-.projects-item__stack-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: variables.$spacing-xs variables.$spacing-sm;
-  background-color: var(--color-surface-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: variables.$radius-md;
-  font-size: variables.$font-size-xs;
-  font-weight: variables.$font-weight-medium;
-  color: var(--color-text-secondary);
-  transition: all variables.$transition-fast;
-
-  &:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
   }
 }

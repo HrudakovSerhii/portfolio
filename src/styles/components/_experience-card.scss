@@ -9,8 +9,13 @@
   border-radius: variables.$radius-lg;
   background-color: var(--color-surface);
   padding: variables.$spacing-lg;
+  margin-bottom: variables.$spacing-md;
   border: 1px solid var(--color-border);
   transition: border-color variables.$transition-fast;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &:hover {
     border-color: var(--color-accent);
@@ -37,13 +42,19 @@
     width: variables.$spacing-2xl;
     height: variables.$spacing-2xl;
     border-radius: variables.$radius-md;
-    background-color: var(--color-text-inverse);
-    padding: variables.$spacing-xs;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-secondary);
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
+    @include mixins.desktop {
+      width: variables.$spacing-3xl;
+      height: variables.$spacing-3xl;
+      padding: variables.$spacing-s;
+    }
   }
 
   &__logo {
@@ -122,25 +133,10 @@
     margin: 0;
   }
 
-  &__tech-list {
+  &__tech-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: variables.$spacing-sm;
+    gap: variables.$spacing-xs;
     margin-top: variables.$spacing-xs;
-  }
-
-  &__tech-tag {
-    padding: variables.$spacing-xs variables.$spacing-sm;
-    border-radius: variables.$radius-sm;
-    background-color: var(--color-surface-secondary);
-    font-size: variables.$font-size-xs;
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-    transition: border-color variables.$transition-fast, color variables.$transition-fast;
-
-    &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-text);
-    }
   }
 }

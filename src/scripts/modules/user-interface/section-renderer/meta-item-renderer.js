@@ -34,20 +34,18 @@ class MetaItemRenderer {
       return null;
     }
 
-    const container = document.createElement('div');
-    container.className = 'meta-items-list';
-
     const itemsToRender = this._filterItemsByRole(mainItems, currentRole, sectionId);
+    const fragment = document.createDocumentFragment();
 
     itemsToRender.forEach(item => {
       const renderedItem = this._renderItem(sectionId, item);
 
       if (renderedItem) {
-        container.appendChild(renderedItem);
+        fragment.appendChild(renderedItem);
       }
     });
 
-    return container;
+    return fragment.hasChildNodes() ? fragment : null;
   }
 
   _filterItemsByRole(items, role, sectionId) {
@@ -154,25 +152,32 @@ class MetaItemRenderer {
     const companyElement = element.querySelector('.experience-card__company');
     const periodElement = element.querySelector('.experience-card__period');
     const descriptionElement = element.querySelector('.experience-card__description');
-    const techListElement = element.querySelector('.experience-card__tech-list');
+    const techTags = element.querySelector('#experience-tech-tags');
     const starsElement = element.querySelector('.experience-card__stars');
+    const logoWrapper = element.querySelector('.experience-card__logo-wrapper');
 
     if (roleElement) roleElement.textContent = item.role;
     if (companyElement) companyElement.textContent = item.company;
     if (periodElement) periodElement.textContent = item.period;
     if (descriptionElement) descriptionElement.textContent = item.description;
 
+    if (logoWrapper && item.logoUrl) {
+      const logoImg = document.createElement('img');
+      logoImg.src = item.logoUrl;
+      logoImg.alt = `${item.company} logo`;
+      logoImg.className = 'experience-card__logo';
+      logoImg.loading = 'lazy';
+      logoWrapper.appendChild(logoImg);
+    }
+
     if (starsElement && item.impactScore) {
       starsElement.innerHTML = this._renderStars(item.impactScore);
     }
 
-    if (techListElement && item.technologies) {
-      item.technologies.forEach(tech => {
-        const techTag = document.createElement('span');
-        techTag.className = 'experience-card__tech-tag';
-        techTag.textContent = tech;
-        techListElement.appendChild(techTag);
-      });
+    if (techTags && item.technologies) {
+      const techStackElements = this._generateTagsList(item.technologies);
+
+      techTags.appendChild(techStackElements);
     }
 
     return element;
@@ -185,19 +190,16 @@ class MetaItemRenderer {
     const titleElement = element.querySelector('.projects-item__title');
     const dateElement = element.querySelector('.projects-item__date span');
     const descriptionElement = element.querySelector('.projects-item__description');
-    const stackSection = element.querySelector('.projects-item__stack-section');
+    const projectTechTags = element.querySelector('#projects-tech-tags');
 
     if (titleElement) titleElement.textContent = item.title;
     if (dateElement) dateElement.textContent = item.date;
     if (descriptionElement) descriptionElement.textContent = item.description;
 
-    if (stackSection && item.stack) {
-      item.stack.forEach(tech => {
-        const techTag = document.createElement('span');
-        techTag.className = 'projects-item__stack-tag';
-        techTag.textContent = tech;
-        stackSection.appendChild(techTag);
-      });
+    if (projectTechTags && item.stack) {
+      const projectTagsElements = this._generateTagsList(item.stack);
+
+      projectTechTags.appendChild(projectTagsElements);
     }
 
     return element;
@@ -213,6 +215,20 @@ class MetaItemRenderer {
     }
 
     return starsHtml;
+  }
+
+  _generateTagsList(items) {
+    const fragment = document.createDocumentFragment();
+
+    items.forEach(item => {
+      const techTag = document.createElement('span');
+      techTag.className = 'meta-tag';
+      techTag.textContent = item;
+
+      fragment.appendChild(techTag);
+    });
+
+    return fragment.hasChildNodes() ? fragment : null;
   }
 }
 
