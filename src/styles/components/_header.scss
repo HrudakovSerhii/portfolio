@@ -114,19 +114,8 @@
   transform: translateX(-10px);
   animation: slideInNav 300ms ease forwards;
 
-  &:hover {
-    color: var(--color-text);
-  }
-
   &.active {
-    color: var(--color-text);
     font-weight: 600;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: variables.$radius-sm;
   }
 
   @for $i from 1 through 10 {

@@ -18,7 +18,7 @@ const ELEMENT_IDS = {
   languageSelector: 'language-selector',
   mainContent: 'main-content',
   typingIndicator: 'typing-indicator',
-  introSection: 'section-intro',
+  introSection: 'intro-section',
 };
 
 const CRITICAL_ELEMENT_KEYS = [
