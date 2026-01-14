@@ -20,7 +20,7 @@
             "type": "link",
             "title":  "Download resume PDF",
             "props": {
-              "url": "url to resume will be added later",
+              "url": "data/CV_Hrudakov_2025.pdf",
               "type": "download"
             }
           }
@@ -280,6 +280,40 @@
         "icon": "folder",
         "order": 5,
         "main_items": [
+          {
+            "type": "project",
+            "title": "Personal portfolio of Serhii",
+            "link": "https://github.com/HrudakovSerhii/portfolio",
+            "date": "Nov 2025 - Jan 2026",
+            "description": "Simple but features rich VanillaJS portfolio website to replace traditional CV with tailored story path and AI text generation.",
+            "stack": [
+              "JavaScript",
+              "HTML",
+              "SCSS",
+              "Vitest",
+              "Stitch",
+              "Vite",
+              "WebWorkers",
+              "Embedding model",
+              "In-browser model"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "TV Show Explorer",
+            "link": "https://github.com/HrudakovSerhii/tv-show-explorer",
+            "date": "Jan 2026 - Jan 2026",
+            "description": "Developed a simple NextJS application for client demo project. Design was generated using Google Stitch and later implemented in SSR components using App Router",
+            "stack": [
+              "React",
+              "NextJS",
+              "Tailwind",
+              "Vitest",
+              "REST API",
+              "Stitch",
+              "Atlassian Design"
+            ]
+          },
           {
             "type": "project",
             "title": "ChatAgent AI (Banking)",
