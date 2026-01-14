@@ -6,7 +6,13 @@ const HEADER_ELEMENTS = {
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
   navToggle: 'header-nav-toggle',
-  indicator: 'nav-indicator'
+  indicator: 'nav-indicator',
+  // Mobile nav elements
+  mobileNavToggle: 'mobile-nav-toggle',
+  mobileNavOverlay: 'mobile-nav-overlay',
+  mobileNavClose: 'mobile-nav-close',
+  mobileNav: 'mobile-nav',
+  mobileNavItem: 'mobile-nav-item'
 };
 
 const SECTION_ATTRIBUTES = {
@@ -27,22 +33,34 @@ class HeaderController {
     this.roleBadgeText = null;
     this.navToggle = null;
 
+    // Mobile nav elements
+    this.mobileNavToggle = null;
+    this.mobileNavOverlay = null;
+    this.mobileNavClose = null;
+    this.mobileNav = null;
+
     this.visibleSections = [];
     this.activeObserver = null;
     this._resizeHandler = this._handleResize.bind(this);
   }
 
-  initialize(ownerNameElement, languageSelectorElement, roleManager) {
+  initialize(ownerNameElement, roleManager) {
     this.roleManager = roleManager;
     this.ownerName = ownerNameElement;
-    this.languageSelector = languageSelectorElement;
+    // this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
     this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
     this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
 
-    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'sections-container', {
+    // Cache mobile nav elements
+    this.mobileNavToggle = document.getElementById(HEADER_ELEMENTS.mobileNavToggle);
+    this.mobileNavOverlay = document.getElementById(HEADER_ELEMENTS.mobileNavOverlay);
+    this.mobileNavClose = document.getElementById(HEADER_ELEMENTS.mobileNavClose);
+    this.mobileNav = document.getElementById(HEADER_ELEMENTS.mobileNav);
+
+    this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'main-content', {
       activeClass: 'active',
       threshold: 0.51,
       sectionSelector: '.content-section',
@@ -58,7 +76,7 @@ class HeaderController {
     }
 
     this._setupRoleBadgeClick();
-    this._setupMobileToggle();
+    this._setupMobileNavOverlay();
     this._setupActiveObserver();
 
     window.addEventListener('resize', this._resizeHandler);
@@ -130,27 +148,56 @@ class HeaderController {
     }
   }
 
-  _setupMobileToggle() {
-    if (!this.navToggle || !this.headerNav) return;
+  _setupMobileNavOverlay() {
+    if (!this.mobileNavToggle || !this.mobileNavOverlay) return;
 
-    this.navToggle.addEventListener('click', () => {
-      const isOpen = this.headerNav.classList.toggle('is-open');
-      this.navToggle.setAttribute('aria-expanded', isOpen.toString());
+    this.mobileNavToggle.addEventListener('click', () => {
+      this._openMobileNav();
     });
 
-    this.headerNav.addEventListener('click', (e) => {
-      if (e.target.classList.contains(HEADER_ELEMENTS.navItem)) {
-        this.headerNav.classList.remove('is-open');
-        this.navToggle.setAttribute('aria-expanded', 'false');
+    if (this.mobileNavClose) {
+      this.mobileNavClose.addEventListener('click', () => {
+        this._closeMobileNav();
+      });
+    }
+
+    this.mobileNavOverlay.addEventListener('click', (e) => {
+      if (e.target === this.mobileNavOverlay) {
+        this._closeMobileNav();
       }
     });
 
-    document.addEventListener('click', (e) => {
-      if (!this.headerNav.contains(e.target) && !this.navToggle.contains(e.target)) {
-        this.headerNav.classList.remove('is-open');
-        this.navToggle.setAttribute('aria-expanded', 'false');
+    if (this.mobileNav) {
+      this.mobileNav.addEventListener('click', (e) => {
+        if (e.target.classList.contains(HEADER_ELEMENTS.mobileNavItem)) {
+          this._closeMobileNav();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.mobileNavOverlay.classList.contains('is-open')) {
+        this._closeMobileNav();
       }
     });
+  }
+
+  _openMobileNav() {
+    if (!this.mobileNavOverlay || !this.mobileNavToggle) return;
+
+    this.mobileNavOverlay.classList.add('is-open');
+    this.mobileNavOverlay.setAttribute('aria-hidden', 'false');
+    this.mobileNavToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  _closeMobileNav() {
+    if (!this.mobileNavOverlay || !this.mobileNavToggle) return;
+
+    this.mobileNavOverlay.classList.remove('is-open');
+    this.mobileNavOverlay.setAttribute('aria-hidden', 'true');
+    this.mobileNavToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
   }
 
   updateOwnerName(name) {
@@ -183,7 +230,7 @@ class HeaderController {
 
     if (role) {
       const roleText = role.charAt(0).toUpperCase() + role.slice(1);
-      this.roleBadgeText.textContent = `${roleText} View`;
+      this.roleBadgeText.textContent = `${roleText === 'Developer' ? 'Engineer' : roleText} View`;
       this.roleBadge.style.display = 'flex';
     } else {
       this.roleBadge.style.display = 'none';
@@ -199,16 +246,28 @@ class HeaderController {
 
     this.visibleSections.push(sectionId);
 
-    const navLink = document.createElement('a');
-    navLink.className = HEADER_ELEMENTS.navItem;
-    navLink.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
-    navLink.setAttribute('href', `#section-${sectionId}`);
-    navLink.textContent = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+    const title = sectionTitle || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
-    this.headerNav.appendChild(navLink);
+    const desktopNavLink = document.createElement('a');
+    desktopNavLink.className = HEADER_ELEMENTS.navItem;
+    desktopNavLink.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
+    desktopNavLink.setAttribute('href', `#section-${sectionId}`);
+    desktopNavLink.textContent = title;
+
+    this.headerNav.appendChild(desktopNavLink);
 
     if (this.navIndicator) {
       this.headerNav.appendChild(this.navIndicator);
+    }
+
+    if (this.mobileNav) {
+      const mobileNavLink = document.createElement('a');
+      mobileNavLink.className = HEADER_ELEMENTS.mobileNavItem;
+      mobileNavLink.setAttribute(SECTION_ATTRIBUTES.sectionId, sectionId);
+      mobileNavLink.setAttribute('href', `#section-${sectionId}`);
+      mobileNavLink.textContent = title;
+
+      this.mobileNav.appendChild(mobileNavLink);
     }
   }
 
@@ -217,6 +276,11 @@ class HeaderController {
 
     const items = this.headerNav.querySelectorAll(`.${HEADER_ELEMENTS.navItem}`);
     items.forEach(el => el.remove());
+
+    if (this.mobileNav) {
+      const mobileItems = this.mobileNav.querySelectorAll(`.${HEADER_ELEMENTS.mobileNavItem}`);
+      mobileItems.forEach(el => el.remove());
+    }
 
     this.visibleSections = [];
 

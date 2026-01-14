@@ -1,41 +1,27 @@
 // Overlay & Layout Utilities
 
+@use '../base/variables';
+@use '../base/mixins';
+
 // Overlay pattern (reusable for modals, drawers, etc.)
 .overlay {
-  @include absolute-fill;
-  @include flex-center;
+  @include mixins.flex-center;
   position: fixed;
-  z-index: $z-modal-overlay;
-  background: var(--modal-overlay-bg);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: variables.$z-modal-overlay;
+  background: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity $transition-base, visibility $transition-base;
+  transition: opacity variables.$transition-base, visibility variables.$transition-base;
   cursor: pointer;
 
   &.active {
     opacity: 1;
     visibility: visible;
-  }
-}
-
-// Button group layout
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-
-  @include tablet {
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  &--vertical {
-    flex-direction: column;
-  }
-
-  &--horizontal {
-    flex-direction: row;
   }
 }

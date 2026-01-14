@@ -95,9 +95,11 @@ class ContentMiddleware {
       sectionId,
       title: section.metadata.title,
       text: roleContent.text,
+      subText: roleContent.subText,
+      link: roleContent.link,
       image: {
-        imageUrl: `/portfolio/images/${imageName}.full.webp`,
-        lowResImageUrl: `/portfolio/images/${imageName}.low.webp`,
+        imageUrl: `/portfolio/assets/images/${imageName}.full.webp`,
+        lowResImageUrl: `/portfolio/assets/images/${imageName}.low.webp`,
         imageAlt: roleContent.image?.imageAlt || section.metadata.title,
         aspectRatio: roleContent.image?.aspectRatio || 'aspect-portrait',
       },
@@ -137,7 +139,8 @@ class ContentMiddleware {
       id: sectionId,
       title: section.metadata.title,
       icon: section.metadata.icon,
-      order: section.metadata.order
+      order: section.metadata.order,
+      mainItems: section.metadata.main_items,
     };
   }
 

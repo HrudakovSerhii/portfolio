@@ -1,35 +1,27 @@
+@use '../base/variables';
+@use '../base/mixins';
+
 .header {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  height: $header-height;
-  background-color: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: variables.$spacing-md variables.$spacing-lg;
+  background-color: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
-  z-index: $z-header;
-  transition: all $transition-base;
-}
+  z-index: variables.$z-header;
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  max-width: $content-max-width;
-  margin: 0 auto;
-  padding: 0 $spacing-lg;
-
-  @include mobile {
-    padding: 0 $spacing-md;
+  @include mixins.tablet {
+    padding: variables.$spacing-md variables.$spacing-xl;
   }
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: variables.$spacing-lg;
   flex: 1;
   min-width: 0;
 }
@@ -37,51 +29,34 @@
 .header-brand {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: variables.$spacing-sm;
   flex-shrink: 0;
+}
+
+.header-brand-icon {
+  font-size: 28px;
+  color: var(--color-primary);
+}
+
+.header-brand-link {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    opacity: 0.9;
+  }
 }
 
 .header-brand-text {
-  font-size: $font-size-base;
-  font-weight: 600;
+  font-size: variables.$font-size-lg;
+  font-weight: 700;
   color: var(--color-text);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
   display: none;
+  margin: 0;
 
-  @include tablet {
+  @include mixins.mobile-up {
     display: block;
-  }
-}
-
-.header-brand-sub-text {
-  font-size: $font-size-xs;
-  font-weight: 400;
-  color: var(--color-text);
-  letter-spacing: -0.01em;
-  display: none;
-
-  @include tablet {
-    display: inline-block;
-  }
-}
-
-.header-nav-toggle {
-  @include interactive-control;
-  display: none;
-  font-size: $font-size-lg;
-  padding: $spacing-xs;
-  flex-shrink: 0;
-
-  @include mobile {
-    display: flex;
-  }
-
-  .nav-toggle-icon {
-    line-height: 1;
-  }
-
-  &[aria-expanded="true"] .nav-toggle-icon {
-    transform: rotate(90deg);
   }
 }
 
@@ -89,9 +64,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: $spacing-s;
+  gap: variables.$spacing-s;
   overflow-x: auto;
-  overflow-y: hidden;
   flex: 1;
   min-width: 0;
   scrollbar-width: none;
@@ -101,54 +75,8 @@
     display: none;
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 2rem;
-    background: linear-gradient(to left, var(--color-bg), transparent);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity $transition-base;
-  }
-
-  @media (min-width: 769px) {
-    &:has(.header-nav-item:nth-child(5))::after {
-      opacity: 1;
-    }
-  }
-
-  @include mobile {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    overflow-x: visible;
-    overflow-y: auto;
-    max-height: 0;
-    opacity: 0;
-    visibility: hidden;
-    position: absolute;
-    top: calc(100% + $spacing-xs);
-    left: $spacing-md;
-    right: $spacing-md;
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: $radius-md;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all $transition-base;
-    z-index: 100;
-
-    &.is-open {
-      max-height: 400px;
-      opacity: 1;
-      visibility: visible;
-    }
-
-    &::after {
-      display: none;
-    }
+  @include mixins.mobile {
+    display: none;
   }
 }
 
@@ -157,110 +85,37 @@
   bottom: 0;
   left: 0;
   height: 2px;
-  background-color: var(--color-text);
+  background-color: var(--color-primary);
   pointer-events: none;
   z-index: 10;
-
-  /*
-     Animation Logic:
-     We animate transform (position) and width.
-     cubic-bezier adds a slight "momentum" feel.
-  */
   transition:
-          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          opacity 0.2s ease;
-
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.2s ease;
   opacity: 0;
   will-change: transform, width;
-
-  @include mobile {
-    display: none !important;
-  }
 }
 
 .header-nav-item {
   position: relative;
   display: inline-block;
-  padding: $spacing-xs $spacing-sm;
-  font-size: $font-size-xs;
+  padding: variables.$spacing-xs variables.$spacing-sm;
+  font-size: variables.$font-size-sm;
   font-weight: 500;
-  color: var(--color-text);
+  color: var(--color-text-secondary);
   white-space: nowrap;
   text-decoration: none;
   background-color: transparent;
   border: none;
-  border-radius: $radius-sm;
   flex-shrink: 0;
   cursor: pointer;
-  transition: all $transition-base;
-  animation: slideInNav 300ms ease forwards;
+  transition: color variables.$transition-base;
   opacity: 0;
   transform: translateX(-10px);
+  animation: slideInNav 300ms ease forwards;
 
-  @include tablet {
-    font-size: $font-size-sm;
-  }
-
-  @include mobile {
-    display: block;
-    width: 100%;
-    padding: $spacing-sm $spacing-md;
-    border-radius: 0;
-    border-bottom: 1px solid var(--color-border);
-    animation: none;
-    opacity: 1;
-    transform: none;
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &::before {
-      display: none;
-    }
-
-    &.active {
-      background-color: var(--color-bg-secondary);
-      font-weight: 600;
-    }
-
-    &:active {
-      transform: none;
-      background-color: var(--color-bg-tertiary);
-    }
-  }
-
-  &:not(:first-child)::before {
-    content: '';
-    position: absolute;
-    left: calc(-#{$spacing-s} / 2);
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 1rem;
-    background-color: var(--color-border);
-
-    @include mobile {
-      display: none;
-    }
-  }
-
-  @include animated-underline(0px, $spacing-sm, $spacing-sm);
-
-  &:hover {
-    transform: scaleY(0.95);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 2px;
-  }
-
-  @include mobile {
-    &::after {
-      display: none;
-    }
+  &.active {
+    font-weight: 600;
   }
 
   @for $i from 1 through 10 {
@@ -273,62 +128,232 @@
 .header-controls {
   display: flex;
   align-items: center;
-  gap: $spacing-s;
+  gap: variables.$spacing-xs;
   flex-shrink: 0;
+}
 
-  .header-role-badge {
-    @include interactive-control;
+.header-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: variables.$radius-lg;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  transition: background-color variables.$transition-base;
 
-    display: none;
-    gap: $spacing-sm;
-    font-size: $font-size-xs;
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+
+.header-role-badge {
+  width: auto;
+  gap: variables.$spacing-xs;
+  padding: 0 variables.$spacing-sm;
+
+  .header-role-icon {
+    font-size: 18px;
+  }
+
+  .header-role-text {
+    font-size: variables.$font-size-xs;
     font-weight: 500;
+    white-space: nowrap;
+  }
+}
 
-    @include tablet {
-      display: flex;
-    }
+.header-language-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 2.5rem;
+  padding: 0 variables.$spacing-xs 0 variables.$spacing-sm;
+  border-radius: variables.$radius-lg;
+  background-color: var(--color-bg-secondary);
+  cursor: pointer;
+  transition: background-color variables.$transition-base;
 
-    @include focus-visible;
-
-    .header-role-icon {
-      font-size: $font-size-sm;
-      line-height: 1;
-    }
-
-    .header-role-text {
-      text-transform: capitalize;
-    }
+  &:hover {
+    background-color: var(--color-bg-tertiary);
   }
 
-  .control-button {
-    @include interactive-control;
-    font-size: $font-size-sm;
+  &:focus-within {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
 
-    .control-icon {
-      font-size: $font-size-lg;
-      line-height: 1;
+.header-language-icon {
+  font-size: 20px;
+  color: var(--color-text);
+  pointer-events: none;
+}
 
-      @include mobile {
-        font-size: $font-size-base;
-      }
-    }
+.header-language-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: variables.$font-size-sm;
+  font-weight: 500;
+  padding: 0 variables.$spacing-sm 0 variables.$spacing-xs;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
   }
 
-  .control-select {
-    @include interactive-control;
-    font-size: $font-size-xs;
+  option {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+}
 
-    @include mobile {
-      padding: $spacing-xs $spacing-sm;
+// Mobile menu toggle - only visible on mobile
+.header-mobile-toggle {
+  display: flex;
 
-      &:hover {
-        padding: calc(#{$spacing-xs} - 1px) calc(#{$spacing-sm} - 1px);
-      }
+  @include mixins.mobile-up {
+    display: none;
+  }
+}
+
+@keyframes slideInNav {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Mobile Navigation Overlay
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: variables.$z-modal-overlay;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity variables.$transition-base,
+    visibility variables.$transition-base;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+
+    .mobile-nav-panel {
+      transform: translateY(0);
     }
+  }
+}
 
-    option {
-      background-color: var(--color-bg);
-      color: var(--color-text);
-    }
+.mobile-nav-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-bg);
+  border-bottom-left-radius: variables.$radius-xl;
+  border-bottom-right-radius: variables.$radius-xl;
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-100%);
+  transition: transform variables.$transition-medium;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: variables.$spacing-md variables.$spacing-lg;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-nav-title {
+  font-size: variables.$font-size-lg;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.mobile-nav-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: variables.$radius-lg;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  transition: background-color variables.$transition-base;
+
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  padding: variables.$spacing-md 0;
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  padding: variables.$spacing-md variables.$spacing-lg;
+  font-size: variables.$font-size-base;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color variables.$transition-base,
+    color variables.$transition-base;
+
+  &:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  &.active {
+    color: var(--color-primary);
+    font-weight: 600;
+    background-color: rgba(var(--color-primary), 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
   }
 }

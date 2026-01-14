@@ -1,31 +1,36 @@
 // Main layout styles
 
+@use '../base/variables';
+@use '../base/mixins';
+
 .main-content {
     position: relative;
     display: flex;
     flex-direction: column;
-    margin-top: $spacing-3xl;
+    align-items: center;
+    margin-top: variables.$spacing-2xl;
     z-index: 1;
+    max-width: variables.$breakpoint-desktop;
 
-    @include desktop {
-        margin-top: 0;
-    }
-
-    section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        max-width: $content-max-width;
-        padding: $spacing-lg;
-
-        @include desktop {
-            padding: $spacing-xl;
-        }
+    @include mixins.desktop {
+        margin: 0 auto;
     }
 
     .sections-container {
         position: relative;
+    }
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    max-width: variables.$content-max-width;
+    padding: variables.$spacing-md;
+
+    @include mixins.desktop {
+        padding: variables.$spacing-xl;
     }
 }

@@ -30,17 +30,14 @@
     "express": "^4.21.2",
     "happy-dom": "^20.0.10",
     "jsdom": "^27.1.0",
+    "lightningcss": "^1.30.2",
     "live-server": "^1.2.2",
     "nodemon": "^3.0.2",
     "sass": "^1.94.2",
     "terser": "^5.44.1",
     "vite": "^5.2.14",
+    "vite-plugin-minify": "^2.1.0",
+    "vite-plugin-purgecss": "^0.2.13",
     "vitest": "^4.0.7"
-  },
-  "dependencies": {
-    "@huggingface/transformers": "^3.7.6",
-    "@mlc-ai/web-llm": "^0.2.46",
-    "@modelcontextprotocol/sdk": "^1.20.2",
-    "@xenova/transformers": "^2.17.2"
   }
 }

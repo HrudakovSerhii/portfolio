@@ -1,0 +1,142 @@
+@use '../base/variables';
+@use '../base/mixins';
+
+.experience-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-md;
+  border-radius: variables.$radius-lg;
+  background-color: var(--color-surface);
+  padding: variables.$spacing-lg;
+  margin-bottom: variables.$spacing-md;
+  border: 1px solid var(--color-border);
+  transition: border-color variables.$transition-fast;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    border-color: var(--color-accent);
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: variables.$spacing-md;
+
+    @include mixins.desktop {
+      flex-direction: row;
+    }
+  }
+
+  &__info {
+    display: flex;
+    align-items: flex-start;
+    gap: variables.$spacing-md;
+  }
+
+  &__logo-wrapper {
+    width: variables.$spacing-2xl;
+    height: variables.$spacing-2xl;
+    border-radius: variables.$radius-md;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-secondary);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    @include mixins.desktop {
+      width: variables.$spacing-3xl;
+      height: variables.$spacing-3xl;
+      padding: variables.$spacing-s;
+    }
+  }
+
+  &__logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &__role {
+    color: var(--color-text);
+    font-size: variables.$font-size-lg;
+    font-weight: variables.$font-weight-bold;
+    margin: 0;
+    line-height: variables.$line-height-tight;
+  }
+
+  &__company {
+    color: var(--color-accent);
+    font-size: variables.$font-size-sm;
+    font-weight: variables.$font-weight-medium;
+    margin: variables.$spacing-xs 0 0 0;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: variables.$spacing-xs;
+
+    @include mixins.desktop {
+      align-items: flex-end;
+    }
+  }
+
+  &__period {
+    color: var(--color-text-tertiary);
+    font-size: variables.$font-size-sm;
+    font-family: variables.$font-family-mono;
+  }
+
+  &__impact-badge {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-s;
+    background-color: var(--color-accent-subtle);
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    border-radius: variables.$radius-sm;
+    border: 1px solid var(--color-accent-border);
+  }
+
+  &__impact-label {
+    font-size: variables.$font-size-xs;
+    text-transform: uppercase;
+    font-weight: variables.$font-weight-bold;
+    color: var(--color-accent);
+    letter-spacing: 0.05em;
+  }
+
+  &__stars {
+    display: flex;
+    color: var(--color-accent);
+  }
+
+  &__star {
+    font-size: 16px;
+
+    &--inactive {
+      opacity: 0.3;
+    }
+  }
+
+  &__description {
+    color: var(--color-text-secondary);
+    font-size: variables.$font-size-sm;
+    line-height: variables.$line-height-relaxed;
+    margin: 0;
+  }
+
+  &__tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: variables.$spacing-xs;
+    margin-top: variables.$spacing-xs;
+  }
+}

@@ -2,18 +2,24 @@ class TemplateBuilder {
   constructor() {
     this.templates = {
       section: null,
+      heroSection: null,
       actionPrompt: null,
       navItem: null,
       loader: null,
       typingIndicator: null,
       generativeImage: null,
       personalizationModal: null,
-      roleChangeModal: null
+      roleChangeModal: null,
     };
   }
 
+  kebabToCamel(str) {
+    return str.replace(/-./g, match => match[1].toUpperCase());
+  }
+
   _getTemplate(templateId) {
-    const cacheKey = templateId.replace('-template', '').replace(/-/g, '');
+    const templateName = templateId.replace('-template', '');
+    const cacheKey = this.kebabToCamel(templateName)
 
     if (!this.templates[cacheKey]) {
       const template = document.getElementById(templateId);
@@ -30,25 +36,26 @@ class TemplateBuilder {
 
   _cloneTemplate(templateId) {
     const template = this._getTemplate(templateId);
+
     return template.content.cloneNode(true);
   }
 
-  renderSection(sectionData, isZigZagLeft, profileData = null) {
-    const sectionId = sectionData.sectionId;
-    const templateId = sectionId === 'contact' ? 'contact-section-template' : 'section-template';
-    
-    const section = this._createSectionElement(templateId, sectionData, isZigZagLeft);
-    
-    if (sectionId === 'contact') {
-      this._populateContactActions(section, sectionData, profileData);
-    }
-    
-    return section;
+  renderSection(sectionId, sectionData) {
+    return this._createSectionElement(sectionId, sectionData);
   }
 
-  _createSectionElement(templateId, sectionData, isZigZagLeft) {
+  _createSectionElement(id, sectionData) {
+    const EXCEPTIONS = ['hero', 'experience', 'skills', 'soft-skills', 'projects', 'contact'];
+    let templateId = 'section-template';
+    let sectionId = 'default-section';
+
+    if (EXCEPTIONS.includes(id)) {
+      templateId = `${id}-`+ templateId;
+      sectionId = `${id}-section`;
+    }
+
     const fragment = this._cloneTemplate(templateId);
-    const section = fragment.querySelector('.content-section');
+    const section = fragment.querySelector(`#${sectionId}`);
 
     if (!section) {
       throw new Error(`Section element not found in template: ${templateId}`);
@@ -56,7 +63,7 @@ class TemplateBuilder {
 
     this._setSectionAttributes(section, sectionData);
     this._setSectionHeader(section, sectionData);
-    this._setSectionLayout(section, sectionData, isZigZagLeft);
+    this._setSectionLayout(section, sectionData);
     this._setSectionContent(section, sectionData);
 
     return section;
@@ -84,7 +91,7 @@ class TemplateBuilder {
     }
   }
 
-  _setSectionLayout(section, sectionData, isZigZagLeft) {
+  _setSectionLayout(section, sectionData) {
     const layoutElement = section.querySelector('.section-layout');
     if (!layoutElement) return;
 
@@ -93,17 +100,21 @@ class TemplateBuilder {
 
     if (isLandscape) {
       layoutElement.classList.add('non-square-image');
-    } else {
-      const layoutClass = isZigZagLeft ? 'zig-zag-left' : 'zig-zag-right';
-      layoutElement.classList.add(layoutClass);
-      section.style.justifyContent = 'center';
     }
+
+    layoutElement.classList.add('zig-zag-left');
+    section.style.justifyContent = 'center';
   }
 
   _setSectionContent(section, sectionData) {
     const textElement = section.querySelector('.section-body-content');
     if (textElement) {
       textElement.setAttribute('data-text', sectionData.text);
+    }
+
+    const subTextElement = section.querySelector('.section-subtext-content');
+    if (subTextElement) {
+      subTextElement.setAttribute('data-text', sectionData.subText);
     }
 
     const imageContainer = section.querySelector('.content-image');
@@ -114,25 +125,7 @@ class TemplateBuilder {
     }
   }
 
-  _populateContactActions(section, sectionData, profileData) {
-    if (!profileData) return;
-
-    const emailLink = section.querySelector('.contact-email-link');
-    if (emailLink && profileData.email) {
-      const subject = encodeURIComponent(sectionData.emailSubject || 'Hello');
-      const body = encodeURIComponent(sectionData.emailBody || '');
-      emailLink.href = `mailto:${profileData.email}?subject=${subject}&body=${body}`;
-      emailLink.setAttribute('data-email', profileData.email);
-      emailLink.setAttribute('data-name', profileData.name);
-    }
-
-    const linkedinLink = section.querySelector('.contact-linkedin-link');
-    if (linkedinLink && profileData.socialLinks?.linkedin) {
-      linkedinLink.href = profileData.socialLinks.linkedin;
-    }
-  }
-
-  renderActionPrompt(sectionId, placeholder) {
+  renderActionPrompt(sectionId) {
     // TODO: move usage of placeholder to chat feature that can be called on each section.
     const fragment = this._cloneTemplate('action-prompt-template');
     const actionPrompt = fragment.querySelector('.action-prompt');
@@ -241,12 +234,18 @@ class TemplateBuilder {
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {
       currentButton.disabled = true;
-      currentButton.style.opacity = '0.5';
-      currentButton.style.cursor = 'not-allowed';
-      currentButton.style.pointerEvents = 'none';
     }
 
     return modal;
+  }
+
+  cloneMetaItemTemplate(templateId) {
+    try {
+      return this._cloneTemplate(templateId);
+    } catch {
+      console.warn(`Meta item template "${templateId}" not found`);
+      return null;
+    }
   }
 }
 

@@ -5,15 +5,22 @@
 :root {
   // Background colors
   --color-bg: #f9fafb; // gray-50
-  --color-bg-rgb: 249, 250, 251; // RGB for backdrop
+  --color-bg-rgb: 249, 250, 251; // RGB for backdrop blur
+  --color-bg-secondary: #e5e7eb; // gray-200 - for button backgrounds
+  --color-bg-tertiary: #d1d5db; // gray-300 - for button hover
   --color-surface: #ffffff; // white
   --color-surface-secondary: #f3f4f6; // gray-100
   --color-surface-dark: #1e1f20; // dark gray for image containers
 
+  // Primary color (alias for accent)
+  --color-primary: #3b82f6; // blue-500
+
   // Text colors
   --color-text: #111827; // gray-900
-  --color-text-secondary: #6b7280; // gray-500
+  --color-text-secondary: #362f2f; // gray-500
   --color-text-tertiary: #9ca3af; // gray-400
+  --color-text-muted: #6b7280; // gray-500
+  --color-text-inverse: #ffffff; // white - for dark backgrounds
 
   // Border colors
   --color-border: #e5e7eb; // gray-200
@@ -29,6 +36,12 @@
   --color-blue-900: #1e3a8a;
   --color-accent: #2563eb; // blue-600
   --color-accent-hover: #3b82f6; // blue-500
+  --color-accent-subtle: rgba(37, 99, 235, 0.1); // blue-600/10
+  --color-accent-border: rgba(37, 99, 235, 0.2); // blue-600/20
+  --color-text-on-accent: #ffffff; // text on accent backgrounds
+
+  // Primary subtle (alias for accent-subtle)
+  --color-primary-subtle: rgba(59, 130, 246, 0.1); // blue-500/10
 
   // Accent colors - Indigo
   --color-indigo-50: #eef2ff;
@@ -59,6 +72,20 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  // Custom hero-specific colors
+  --custom-hero-status-bg: rgba(16, 185, 129, 0.1); // green-500/10
+  --custom-hero-status-ring: rgba(16, 185, 129, 0.2); // green-500/20
+  --custom-hero-cta-bg: #e2e8f0; // slate-200
+  --custom-hero-cta-hover-bg: rgba(37, 99, 235, 0.1); // blue-600/10
+  --custom-hero-shadow-primary: rgba(37, 99, 235, 0.2); // blue-600/20
+  --custom-hero-glow-opacity: 0.3;
+
+  // Glass overlay colors (for overlays on dark images)
+  --color-glass-bg: rgba(0, 0, 0, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-text: #ffffff;
 
   // Role card hover backgrounds
   --color-blue-hover-bg: rgba(239, 246, 255, 1); // blue-50
@@ -74,15 +101,22 @@
 [data-theme="dark"] {
   // Background colors
   --color-bg: #030712; // gray-950
-  --color-bg-rgb: 3, 7, 18; // RGB for backdrop
+  --color-bg-rgb: 3, 7, 18; // RGB for backdrop blur
+  --color-bg-secondary: #1f2937; // gray-800 - for button backgrounds
+  --color-bg-tertiary: #374151; // gray-700 - for button hover
   --color-surface: #1f2937; // gray-800
   --color-surface-secondary: #111827; // gray-900
   --color-surface-dark: #1e1f20; // dark gray for image containers
+
+  // Primary color (alias for accent)
+  --color-primary: #3b82f6; // blue-500
 
   // Text colors
   --color-text: #ffffff; // white
   --color-text-secondary: #d1d5db; // gray-300
   --color-text-tertiary: #9ca3af; // gray-400
+  --color-text-muted: #9ca3af; // gray-400
+  --color-text-inverse: #111827; // gray-900 - for light backgrounds
 
   // Border colors
   --color-border: #374151; // gray-700
@@ -98,6 +132,12 @@
   --color-blue-900: #1e3a8a;
   --color-accent: #3b82f6; // blue-500
   --color-accent-hover: #60a5fa; // blue-400
+  --color-accent-subtle: rgba(59, 130, 246, 0.15); // blue-500/15
+  --color-accent-border: rgba(59, 130, 246, 0.25); // blue-500/25
+  --color-text-on-accent: #ffffff; // text on accent backgrounds
+
+  // Primary subtle (alias for accent-subtle)
+  --color-primary-subtle: rgba(59, 130, 246, 0.15); // blue-500/15
 
   // Accent colors - Indigo
   --color-indigo-50: #312e81;
@@ -128,6 +168,20 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+
+  // Custom hero-specific colors (dark mode)
+  --custom-hero-status-bg: rgba(52, 211, 153, 0.1); // green-400/10
+  --custom-hero-status-ring: rgba(52, 211, 153, 0.2); // green-400/20
+  --custom-hero-cta-bg: #233648; // dark slate
+  --custom-hero-cta-hover-bg: rgba(59, 130, 246, 0.2); // blue-500/20
+  --custom-hero-shadow-primary: rgba(59, 130, 246, 0.2); // blue-500/20
+  --custom-hero-glow-opacity: 0.5;
+
+  // Glass overlay colors (same as light - for overlays on dark images)
+  --color-glass-bg: rgba(0, 0, 0, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-text: #ffffff;
 
   // Role card hover backgrounds
   --color-blue-hover-bg: rgba(30, 58, 138, 0.1); // blue-900/10

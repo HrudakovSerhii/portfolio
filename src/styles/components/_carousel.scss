@@ -1,0 +1,92 @@
+@use '../base/variables';
+@use '../base/mixins';
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 0 variables.$spacing-md;
+
+  &__track {
+    display: flex;
+    transition: transform 300ms ease-in-out;
+    will-change: transform;
+  }
+
+  &__item {
+    flex-shrink: 0;
+    width: calc(100vw - #{variables.$spacing-md * 4});
+    max-width: 400px;
+    margin-right: variables.$spacing-md;
+
+    @include mixins.tablet {
+      width: calc(50vw - #{variables.$spacing-md * 3});
+      max-width: 420px;
+    }
+
+    @include mixins.desktop {
+      width: calc(33.333vw - #{variables.$spacing-md * 2.5});
+      max-width: 450px;
+    }
+
+    &--clone {
+      pointer-events: none;
+    }
+  }
+
+  &__navigation {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    padding: 0 variables.$spacing-xs;
+
+    @include mixins.tablet {
+      padding: 0 variables.$spacing-md;
+    }
+  }
+
+  &__nav-button {
+    pointer-events: all;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: variables.$radius-full;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    transition: all variables.$transition-fast;
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-accent);
+      color: var(--color-surface);
+      box-shadow: var(--shadow-lg);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &--prev {
+      left: 0;
+    }
+
+    &--next {
+      right: 0;
+    }
+  }
+}

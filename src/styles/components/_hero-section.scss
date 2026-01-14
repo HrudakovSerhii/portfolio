@@ -1,0 +1,157 @@
+@use '../base/variables';
+@use '../base/mixins';
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: variables.$breakpoint-desktop;
+  width: 100%;
+
+  &__container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: variables.$spacing-xl;
+    padding: variables.$spacing-md 0;
+
+    @include mixins.desktop {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: variables.$spacing-3xl;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-lg;
+    align-items: flex-start;
+    animation: hero-fade-in variables.$transition-slowest ease-out;
+
+    @include mixins.desktop {
+      max-width: 550px;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-sm;
+    text-align: left;
+  }
+
+  &__title {
+    color: var(--color-text);
+    font-size: variables.$font-size-6xl;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+
+    @include mixins.desktop {
+      font-size: variables.$font-size-6xl;
+    }
+  }
+
+  &__subtitle {
+    color: var(--color-text-secondary);
+    font-size: variables.$font-size-xl;
+    font-weight: variables.$font-weight-normal;
+    line-height: variables.$line-height-relaxed;
+  }
+
+  &__visual {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    @include mixins.desktop {
+      width: auto;
+      display: block;
+    }
+
+    &:hover .hero__accent {
+      background-color: rgba(var(--color-primary), 0.3);
+    }
+  }
+
+  &__image-wrapper {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    border-radius: variables.$radius-md;
+    overflow: hidden;
+    border: 1px solid var(--color-glass-border);
+
+    @include mixins.desktop {
+      width: 340px;
+      height: 340px;
+    }
+  }
+
+  &__status {
+    position: absolute;
+    bottom: variables.$spacing-md;
+    left: variables.$spacing-md;
+    z-index: variables.$z-header;
+  }
+
+  &__status-badge {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-xs;
+    background-color: var(--color-glass-bg);
+    backdrop-filter: blur(12px);
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    border-radius: variables.$radius-full;
+    border: 1px solid var(--color-glass-border);
+  }
+
+  &__status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: variables.$radius-full;
+    background-color: var(--color-success);
+  }
+
+  &__status-text {
+    color: var(--color-glass-text);
+    font-size: variables.$font-size-xs;
+    font-weight: variables.$font-weight-medium;
+  }
+
+  &__accent {
+    position: absolute;
+    z-index: -1;
+    top: -40px;
+    right: -40px;
+    width: 256px;
+    height: 256px;
+    background-color: var(--custom-hero-shadow-primary);
+    border-radius: variables.$radius-full;
+    filter: blur(80px);
+    transition: background-color variables.$transition-base;
+  }
+
+  // Override conflicting global styles
+  .section-body-content {
+    display: block;
+    justify-content: initial;
+    align-items: initial;
+    min-width: initial;
+    width: initial;
+    height: initial;
+  }
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

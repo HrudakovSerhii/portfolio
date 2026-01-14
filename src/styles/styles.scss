@@ -1,34 +1,40 @@
 // Main SCSS entry point
-// Import partials and components
+// Use @use for module imports with namespaces
 
 // Base styles (variables and mixins must come first)
-@import 'base/variables';
-@import 'base/mixins';
-@import 'base/theme';
-@import 'base/reset';
-@import 'base/typography';
+@use 'base/variables';
+@use 'base/mixins';
+@use 'base/theme';
+@use 'base/reset';
+@use 'base/typography';
 
 // Elements (must come before components that extend them)
-@import "components/elements";
+@use "components/elements";
 
 // Components
-@import 'components/header';
-@import 'components/hero';
-@import 'components/parallax';
+@use 'components/header';
+@use 'components/intro';
+@use 'components/parallax';
 
-@import 'components/featured-projects';
-@import 'components/footer';
-//@import 'components/chat-ui';
-@import 'components/generative-image';
-@import 'components/modal-base';
-@import 'components/modal-content';
-@import 'components/section';
-@import 'components/action-prompt';
-@import 'components/loader';
+@use 'components/footer';
+//@use 'components/chat-ui';
+@use 'components/generative-image';
+@use 'components/modal-base';
+@use 'components/modal-content';
+@use 'components/section';
+@use 'components/action-prompt';
+@use 'components/loader';
+@use 'components/experience-card';
+@use 'components/project-card';
+@use 'components/soft-skills-card';
+@use 'components/meta-items';
+@use 'components/hero-section';
+@use 'components/contact-card';
+@use 'components/carousel';
 
 // Layout
-@import 'layout/overlay';
-@import 'layout/main';
+@use 'layout/overlay';
+@use 'layout/main';
 
 // Utilities
-@import 'utilities/animations';
+@use 'utilities/animations';

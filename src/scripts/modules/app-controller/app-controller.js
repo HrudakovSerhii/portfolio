@@ -6,7 +6,6 @@ import ParallaxController from '../parallax-controller';
 import ThemeSwitcher from '../user-interface/theme-switcher';
 import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
-import GenerativeImage from '../user-interface/generative-image/generative-image.js';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
@@ -16,19 +15,24 @@ const ELEMENT_IDS = {
   header: 'header',
   ownerName: 'owner-name',
   themeToggle: 'theme-toggle',
-  languageSelector: 'language-selector',
+  // languageSelector: 'language-selector',
   mainContent: 'main-content',
-  heroSection: 'hero-section',
-  heroRoles: 'hero-roles',
-  heroBackgroundImage: 'hero-background-image',
-  sectionsContainer: 'sections-container',
-  typingIndicator: 'typing-indicator'
+  typingIndicator: 'typing-indicator',
+  introSection: 'intro-section',
 };
+
+const CRITICAL_ELEMENT_KEYS = [
+  'initialLoader',
+  'themeToggle',
+  // 'languageSelector',
+  'mainContent',
+  'introSection',
+];
 
 class AppController {
   constructor() {
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-default-content.json');
+    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-content.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
     this.parallaxController = new ParallaxController();
@@ -47,13 +51,10 @@ class AppController {
       header: null,
       ownerName: null,
       themeToggle: null,
-      languageSelector: null,
+      // languageSelector: null,
       mainContent: null,
-      heroSection: null,
-      heroRoles: null,
-      heroBackgroundImage: null,
-      sectionsContainer: null,
-      typingIndicator: null
+      introSection: null,
+      typingIndicator: null,
     };
 
     this.initialized = false;
@@ -66,6 +67,7 @@ class AppController {
 
     try {
       this._cacheElements();
+      this._validateCachedElements(CRITICAL_ELEMENT_KEYS);
       this._setupEventListeners();
 
       this.themeSwitcher.initialize(this.elements.themeToggle);
@@ -74,20 +76,19 @@ class AppController {
 
       this.headerController.initialize(
         this.elements.ownerName,
-        this.elements.languageSelector,
+        // this.elements.languageSelector,
         this.roleManager
       );
 
       this.parallaxController.init();
 
       this.sectionRenderer.initialize(
-        this.elements.sectionsContainer,
+        this.elements.mainContent,
         this.elements.typingIndicator,
         SECTION_ORDER,
         (nextSectionId) => this.revealSection(nextSectionId, '')
       );
 
-      this._initializeHeroBackgroundImage();
       this._hideInitialLoader();
       this.initialized = true;
     } catch (error) {
@@ -100,7 +101,10 @@ class AppController {
     await this._loadUserProfile();
 
     if (this.stateManager.hasCompletedPersonalization()) {
-      this.headerController.updateRoleBadge(this.stateManager.getRole());
+      const role = this.stateManager.getRole();
+
+      this.headerController.updateRoleBadge(role);
+      this.elements.introSection.classList.add('hidden');
 
       await this.restoreState();
     }
@@ -111,24 +115,13 @@ class AppController {
     this.elements.header = document.getElementById(ELEMENT_IDS.header);
     this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
     this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
-    this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
+    // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.heroSection = document.getElementById(ELEMENT_IDS.heroSection);
-    this.elements.heroRoles = document.getElementById(ELEMENT_IDS.heroRoles);
-    this.elements.heroBackgroundImage = document.getElementById(ELEMENT_IDS.heroBackgroundImage);
-    this.elements.sectionsContainer = document.getElementById(ELEMENT_IDS.sectionsContainer);
+    this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
+  }
 
-    const criticalElementKeys = [
-      'initialLoader',
-      'themeToggle',
-      'languageSelector',
-      'mainContent',
-      'heroRoles',
-      'heroBackgroundImage',
-      'sectionsContainer'
-    ];
-
+  _validateCachedElements(criticalElementKeys) {
     for (const key of criticalElementKeys) {
       if (!this.elements[key]) {
         throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
@@ -141,25 +134,30 @@ class AppController {
       this.themeSwitcher.toggle();
     });
 
-    this.elements.languageSelector.addEventListener('change', (e) => {
-      this.headerController.updateLanguage(e.target.value);
-    });
+    // this.elements.languageSelector.addEventListener('change', (e) => {
+    //   this.headerController.updateLanguage(e.target.value);
+    // });
 
-    this._setupHeroRoleCardListeners();
-  }
-
-  _setupHeroRoleCardListeners() {
-    const roleCards = this.elements.heroRoles.querySelectorAll('.button[data-role]');
-
-    roleCards.forEach(card => {
-      card.addEventListener('click', async () => {
-        const role = card.getAttribute('data-role');
+    this.elements.introSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+      storyPathBtn.addEventListener('click', async () => {
+        const role = storyPathBtn.getAttribute('data-role');
 
         if (role) {
           await this.roleManager.selectRole(role);
         }
       });
     });
+  }
+
+  _scrollToElementById(id) {
+    const element = this.elements.mainContent.querySelector(`#${id}`);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   }
 
   async _loadUserProfile() {
@@ -169,47 +167,6 @@ class AppController {
     } catch (error) {
       console.error('Failed to load user profile:', error);
     }
-  }
-
-  _initializeHeroBackgroundImage() {
-    try {
-      this._tryToInitializeHeroBackgroundImage()
-    } catch (error) {
-      this._handleInitializeHeroBackgroundImageFailure(error)
-    }
-  }
-
-  _tryToInitializeHeroBackgroundImage() {
-    const container = this.elements.heroBackgroundImage;
-
-    if (!container) {
-      console.warn('Hero background image container not found');
-      return;
-    }
-
-    const existingImg = container.querySelector('img');
-    if (existingImg) {
-      existingImg.remove();
-    }
-
-    const generativeHeroImage = new GenerativeImage({
-      highResSrc: './backgrounds/karpaty.full.jpeg',
-      lowResSrc: './backgrounds/karpaty.low.jpeg',
-      alt: 'Hero background image',
-      shouldAnimate: true,
-      aspectClass: 'aspect-portrait',
-      gridConfig: {
-        rows: 8,
-        cols: 8
-      }
-    });
-
-    const imageElement = generativeHeroImage.create();
-    container.appendChild(imageElement);
-  }
-
-  _handleInitializeHeroBackgroundImageFailure(error) {
-    console.error('Failed to initialize hero background image:', error);
   }
 
   _hideInitialLoader() {
@@ -246,22 +203,20 @@ class AppController {
       return;
     }
 
-    if (role) {
-      this.elements.heroRoles.style.display = 'none';
-    }
-
     await this._restoreRevealedSections(revealedSections, role);
   }
 
   async _restoreRevealedSections(revealedSections, role) {
     for (const sectionId of revealedSections) {
-      await this._handleRevealNavigationItem(sectionId);
-      await this._restoreSingleSection(sectionId, role);
+      await Promise.all([
+        this._handleRevealNavigationItem(sectionId),
+        this._restoreSingleSection(sectionId, role)
+      ]);
     }
 
-    const lastSection = this._getSectionElement(revealedSections[revealedSections.length - 1])
+    const sectionId = `section-${revealedSections[revealedSections.length - 1]}`;
 
-    lastSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this._scrollToElementById(sectionId);
   }
 
   async _restoreSingleSection(sectionId, role) {
@@ -283,8 +238,11 @@ class AppController {
       }
 
       this.stateManager.setRole(role);
-      this.elements.heroRoles.classList.add('invisible');
-      this.headerController.updateRoleBadge();
+      this.headerController.updateRoleBadge(role);
+
+      if (this.elements.introSection) {
+        this.elements.introSection.classList.add('hidden');
+      }
 
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
@@ -296,14 +254,10 @@ class AppController {
   _resetPortfolioState() {
     this.stateManager.resetRevealedSections();
 
-    const sections = this.elements.sectionsContainer.querySelectorAll('.content-section');
+    const sections = this.elements.mainContent.querySelectorAll('.content-section');
     sections.forEach(section => section.remove());
 
     this.headerController.clearNavigation();
-
-    this.revealSection(SECTION_ORDER[0]).catch(error => {
-      console.error('Failed to reveal section after reset:', error);
-    });
   }
 
   async revealSection(sectionId, customQuery = '') {
@@ -341,10 +295,6 @@ class AppController {
     if (this.elements.typingIndicator) {
       this.elements.typingIndicator.style.display = 'none';
     }
-  }
-
-  _getSectionElement(sectionId) {
-    return this.elements.sectionsContainer.querySelector(`[data-section-id="${sectionId}"]`);
   }
 }
 

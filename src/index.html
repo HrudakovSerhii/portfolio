@@ -13,6 +13,11 @@
 
   <title>Interactive Portfolio of Serhii Hrudakov</title>
 
+  <!-- Material Symbols Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./styles/styles.scss">
 </head>
 <body>
@@ -22,58 +27,79 @@
   </div>
 
   <header class="header" role="banner">
-    <div class="header-content">
-      <div class="header-left">
-        <div class="header-brand">
-          <span class="header-brand-text">Serhii Hrudakov</span>
-          <span class="header-brand-sub-text">Portfolio</span>
-        </div>
-
-        <button
-          id="header-nav-toggle"
-          class="header-nav-toggle"
-          aria-label="Toggle navigation menu"
-          aria-expanded="false"
-          aria-controls="header-nav">
-          <span class="nav-toggle-icon" aria-hidden="true">☰</span>
-        </button>
-
-        <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
-          <!-- Navigation items will be added dynamically -->
-          <div id="nav-indicator" class="nav-indicator"></div>
-        </nav>
+    <div class="header-left">
+      <div class="header-brand">
+        <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
+        <a href="/" class="header-brand-link">
+          <h2 class="header-brand-text">Serhii Hrudakov</h2>
+        </a>
       </div>
 
-      <div class="header-controls">
-        <button
-          id="header-role-badge"
-          class="header-role-badge"
-          aria-label="Change role"
-          title="Click to change role"
-          style="display: none;">
-          <span class="header-role-text" id="header-role-text">View</span>
-        </button>
+      <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
+        <!-- Navigation items will be added dynamically -->
+        <div id="nav-indicator" class="nav-indicator"></div>
+      </nav>
+    </div>
 
-        <button
-          id="theme-toggle"
-          class="control-button control-button--icon"
-          aria-label="Toggle theme"
-          aria-pressed="false"
-          title="Toggle Theme"
-          data-theme="light">
-          <span class="control-icon" aria-hidden="true">🌙</span>
-        </button>
+    <div class="header-controls">
+      <button
+        id="header-role-badge"
+        class="header-control-button header-role-badge"
+        aria-label="Change role"
+        title="Click to change role"
+        style="display: none;">
+        <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
+        <span class="header-role-text" id="header-role-text">View</span>
+      </button>
 
-        <select
-          id="language-selector"
-          class="control-select"
-          aria-label="Select language">
-          <option value="en">English</option>
-          <option value="es">Español</option>
-        </select>
-      </div>
+      <button
+        id="theme-toggle"
+        class="header-control-button"
+        aria-label="Toggle theme"
+        aria-pressed="false"
+        title="Toggle Theme"
+        data-theme="light">
+        <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+      </button>
+
+<!--      <div class="header-language-select">-->
+<!--        <span class="material-symbols-outlined header-language-icon" aria-hidden="true">language</span>-->
+<!--        <select-->
+<!--          id="language-selector"-->
+<!--          class="header-language-input"-->
+<!--          aria-label="Select language">-->
+<!--          <option value="en">EN</option>-->
+<!--          <option value="es">ES</option>-->
+<!--        </select>-->
+<!--      </div>-->
+
+      <button
+        id="mobile-nav-toggle"
+        class="header-control-button header-mobile-toggle"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav-overlay">
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
     </div>
   </header>
+
+  <div id="mobile-nav-overlay" class="mobile-nav-overlay" aria-hidden="true">
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-header">
+        <span class="mobile-nav-title">Navigation</span>
+        <button
+          id="mobile-nav-close"
+          class="mobile-nav-close"
+          aria-label="Close navigation menu">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+        <!-- Navigation items will be synced dynamically from header-nav -->
+      </nav>
+    </div>
+  </div>
 
   <main class="main-content" role="main" id="main-content">
     <div class="parallax-background" aria-hidden="true">
@@ -86,62 +112,45 @@
       <div class="parallax-blob parallax-blob--7"></div>
     </div>
 
-    <section id="welcome-section" class="hero-section">
-      <div class="hero-container">
-        <div class="hero-intro">
-          <h1 class="hero-title"> Hi, I'm <span class="hero-title-gradient">Serhii</span></h1>
-          <h2 class="hero-subtitle">Lead Frontend Engineer</h2>
-          <p class="hero-description" id="hero-description">
-            I bridge the gap between Design, Backend, and Product. <br> With 10+ years in Banking, E-Commerce and SaaS, <br>I fix development workflows to ensure teams ship reliable software on time. <br>I believe clear communication is the most important coding tool.
-          </p>
+    <section class="content-section intro" id="intro-section">
+      <h1 class="intro__title">Hello, I'm <span class="text-gradient">Serhii</span></h1>
+      <h2 class="intro__heading">
+        Senior Frontend Specialist
+      </h2>
+      <p class="intro__lead">
+        I built this site so you can get to know me in the way that matters most - to <span class="text-gradient">You.</span>
+      </p>
+<!--      <div class="intro__story-context">-->
+<!--        <p class="intro__story-context__heading">-->
+<!--          Hiring the right person shouldn't mean drowning in hundreds of CVs.-->
+<!--        </p>-->
+<!--        <p class="intro__story-context__subheading">-->
+<!--          Even with <span class="text-gradient">AI's</span> help, you still need to know what you're looking for.-->
+<!--          I wanted to solve that problem - by letting you choose your own path.-->
+<!--        </p>-->
+<!--        <p class="intro__story-context__cta">-->
+<!--          This way you can explore not only my relevant profile information, but also my personal side.-->
+<!--          Side that important when you work with <span class="text-gradient">humans</span>-->
+<!--        </p>-->
+<!--      </div>-->
+
+      <div id="intro-options" class="intro__options">
+        <div class="intro__option">
+          <button class="button button--recruiter" data-role="recruiter">I'm a Recruiter</button>
+          <p class="intro__option-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
         </div>
-        <div class="hero-background-image" id="hero-background-image"></div>
-      </div>
-
-      <div class="hero-roles" id="hero-roles">
-        <span class="hero-roles-title">Let's speak the same language. Tell me about you:</span>
-
-        <div class="hero-roles-grid">
-          <button class="button button--recruiter" data-role="recruiter">
-            <p class="button__description">
-              I'll focus on reliability, estimations, and delivery.
-            </p>
-            <div class="button__content">
-              <div class="button__icon button__icon--blue">
-                <span>💼</span>
-              </div>
-              <span class="button__title">I am Recruiter</span>
-            </div>
-          </button>
-
-          <button class="button button--developer" data-role="developer">
-            <p class="button__description">
-              I'll dive into the tech stack, architecture, and tools.
-            </p>
-            <div class="button__content">
-              <div class="button__icon button__icon--indigo">
-                <span>💻</span>
-              </div>
-              <span class="button__title">I am Developer</span>
-            </div>
-          </button>
-
-          <button class="button button--friend" data-role="friend">
-            <p class="button__description">
-              I'll introduce the human side of my work.
-            </p>
-            <div class="button__content">
-              <div class="button__icon button__icon--teal">
-                <span>👋</span>
-              </div>
-              <span class="button__title">I am Friend</span>
-            </div>
-          </button>
+        <div class="intro__option">
+          <button class="button button--developer" data-role="developer">I'm an Engineer</button>
+          <p class="intro__option-description">Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.</p>
+        </div>
+        <div class="intro__option">
+          <button class="button button--friend" data-role="friend">I'm a Friend</button>
+          <p class="intro__option-description">I'll introduce the human side of my self so you can understand what kind of person I am.</p>
         </div>
       </div>
+
+      <p class="intro__cta-prompt">Which path speaks to you?</p>
     </section>
-
-    <div id="sections-container" class="sections-container"></div>
 
     <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
       <span class="typing-dot"></span>
@@ -151,67 +160,191 @@
     </div>
   </main>
 
-  <template id="section-template">
-    <section class="content-section" id="" data-section-id="">
-      <div class="parallax-layer" aria-hidden="true"></div>
+  <footer class="footer" role="contentinfo">
+    <div class="footer-social">
+      <a
+        href="https://github.com/HrudakovSerhii"
+        class="footer-social-link"
+        aria-label="GitHub"
+        target="_blank"
+        rel="noopener noreferrer">
+        <svg aria-hidden="true" viewBox="0 0 24 24" height="24px" width="24px" fill="currentColor" data-view-component="true">
+          <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"></path>
+        </svg>
+      </a>
+      <a
+        href="https://www.linkedin.com/in/serhii-hrudakov/"
+        class="footer-social-link"
+        aria-label="LinkedIn"
+        target="_blank"
+        rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-supported-dps="24x24" fill="currentColor" width="24" height="24" focusable="false">
+          <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+        </svg>
+      </a>
+      <a
+        href="mailto:hrudakovserhii@gmail.com"
+        class="footer-social-link"
+        aria-label="Email">
+        <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+      </a>
+      <a
+        href="https://www.threads.com/@serhiykola"
+        class="footer-social-link"
+        aria-label="Threads">
+        <svg aria-hidden="true" viewBox="0 0 192 192" height="24px" width="24px" fill="currentColor" role="img" xmlns="http://www.w3.org/2000/svg">
+          <path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z"></path>
+        </svg>
+      </a>
+    </div>
+    <p class="footer-copyright">Build with love to people. And with passion to <span class="text-gradient">machines</span>.</p>
+  </footer>
 
+  <template id="section-template">
+    <section class="content-section" id="default-section">
       <div class="section-layout">
-        <div class="section-visual">
-          <div class="section-visual-container">
-            <!-- Image will be inserted here -->
-          </div>
+        <div class="section-visual section-visual-container">
+          <!-- Image will be inserted here -->
         </div>
         <div class="section-body">
           <div class="section-header">
             <h2 class="section-title"></h2>
             <p class="section-query"></p>
           </div>
-          <div class="section-body-content">
+          <p class="section-body-content section-body-text">
             <!-- Text content will be inserted here -->
+          </p>
+          <div class="section-meta-items default-meta-items">
+            <!-- Meta items will be inserted here based on section type -->
           </div>
         </div>
       </div>
     </section>
   </template>
 
-<!--  TODO: Make template for default section content and then use it with dynamic section elements under 2 different templates-->
-  <template id="contact-section-template">
-    <section class="content-section content-section--contact" id="" data-section-id="">
-      <div class="parallax-layer" aria-hidden="true"></div>
+  <template id="experience-section-template">
+    <section class="content-section" id="experience-section">
+      <div class="section-body">
+        <div class="section-header">
+          <h2 class="section-title"></h2>
+          <p class="section-query"></p>
+        </div>
+        <p class="section-body-content section-body-text">
+          <!-- Text content will be inserted here -->
+        </p>
+        <div class="section-meta-items experience-meta-items">
+          <!-- Meta items will be inserted here based on section type -->
+        </div>
+      </div>
+    </section>
+  </template>
 
-      <div class="section-layout">
-        <div class="section-visual">
-          <div class="section-visual-container">
-            <!-- Image will be inserted here -->
-          </div>
+  <template id="skills-section-template">
+    <section class="content-section" id="skills-section">
+      <div class="section-body">
+        <div class="section-header">
+          <h2 class="section-title"></h2>
+          <p class="section-query"></p>
         </div>
-        <div class="section-body">
-          <div class="section-header">
-            <h2 class="section-title"></h2>
-            <p class="section-query"></p>
-          </div>
-          <div class="section-body-content">
+        <p class="section-body-content section-body-text">
+          <!-- Text content will be inserted here -->
+        </p>
+        <div class="section-meta-items skills-meta-items">
+          <!-- Meta items will be inserted here based on section type -->
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="projects-section-template">
+    <section class="content-section" id="projects-section">
+      <div class="section-body">
+        <div class="section-header">
+          <h2 class="section-title"></h2>
+          <p class="section-query"></p>
+        </div>
+        <p class="section-body-content section-body-text">
+          <!-- Text content will be inserted here -->
+        </p>
+      </div>
+      <div class="section-carousel">
+        <div class="section-carousel-meta-items">
+          <!-- Meta items will be inserted here based on section type -->
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="hero-section-template">
+    <section class="content-section" id="hero-section">
+      <div class="hero__content">
+        <div class="hero__text">
+          <h1 class="hero__title section-body-content">
             <!-- Text content will be inserted here -->
-          </div>
-          <div class="contact-actions">
-            <a
-              href="mailto:"
-              class="contact-link contact-email-link"
-              data-email=""
-              data-name=""
-              aria-label="Send email">
-              Send me an email
-            </a>
-            <a
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="contact-link contact-linkedin-link"
-              aria-label="Connect on LinkedIn">
-              Connect on LinkedIn
-            </a>
-          </div>
+          </h1>
+          <h3 class="hero__subtitle section-subtext-content">
+            <!-- Subtext content will be inserted here -->
+          </h3>
         </div>
+        <div class="section-meta-items hero-meta-items">
+          <!-- Meta items will be inserted here based on section type -->
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="contact-section-template">
+    <section class="content-section contact" id="contact-section">
+      <div class="section-header">
+        <h2 class="section-title">Let's Build Something Together</h2>
+        <p class="section-query">Reach out for opportunities or just to say hello.</p>
+      </div>
+      <p class="section-body-content section-body-text">
+        <!-- Text content will be inserted here -->
+      </p>
+      <div class="section-meta-items contact-meta-items">
+        <!-- Email Card -->
+        <a class="contact-card" href="mailto:hrudakovserhii@gmail.com">
+          <div class="contact-card__icon">
+            <span class="material-symbols-outlined">mail</span>
+          </div>
+          <h3 class="contact-card__title">Email</h3>
+          <p class="contact-card__subtitle">Best for job inquiries</p>
+          <div class="contact-card__link">
+            hrudakovserhii@gmail.com
+            <span class="material-symbols-outlined">arrow_outward</span>
+          </div>
+        </a>
+
+        <!-- LinkedIn Card -->
+        <a class="contact-card" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/serhii-hrudakov/">
+          <div class="contact-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+              <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+            </svg>
+          </div>
+          <h3 class="contact-card__title">LinkedIn</h3>
+          <p class="contact-card__subtitle">Professional Story</p>
+          <div class="contact-card__link">
+            linkedin.com/in/serhii-hrudakov/
+            <span class="material-symbols-outlined">arrow_outward</span>
+          </div>
+        </a>
+
+        <!-- GitHub Card -->
+        <a class="contact-card" aria-label="GitHub" rel="noopener noreferrer" target="_blank" href="https://github.com/HrudakovSerhii">
+          <div class="contact-card__icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"></path>
+            </svg>
+          </div>
+          <h3 class="contact-card__title">GitHub</h3>
+          <p class="contact-card__subtitle">Code &amp; Contributions</p>
+          <div class="contact-card__link">
+            github.com/HrudakovSerhii
+            <span class="material-symbols-outlined">arrow_outward</span>
+          </div>
+        </a>
       </div>
     </section>
   </template>
@@ -248,107 +381,145 @@
     </div>
   </template>
 
-  <template id="personalization-modal-template">
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="personalization-title">
-      <div class="modal-content modal-content--personalization">
-        <h2 id="personalization-title" class="modal-title">Welcome! Let's personalize your experience</h2>
+  <!--  This is the template for the modal to change personalisation role (story path)-->
+  <template id="role-change-modal-template">
+    <div class="modal-overlay overlay" role="dialog" aria-modal="true" aria-labelledby="role-change-modal-title">
+      <div class="modal-content role-change-modal">
+        <button class="modal-content-close" aria-label="Close modal">
+          <span aria-hidden="true">×</span>
+        </button>
 
-        <div class="personalization-form">
-          <div class="form-group">
-            <label for="user-name-input" class="form-label">What's your name?</label>
-            <input
-              type="text"
-              id="user-name-input"
-              class="form-input"
-              placeholder="Enter your name"
-              maxlength="50"
-              required
-              aria-required="true">
-          </div>
+        <h3 id="role-change-modal-title" class="role-change-modal-title">Change Your Role</h3>
+        <span class="role-change-modal-subtitle">Select a different perspective <br/> to see other sides of my <span class="text-gradient">portfolio</span></span>
 
-          <div class="form-group">
-            <p class="form-label">I'm a...</p>
-            <div class="role-buttons" role="radiogroup" aria-label="Select your role">
-              <button
-                class="role-button"
-                data-role="recruiter"
-                role="radio"
-                aria-checked="false">
-                <span class="role-icon" aria-hidden="true">💼</span>
-                <span class="role-label">Recruiter</span>
-              </button>
-              <button
-                class="role-button"
-                data-role="developer"
-                role="radio"
-                aria-checked="false">
-                <span class="role-icon" aria-hidden="true">💻</span>
-                <span class="role-label">Developer</span>
-              </button>
-              <button
-                class="role-button"
-                data-role="friend"
-                role="radio"
-                aria-checked="false">
-                <span class="role-icon" aria-hidden="true">👋</span>
-                <span class="role-label">Friend</span>
-              </button>
-            </div>
-          </div>
+        <div class="role-change-modal-selection-grid">
+          <button class="button button--recruiter" data-role="recruiter">
+            <span class="button__description" data-role="recruiter-description">
+              I'll focus on reliability, estimations, and delivery experience
+            </span>
+            <span class="button__title">Recruiter</span>
+          </button>
+
+          <button class="button button--developer" data-role="developer">
+            <span class="button__description" data-role="developer-description">
+              I'll dive into the tech stack, architecture, and tools I used in my projects.
+            </span>
+            <span class="button__title">Engineer</span>
+          </button>
+
+          <button class="button button--friend" data-role="friend">
+            <span class="button__description" data-role="friend-description">
+              I'll introduce the human side of my self so you can understand what kind of person I am.
+            </span>
+            <span class="button__title">Friend</span>
+          </button>
         </div>
       </div>
     </div>
   </template>
 
-  <template id="role-change-modal-template">
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="role-change-title">
-      <div class="modal-content modal-content--role-change">
-        <button class="modal-close" aria-label="Close modal">
-          <span aria-hidden="true">×</span>
-        </button>
-
-        <h2 id="role-change-title" class="modal-title">Change Your Role</h2>
-        <p class="modal-description">Select a different perspective to see personalized content</p>
-
-        <div class="hero-roles-grid">
-          <button class="button button--recruiter" data-role="recruiter">
-            <p class="button__description">
-              I'll focus on reliability, estimations, and delivery.
+  <template id="experience-meta-item-template">
+    <div class="experience-card">
+      <div class="experience-card__header">
+        <div class="experience-card__info">
+          <div class="experience-card__logo-wrapper">
+            <!--            <img-->
+            <!--                    src={experience.logoUrl}-->
+            <!--                    alt={experience.company}-->
+            <!--                    class="experience-card__logo"-->
+            <!--            />-->
+          </div>
+          <div class="experience-card__title-group">
+            <h3 class="experience-card__role">
+              <!-- {experience.role}-->
+            </h3>
+            <p class="experience-card__company">
+              <!-- {experience.company}-->
             </p>
-            <div class="button__content">
-              <div class="button__icon button__icon--blue">
-                <span>💼</span>
-              </div>
-              <span class="button__title">I am Recruiter</span>
-            </div>
-          </button>
+          </div>
+        </div>
 
-          <button class="button button--developer" data-role="developer">
-            <p class="button__description">
-              I'll dive into the tech stack, architecture, and tools.
-            </p>
-            <div class="button__content">
-              <div class="button__icon button__icon--indigo">
-                <span>💻</span>
-              </div>
-              <span class="button__title">I am Developer</span>
+        <div class="experience-card__meta">
+          <span class="experience-card__period">
+            <!-- experience.period -->
+          </span>
+          <div class="experience-card__impact-badge">
+            <span class="experience-card__impact-label">Impact</span>
+            <div class="experience-card__stars">
+              <!-- experience.level -->
             </div>
-          </button>
-
-          <button class="button button--friend" data-role="friend">
-            <p class="button__description">
-              I'll introduce the human side of my work.
-            </p>
-            <div class="button__content">
-              <div class="button__icon button__icon--teal">
-                <span>👋</span>
-              </div>
-              <span class="button__title">I am Friend</span>
-            </div>
-          </button>
+          </div>
         </div>
       </div>
+      <p class="experience-card__description"></p>
+      <div class="experience-card__tech-tags" id="experience-tech-tags">
+        <!-- experience.technologies -->
+      </div>
     </div>
+  </template>
+
+  <template id="projects-meta-item-template">
+    <div class="projects-item">
+      <div class="projects-item__header">
+        <h3 class="projects-item__title"></h3>
+        <span class="projects-item__date">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="projects-item__date-icon" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+            <span></span>
+          </span>
+      </div>
+      <a href="#" class="projects-item__link">Link to project</a>
+      <p class="projects-item__description"></p>
+      <div class="projects-item__tech-tags" id="projects-tech-tags">
+        <!-- Project stack items from main_items[index].stack will be inserted here -->
+      </div>
+    </div>
+  </template>
+
+  <template id="skills-meta-item-template">
+    <div class="skill-item">
+      <h3 class="skills-item__name"></h3>
+      <span class="skills-item__years"></span>
+      <span class="skills-item__icon"></span>
+    </div>
+  </template>
+
+  <template id="soft-skills-section-template">
+    <section class="content-section" id="soft-skills-section">
+      <div class="section-body">
+        <div class="section-header">
+          <h2 class="section-title"></h2>
+          <p class="section-query"></p>
+        </div>
+        <p class="section-body-content section-body-text">
+          <!-- Text content will be inserted here -->
+        </p>
+        <div class="section-meta-items soft-skills-meta-items">
+          <!-- Meta items will be inserted here based on section type -->
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="soft-skills-meta-item-template">
+    <div class="soft-skills-item">
+      <div class="soft-skills-item__header">
+        <span class="soft-skills-item__icon material-symbols-outlined"></span>
+        <h3 class="soft-skills-item__title"></h3>
+      </div>
+      <ul class="soft-skills-item__list">
+        <!-- List items will be inserted here -->
+      </ul>
+    </div>
+  </template>
+
+  <template id="about-meta-item-template">
+    <span class="meta-tag"></span>
+  </template>
+
+  <template id="link-meta-item-template">
+    <a href="#" class="meta-link" target="_blank" rel="noopener noreferrer">
+      <span class="meta-link__title"></span>
+    </a>
   </template>
 
   <script type="module" src="./scripts/modules/app-controller/index.js"></script>
