@@ -76,6 +76,8 @@ class MetaItemRenderer {
         return this._populateTagItem(fragment, item);
       case 'skills':
         return this._populateSkillItem(fragment, item);
+      case 'soft-skills':
+        return this._populateSoftSkillItem(fragment, item);
       case 'experience':
         return this._populateExperienceItem(fragment, item);
       case 'projects':
@@ -140,6 +142,28 @@ class MetaItemRenderer {
     if (nameElement) nameElement.textContent = item.name;
     if (yearsElement) yearsElement.textContent = item.years + " Years";
     if (iconElement) iconElement.textContent = item.icon;
+
+    return element;
+  }
+
+  _populateSoftSkillItem(fragment, item) {
+    const element = fragment.querySelector('.soft-skills-item');
+    if (!element) return null;
+
+    const iconElement = element.querySelector('.soft-skills-item__icon');
+    const titleElement = element.querySelector('.soft-skills-item__title');
+    const listElement = element.querySelector('.soft-skills-item__list');
+
+    if (iconElement) iconElement.textContent = item.icon;
+    if (titleElement) titleElement.textContent = item.title;
+
+    if (listElement && item.items) {
+      item.items.forEach(listItem => {
+        const li = document.createElement('li');
+        li.textContent = listItem;
+        listElement.appendChild(li);
+      });
+    }
 
     return element;
   }

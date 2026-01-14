@@ -1,0 +1,100 @@
+@use '../base/variables';
+@use '../base/mixins';
+
+.soft-skills-meta-items {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, auto); // header + list rows
+  gap: variables.$spacing-md;
+
+  @include mixins.tablet {
+    // 2 columns × 2 rows each = 4 row tracks
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, auto);
+  }
+
+  @include mixins.desktop {
+    // 4 columns × 2 rows each = 2 row tracks (single row of cards)
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, auto);
+  }
+}
+
+.soft-skills-item {
+  position: relative;
+  width: 100%;
+  padding: variables.$spacing-md;
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2; // spans header + list rows
+  row-gap: 0;
+  text-align: left;
+  word-break: break-word;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-lg;
+  transition: all variables.$transition-fast;
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+
+  @include mixins.tablet {
+    padding: variables.$spacing-lg;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-sm;
+    margin-bottom: variables.$spacing-md;
+    padding-bottom: variables.$spacing-sm;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__icon {
+    font-size: variables.$font-size-xl;
+    color: var(--color-primary);
+  }
+
+  &__title {
+    font-size: variables.$font-size-lg;
+    font-weight: variables.$font-weight-bold;
+    color: var(--color-text);
+    margin: 0;
+
+    @include mixins.tablet {
+      font-size: variables.$font-size-lg;
+    }
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-xs;
+  }
+
+  &__list li {
+    font-size: variables.$font-size-sm;
+    line-height: variables.$line-height-relaxed;
+    color: var(--color-text-secondary);
+    padding-left: variables.$spacing-md;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+  }
+}
