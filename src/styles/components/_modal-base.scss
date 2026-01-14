@@ -1,7 +1,6 @@
-// Modal Base - Structure, Layout & Animations
+// Modal Base - Overlay styles
 
 @use '../base/variables';
-@use '../base/mixins';
 
 .modal-overlay {
   &.active ~ body {
@@ -9,99 +8,9 @@
   }
 }
 
-// Base Modal Container
-.modal {
-  position: relative;
-  max-width: 90%;
-  width: 500px;
-  padding: variables.$spacing-2xl;
-  border-radius: variables.$radius-2xl;
-  background: var(--glass-bg-light);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border-light);
-  box-shadow: var(--shadow-lg);
-  cursor: default;
-  transform: scale(0.9);
-  opacity: 0;
-  transition: transform variables.$transition-base, opacity variables.$transition-base;
-
-  @include mixins.mobile {
-    max-width: 95%;
-    padding: variables.$spacing-xl;
-  }
-
-  .modal-overlay.active & {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-// Modal Structure
-.modal-header {
-  margin-bottom: variables.$spacing-xl;
-  text-align: center;
-}
-
-.modal-body {
-  margin-bottom: variables.$spacing-xl;
-}
-
-.modal-close {
-  position: absolute;
-  top: variables.$spacing-md;
-  right: variables.$spacing-md;
-}
-
-// Animations
-@keyframes modal-fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes modal-fade-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-}
-
-@keyframes overlay-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes overlay-fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
 // Accessibility
 @media (prefers-reduced-motion: reduce) {
-  .modal-overlay,
-  .modal {
+  .modal-overlay {
     transition: none;
-  }
-
-  .modal {
-    transform: none;
   }
 }

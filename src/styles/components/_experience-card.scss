@@ -5,22 +5,22 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  border-radius: 0.75rem;
-  background-color: #1a1d24;
-  padding: 1.5rem;
-  border: 1px solid #282e39;
-  transition: border-color 0.2s ease;
+  gap: variables.$spacing-md;
+  border-radius: variables.$radius-lg;
+  background-color: var(--color-surface);
+  padding: variables.$spacing-lg;
+  border: 1px solid var(--color-border);
+  transition: border-color variables.$transition-fast;
 
   &:hover {
-    border-color: rgba(19, 91, 236, 0.5);
+    border-color: var(--color-accent);
   }
 
   &__header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1rem;
+    gap: variables.$spacing-md;
 
     @include mixins.desktop {
       flex-direction: row;
@@ -30,15 +30,15 @@
   &__info {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
+    gap: variables.$spacing-md;
   }
 
   &__logo-wrapper {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.5rem;
-    background-color: #ffffff;
-    padding: 0.25rem;
+    width: variables.$spacing-2xl;
+    height: variables.$spacing-2xl;
+    border-radius: variables.$radius-md;
+    background-color: var(--color-text-inverse);
+    padding: variables.$spacing-xs;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -53,25 +53,25 @@
   }
 
   &__role {
-    color: #ffffff;
-    font-size: 1.125rem;
-    font-weight: 700;
+    color: var(--color-text);
+    font-size: variables.$font-size-lg;
+    font-weight: variables.$font-weight-bold;
     margin: 0;
-    line-height: 1.2;
+    line-height: variables.$line-height-tight;
   }
 
   &__company {
-    color: #135bec;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin: 0.25rem 0 0 0;
+    color: var(--color-accent);
+    font-size: variables.$font-size-sm;
+    font-weight: variables.$font-weight-medium;
+    margin: variables.$spacing-xs 0 0 0;
   }
 
   &__meta {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: variables.$spacing-xs;
 
     @include mixins.desktop {
       align-items: flex-end;
@@ -79,32 +79,32 @@
   }
 
   &__period {
-    color: #94a3b8;
-    font-size: 0.875rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--color-text-tertiary);
+    font-size: variables.$font-size-sm;
+    font-family: variables.$font-family-mono;
   }
 
   &__impact-badge {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
-    background-color: rgba(19, 91, 236, 0.1);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid rgba(19, 91, 236, 0.2);
+    gap: variables.$spacing-s;
+    background-color: var(--color-accent-subtle);
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    border-radius: variables.$radius-sm;
+    border: 1px solid var(--color-accent-border);
   }
 
   &__impact-label {
-    font-size: 10px;
+    font-size: variables.$font-size-xs;
     text-transform: uppercase;
-    font-weight: 700;
-    color: #135bec;
+    font-weight: variables.$font-weight-bold;
+    color: var(--color-accent);
     letter-spacing: 0.05em;
   }
 
   &__stars {
     display: flex;
-    color: #135bec;
+    color: var(--color-accent);
   }
 
   &__star {
@@ -116,31 +116,31 @@
   }
 
   &__description {
-    color: #cbd5e1;
-    font-size: 0.875rem;
-    line-height: 1.625;
+    color: var(--color-text-secondary);
+    font-size: variables.$font-size-sm;
+    line-height: variables.$line-height-relaxed;
     margin: 0;
   }
 
   &__tech-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+    gap: variables.$spacing-sm;
+    margin-top: variables.$spacing-xs;
   }
 
   &__tech-tag {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    background-color: #282e39;
-    font-size: 0.75rem;
-    color: #cbd5e1;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: border-color 0.2s ease, color 0.2s ease;
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    border-radius: variables.$radius-sm;
+    background-color: var(--color-surface-secondary);
+    font-size: variables.$font-size-xs;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    transition: border-color variables.$transition-fast, color variables.$transition-fast;
 
     &:hover {
-      border-color: rgba(19, 91, 236, 0.3);
-      color: #ffffff;
+      border-color: var(--color-accent);
+      color: var(--color-text);
     }
   }
 }

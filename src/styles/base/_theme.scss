@@ -19,6 +19,8 @@
   --color-text: #111827; // gray-900
   --color-text-secondary: #362f2f; // gray-500
   --color-text-tertiary: #9ca3af; // gray-400
+  --color-text-muted: #6b7280; // gray-500
+  --color-text-inverse: #ffffff; // white - for dark backgrounds
 
   // Border colors
   --color-border: #e5e7eb; // gray-200
@@ -34,6 +36,12 @@
   --color-blue-900: #1e3a8a;
   --color-accent: #2563eb; // blue-600
   --color-accent-hover: #3b82f6; // blue-500
+  --color-accent-subtle: rgba(37, 99, 235, 0.1); // blue-600/10
+  --color-accent-border: rgba(37, 99, 235, 0.2); // blue-600/20
+  --color-text-on-accent: #ffffff; // text on accent backgrounds
+
+  // Primary subtle (alias for accent-subtle)
+  --color-primary-subtle: rgba(59, 130, 246, 0.1); // blue-500/10
 
   // Accent colors - Indigo
   --color-indigo-50: #eef2ff;
@@ -74,6 +82,11 @@
   --custom-hero-shadow-primary: rgba(37, 99, 235, 0.2); // blue-600/20
   --custom-hero-glow-opacity: 0.3;
 
+  // Glass overlay colors (for overlays on dark images)
+  --color-glass-bg: rgba(0, 0, 0, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-text: #ffffff;
+
   // Role card hover backgrounds
   --color-blue-hover-bg: rgba(239, 246, 255, 1); // blue-50
   --color-indigo-hover-bg: rgba(238, 242, 255, 1); // indigo-50
@@ -102,6 +115,8 @@
   --color-text: #ffffff; // white
   --color-text-secondary: #d1d5db; // gray-300
   --color-text-tertiary: #9ca3af; // gray-400
+  --color-text-muted: #9ca3af; // gray-400
+  --color-text-inverse: #111827; // gray-900 - for light backgrounds
 
   // Border colors
   --color-border: #374151; // gray-700
@@ -117,6 +132,12 @@
   --color-blue-900: #1e3a8a;
   --color-accent: #3b82f6; // blue-500
   --color-accent-hover: #60a5fa; // blue-400
+  --color-accent-subtle: rgba(59, 130, 246, 0.15); // blue-500/15
+  --color-accent-border: rgba(59, 130, 246, 0.25); // blue-500/25
+  --color-text-on-accent: #ffffff; // text on accent backgrounds
+
+  // Primary subtle (alias for accent-subtle)
+  --color-primary-subtle: rgba(59, 130, 246, 0.15); // blue-500/15
 
   // Accent colors - Indigo
   --color-indigo-50: #312e81;
@@ -156,6 +177,11 @@
   --custom-hero-cta-hover-bg: rgba(59, 130, 246, 0.2); // blue-500/20
   --custom-hero-shadow-primary: rgba(59, 130, 246, 0.2); // blue-500/20
   --custom-hero-glow-opacity: 0.5;
+
+  // Glass overlay colors (same as light - for overlays on dark images)
+  --color-glass-bg: rgba(0, 0, 0, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-text: #ffffff;
 
   // Role card hover backgrounds
   --color-blue-hover-bg: rgba(30, 58, 138, 0.1); // blue-900/10

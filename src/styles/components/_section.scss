@@ -8,16 +8,6 @@
   background-color: transparent;
   justify-content: center;
 
-  .parallax-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-  }
-
   .section-layout {
     display: flex;
     flex-direction: column;
@@ -191,37 +181,6 @@
 
     @include mixins.tablet {
       grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .contact-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: variables.$spacing-lg;
-    margin-top: variables.$spacing-lg;
-
-    @include mixins.desktop {
-      flex-direction: row;
-      gap: variables.$spacing-2xl;
-    }
-  }
-
-  .contact-link {
-    @include mixins.animated-underline(-3px, 0, 0, 100%);
-
-    font-size: variables.$font-size-xl;
-    font-weight: 600;
-    color: var(--color-text);
-    text-decoration: none;
-    transition: color variables.$transition-medium;
-
-    &:hover {
-      color: var(--color-accent);
-    }
-
-    &:active {
-      color: var(--color-accent-hover);
     }
   }
 }

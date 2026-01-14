@@ -5,17 +5,6 @@
   margin-top: variables.$spacing-lg;
 }
 
-.meta-items-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: variables.$spacing-sm;
-
-  &--vertical {
-    flex-direction: column;
-    gap: variables.$spacing-md;
-  }
-}
-
 .meta-tag {
   display: inline-flex;
   align-items: center;
@@ -44,7 +33,7 @@
   border-radius: variables.$radius-md;
   font-size: variables.$font-size-sm;
   font-weight: variables.$font-weight-bold;
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   text-decoration: none;
   transition: all variables.$transition-fast;
   cursor: pointer;
@@ -61,18 +50,6 @@
 
   &__title {
     white-space: nowrap;
-  }
-
-  &--secondary {
-    background-color: transparent;
-    border-color: var(--color-border);
-    color: var(--color-text-secondary);
-
-    &:hover {
-      background-color: var(--color-surface-secondary);
-      border-color: var(--color-accent);
-      color: var(--color-text);
-    }
   }
 }
 

@@ -92,9 +92,3 @@
   }
 }
 
-// Reduced motion support for interactive elements
-@media (prefers-reduced-motion: reduce) {
-  .role-button:hover:not(:disabled) {
-    transform: none;
-  }
-}

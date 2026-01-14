@@ -71,7 +71,7 @@
   bottom: variables.$spacing-sm;
   right: variables.$spacing-sm;
   padding: variables.$spacing-xs variables.$spacing-sm;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--color-glass-bg);
   border-radius: variables.$radius-md;
   font-size: variables.$font-size-xs;
   text-transform: uppercase;
