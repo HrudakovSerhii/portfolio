@@ -65,6 +65,13 @@
     height: variables.$spacing-md;
   }
 
+  &__link {
+    margin-bottom: variables.$spacing-xs;
+    font-size: variables.$font-size-sm;
+    font-weight: variables.$font-weight-medium;;
+    color: var(--color-primary);
+  }
+
   &__description {
     font-size: variables.$font-size-sm;
     line-height: variables.$line-height-relaxed;

@@ -189,12 +189,19 @@ class MetaItemRenderer {
 
     const titleElement = element.querySelector('.projects-item__title');
     const dateElement = element.querySelector('.projects-item__date span');
+    const linkElement = element.querySelector('.projects-item__link');
     const descriptionElement = element.querySelector('.projects-item__description');
     const projectTechTags = element.querySelector('#projects-tech-tags');
 
     if (titleElement) titleElement.textContent = item.title;
     if (dateElement) dateElement.textContent = item.date;
     if (descriptionElement) descriptionElement.textContent = item.description;
+
+    if (item.link) {
+      if (linkElement) linkElement.href = item.link;
+    } else {
+      if (linkElement) linkElement.style = 'display:none';
+    }
 
     if (projectTechTags && item.stack) {
       const projectTagsElements = this._generateTagsList(item.stack);

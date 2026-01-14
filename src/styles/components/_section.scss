@@ -3,10 +3,18 @@
 
 .content-section {
   position: relative;
-  min-height: calc(100vh - #{variables.$spacing-3xl});
   margin: 0 auto;
   background-color: transparent;
   justify-content: center;
+
+  &:is(#section-hero),
+  &:is(#section-contact){
+    min-height: calc(100vh - 3rem) !important;
+
+    @include mixins.desktop {
+      min-height: calc(100vh - 4rem) !important;
+    }
+  }
 
   .section-layout {
     display: flex;
