@@ -130,75 +130,12 @@
   }
 }
 
-.icon-button {
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--glass-button-bg);
-  border-radius: variables.$radius-md;
-  color: var(--color-text);
-  font-size: variables.$font-size-xl;
-  line-height: 1;
-  transition: background variables.$transition-fast, transform variables.$transition-fast;
-
-  @include mixins.focus-visible;
-
-  &:hover {
-    background: var(--glass-button-bg-hover);
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .button,
-  .icon-button {
+  .button {
     transition: none;
 
     &:hover {
       transform: none;
     }
   }
-}
-
-.icon {
-  width: 24px;
-  height: 24px;
-}
-
-.input {
-  width: 100%;
-  padding: variables.$spacing-md;
-  font-size: variables.$font-size-base;
-  font-family: variables.$font-family-base;
-  color: var(--color-text);
-  background: var(--glass-overlay-light);
-  border: 1px solid var(--color-border);
-  border-radius: variables.$radius-md;
-  transition: border-color variables.$transition-fast, background variables.$transition-fast;
-
-  &::placeholder {
-    color: var(--color-text-secondary);
-    opacity: 0.7;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: var(--color-accent);
-    background: var(--glass-overlay-light-hover);
-  }
-}
-
-.label {
-  display: block;
-  font-size: variables.$font-size-sm;
-  font-weight: 500;
-  color: var(--color-text);
-  margin-bottom: variables.$spacing-sm;
 }

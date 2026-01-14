@@ -1,13 +1,6 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-//.projects-items-container {
-//  display: flex;
-//  flex-direction: column;
-//  gap: variables.$spacing-lg;
-//  margin-top: variables.$spacing-lg;
-//}
-
 .projects-item {
   position: relative;
   width: 100%;
