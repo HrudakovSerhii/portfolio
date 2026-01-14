@@ -2,11 +2,10 @@
 @use '../base/mixins';
 
 .action-prompt {
-  position: absolute;
   display: flex;
   width: 100%;
   justify-content: center;
-  bottom: variables.$spacing-2xl;
+  margin-bottom: variables.$spacing-xl;
   opacity: 0;
   visibility: hidden;
   transition: opacity variables.$transition-base, visibility variables.$transition-base;

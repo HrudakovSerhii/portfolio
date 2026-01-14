@@ -13,7 +13,7 @@ class ActionPromptManager {
   initialize(container, onActionClick) {
     this.onActionClick = onActionClick;
     this.element = this.templateBuilder.renderActionPrompt('placeholder', '');
-    this.element.style.display = 'none';
+
     container.appendChild(this.element);
   }
 
@@ -49,8 +49,6 @@ class ActionPromptManager {
 
       this._setupClickHandler(nextSectionId);
 
-      this.element.style.display = 'flex';
-
       requestAnimationFrame(() => {
         this.element.classList.add('action-prompt--visible');
       });
@@ -65,7 +63,6 @@ class ActionPromptManager {
     }
 
     this.element.classList.remove('action-prompt--visible');
-    this.element.style.display = 'none';
   }
 
   getNextSectionId(currentSectionId) {
