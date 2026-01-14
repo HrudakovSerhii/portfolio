@@ -15,7 +15,9 @@
   }
 
   &.hero-meta-items {
-    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   &.skills-meta-items {
