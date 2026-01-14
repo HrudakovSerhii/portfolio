@@ -44,10 +44,10 @@ class HeaderController {
     this._resizeHandler = this._handleResize.bind(this);
   }
 
-  initialize(ownerNameElement, languageSelectorElement, roleManager) {
+  initialize(ownerNameElement, roleManager) {
     this.roleManager = roleManager;
     this.ownerName = ownerNameElement;
-    this.languageSelector = languageSelectorElement;
+    // this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
     this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
