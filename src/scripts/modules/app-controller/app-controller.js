@@ -15,7 +15,7 @@ const ELEMENT_IDS = {
   header: 'header',
   ownerName: 'owner-name',
   themeToggle: 'theme-toggle',
-  languageSelector: 'language-selector',
+  // languageSelector: 'language-selector',
   mainContent: 'main-content',
   typingIndicator: 'typing-indicator',
   introSection: 'intro-section',
@@ -24,7 +24,7 @@ const ELEMENT_IDS = {
 const CRITICAL_ELEMENT_KEYS = [
   'initialLoader',
   'themeToggle',
-  'languageSelector',
+  // 'languageSelector',
   'mainContent',
   'introSection',
 ];
@@ -51,7 +51,7 @@ class AppController {
       header: null,
       ownerName: null,
       themeToggle: null,
-      languageSelector: null,
+      // languageSelector: null,
       mainContent: null,
       introSection: null,
       typingIndicator: null,
@@ -76,7 +76,7 @@ class AppController {
 
       this.headerController.initialize(
         this.elements.ownerName,
-        this.elements.languageSelector,
+        // this.elements.languageSelector,
         this.roleManager
       );
 
@@ -115,7 +115,7 @@ class AppController {
     this.elements.header = document.getElementById(ELEMENT_IDS.header);
     this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
     this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
-    this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
+    // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
     this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
@@ -134,9 +134,9 @@ class AppController {
       this.themeSwitcher.toggle();
     });
 
-    this.elements.languageSelector.addEventListener('change', (e) => {
-      this.headerController.updateLanguage(e.target.value);
-    });
+    // this.elements.languageSelector.addEventListener('change', (e) => {
+    //   this.headerController.updateLanguage(e.target.value);
+    // });
 
     this.elements.introSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
