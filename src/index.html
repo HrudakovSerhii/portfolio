@@ -112,48 +112,55 @@
       <div class="parallax-blob parallax-blob--7"></div>
     </div>
 
-    <section id="section-intro" class="intro">
-      <h1 class="intro-title">Hello, I'm <span class="text-gradient">Serhii</span></h1>
-      <p class="intro-lead">
+    <section class="content-section intro" id="intro-section">
+      <h1 class="intro__title">Hello, I'm <span class="text-gradient">Serhii</span></h1>
+      <h2 class="intro__heading">
+        Senior Frontend Specialist
+      </h2>
+      <p class="intro__lead">
         I built this site so you can get to know me in the way that matters most - to <span class="text-gradient">You.</span>
       </p>
-      <h2 class="intro-heading">
-        Hiring the right person shouldn't mean drowning in hundreds of CVs.
-      </h2>
-      <h3 class="intro-subheading">
-        Even with <span class="text-gradient">AI's</span> help, you still need to know what you're looking for.
-        I wanted to solve that problem - by letting you choose your own path.
-      </h3>
-      <h3 class="intro-text">
-        This way you can explore not only my relevant profile information, but also my personal side.
-        Side that important when you work with <span class="text-gradient">humans</span>
-      </h3>
-      <div id="intro-options" class="intro-options">
-        <div class="intro-option">
-          <p class="intro-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
+<!--      <div class="intro__story-context">-->
+<!--        <p class="intro__story-context__heading">-->
+<!--          Hiring the right person shouldn't mean drowning in hundreds of CVs.-->
+<!--        </p>-->
+<!--        <p class="intro__story-context__subheading">-->
+<!--          Even with <span class="text-gradient">AI's</span> help, you still need to know what you're looking for.-->
+<!--          I wanted to solve that problem - by letting you choose your own path.-->
+<!--        </p>-->
+<!--        <p class="intro__story-context__cta">-->
+<!--          This way you can explore not only my relevant profile information, but also my personal side.-->
+<!--          Side that important when you work with <span class="text-gradient">humans</span>-->
+<!--        </p>-->
+<!--      </div>-->
+
+      <div id="intro-options" class="intro__options">
+        <div class="intro__option">
           <button class="button button--recruiter" data-role="recruiter">
             I'm a Recruiter
+            <p class="intro__option-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
           </button>
         </div>
-        <div class="intro-option">
-          <p class="intro-description">
-            Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
-          </p>
+        <div class="intro__option">
+
           <button class="button button--developer" data-role="developer">
             I'm an Engineer
+            <p class="intro__option-description">
+              Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.
+            </p>
           </button>
         </div>
-        <div class="intro-option">
-          <p class="intro-description">
-            I'll introduce the human side of my self so you can understand what kind of person I am.
-          </p>
+        <div class="intro__option">
           <button class="button button--friend" data-role="friend">
             I'm a Friend
+            <p class="intro__option-description">
+              I'll introduce the human side of my self so you can understand what kind of person I am.
+            </p>
           </button>
         </div>
       </div>
 
-      <p class="intro-cta-prompt">Which path speaks to you?</p>
+      <p class="intro__cta-prompt">Which path speaks to you?</p>
     </section>
 
     <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
@@ -281,33 +288,17 @@
 
   <template id="hero-section-template">
     <section class="content-section" id="hero-section">
-      <div class="hero__container">
-        <div class="hero__content">
-          <div class="hero__text">
-            <h1 class="hero__title section-body-content">
-              <!-- Text content will be inserted here -->
-            </h1>
-            <h3 class="hero__subtitle section-subtext-content">
-              <!-- Subtext content will be inserted here -->
-            </h3>
-          </div>
-          <div class="section-meta-items hero-meta-items">
-            <!-- Meta items will be inserted here based on section type -->
-          </div>
+      <div class="hero__content">
+        <div class="hero__text">
+          <h1 class="hero__title section-body-content">
+            <!-- Text content will be inserted here -->
+          </h1>
+          <h3 class="hero__subtitle section-subtext-content">
+            <!-- Subtext content will be inserted here -->
+          </h3>
         </div>
-
-        <div class="hero__visual">
-          <div class="hero__image-wrapper section-visual-container">
-            <!-- Image will be inserted here -->
-            <div class="hero__status">
-              <div class="hero__status-badge">
-                <span class="hero__status-indicator"></span>
-                <span class="hero__status-text">Open to work</span>
-              </div>
-            </div>
-          </div>
-          <!-- Visual Accent -->
-          <div class="hero__accent"></div>
+        <div class="section-meta-items hero-meta-items">
+          <!-- Meta items will be inserted here based on section type -->
         </div>
       </div>
     </section>

@@ -2,20 +2,16 @@
 @use '../base/mixins';
 
 .intro {
-  position: relative;
-  z-index: variables.$z-nav;
-  background-color: transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: variables.$spacing-2xl variables.$spacing-md;
-  min-height: calc(100vh - 3rem);
+  gap: variables.$spacing-xl;
+  z-index: variables.$z-nav;
+  min-height: calc(100vh - 3rem) !important;
   overflow: hidden;
   transition: max-height 1s ease-in-out;
 
   @include mixins.desktop {
-    min-height: calc(100vh - 4rem);
-    padding: variables.$spacing-3xl variables.$spacing-xl;
+    min-height: calc(100vh - 4rem) !important;
   }
 
   &.invisible {
@@ -27,7 +23,7 @@
     display: none;
   }
 
-  &-title {
+  &__title {
     font-size: variables.$font-size-4xl;
     color: var(--color-text);
     letter-spacing: -0.025em;
@@ -42,7 +38,7 @@
     }
   }
 
-  &-lead {
+  &__lead {
     font-size: variables.$font-size-lg;
     color: var(--color-text-secondary);
     line-height: variables.$line-height-relaxed;
@@ -54,74 +50,91 @@
       text-align: left;
     }
   }
-}
 
-.intro-heading {
-  text-align: center;
-}
+  &__story-context {
+    display: flex;
+    gap: variables.$spacing-md;
 
-.intro-subheading {
-  text-align: center;
-}
+    &__heading {
+      text-align: center;
+    }
 
-.intro-text {
-  text-align: center;
+    &__subheading {
+      text-align: center;
+    }
 
-  .text-gradient {
-    font-size: 24px;
-  }
-}
+    &__cta {
+      text-align: center;
 
-.intro-options {
-  display: grid;
-  margin: 0 auto;
-  gap: variables.$spacing-lg;
-  padding: 0 variables.$spacing-md;
-
-  @include mixins.tablet {
-    grid-template-columns: repeat(3, 1fr);
-
-    &:last-child {
-      grid-column: 1 / 2;
-      max-width: 50%;
+      .text-gradient {
+        font-size: 24px;
+      }
     }
   }
 
-  @include mixins.desktop {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    max-width: variables.$content-max-width;
-    gap: variables.$spacing-xl;
+  &__options {
+    display: grid;
+    margin: 0 auto;
+    gap: variables.$spacing-lg;
+    padding: 0 variables.$spacing-md;
 
-    &:last-child {
+    @include mixins.tablet {
+      grid-template-columns: repeat(3, 1fr);
+
+      &:last-child {
+        grid-column: 1 / 2;
+        max-width: 50%;
+      }
+    }
+
+    @include mixins.desktop {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       max-width: variables.$content-max-width;
+      gap: variables.$spacing-xl;
+
+      &:last-child {
+        max-width: variables.$content-max-width;
+      }
     }
   }
-}
 
-.intro-option {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  gap: 1rem;
-}
+  &__option {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 1rem;
 
-.intro-description {
-  width: 100%;
-  text-align: center;
-  font-size: variables.$font-size-base;
-  color: var(--color-text-secondary);
-  line-height: variables.$line-height-normal;
+    .button {
+      .intro__option-description {
+        position: absolute;
+        display: none;
+        width: 100%;
+        text-align: center;
+        font-size: variables.$font-size-base;
+        color: var(--color-text-secondary);
+        line-height: variables.$line-height-normal;
 
-  @include mixins.mobile {
-    padding: variables.$spacing-xs variables.$spacing-md;
+        @include mixins.mobile {
+          padding: variables.$spacing-xs variables.$spacing-md;
+        }
+
+        @include mixins.desktop {
+          font-size: variables.$font-size-xl;
+        }
+      }
+
+      &:hover {
+        .intro__option-description {
+          display: block;
+        }
+      }
+    }
   }
 
-  @include mixins.desktop {
-    font-size: variables.$font-size-xl;
+  &__cta-prompt {
+    margin-bottom: variables.$spacing-md;
+    font-size: variables.$font-size-lg;
   }
 }
 
-.intro-cta-prompt {
-  margin-bottom: variables.$spacing-md;
-  font-size: variables.$font-size-lg;
-}
+
