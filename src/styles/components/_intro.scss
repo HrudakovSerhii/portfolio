@@ -99,35 +99,55 @@
   }
 
   &__option {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: start;
     gap: 1rem;
 
-    .button {
+    &:hover {
       .intro__option-description {
-        position: absolute;
-        display: none;
-        width: 100%;
-        text-align: center;
-        font-size: variables.$font-size-base;
-        color: var(--color-text-secondary);
-        line-height: variables.$line-height-normal;
-
-        @include mixins.mobile {
-          padding: variables.$spacing-xs variables.$spacing-md;
-        }
-
-        @include mixins.desktop {
-          font-size: variables.$font-size-xl;
-        }
+        opacity: 1;
+        visibility: visible;
       }
+    }
+  }
 
-      &:hover {
-        .intro__option-description {
-          display: block;
-        }
-      }
+  &__option-description {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 280px;
+    padding: variables.$spacing-sm variables.$spacing-md;
+    background-color: var(--color-bg-dark, #1a1a1a);
+    color: var(--color-text-light, #fff);
+    border-radius: variables.$radius-md;
+    font-size: variables.$font-size-sm;
+    line-height: variables.$line-height-normal;
+    text-align: center;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: variables.$z-tooltip;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    // Tooltip arrow
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--color-bg-dark, #1a1a1a);
+    }
+
+    @include mixins.desktop {
+      max-width: 320px;
+      font-size: variables.$font-size-base;
     }
   }
 
