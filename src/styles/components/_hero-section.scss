@@ -60,12 +60,6 @@
     line-height: variables.$line-height-relaxed;
   }
 
-  &__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: variables.$spacing-sm;
-  }
-
   &__visual {
     position: relative;
     width: 100%;
@@ -148,10 +142,6 @@
     min-width: initial;
     width: initial;
     height: initial;
-  }
-
-  .section-meta-items {
-    margin-top: 0;
   }
 }
 

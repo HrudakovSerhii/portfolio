@@ -81,7 +81,7 @@
               "Zod",
               "Playwright"
             ],
-            "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Hexaware_new_logo.svg"
+            "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Hexaware_new_logo.svg"
           },
           {
             "type": "experience",
@@ -100,7 +100,7 @@
               "Google Analytics",
               "TypeScript"
             ],
-            "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fb/ERIKS_logo.svg"
+            "logoUrl": "https://shop.eriks.nl/webapp/wcs/stores/servlet/ERIKSStorefrontAssetStore/images/layout/logo-eriks-blue.svg"
           },
           {
             "type": "experience",
@@ -119,7 +119,7 @@
               "Python",
               "NestJS"
             ],
-            "logoUrl": "https://a-dam.com/assets/logo.svg"
+            "logoUrl": "https://www.vanuffelenmode.nl/img/a-dam-underwear_300x300_326078.webp"
           },
           {
             "type": "experience",
@@ -137,7 +137,7 @@
               "XCode",
               "RestAPI"
             ],
-            "logoUrl": "https://digitalchefs.nl/assets/logo.svg"
+            "logoUrl": "https://digitalchefs.nl/wp-content/uploads/2025/01/digitalchefs.svg"
           },
           {
             "type": "experience",
@@ -155,7 +155,7 @@
               "JQuery",
               "Gulp"
             ],
-            "logoUrl": "https://www.abiggercircle.com/assets/logo.svg"
+            "logoUrl": "https://www.abiggercircle.com/assets/logo/ULTRAMARINE_Center.svg"
           },
           {
             "type": "experience",
@@ -172,7 +172,7 @@
               "RestAPI",
               "CMS"
             ],
-            "logoUrl": "https://it-transit.com/assets/logo.svg"
+            "logoUrl": "https://it-transit.com/wp-content/plugins/website-logo/images/Logo_distr.png"
           },
           {
             "type": "experience",
@@ -190,7 +190,7 @@
               "SourceTree",
               "JavaScript"
             ],
-            "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Luxoft_Logo.svg"
+            "logoUrl": "https://www.luxoft.com/theme/luxoft/assets/images/logo/luxoft-new-black.svg"
           }
         ]
       },
@@ -420,25 +420,25 @@
         "recruiter": {
           "text": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship—I believe the best way to master a skill is to teach it. I thrive in multicultural environments, having built efficient, happy teams that translate complex technical challenges into clear business solutions.",
           "image": {
-            "name": "about.hr",
-            "imageAlt": "Professional background",
+            "name": "hero.hr",
+            "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
             "aspectRatio": "aspect-square"
           }
         },
         "developer": {
           "text": "My engineering philosophy centers on 'pixel-perfect' implementation and rigorous performance optimization. I don't just write code; I design systems. From configuring GitLab pipelines to setting up SonarCloud analysis, I ensure the development lifecycle is healthy. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
           "image": {
-            "name": "about.developer",
-            "imageAlt": "Engineering journey",
-            "aspectRatio": "aspect-landscape"
+            "name": "hero.developer",
+            "imageAlt": "Serhii Hrudakov - Software Engineer",
+            "aspectRatio": "aspect-square"
           }
         },
         "friend": {
           "text": "When I'm not coding, I'm usually outside. I grew up next to the mountains, so snowboarding, ice climbing, and hiking are my go-to resets. I love organizing these trips because I enjoy sharing the beauty of nature with others. If I'm indoors, I'm probably tinkering with my smart home setup or trying a new recipe. I value open communication and try to be the person who brings confidence and positivity to the people around me.",
           "image": {
-            "name": "about.friend",
-            "imageAlt": "Personal story",
-            "aspectRatio": "aspect-landscape"
+            "name": "hero.friend",
+            "imageAlt": "Serhii Hrudakov",
+            "aspectRatio": "aspect-portrait"
           }
         }
       }
@@ -471,28 +471,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "I am seeking a role where I can apply my experience in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals.",
-          "image": {
-            "name": "contact.hr",
-            "imageAlt": "Contact Serhii Hrudakov",
-            "aspectRatio": "aspect-square"
-          }
+          "text": "I am seeking a role where I can apply my experience in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
         },
         "developer": {
-          "text": "I'm always open to discussing frontend architecture, from state management patterns to the latest UI designs and systems integration. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineering professionals.",
-          "image": {
-            "name": "contact.developer",
-            "imageAlt": "Connect with Serhii",
-            "aspectRatio": "aspect-landscape"
-          }
+          "text": "I'm always open to discussing frontend architecture, from state management patterns to the latest UI designs and systems integration. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineering professionals."
         },
         "friend": {
-          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, hiking trails, or old motorcycles, hit me up. I love meeting new people and swapping stories about the weirdest coding bugs we've ever encountered. Let's connect and see if we can learn something new from each other!",
-          "image": {
-            "name": "contact.friend",
-            "imageAlt": "Let's connect",
-            "aspectRatio": "aspect-landscape"
-          }
+          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, hiking trails, or old motorcycles, hit me up. I love meeting new people and swapping stories about the weirdest coding bugs we've ever encountered. Let's connect and see if we can learn something new from each other!"
         }
       }
     }
