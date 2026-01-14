@@ -45,7 +45,7 @@ class TemplateBuilder {
   }
 
   _createSectionElement(id, sectionData) {
-    const EXCEPTIONS = ['hero', 'experience', 'skills', 'projects', 'contact'];
+    const EXCEPTIONS = ['hero', 'experience', 'skills', 'soft-skills', 'projects', 'contact'];
     let templateId = 'section-template';
     let sectionId = 'default-section';
 

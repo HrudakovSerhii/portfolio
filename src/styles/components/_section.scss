@@ -8,6 +8,8 @@
   justify-content: center;
 
   &:is(#section-hero),
+  &:is(#section-skills),
+  &:is(#section-soft-skills),
   &:is(#section-contact){
     min-height: calc(100vh - 3rem) !important;
 

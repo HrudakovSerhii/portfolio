@@ -47,7 +47,7 @@
         },
         "friend": {
           "text": "Designing imagination always been my dream. With code it's became reality",
-          "subText": "An engineer at heart ready to tackle tasks with head and hands. <Rusty set of tools in garage and keyboard has a lot of in commot. It's an instrument to create. It's a tool to do what you love.>",
+          "subText": "An engineer at heart ready to tackle tasks with head and hands. Believe that using rusty set of tools in garage and keyboard has a lot of in commot as both are instruments to create. Both are tools to do what you love.",
           "image": {
             "name": "hero.friend",
             "imageAlt": "Serhii Hrudakov",
@@ -238,15 +238,33 @@
           },
           {
             "type": "skills",
-            "name": "NX Monorepo",
-            "years": "2+",
-            "icon": "nx"
-          },
-          {
-            "type": "skills",
             "name": "HTML/CSS/SCSS",
             "years": "10+",
             "icon": "html5"
+          },
+          {
+            "type": "skills",
+            "name": "Python",
+            "years": "2+",
+            "icon": "python"
+          },
+          {
+            "type": "skills",
+            "name": "GraphQL / REST API",
+            "years": "5+",
+            "icon": "graphql"
+          },
+          {
+            "type": "skills",
+            "name": "Redux / Zustand",
+            "years": "5+",
+            "icon": "redux"
+          },
+          {
+            "type": "skills",
+            "name": "Testing (Playwright/Jest)",
+            "years": "3+",
+            "icon": "testing"
           },
           {
             "type": "skills",
@@ -256,9 +274,15 @@
           },
           {
             "type": "skills",
-            "name": "Testing (Playwright/Jest)",
+            "name": "Docker",
             "years": "3+",
-            "icon": "testing"
+            "icon": "docker"
+          },
+          {
+            "type": "skills",
+            "name": "SQL (MySQL/PostgreSQL)",
+            "years": "5+",
+            "icon": "database"
           }
         ]
       },
@@ -427,28 +451,7 @@
         "title": "About Me",
         "icon": "user",
         "order": 2,
-        "main_items": [
-          {
-            "type": "tag",
-            "text":  "Master's in Computer Science"
-          },
-          {
-            "type": "tag",
-            "text":  "Engineering Passion"
-          },
-          {
-            "type": "tag",
-            "text":  "Leadership"
-          },
-          {
-            "type": "tag",
-            "text":  "Mentorship"
-          },
-          {
-            "type": "tag",
-            "text":  "Sales Experience"
-          }
-        ]
+        "main_items": []
       },
       "content": {
         "recruiter": {
@@ -477,11 +480,75 @@
         }
       }
     },
+    "soft-skills": {
+      "metadata": {
+        "title": "Soft Skills",
+        "icon": "diversity_3",
+        "order": 7,
+        "main_items": [
+          {
+            "type": "soft-skills",
+            "title": "Leadership & Management",
+            "icon": "groups",
+            "items": [
+              "Team Leadership (3-4 developers)",
+              "Hiring & Recruitment",
+              "Project Planning & Estimation",
+              "Code Review Management"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "Communication",
+            "icon": "forum",
+            "items": [
+              "Client Communication",
+              "Cross-functional Collaboration",
+              "Technical Documentation",
+              "Stakeholder Management"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "Personal Qualities",
+            "icon": "psychology",
+            "items": [
+              "Problem-solving",
+              "Attention to Detail",
+              "Initiative & Ownership",
+              "Continuous Learning"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "Background & Education",
+            "icon": "school",
+            "items": [
+              "Master's in Computer Science",
+              "Sales Experience",
+              "Engineering Passion",
+              "Multicultural Experience"
+            ]
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Beyond technical expertise, I bring proven leadership and communication skills. I've successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+        },
+        "developer": {
+          "text": "I believe great engineering goes beyond code. I focus on clear documentation, thorough code reviews, and knowledge sharing. I'm detail-oriented when it comes to implementation—pixel-perfect UI and well-structured architecture matter to me. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications."
+        },
+        "friend": {
+          "text": "I genuinely enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others succeed. I'm curious by nature—always learning something new, whether it's a programming language or how to fix a motorcycle. I value honesty and try to create an environment where people feel comfortable asking questions."
+        }
+      }
+    },
     "contact": {
       "metadata": {
         "title": "Get In Touch",
         "icon": "mail",
-        "order": 6,
+        "order": 8,
         "main_items": [
           {
             "type": "email",
