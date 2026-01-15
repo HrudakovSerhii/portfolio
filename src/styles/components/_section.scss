@@ -11,10 +11,10 @@
   &:is(#section-skills),
   &:is(#section-soft-skills),
   &:is(#section-contact){
-    min-height: calc(100vh - 3rem) !important;
+    min-height: calc(100vh - 56px) !important;
 
     @include mixins.desktop {
-      min-height: calc(100vh - 4rem) !important;
+      min-height: calc(100vh - 72px) !important;
     }
   }
 

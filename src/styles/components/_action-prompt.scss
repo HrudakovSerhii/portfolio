@@ -2,16 +2,15 @@
 @use '../base/mixins';
 
 .action-prompt {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  margin-bottom: variables.$spacing-xl;
+  position: relative;
+  bottom: 0;
+  margin: variables.$spacing-md auto;
   opacity: 0;
   visibility: hidden;
   transition: opacity variables.$transition-base, visibility variables.$transition-base;
 
-  @include mixins.mobile {
-    padding: variables.$spacing-md 0 0;
+  @include mixins.desktop {
+    margin: variables.$spacing-lg auto;
   }
 
   &.action-prompt--visible {

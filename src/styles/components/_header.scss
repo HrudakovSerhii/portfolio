@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: variables.$spacing-md variables.$spacing-lg;
+  padding: variables.$spacing-xs variables.$spacing-xs;
   background-color: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
