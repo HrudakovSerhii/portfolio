@@ -109,14 +109,11 @@
 
 .skills-item {
   &__name {
-    font-size: variables.$font-size-sm;
+    // Fluid: 0.875rem (14px) → 1rem (16px)
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
     font-weight: variables.$font-weight-bold;
     color: var(--color-text);
     margin: 0;
-
-    @include mixins.tablet {
-      font-size: variables.$font-size-base;
-    }
   }
 
   &__years {

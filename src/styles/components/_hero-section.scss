@@ -43,19 +43,17 @@
 
   &__title {
     color: var(--color-text);
-    font-size: variables.$font-size-6xl;
+    // Fluid: 2.25rem (36px) → 3.25rem (52px)
+    font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
     font-weight: 900;
     line-height: 1.1;
     letter-spacing: -0.025em;
-
-    @include mixins.desktop {
-      font-size: variables.$font-size-6xl;
-    }
   }
 
   &__subtitle {
     color: var(--color-text-secondary);
-    font-size: variables.$font-size-xl;
+    // Fluid: 1.125rem (18px) → 1.25rem (20px)
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
     font-weight: variables.$font-weight-normal;
     line-height: variables.$line-height-relaxed;
   }

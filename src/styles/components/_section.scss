@@ -105,18 +105,16 @@
     text-align: start;
 
     .section-title {
-      font-size: variables.$font-size-3xl;
+      // Fluid: 1.5rem (24px) → 2.25rem (36px)
+      font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
       font-weight: 600;
       color: var(--color-text);
       margin-bottom: variables.$spacing-sm;
-
-      @include mixins.desktop {
-        font-size: variables.$font-size-4xl;
-      }
     }
 
     .section-query {
-      font-size: variables.$font-size-lg;
+      // Fluid: 1rem (16px) → 1.125rem (18px)
+      font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
       color: var(--color-text-secondary);
       font-style: italic;
       margin: 0;
@@ -133,7 +131,8 @@
     height: 100%;
 
     &.section-body-text {
-      font-size: variables.$font-size-xl;
+      // Fluid: 1rem (16px) → 1.25rem (20px)
+      font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
     }
   }
 

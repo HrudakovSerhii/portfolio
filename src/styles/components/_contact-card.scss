@@ -15,7 +15,8 @@
   }
 
   .section-title {
-    font-size: 28px;
+    // Fluid: 1.5rem (24px) → 1.75rem (28px)
+    font-size: clamp(1.5rem, 1.375rem + 0.5vw, 1.75rem);
     font-weight: variables.$font-weight-bold;
     line-height: variables.$line-height-tight;
     letter-spacing: -0.025em;

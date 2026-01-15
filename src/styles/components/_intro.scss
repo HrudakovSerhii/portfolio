@@ -24,7 +24,8 @@
   }
 
   &__title {
-    font-size: variables.$font-size-4xl;
+    // Fluid: 2.25rem (36px) → 3.25rem (52px)
+    font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
     color: var(--color-text);
     letter-spacing: -0.025em;
     font-weight: variables.$font-weight-bold;
@@ -33,20 +34,19 @@
     margin: 0;
 
     @include mixins.desktop {
-      font-size: variables.$font-size-6xl;
       text-align: left;
     }
   }
 
   &__lead {
-    font-size: variables.$font-size-lg;
+    // Fluid: 1.125rem (18px) → 1.25rem (20px)
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
     color: var(--color-text-secondary);
     line-height: variables.$line-height-relaxed;
     text-align: center;
     margin: 0;
 
     @include mixins.desktop {
-      font-size: variables.$font-size-xl;
       text-align: left;
     }
   }
@@ -67,7 +67,7 @@
       text-align: center;
 
       .text-gradient {
-        font-size: 24px;
+        font-size: variables.$font-size-2xl;
       }
     }
   }

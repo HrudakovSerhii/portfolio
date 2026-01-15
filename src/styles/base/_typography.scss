@@ -1,25 +1,34 @@
 @use 'variables';
 @use 'mixins';
 
+// Fluid Typography Scale
+// Uses clamp() for smooth scaling between mobile (320px) and desktop (1024px)
+// Formula: clamp(min, preferred, max)
+// Preferred uses viewport width for fluid scaling
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: variables.$line-height-tight;
 }
 
+// h1: 2rem (32px) → 3.25rem (52px)
 h1 {
-    font-size: variables.$font-size-6xl;
+    font-size: clamp(2rem, 1.5rem + 2.5vw, 3.25rem);
 }
 
+// h2: 1.375rem (22px) → 1.75rem (28px)
 h2 {
-    font-size: variables.$font-size-2xl;
+    font-size: clamp(1.375rem, 1.2rem + 0.75vw, 1.75rem);
 }
 
+// h3: 1.125rem (18px) → 1.375rem (22px)
 h3 {
-    font-size: variables.$font-size-xl;
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
 }
 
+// h4-h6: 1rem (16px) → 1.125rem (18px)
 h4, h5, h6 {
-    font-size: variables.$font-size-base;
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
 }
 
 p {
