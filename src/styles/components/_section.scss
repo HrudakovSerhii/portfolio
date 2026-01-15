@@ -140,8 +140,12 @@
 
   .section-carousel {
     position: relative;
-    padding-top: variables.$spacing-xl;
+    padding: variables.$spacing-xs 0;
     max-width: variables.$content-max-width;
+
+    @include mixins.desktop {
+      padding: variables.$spacing-md 0;
+    }
   }
 }
 

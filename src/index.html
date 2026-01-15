@@ -211,7 +211,7 @@
             <h2 class="section-title"></h2>
             <p class="section-query"></p>
           </div>
-          <p class="section-body-content section-body-text">
+          <p class="section-body-content section-body-text section-content-animated">
             <!-- Text content will be inserted here -->
           </p>
           <div class="section-meta-items default-meta-items">
@@ -229,7 +229,7 @@
           <h2 class="section-title"></h2>
           <p class="section-query"></p>
         </div>
-        <p class="section-body-content section-body-text">
+        <p class="section-body-content section-body-text section-content-animated">
           <!-- Text content will be inserted here -->
         </p>
         <div class="section-meta-items experience-meta-items">
@@ -246,7 +246,7 @@
           <h2 class="section-title"></h2>
           <p class="section-query"></p>
         </div>
-        <p class="section-body-content section-body-text">
+        <p class="section-body-content section-body-text section-content-animated">
           <!-- Text content will be inserted here -->
         </p>
         <div class="section-meta-items skills-meta-items">
@@ -263,7 +263,7 @@
           <h2 class="section-title"></h2>
           <p class="section-query"></p>
         </div>
-        <p class="section-body-content section-body-text">
+        <p class="section-body-content section-body-text section-content-animated">
           <!-- Text content will be inserted here -->
         </p>
       </div>
@@ -276,13 +276,13 @@
   </template>
 
   <template id="hero-section-template">
-    <section class="content-section" id="hero-section">
+    <section class="content-section hero" id="hero-section">
       <div class="hero__content">
         <div class="hero__text">
           <h2 class="hero__title section-body-content">
             <!-- Text content will be inserted here -->
           </h2>
-          <p class="hero__subtitle section-subtext-content">
+          <p class="hero__subtitle section-subtext-content section-content-animated">
             <!-- Subtext content will be inserted here -->
           </p>
         </div>
@@ -299,7 +299,7 @@
         <h2 class="section-title">Let's Build Something Together</h2>
         <p class="section-query">Reach out for opportunities or just to say hello.</p>
       </div>
-      <p class="section-body-content section-body-text">
+      <p class="section-body-content section-body-text section-content-animated">
         <!-- Text content will be inserted here -->
       </p>
       <div class="section-meta-items contact-meta-items">
@@ -429,37 +429,26 @@
       <div class="experience-card__header">
         <div class="experience-card__info">
           <div class="experience-card__logo-wrapper">
-            <!--            <img-->
-            <!--                    src={experience.logoUrl}-->
-            <!--                    alt={experience.company}-->
-            <!--                    class="experience-card__logo"-->
-            <!--            />-->
           </div>
           <div class="experience-card__title-group">
             <h3 class="experience-card__role">
               <!-- {experience.role}-->
             </h3>
+            <span class="experience-card__period">
+              <!-- experience.period -->
+            </span>
             <p class="experience-card__company">
               <!-- {experience.company}-->
             </p>
           </div>
         </div>
-
-        <div class="experience-card__meta">
-          <span class="experience-card__period">
-            <!-- experience.period -->
-          </span>
-          <div class="experience-card__impact-badge">
-            <span class="experience-card__impact-label">Impact</span>
-            <div class="experience-card__stars">
-              <!-- experience.level -->
-            </div>
-          </div>
-        </div>
+        <span class="experience-card__cta">Show more</span>
       </div>
-      <p class="experience-card__description"></p>
-      <div class="experience-card__tech-tags" id="experience-tech-tags">
-        <!-- experience.technologies -->
+      <div class="experience-card__drawer">
+        <p class="experience-card__description"></p>
+        <div class="experience-card__tech-tags" id="experience-tech-tags">
+          <!-- experience.technologies -->
+        </div>
       </div>
     </div>
   </template>
@@ -496,7 +485,7 @@
           <h2 class="section-title"></h2>
           <p class="section-query"></p>
         </div>
-        <p class="section-body-content section-body-text">
+        <p class="section-body-content section-body-text section-content-animated">
           <!-- Text content will be inserted here -->
         </p>
         <div class="section-meta-items soft-skills-meta-items">

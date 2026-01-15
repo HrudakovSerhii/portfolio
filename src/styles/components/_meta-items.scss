@@ -2,7 +2,7 @@
 @use '../base/mixins';
 
 .section-meta-items {
-  margin-top: variables.$spacing-lg;
+  margin: variables.$spacing-lg 0 variables.$spacing-lg;
   
   &.default-meta-items {
     display: flex;
@@ -10,9 +10,6 @@
     flex-wrap: wrap;
   }
 
-  &.experience-meta-items {
-    margin-top: variables.$spacing-lg;
-  }
 
   &.hero-meta-items {
     display: flex;
