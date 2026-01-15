@@ -177,7 +177,6 @@ class MetaItemRenderer {
     const periodElement = element.querySelector('.experience-card__period');
     const descriptionElement = element.querySelector('.experience-card__description');
     const techTags = element.querySelector('#experience-tech-tags');
-    const starsElement = element.querySelector('.experience-card__stars');
     const logoWrapper = element.querySelector('.experience-card__logo-wrapper');
 
     if (roleElement) roleElement.textContent = item.role;
@@ -194,15 +193,23 @@ class MetaItemRenderer {
       logoWrapper.appendChild(logoImg);
     }
 
-    if (starsElement && item.impactScore) {
-      starsElement.innerHTML = this._renderStars(item.impactScore);
-    }
-
     if (techTags && item.technologies) {
       const techStackElements = this._generateTagsList(item.technologies);
 
       techTags.appendChild(techStackElements);
     }
+
+    element.addEventListener('click', () => {
+      const isOpen = element.classList.contains('experience-card--open');
+
+      document.querySelectorAll('.experience-card--open').forEach(card => {
+        card.classList.remove('experience-card--open');
+      });
+
+      if (!isOpen) {
+        element.classList.add('experience-card--open');
+      }
+    });
 
     return element;
   }
@@ -234,18 +241,6 @@ class MetaItemRenderer {
     }
 
     return element;
-  }
-
-  _renderStars(score, maxStars = 10) {
-    const filledStars = Math.min(score, maxStars);
-    let starsHtml = '';
-
-    for (let i = 0; i < maxStars; i++) {
-      const isActive = i < filledStars;
-      starsHtml += `<span class="experience-card__star${isActive ? '' : ' experience-card__star--inactive'}">★</span>`;
-    }
-
-    return starsHtml;
   }
 
   _generateTagsList(items) {
