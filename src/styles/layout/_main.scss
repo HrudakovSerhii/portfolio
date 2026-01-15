@@ -8,7 +8,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: variables.$spacing-2xl;
     z-index: 1;
     max-width: variables.$breakpoint-desktop;
 
@@ -28,7 +27,7 @@ section {
     width: 100%;
     height: 100%;
     max-width: variables.$content-max-width;
-    padding: variables.$spacing-md;
+    padding: 0 variables.$spacing-md 0;
 
     @include mixins.desktop {
         padding: variables.$spacing-xl;

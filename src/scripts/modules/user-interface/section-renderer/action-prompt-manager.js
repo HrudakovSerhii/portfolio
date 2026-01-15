@@ -6,35 +6,43 @@ class ActionPromptManager {
   constructor(templateBuilder, sectionOrder) {
     this.templateBuilder = templateBuilder;
     this.sectionOrder = sectionOrder;
-    this.element = null;
     this.onActionClick = null;
+    this.sectionPrompts = new Map();
   }
 
-  initialize(container, onActionClick) {
+  initialize(onActionClick) {
     this.onActionClick = onActionClick;
-    this.element = this.templateBuilder.renderActionPrompt('placeholder', '');
+  }
 
-    container.appendChild(this.element);
+  createForSection(sectionId) {
+    const promptElement = this.templateBuilder.renderActionPrompt(sectionId);
+    this.sectionPrompts.set(sectionId, promptElement);
+    return promptElement;
   }
 
   update(currentSectionId, revealedSections) {
     const nextSectionId = this.getNextSectionId(currentSectionId);
     const isLastRevealed = this._isLastRevealedSection(currentSectionId, revealedSections);
+    const promptElement = this.sectionPrompts.get(currentSectionId);
+
+    if (!promptElement) {
+      return;
+    }
 
     if (nextSectionId && isLastRevealed) {
-      this.show(nextSectionId);
+      this.show(promptElement, nextSectionId);
     } else {
-      this.hide();
+      this.hide(promptElement);
     }
   }
 
-  async show(nextSectionId) {
-    if (!this.element) {
+  show(promptElement, nextSectionId) {
+    if (!promptElement) {
       return;
     }
 
     try {
-      const button = this.element.querySelector(SELECTORS.promptButton);
+      const button = promptElement.querySelector(SELECTORS.promptButton);
 
       if (button) {
         const sectionName = nextSectionId.charAt(0).toUpperCase() + nextSectionId.slice(1);
@@ -44,25 +52,24 @@ class ActionPromptManager {
         button.setAttribute('data-section-id', nextSectionId);
       }
 
-      this.element.setAttribute('data-section-id', nextSectionId);
-      this.element.id = `action-prompt-${nextSectionId}`;
+      promptElement.setAttribute('data-section-id', nextSectionId);
 
-      this._setupClickHandler(nextSectionId);
+      this._setupClickHandler(promptElement, nextSectionId);
 
       requestAnimationFrame(() => {
-        this.element.classList.add('action-prompt--visible');
+        promptElement.classList.add('action-prompt--visible');
       });
     } catch (error) {
       console.error('Failed to show action prompt:', error);
     }
   }
 
-  hide() {
-    if (!this.element) {
+  hide(promptElement) {
+    if (!promptElement) {
       return;
     }
 
-    this.element.classList.remove('action-prompt--visible');
+    promptElement.classList.remove('action-prompt--visible');
   }
 
   getNextSectionId(currentSectionId) {
@@ -75,8 +82,8 @@ class ActionPromptManager {
     return lastRevealedId === sectionId;
   }
 
-  _setupClickHandler(nextSectionId) {
-    const button = this.element.querySelector(SELECTORS.promptButton);
+  _setupClickHandler(promptElement, nextSectionId) {
+    const button = promptElement.querySelector(SELECTORS.promptButton);
 
     if (!button || !this.onActionClick) {
       return;
@@ -87,7 +94,7 @@ class ActionPromptManager {
     button.parentNode.replaceChild(newButton, button);
 
     newButton.addEventListener('click', async () => {
-      this.hide();
+      this.hide(promptElement);
       await this.onActionClick(nextSectionId);
     });
   }

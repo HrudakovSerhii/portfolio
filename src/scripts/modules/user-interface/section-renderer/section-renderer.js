@@ -21,7 +21,7 @@ class SectionRenderer {
     this.sectionsContainer = sectionsContainerElement;
     this.typingIndicator = new TypingIndicator(typingIndicatorElement);
     this.actionPromptManager = new ActionPromptManager(this.templateBuilder, sectionOrder);
-    this.actionPromptManager.initialize(sectionsContainerElement, onActionPromptClick);
+    this.actionPromptManager.initialize(onActionPromptClick);
   }
 
   async reveal(sectionId, role, customQuery = '') {
@@ -66,8 +66,12 @@ class SectionRenderer {
 
   _renderSection(sectionId, sectionContent) {
     const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
+    
+    // Create and append action prompt to section before mounting to DOM
+    const promptElement = this.actionPromptManager.createForSection(sectionId);
+    sectionElement.appendChild(promptElement);
+    
     const lastSectionElement = this.sectionsContainer.lastChild;
-
     this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
 
     return sectionElement;
