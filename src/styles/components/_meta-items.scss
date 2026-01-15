@@ -3,7 +3,7 @@
 
 .section-meta-items {
   margin-top: variables.$spacing-lg;
-
+  
   &.default-meta-items {
     display: flex;
     gap: variables.$spacing-xs;
@@ -34,6 +34,12 @@
   &.contact-meta-items {
     display: flex;
     gap: variables.$spacing-md;
+
+    @include mixins.mobile-max {
+      flex-direction: column;
+      gap: variables.$spacing-md;
+      width: 100%;
+    }
   }
 }
 

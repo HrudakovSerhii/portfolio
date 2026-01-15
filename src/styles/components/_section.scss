@@ -6,10 +6,12 @@
   margin: 0 auto;
   background-color: transparent;
   justify-content: center;
+  margin-top: variables.$spacing-lg;
 
   &:is(#section-hero),
   &:is(#section-skills),
   &:is(#section-soft-skills),
+  &:is(#section-about),
   &:is(#section-contact){
     min-height: calc(100vh - 56px) !important;
 

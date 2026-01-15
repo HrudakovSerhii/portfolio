@@ -29,7 +29,11 @@ section {
     max-width: variables.$content-max-width;
     padding: 0 variables.$spacing-md;
 
-    @include mixins.desktop {
+    @include mixins.tablet {
         padding: 0 variables.$spacing-xl;
+    }
+
+    @include mixins.desktop {
+        padding: 0 variables.$spacing-2xl;
     }
 }

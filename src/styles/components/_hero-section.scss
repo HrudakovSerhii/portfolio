@@ -37,8 +37,14 @@
   &__text {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: variables.$spacing-sm;
     text-align: left;
+
+    @include mixins.tablet {
+      max-width: 550px;
+      gap: variables.$spacing-md;
+    }
   }
 
   &__title {

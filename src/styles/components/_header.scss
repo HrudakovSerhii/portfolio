@@ -21,9 +21,17 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: variables.$spacing-lg;
+  gap: variables.$spacing-xs;
   flex: 1;
   min-width: 0;
+
+  @include mixins.tablet {
+    gap: variables.$spacing-md;
+  }
+
+  @include mixins.desktop {
+    gap: variables.$spacing-lg;
+  }
 }
 
 .header-brand {
