@@ -79,7 +79,7 @@ class Carousel {
       return wrapper;
     });
 
-    lastClones.forEach(clone => this.track.insertBefore(clone, this.track.firstChild));
+    lastClones.reverse().forEach(clone => this.track.insertBefore(clone, this.track.firstChild));
     firstClones.forEach(clone => this.track.appendChild(clone));
 
     this.currentIndex = 3;
@@ -111,7 +111,7 @@ class Carousel {
     this.currentIndex++;
     this._updatePosition();
 
-    if (this.options.loop && this.currentIndex >= this.items.length + 3) {
+    if (this.options.loop && this.currentIndex > this.items.length + 2) {
       setTimeout(() => {
         this.currentIndex = 3;
         this._updatePosition(false);
