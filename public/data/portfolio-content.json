@@ -475,7 +475,7 @@
           "image": {
             "name": "hero.friend",
             "imageAlt": "Serhii Hrudakov",
-            "aspectRatio": "aspect-portrait"
+            "aspectRatio": "aspect-square"
           }
         }
       }

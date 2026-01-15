@@ -120,12 +120,14 @@ class Carousel {
     const firstItem = this.track.querySelector('.carousel__item');
     if (!firstItem) return;
 
+    const containerWidth = this.container.offsetWidth;
     const itemWidth = firstItem.offsetWidth;
-    const itemStyle = window.getComputedStyle(firstItem);
-    const itemMargin = parseFloat(itemStyle.marginRight) || 0;
-    const totalItemWidth = itemWidth + itemMargin;
+    const gap = parseFloat(getComputedStyle(this.track).gap) || 0;
+    const totalItemWidth = itemWidth + gap;
 
-    const offset = -(this.currentIndex * totalItemWidth);
+    // Center the active card in the viewport
+    const centerOffset = (containerWidth - itemWidth) / 2;
+    const offset = centerOffset - (this.currentIndex * totalItemWidth);
 
     if (animate) {
       this.track.style.transition = 'transform 300ms ease-in-out';

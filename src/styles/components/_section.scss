@@ -133,18 +133,13 @@
     height: 100%;
 
     &.section-body-text {
-      margin-bottom: variables.$spacing-md;
       font-size: variables.$font-size-xl;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
     }
   }
 
   .section-carousel {
     position: relative;
-    padding: variables.$spacing-xl;
+    padding-top: variables.$spacing-xl;
     max-width: variables.$content-max-width;
   }
 }
