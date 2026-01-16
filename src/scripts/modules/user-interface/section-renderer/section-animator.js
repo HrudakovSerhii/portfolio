@@ -8,8 +8,8 @@ class SectionAnimator {
   }
 
   async animateSection(sectionElement, sectionContent) {
-    const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.text}`);
-    const imageContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.image}`);
+    const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.textAnimated}`);
+    const imageContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.imageAnimated}`);
 
     this._createAnimatedImage(imageContainer, sectionContent.image);
 

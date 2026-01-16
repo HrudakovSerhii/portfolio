@@ -33,6 +33,7 @@ class SectionRenderer {
 
       const sectionElement = this._renderSection(sectionId, sectionContent);
 
+      this._populateText(sectionElement, sectionContent.text);
       this._populateSubText(sectionElement, sectionContent.subText);
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 

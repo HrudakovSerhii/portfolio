@@ -1,7 +1,10 @@
 export const SECTION_ELEMENTS = {
   text: 'section-body-content',
   subText: 'section-subtext-content',
-  image: 'section-visual-container',
+  textAnimated: 'section-body-content-animated',
+  subTextAnimated: 'section-subtext-content-animated',
+  image: 'section-visual',
+  imageAnimated: 'section-visual-animated',
   metaItems: 'section-meta-items',
   carouselMetaItems: 'section-carousel-meta-items'
 };
