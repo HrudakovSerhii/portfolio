@@ -29,7 +29,7 @@
       "content": {
         "recruiter": {
           "text": "Helping to build scalable Frontend and happy Teams",
-          "subText": "Result-driven Senior Frontend Developer with over 10 years of experience delivering high-value technical solutions.",
+          "subText": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments, having built efficient, happy teams that translate complex technical challenges into clear business solutions.",
           "image": {
             "name": "hero.hr",
             "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
@@ -38,7 +38,7 @@
         },
         "developer": {
           "text": "On a mission `Impossible` to keep codebases scalable and maintainable",
-          "subText": "Passionate Software Engineer with expertise in modern web architecture, system migrations and best UX/UI practices.",
+          "subText": "My engineering philosophy centers on 'pixel-perfect' implementation and rigorous performance optimization. I don't just write code; I design systems. From configuring GitLab pipelines to setting up SonarCloud analysis, I ensure the development lifecycle is healthy. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
           "image": {
             "name": "hero.developer",
             "imageAlt": "Serhii Hrudakov - Software Engineer",
@@ -47,7 +47,7 @@
         },
         "friend": {
           "text": "Code is a magic tool that helps to bring ideas to life",
-          "subText": "An engineer at heart ready to tackle tasks with head and hands. Believe that using rusty set of tools in garage and keyboard has a lot of in commot as both are instruments to create. Both are tools to do what you love.",
+          "subText": "I am an engineer at heart ready to tackle tasks with head and hands. I believe that using rusty set of tools in garage and keyboard has a lot of in commot as both are instruments to create. Both are tools to do what you love.",
           "image": {
             "name": "hero.friend",
             "imageAlt": "Serhii Hrudakov",
@@ -60,7 +60,7 @@
       "metadata": {
         "title": "Work Experience",
         "icon": "briefcase",
-        "order": 4,
+        "order": 2,
         "main_items": [
           {
             "type": "experience",
@@ -304,11 +304,75 @@
         }
       }
     },
+    "soft-skills": {
+      "metadata": {
+        "title": "Soft Skills",
+        "icon": "diversity_3",
+        "order": 4,
+        "main_items": [
+          {
+            "type": "soft-skills",
+            "title": "Leadership & Management",
+            "icon": "groups",
+            "items": [
+              "Team Leadership (3-4 developers)",
+              "Hiring & Recruitment",
+              "Project Planning & Estimation",
+              "Code Review Management"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "Communication",
+            "icon": "forum",
+            "items": [
+              "Client Communication",
+              "Cross-functional Collaboration",
+              "Technical Documentation",
+              "Stakeholder Management"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "Personal Qualities",
+            "icon": "psychology",
+            "items": [
+              "Problem-solving",
+              "Attention to Detail",
+              "Initiative & Ownership",
+              "Continuous Learning"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "Background & Education",
+            "icon": "school",
+            "items": [
+              "Master's in Computer Science",
+              "Sales Experience",
+              "Engineering Passion",
+              "Multicultural Experience"
+            ]
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Beyond technical expertise, I bring proven leadership and communication skills. I've successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+        },
+        "developer": {
+          "text": "I believe great engineering goes beyond code. I focus on clear documentation, thorough code reviews, and knowledge sharing. I'm detail-oriented when it comes to implementation—pixel-perfect UI and well-structured architecture matter to me. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications."
+        },
+        "friend": {
+          "text": "I genuinely enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others succeed. I'm curious by nature—always learning something new, whether it's a programming language or how to fix a motorcycle. I value honesty and try to create an environment where people feel comfortable asking questions."
+        }
+      }
+    },
     "projects": {
       "metadata": {
         "title": "Featured Projects",
         "icon": "folder",
-        "order": 5,
+        "order": 4,
         "main_items": [
           {
             "type": "project",
@@ -452,109 +516,11 @@
         }
       }
     },
-    "about": {
-      "metadata": {
-        "title": "About Me",
-        "icon": "user",
-        "order": 2,
-        "main_items": []
-      },
-      "content": {
-        "recruiter": {
-          "text": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments, having built efficient, happy teams that translate complex technical challenges into clear business solutions.",
-          "image": {
-            "name": "hero.hr",
-            "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
-            "aspectRatio": "aspect-square"
-          }
-        },
-        "developer": {
-          "text": "My engineering philosophy centers on 'pixel-perfect' implementation and rigorous performance optimization. I don't just write code; I design systems. From configuring GitLab pipelines to setting up SonarCloud analysis, I ensure the development lifecycle is healthy. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
-          "image": {
-            "name": "hero.developer",
-            "imageAlt": "Serhii Hrudakov - Software Engineer",
-            "aspectRatio": "aspect-square"
-          }
-        },
-        "friend": {
-          "text": "When I'm not coding, I'm usually outside. I grew up next to the mountains, so snowboarding, ice climbing, and hiking are my go-to resets. I love organizing these trips because I enjoy sharing the beauty of nature with others. If I'm indoors, I'm probably tinkering with my smart home setup or trying a new recipe. I value open communication and try to be the person who brings confidence and positivity to the people around me.",
-          "image": {
-            "name": "hero.friend",
-            "imageAlt": "Serhii Hrudakov",
-            "aspectRatio": "aspect-square"
-          }
-        }
-      }
-    },
-    "soft-skills": {
-      "metadata": {
-        "title": "Soft Skills",
-        "icon": "diversity_3",
-        "order": 7,
-        "main_items": [
-          {
-            "type": "soft-skills",
-            "title": "Leadership & Management",
-            "icon": "groups",
-            "items": [
-              "Team Leadership (3-4 developers)",
-              "Hiring & Recruitment",
-              "Project Planning & Estimation",
-              "Code Review Management"
-            ]
-          },
-          {
-            "type": "soft-skills",
-            "title": "Communication",
-            "icon": "forum",
-            "items": [
-              "Client Communication",
-              "Cross-functional Collaboration",
-              "Technical Documentation",
-              "Stakeholder Management"
-            ]
-          },
-          {
-            "type": "soft-skills",
-            "title": "Personal Qualities",
-            "icon": "psychology",
-            "items": [
-              "Problem-solving",
-              "Attention to Detail",
-              "Initiative & Ownership",
-              "Continuous Learning"
-            ]
-          },
-          {
-            "type": "soft-skills",
-            "title": "Background & Education",
-            "icon": "school",
-            "items": [
-              "Master's in Computer Science",
-              "Sales Experience",
-              "Engineering Passion",
-              "Multicultural Experience"
-            ]
-          }
-        ]
-      },
-      "content": {
-        "recruiter": {
-          "text": "Beyond technical expertise, I bring proven leadership and communication skills. I've successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
-        },
-        "developer": {
-          "text": "I believe great engineering goes beyond code. I focus on clear documentation, thorough code reviews, and knowledge sharing. I'm detail-oriented when it comes to implementation—pixel-perfect UI and well-structured architecture matter to me. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications."
-        },
-        "friend": {
-          "text": "I genuinely enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others succeed. I'm curious by nature—always learning something new, whether it's a programming language or how to fix a motorcycle. I value honesty and try to create an environment where people feel comfortable asking questions."
-        }
-      }
-    },
     "contact": {
       "metadata": {
         "title": "Get In Touch",
         "icon": "mail",
-        "order": 8,
+        "order": 5,
         "main_items": [
           {
             "type": "email",

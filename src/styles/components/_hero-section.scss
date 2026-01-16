@@ -2,7 +2,11 @@
 @use '../base/mixins';
 
 .hero {
-  justify-content: space-around;
+  justify-content: center;
+
+  .section-visual-hero {
+    align-items: flex-start;
+  }
 
   .section-header--hero {
     display: flex;
