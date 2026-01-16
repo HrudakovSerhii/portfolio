@@ -235,6 +235,26 @@ class TemplateBuilder {
       return null;
     }
   }
+
+  renderGenerativeImage(aspectClass) {
+    const fragment = this._cloneTemplate('generative-image-template');
+    const container = fragment.querySelector('.generative-image');
+
+    if (!container) {
+      throw new Error('Generative image container not found in template');
+    }
+
+    if (aspectClass) {
+      container.classList.add(aspectClass);
+    }
+
+    return {
+      container,
+      highResImg: container.querySelector('.generative-image__high-res'),
+      overlay: container.querySelector('.generative-image__overlay'),
+      badge: container.querySelector('.generative-image__badge'),
+    };
+  }
 }
 
 export default TemplateBuilder;

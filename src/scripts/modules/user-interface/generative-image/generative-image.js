@@ -6,6 +6,7 @@ class GenerativeImage {
   };
 
   constructor(config = {}) {
+    this.templateBuilder = config.templateBuilder;
     this.highResSrc = config.highResSrc;
     this.lowResSrc = config.lowResSrc;
     this.alt = config.alt;
@@ -21,7 +22,7 @@ class GenerativeImage {
   }
 
   create() {
-    this._buildFromTemplate();
+    this._buildElements();
     this._configureImage();
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,21 +53,13 @@ class GenerativeImage {
     });
   }
 
-  _buildFromTemplate() {
-    const template = document.getElementById('generative-image-template');
-    if (!template) {
-      throw new Error('GenerativeImage: Template not found');
-    }
+  _buildElements() {
+    const elements = this.templateBuilder.renderGenerativeImage(this.aspectClass);
 
-    const clone = template.content.cloneNode(true);
-    this.container = clone.querySelector('.generative-image');
-    this.highResImg = clone.querySelector('.generative-image__high-res');
-    this.overlay = clone.querySelector('.generative-image__overlay');
-    this.badge = clone.querySelector('.generative-image__badge');
-
-    if (this.aspectClass) {
-      this.container.classList.add(this.aspectClass);
-    }
+    this.container = elements.container;
+    this.highResImg = elements.highResImg;
+    this.overlay = elements.overlay;
+    this.badge = elements.badge;
   }
 
   _configureImage() {

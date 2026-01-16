@@ -12,7 +12,7 @@ class SectionRenderer {
 
     this.sectionsContainer = null;
     this.actionPromptManager = null;
-    this.sectionAnimator = new SectionAnimator(animationController);
+    this.sectionAnimator = new SectionAnimator(animationController, templateBuilder);
   }
 
   initialize(sectionsContainerElement, sectionOrder, onActionPromptClick) {
@@ -192,6 +192,7 @@ class SectionRenderer {
     }
 
     const generativeImage = new GenerativeImage({
+      templateBuilder: this.templateBuilder,
       highResSrc: imageData.imageUrl,
       lowResSrc: imageData.lowResImageUrl || '',
       alt: imageData.imageAlt,

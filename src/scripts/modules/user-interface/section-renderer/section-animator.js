@@ -2,8 +2,9 @@ import { GenerativeImage } from '../generative-image/index.js';
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG } from './constants.js';
 
 class SectionAnimator {
-  constructor(animationController) {
+  constructor(animationController, templateBuilder) {
     this.animationController = animationController;
+    this.templateBuilder = templateBuilder;
     this.imageInstances = new WeakMap();
   }
 
@@ -55,6 +56,7 @@ class SectionAnimator {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const generativeImage = new GenerativeImage({
+      templateBuilder: this.templateBuilder,
       highResSrc: imageData.imageUrl,
       lowResSrc: imageData.lowResImageUrl || '',
       alt: imageData.imageAlt,
