@@ -7,7 +7,7 @@
 - **JSON**: Translation and content data storage
 
 ## Build System
-- **Node.js & npm**: Package management and build scripts
+- **Vite**: Vite utility to build and run application
 - **Sass compiler**: SCSS to CSS compilation
 - **Static hosting**: Designed for GitHub Pages deployment
 

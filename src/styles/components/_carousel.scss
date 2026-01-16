@@ -4,29 +4,69 @@
 .carousel {
   position: relative;
   width: 100%;
+  max-width: 100vw;
   overflow: hidden;
-  padding: 0 variables.$spacing-md;
+  padding: 0;
+
+  // CSS custom properties for JS centering calculation
+  --card-gap: #{variables.$spacing-sm};
+  --edge-fade-width: 3rem;
+
+  @include mixins.tablet {
+    --card-gap: #{variables.$spacing-md};
+    --edge-fade-width: 4rem;
+  }
+
+  @include mixins.desktop {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  // Gradient edge shadows (hidden on desktop where container is constrained)
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--edge-fade-width);
+    z-index: 2;
+    pointer-events: none;
+
+    @include mixins.desktop {
+      display: none;
+    }
+  }
 
   &__track {
     display: flex;
     transition: transform 300ms ease-in-out;
     will-change: transform;
+    gap: variables.$spacing-sm;
+
+    @include mixins.tablet {
+      gap: variables.$spacing-md;
+    }
   }
 
   &__item {
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
-    width: calc(100vw - #{variables.$spacing-md * 4});
-    max-width: 400px;
-    margin-right: variables.$spacing-md;
+    width: min(100%, 320px);
 
     @include mixins.tablet {
-      width: calc(50vw - #{variables.$spacing-md * 3});
-      max-width: 420px;
+      width: min(100%, 380px);
     }
 
     @include mixins.desktop {
-      width: calc(33.333vw - #{variables.$spacing-md * 2.5});
-      max-width: 450px;
+      width: 380px;
+      transition: transform variables.$transition-base;
+
+      &:hover {
+        transform: scale(1.05);
+        z-index: 1;
+      }
     }
 
     &--clone {
@@ -44,9 +84,10 @@
     justify-content: space-between;
     pointer-events: none;
     padding: 0 variables.$spacing-xs;
+    z-index: 3;
 
     @include mixins.tablet {
-      padding: 0 variables.$spacing-md;
+      padding: 0 variables.$spacing-sm;
     }
   }
 

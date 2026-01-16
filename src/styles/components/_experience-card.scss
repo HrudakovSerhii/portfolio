@@ -5,31 +5,43 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: variables.$spacing-md;
   border-radius: variables.$radius-lg;
   background-color: var(--color-surface);
   padding: variables.$spacing-lg;
   margin-bottom: variables.$spacing-md;
   border: 1px solid var(--color-border);
-  transition: border-color variables.$transition-fast;
+  transition: all variables.$transition-fast;
+  cursor: pointer;
 
   &:last-child {
     margin-bottom: 0;
   }
 
   &:hover {
-    border-color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+
+  &--open {
+    .experience-card__drawer {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: variables.$spacing-md;
+    }
+
+    .experience-card__cta {
+      &::before {
+        content: 'Show less';
+      }
+    }
   }
 
   &__header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
+    align-items: flex-start;
     gap: variables.$spacing-md;
-
-    @include mixins.desktop {
-      flex-direction: row;
-    }
   }
 
   &__info {
@@ -43,7 +55,7 @@
     height: variables.$spacing-2xl;
     border-radius: variables.$radius-md;
     border: 1px solid var(--color-border);
-    background-color: var(--color-bg-secondary);
+    background-color: #eff6ff;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -63,12 +75,24 @@
     object-fit: contain;
   }
 
+  &__title-group {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__role {
     color: var(--color-text);
     font-size: variables.$font-size-lg;
     font-weight: variables.$font-weight-bold;
     margin: 0;
     line-height: variables.$line-height-tight;
+  }
+
+  &__period {
+    color: var(--color-text-tertiary);
+    font-size: variables.$font-size-xs;
+    font-family: variables.$font-family-mono;
+    margin-top: variables.$spacing-xs;
   }
 
   &__company {
@@ -78,52 +102,32 @@
     margin: variables.$spacing-xs 0 0 0;
   }
 
-  &__meta {
+  &__cta {
+    color: var(--color-text-tertiary);
+    font-size: variables.$font-size-xs;
+    align-self: flex-end;
+    flex-shrink: 0;
+    transition: color variables.$transition-fast;
+
+    &::before {
+      content: 'Show more';
+    }
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  &__drawer {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height variables.$transition-base,
+                opacity variables.$transition-base,
+                margin-top variables.$transition-base;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: variables.$spacing-xs;
-
-    @include mixins.desktop {
-      align-items: flex-end;
-    }
-  }
-
-  &__period {
-    color: var(--color-text-tertiary);
-    font-size: variables.$font-size-sm;
-    font-family: variables.$font-family-mono;
-  }
-
-  &__impact-badge {
-    display: flex;
-    align-items: center;
-    gap: variables.$spacing-s;
-    background-color: var(--color-accent-subtle);
-    padding: variables.$spacing-xs variables.$spacing-sm;
-    border-radius: variables.$radius-sm;
-    border: 1px solid var(--color-accent-border);
-  }
-
-  &__impact-label {
-    font-size: variables.$font-size-xs;
-    text-transform: uppercase;
-    font-weight: variables.$font-weight-bold;
-    color: var(--color-accent);
-    letter-spacing: 0.05em;
-  }
-
-  &__stars {
-    display: flex;
-    color: var(--color-accent);
-  }
-
-  &__star {
-    font-size: 16px;
-
-    &--inactive {
-      opacity: 0.3;
-    }
+    gap: variables.$spacing-md;
   }
 
   &__description {
@@ -137,6 +141,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: variables.$spacing-xs;
-    margin-top: variables.$spacing-xs;
+    padding-top: variables.$spacing-md;
+    border-top: 1px solid var(--color-border);
   }
 }

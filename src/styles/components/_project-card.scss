@@ -40,14 +40,11 @@
   }
 
   &__title {
-    font-size: variables.$font-size-lg;
+    // Fluid: 1.125rem (18px) → 1.25rem (20px)
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
     font-weight: variables.$font-weight-bold;
     color: var(--color-text);
     margin-bottom: variables.$spacing-xs;
-
-    @include mixins.tablet {
-      font-size: variables.$font-size-xl;
-    }
   }
 
   &__date {

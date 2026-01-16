@@ -1,7 +1,7 @@
 const ANIMATION_CONFIG = {
   typewriter: {
-    defaultSpeed: 1,
-    navigationSpeed: 50,
+    defaultSpeed: 20,
+    navigationSpeed: 100,
     fastSpeed: 15
   },
   image: {

@@ -6,7 +6,6 @@ class TemplateBuilder {
       actionPrompt: null,
       navItem: null,
       loader: null,
-      typingIndicator: null,
       generativeImage: null,
       personalizationModal: null,
       roleChangeModal: null,
@@ -103,7 +102,6 @@ class TemplateBuilder {
     }
 
     layoutElement.classList.add('zig-zag-left');
-    section.style.justifyContent = 'center';
   }
 
   _setSectionContent(section, sectionData) {
@@ -187,16 +185,6 @@ class TemplateBuilder {
     return loader;
   }
 
-  renderTypingIndicator() {
-    const indicator = document.getElementById('typing-indicator');
-
-    if (!indicator) {
-      throw new Error('Typing indicator element not found in DOM');
-    }
-
-    return indicator;
-  }
-
   renderPersonalizationModal() {
     const fragment = this._cloneTemplate('personalization-modal-template');
     const modal = fragment.querySelector('.modal-overlay');
@@ -246,6 +234,26 @@ class TemplateBuilder {
       console.warn(`Meta item template "${templateId}" not found`);
       return null;
     }
+  }
+
+  renderGenerativeImage(aspectClass) {
+    const fragment = this._cloneTemplate('generative-image-template');
+    const container = fragment.querySelector('.generative-image');
+
+    if (!container) {
+      throw new Error('Generative image container not found in template');
+    }
+
+    if (aspectClass) {
+      container.classList.add(aspectClass);
+    }
+
+    return {
+      container,
+      highResImg: container.querySelector('.generative-image__high-res'),
+      overlay: container.querySelector('.generative-image__overlay'),
+      badge: container.querySelector('.generative-image__badge'),
+    };
   }
 }
 

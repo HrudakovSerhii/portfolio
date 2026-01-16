@@ -164,17 +164,6 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
     });
   });
 
-  describe('renderTypingIndicator', () => {
-    it('should return existing typing indicator from DOM', () => {
-      const indicator = templateBuilder.renderTypingIndicator();
-
-      expect(indicator.id).toBe('typing-indicator');
-      expect(indicator.querySelector('.typing-dot')).toBeTruthy();
-
-      expect(indicator.outerHTML).toMatchSnapshot();
-    });
-  });
-
   describe('renderPersonalizationModal', () => {
     it('should render personalization modal with glass effect', () => {
       const modal = templateBuilder.renderPersonalizationModal();
@@ -245,9 +234,5 @@ describe('TemplateBuilder - Snapshot Tests with Real Templates', () => {
       });
     });
 
-    it('should have typing indicator in DOM', () => {
-      const indicator = document.getElementById('typing-indicator');
-      expect(indicator).toBeTruthy();
-    });
   });
 });

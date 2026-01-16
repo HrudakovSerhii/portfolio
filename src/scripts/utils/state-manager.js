@@ -1,4 +1,4 @@
-export const SECTION_ORDER = ['hero', 'experience', 'skills', 'soft-skills', 'projects', 'about', 'contact'];
+export const SECTION_ORDER = ['hero', 'experience', 'skills', 'soft-skills', 'projects', 'contact'];
 
 const VALID_ROLES = ['recruiter', 'developer', 'friend'];
 const VALID_THEMES = ['light', 'dark'];

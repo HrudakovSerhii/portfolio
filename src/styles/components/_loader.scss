@@ -37,41 +37,6 @@
   animation: pulse 2s ease-in-out infinite;
 }
 
-.typing-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: variables.$spacing-sm;
-  padding: variables.$spacing-md variables.$spacing-lg;
-  background: var(--color-surface);
-  border-radius: variables.$radius-lg;
-  margin: variables.$spacing-lg 0;
-
-  .typing-text {
-    font-size: variables.$font-size-base;
-    color: var(--color-text-secondary);
-  }
-}
-
-.typing-dot {
-  width: variables.$spacing-xs;
-  height: variables.$spacing-xs;
-  background: var(--color-accent);
-  border-radius: variables.$radius-full;
-  animation: pulse 1.4s ease-in-out infinite;
-
-  &:nth-child(1) {
-    animation-delay: 0s;
-  }
-
-  &:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .loader-spinner {
     animation: none;
@@ -79,11 +44,6 @@
   }
 
   .loader-text {
-    animation: none;
-    opacity: 1;
-  }
-
-  .typing-dot {
     animation: none;
     opacity: 1;
   }
