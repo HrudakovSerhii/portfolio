@@ -70,8 +70,6 @@ class MetaItemRenderer {
     }
 
     switch (sectionId) {
-      case 'hero':
-        return this._populateLinkItem(fragment, item);
       case 'about':
         return this._populateTagItem(fragment, item);
       case 'skills':

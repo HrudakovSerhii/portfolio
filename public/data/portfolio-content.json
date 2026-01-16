@@ -14,17 +14,7 @@
       "metadata": {
         "title": "Welcome",
         "icon": "home",
-        "order": 1,
-        "main_items": [
-          {
-            "type": "link",
-            "title":  "Download resume PDF",
-            "props": {
-              "url": "data/CV_Hrudakov_2025.pdf",
-              "type": "download"
-            }
-          }
-        ]
+        "order": 1
       },
       "content": {
         "recruiter": {

@@ -183,6 +183,27 @@
   }
 }
 
+.header-download-btn {
+  width: auto;
+  gap: variables.$spacing-xs;
+  padding: 0 variables.$spacing-sm;
+  text-decoration: none;
+
+  .header-download-icon {
+    font-size: 18px;
+  }
+
+  .header-download-text {
+    font-size: variables.$font-size-xs;
+    font-weight: 500;
+    white-space: nowrap;
+
+    @include mixins.mobile {
+      display: none;
+    }
+  }
+}
+
 .header-language-select {
   position: relative;
   display: flex;
