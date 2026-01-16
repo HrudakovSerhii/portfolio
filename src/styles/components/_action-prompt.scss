@@ -5,8 +5,8 @@
   position: relative;
   bottom: 0;
   margin: 0 auto variables.$spacing-md auto;
+  opacity: 0;
   visibility: hidden;
-  transition: opacity variables.$transition-base, visibility variables.$transition-base;
 
   @include mixins.desktop {
     margin: 0 auto variables.$spacing-lg auto;
@@ -15,5 +15,6 @@
   &.action-prompt--visible {
     opacity: 1;
     visibility: visible;
+    transition: opacity variables.$transition-medium, visibility variables.$transition-medium;
   }
 }

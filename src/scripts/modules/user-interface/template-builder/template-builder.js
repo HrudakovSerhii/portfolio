@@ -103,7 +103,6 @@ class TemplateBuilder {
     }
 
     layoutElement.classList.add('zig-zag-left');
-    section.style.justifyContent = 'center';
   }
 
   _setSectionContent(section, sectionData) {
