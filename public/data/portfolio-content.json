@@ -46,7 +46,7 @@
           }
         },
         "friend": {
-          "text": "Designing imagination always been my dream. With code it's became reality",
+          "text": "Code is a magic tool that helps to bring ideas to life",
           "subText": "An engineer at heart ready to tackle tasks with head and hands. Believe that using rusty set of tools in garage and keyboard has a lot of in commot as both are instruments to create. Both are tools to do what you love.",
           "image": {
             "name": "hero.friend",
@@ -461,7 +461,7 @@
       },
       "content": {
         "recruiter": {
-          "text": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship—I believe the best way to master a skill is to teach it. I thrive in multicultural environments, having built efficient, happy teams that translate complex technical challenges into clear business solutions.",
+          "text": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments, having built efficient, happy teams that translate complex technical challenges into clear business solutions.",
           "image": {
             "name": "hero.hr",
             "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",

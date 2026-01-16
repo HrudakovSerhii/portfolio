@@ -151,3 +151,21 @@
     }
   }
 }
+
+@mixin animation-sqwizz {
+  @media (prefers-reduced-motion: no-preference) {
+    height: 100%;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      height variables.$transition-slow,
+      opacity variables.$transition-slow,
+      visibility variables.$transition-slow;
+
+    &.sqwizzed {
+      height: 0;
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+}

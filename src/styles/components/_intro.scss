@@ -6,16 +6,18 @@
   align-items: center;
   gap: variables.$spacing-xl;
   z-index: variables.$z-nav;
-  min-height: calc(100vh - 3rem) !important;
+  min-height: calc(100vh - 3rem);
+  height: 100%;
   overflow: hidden;
-  transition: max-height 1s ease-in-out;
+  transition: height 3s ease-in-out;
 
   @include mixins.desktop {
-    min-height: calc(100vh - 4rem) !important;
+    min-height: calc(100vh - 4rem)t;
   }
 
-  &.invisible {
-    max-height: 0;
+  @include mixins.animation-sqwizz;
+
+  &.sqwizzed {
     min-height: 0;
   }
 

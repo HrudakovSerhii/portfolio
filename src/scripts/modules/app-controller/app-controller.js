@@ -9,6 +9,7 @@ import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
+const INTRO_TRANSITION_DURATION = 400;
 
 const ELEMENT_IDS = {
   initialLoader: 'initial-loader',
@@ -236,15 +237,36 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      if (this.elements.introSection) {
-        this.elements.introSection.classList.add('hidden');
-      }
-
+      await this._hideIntroSection();
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
     }
+  }
+
+  _hideIntroSection() {
+    return new Promise((resolve) => {
+      if (!this.elements.introSection) {
+        resolve();
+        return;
+      }
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        this.elements.introSection.classList.add('hidden');
+        resolve();
+        return;
+      }
+
+      this.elements.introSection.classList.add('sqwizzed');
+
+      setTimeout(() => {
+        this.elements.introSection.classList.add('hidden');
+        resolve();
+      }, INTRO_TRANSITION_DURATION);
+    });
   }
 
   _resetPortfolioState() {
