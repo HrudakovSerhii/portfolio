@@ -139,3 +139,15 @@
     transform: scaleX(1);
   }
 }
+
+// Hide element during animation, show immediately if reduced motion preferred
+@mixin animation-hidden {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: opacity variables.$transition-medium, visibility variables.$transition-medium;
+
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+}

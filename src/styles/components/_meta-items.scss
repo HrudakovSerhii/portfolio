@@ -2,8 +2,9 @@
 @use '../base/mixins';
 
 .section-meta-items {
+  @include mixins.animation-hidden;
   margin: variables.$spacing-lg auto variables.$spacing-lg;
-  
+
   &.default-meta-items {
     display: flex;
     gap: variables.$spacing-xs;
@@ -38,6 +39,10 @@
       width: 100%;
     }
   }
+}
+
+.section-carousel-meta-items {
+  @include mixins.animation-hidden;
 }
 
 .meta-tag {

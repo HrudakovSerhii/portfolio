@@ -38,6 +38,7 @@ class SectionRenderer {
 
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
+      this._revealMetaItems(sectionElement);
       this.actionPromptManager.hideTyping(sectionId);
 
       this.stateManager.addRevealedSection(sectionId);
@@ -59,6 +60,7 @@ class SectionRenderer {
     this._populateSubText(sectionElement, sectionContent.subText);
     this._populateImage(sectionElement, sectionContent.image);
     this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
+    this._revealMetaItems(sectionElement);
 
     this._updateActionPrompt(sectionId);
   }
@@ -118,6 +120,8 @@ class SectionRenderer {
       return;
     }
 
+    metaItemsContainer.classList.add('hidden');
+
     metaItemRenderer.renderInCarousel(metaItemsContainer, sectionId, sectionMetadata.mainItems);
   }
 
@@ -128,10 +132,25 @@ class SectionRenderer {
       return;
     }
 
+    metaItemsContainer.classList.add('hidden');
+
     const renderedItems = metaItemRenderer.render(sectionId, sectionMetadata.mainItems, role);
 
     if (renderedItems) {
       metaItemsContainer.appendChild(renderedItems);
+    }
+  }
+
+  _revealMetaItems(sectionElement) {
+    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
+    const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
+
+    if (metaItemsContainer) {
+      metaItemsContainer.classList.remove('hidden');
+    }
+
+    if (carouselContainer) {
+      carouselContainer.classList.remove('hidden');
     }
   }
 
