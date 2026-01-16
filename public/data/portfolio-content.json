@@ -213,64 +213,70 @@
         "order": 3,
         "main_items": [
           {
+            "type":"skills",
+            "name": "JavaScript, Node",
+            "years": "10+",
+            "icon": "languages"
+          },
+          {
             "type": "skills",
             "name": "TypeScript",
             "years": "7+",
-            "icon": "typescript"
+            "icon": "lanuages"
           },
           {
             "type": "skills",
-            "name": "React Ecosystem",
+            "name": "React",
             "years": "7+",
-            "icon": "react"
+            "icon": "library"
           },
           {
             "type": "skills",
-            "name": "Node.js / NestJS",
+            "name": "NestJS",
             "years": "5+",
-            "icon": "nodejs"
+            "icon": "framework"
           },
           {
             "type": "skills",
             "name": "NextJS",
             "years": "3+",
-            "icon": "nextjs"
+            "icon": "framework"
           },
           {
             "type": "skills",
             "name": "HTML/CSS/SCSS",
             "years": "10+",
-            "icon": "html5"
-          },
-          {
-            "type": "skills",
-            "name": "Python",
-            "years": "2+",
-            "icon": "python"
+            "icon": "Web Basics"
           },
           {
             "type": "skills",
             "name": "GraphQL / REST API",
             "years": "5+",
-            "icon": "graphql"
+            "icon": "API"
           },
           {
             "type": "skills",
-            "name": "Redux / Zustand",
+            "name": "Redux / Zustand / Context",
             "years": "5+",
-            "icon": "redux"
+            "icon": "state Managers"
           },
           {
             "type": "skills",
-            "name": "Testing (Playwright/Jest)",
+            "name": "Playwright / Vitest",
+            "years": "3+",
+            "icon": "testing"
+          },
+                    {
+            "type": "skills",
+            "name": "RTL / Vitest",
             "years": "3+",
             "icon": "testing"
           },
           {
             "type": "skills",
-            "name": "DevOps (Azure/GitLab)",
+            "name": "Azure / GitLab",
             "years": "3+",
-            "icon": "azure"
+            "icon": "DevOps"
           },
           {
             "type": "skills",
@@ -280,7 +286,7 @@
           },
           {
             "type": "skills",
-            "name": "SQL (MySQL/PostgreSQL)",
+            "name": "MySQL / MongoDB",
             "years": "5+",
             "icon": "database"
           }

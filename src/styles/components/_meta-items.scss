@@ -2,7 +2,7 @@
 @use '../base/mixins';
 
 .section-meta-items {
-  margin: variables.$spacing-lg 0 variables.$spacing-lg;
+  margin: variables.$spacing-lg auto variables.$spacing-lg;
   
   &.default-meta-items {
     display: flex;
@@ -18,12 +18,12 @@
   }
 
   &.skills-meta-items {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
     gap: variables.$spacing-xs;
 
     @include mixins.tablet {
-      grid-template-columns: repeat(3, 1fr);
       gap: variables.$spacing-md;
     }
   }
@@ -93,7 +93,7 @@
   display: flex;
   flex-direction: column;
   gap: variables.$spacing-xs;
-  padding: variables.$spacing-md;
+  padding: variables.$spacing-xs;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: variables.$radius-lg;
@@ -107,6 +107,7 @@
 
   @include mixins.tablet {
     min-width: 160px;
+    padding: variables.$spacing-md;
   }
 }
 
