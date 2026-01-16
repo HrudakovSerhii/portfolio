@@ -51,6 +51,13 @@
     }
   }
 
+  &__cta-text {
+    max-width: 400px;
+    // Fluid: 1rem (16px) → 1rem (20px)
+    font-size: clamp(1rem, 1rem + 0.5vw, 1rem);
+    color: var(--color-text-secondary);
+  }
+
   &__story-context {
     display: flex;
     gap: variables.$spacing-md;
