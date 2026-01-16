@@ -1,3 +1,5 @@
+import HeartEffect from '../heart-effect/heart-effect.js';
+
 class GenerativeImage {
   static DEFAULTS = {
     ANIMATION_CLEANUP_DELAY: 100,
@@ -24,6 +26,9 @@ class GenerativeImage {
   create() {
     this._buildElements();
     this._configureImage();
+
+    // Attach heart click effect to the container
+    HeartEffect.attachTo(this.container);
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const shouldSkipAnimation = !this.shouldAnimate || prefersReducedMotion;

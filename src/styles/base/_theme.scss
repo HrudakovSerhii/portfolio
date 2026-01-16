@@ -95,6 +95,10 @@
   // Gradient colors
   --gradient-blue-purple-from: #2563eb; // blue-600
   --gradient-blue-purple-to: #9333ea; // purple-600
+
+  // Ukraine flag colors (for heart effect)
+  --color-ua-blue: #0057B8;
+  --color-ua-yellow: #FFD700;
 }
 
 // Dark Theme
@@ -191,4 +195,8 @@
   // Gradient colors (same as light)
   --gradient-blue-purple-from: #2563eb;
   --gradient-blue-purple-to: #9333ea;
+
+  // Ukraine flag colors (same as light)
+  --color-ua-blue: #0057B8;
+  --color-ua-yellow: #FFD700;
 }

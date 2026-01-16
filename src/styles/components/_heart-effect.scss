@@ -1,0 +1,40 @@
+@use '../base/variables';
+
+// Hearts spawn inside .generative-image which already has position: relative
+
+.heart-effect {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  font-size: variables.$font-size-4xl; // 36px
+  line-height: 1;
+  pointer-events: none;
+  z-index: variables.$z-modal-overlay;
+  animation: heart-fly 3s ease-out forwards;
+
+  &--yellow {
+    color: var(--color-ua-yellow);
+  }
+
+  &--blue {
+    color: var(--color-ua-blue);
+  }
+}
+
+@keyframes heart-fly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--fly-x), var(--fly-y)) scale(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart-effect {
+    animation: none;
+    display: none;
+  }
+}
