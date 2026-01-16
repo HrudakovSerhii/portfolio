@@ -72,6 +72,26 @@ class ActionPromptManager {
     promptElement.classList.remove('action-prompt--visible');
   }
 
+  showTyping(sectionId) {
+    const promptElement = this.sectionPrompts.get(sectionId);
+
+    if (!promptElement) {
+      return;
+    }
+
+    promptElement.classList.add('action-prompt--typing');
+  }
+
+  hideTyping(sectionId) {
+    const promptElement = this.sectionPrompts.get(sectionId);
+
+    if (!promptElement) {
+      return;
+    }
+
+    promptElement.classList.remove('action-prompt--typing');
+  }
+
   getNextSectionId(currentSectionId) {
     const currentIndex = this.sectionOrder.indexOf(currentSectionId);
     return this.sectionOrder[currentIndex + 1] || null;

@@ -17,7 +17,6 @@ const ELEMENT_IDS = {
   themeToggle: 'theme-toggle',
   // languageSelector: 'language-selector',
   mainContent: 'main-content',
-  typingIndicator: 'typing-indicator',
   introSection: 'intro-section',
 };
 
@@ -54,7 +53,6 @@ class AppController {
       // languageSelector: null,
       mainContent: null,
       introSection: null,
-      typingIndicator: null,
     };
 
     this.initialized = false;
@@ -84,7 +82,6 @@ class AppController {
 
       this.sectionRenderer.initialize(
         this.elements.mainContent,
-        this.elements.typingIndicator,
         SECTION_ORDER,
         (nextSectionId) => this.revealSection(nextSectionId, '')
       );
@@ -118,7 +115,6 @@ class AppController {
     // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
-    this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
   }
 
   _validateCachedElements(criticalElementKeys) {
@@ -291,10 +287,6 @@ class AppController {
 
   _handleRevealSectionFailure(sectionId, error) {
     console.error(`Failed to reveal section "${sectionId}":`, error);
-
-    if (this.elements.typingIndicator) {
-      this.elements.typingIndicator.style.display = 'none';
-    }
   }
 }
 

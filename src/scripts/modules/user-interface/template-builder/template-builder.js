@@ -6,7 +6,6 @@ class TemplateBuilder {
       actionPrompt: null,
       navItem: null,
       loader: null,
-      typingIndicator: null,
       generativeImage: null,
       personalizationModal: null,
       roleChangeModal: null,
@@ -184,16 +183,6 @@ class TemplateBuilder {
     }
 
     return loader;
-  }
-
-  renderTypingIndicator() {
-    const indicator = document.getElementById('typing-indicator');
-
-    if (!indicator) {
-      throw new Error('Typing indicator element not found in DOM');
-    }
-
-    return indicator;
   }
 
   renderPersonalizationModal() {

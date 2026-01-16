@@ -1,6 +1,5 @@
 import { GenerativeImage } from '../generative-image/index.js';
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
-import TypingIndicator from './typing-indicator.js';
 import ActionPromptManager from './action-prompt-manager.js';
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
@@ -12,21 +11,17 @@ class SectionRenderer {
     this.templateBuilder = templateBuilder;
 
     this.sectionsContainer = null;
-    this.typingIndicator = null;
     this.actionPromptManager = null;
     this.sectionAnimator = new SectionAnimator(animationController);
   }
 
-  initialize(sectionsContainerElement, typingIndicatorElement, sectionOrder, onActionPromptClick) {
+  initialize(sectionsContainerElement, sectionOrder, onActionPromptClick) {
     this.sectionsContainer = sectionsContainerElement;
-    this.typingIndicator = new TypingIndicator(typingIndicatorElement);
     this.actionPromptManager = new ActionPromptManager(this.templateBuilder, sectionOrder);
     this.actionPromptManager.initialize(onActionPromptClick);
   }
 
   async reveal(sectionId, role, customQuery = '') {
-    this.typingIndicator.show();
-
     try {
       const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role, customQuery);
       const profileData = await this._fetchProfileData();
@@ -39,15 +34,18 @@ class SectionRenderer {
 
       this._scrollToSection(sectionElement);
 
+      this.actionPromptManager.showTyping(sectionId);
+
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
+
+      this.actionPromptManager.hideTyping(sectionId);
 
       this.stateManager.addRevealedSection(sectionId);
 
       this._updateActionPrompt(sectionId);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
-    } finally {
-      this.typingIndicator.hide();
+      this.actionPromptManager.hideTyping(sectionId);
     }
   }
 

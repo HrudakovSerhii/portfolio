@@ -152,12 +152,6 @@
       <p class="intro__cta-prompt">Which path speaks to you?</p>
     </section>
 
-    <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" style="display: none;">
-      <span class="typing-dot"></span>
-      <span class="typing-dot"></span>
-      <span class="typing-dot"></span>
-      <span class="typing-text">Generating content...</span>
-    </div>
   </main>
 
   <footer class="footer" role="contentinfo">
@@ -343,6 +337,11 @@
 
   <template id="action-prompt-template">
     <div class="action-prompt" role="region" aria-label="Section interaction">
+      <div class="typing-indicator" role="status" aria-live="polite">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      </div>
       <button
               class="button prompt-button"
               aria-label="Submit prompt"
