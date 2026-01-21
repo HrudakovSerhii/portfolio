@@ -1,7 +1,7 @@
 {
   "profile": {
     "name": "Serhii Hrudakov",
-    "title": "Lead Frontend Developer",
+    "title": "Senior Frontend Engineer",
     "email": "hrudakovserhii@gmail.com",
     "phone": "+31614848082",
     "location": "Purmerend, Netherlands",
@@ -19,16 +19,16 @@
       "content": {
         "recruiter": {
           "text": "Helping to build scalable Frontend and happy Teams",
-          "subText": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments, having built efficient, happy teams that translate complex technical challenges into clear business solutions.",
+          "subText": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments, contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions.",
           "image": {
             "name": "hero.hr",
-            "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
+            "imageAlt": "Serhii Hrudakov - Senior Frontend Developer",
             "aspectRatio": "aspect-square"
           }
         },
         "developer": {
-          "text": "On a mission `Impossible` to keep codebases scalable and maintainable",
-          "subText": "My engineering philosophy centers on 'pixel-perfect' implementation and rigorous performance optimization. I don't just write code; I design systems. From configuring GitLab pipelines to setting up SonarCloud analysis, I ensure the development lifecycle is healthy. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
+          "text": "On a mission `Impossible` to make complex codebases simple and maintainable",
+          "subText": "My approach is simple: code must be easy to understand, does not matter how complex it is. This helped me to build various systems where each little detail matter: from creating reusable component and functions to configure quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
           "image": {
             "name": "hero.developer",
             "imageAlt": "Serhii Hrudakov - Software Engineer",
@@ -37,7 +37,7 @@
         },
         "friend": {
           "text": "Code is a magic tool that helps to bring ideas to life",
-          "subText": "I am an engineer at heart ready to tackle tasks with head and hands. I believe that using rusty set of tools in garage and keyboard has a lot of in commot as both are instruments to create. Both are tools to do what you love.",
+          "subText": "I am an engineer at heart ready to tackle tasks with head and hands. I believe that using rusty set of tools in garage and keyboard has a lot of in commot: both are instruments to create. Both are tools to help you to do what you love.",
           "image": {
             "name": "hero.friend",
             "imageAlt": "Serhii Hrudakov",
@@ -59,7 +59,7 @@
             "company": "Mobiquity (Hexaware)",
             "period": "Jul 2023 - Oct 2025",
             "impactScore": 9,
-            "description": "Led frontend teams for banking and dating platforms (60% coding / 40% management). Developed Banking AI Agents using LangChain & Python. Architected NX monorepos for dating platforms and implemented a BFF strategy for safety notification systems.",
+            "description": "Led Frontend team for various clients projects in Banking, Social Network and Notifications platforms. Architected NX monorepos for multiple client solutions that required common style and features. Defined team goals and worked on specifications to help team get onboard faster. Navigated clients in feature implementation plan to find best returned value.",
             "technologies": [
               "React",
               "TypeScript",
@@ -80,7 +80,7 @@
             "company": "Erics Digital",
             "period": "Jun 2021 - Jun 2023",
             "impactScore": 8,
-            "description": "Led the 'strangler-fig' migration from a WebSphere monolith to a Headless React architecture. Managed a team of 3 developers, improved SEO (Lighthouse) scores, and implemented custom translation tools.",
+            "description": "Took over and led Web-Shop Frontend migration from a monolith to a micro frontend architecture. Managed a team of 3 developers and 2 QA Engineers from code review to tasks estimation and assigment. Resolved complex problem with state sync across the apps. Improved SEO (Lighthouse) scores and webshop navigation to get top positions in search engines",
             "technologies": [
               "React",
               "Redux Saga",
@@ -99,7 +99,7 @@
             "company": "A-Dam",
             "period": "Jan 2020 - Feb 2021",
             "impactScore": 8,
-            "description": "Developed a web-shop platform that increased brand yearly revenue by over 100%. Migrated the application stack to NestJS for performance boosts and client retention. Built a B2B bulk purchase system.",
+            "description": "Developed a Web-Shop application to extend traditional retail sales. Archived brand yearly revenue by over 100%+ after first release. After one year we migrated the application stack to NestJS to get best SEO scores and performance boosts. This helped to increase client retention and to grow sales via social media commercial campaigns. Built a B2B bulk purchase system on a base of Web-Shop",
             "technologies": [
               "React",
               "NextJS",
@@ -114,11 +114,11 @@
           {
             "type": "experience",
             "id": "digitalchefs",
-            "role": "Middle Frontend Engineer",
+            "role": "Frontend Engineer",
             "company": "DigitalChefs",
             "period": "Sep 2018 - Jan 2020",
             "impactScore": 6,
-            "description": "Developed offline-first React Native apps for KLM cabin crew performance support. Built Tax Adviser app with multi-user support and created reusable component libraries to reduce repetitive tasks.",
+            "description": "Developed number of client applications using React Native and React. Was responsible for extending components library used to resolve at a time common issues (Navigation, Animation) with in ReactNative infrastructure. Supported new developer onboarding process and release management",
             "technologies": [
               "React Native",
               "Express",
@@ -136,7 +136,7 @@
             "company": "ABiggerCircle",
             "period": "Feb 2017 - Sep 2018",
             "impactScore": 5,
-            "description": "Contributed to a marketing campaign builder platform and the SODA social media monitor. Developed embedded entertainment system modules for automotive and marine closed-network environments.",
+            "description": "Contributed to development of in-house Web platform by implementing UI and tools. Marketing team has lead delivered features testing to get best speed/experience ratio when platform was used to build marketing campaign. Aside of main product, I have also developed embedded entertainment system for marine closed-network environments.",
             "technologies": [
               "PHP",
               "Laravel",
@@ -154,7 +154,7 @@
             "company": "IT-Transit",
             "period": "Mar 2015 - Nov 2016",
             "impactScore": 4,
-            "description": "Developed landscape measurement and pipe inspection tools for the Oil & Gas industry. Implemented REST APIs to connect client services and generate renovation progress statistics.",
+            "description": "Developed landscape measurement and pipe inspection tools for the Oil & Gas industry. Worked closely with engineers and business analysts to integrate tools and utilities strictly following industry requirements. Migrated previously developed tools to JavaScript from ActionScript",
             "technologies": [
               "JavaScript",
               "Flex",
@@ -171,7 +171,7 @@
             "company": "Luxoft",
             "period": "Oct 2014 - Mar 2015",
             "impactScore": 3,
-            "description": "Support senior developers on feature development. Management of team Git Repo and code review process. Transforming Flash screens to HTML templates",
+            "description": "Supported project leads on feature development. Developed screen scanner feature to copy design details from AC3 Flash files to HTML templates. Tested features on device by installing updates and manually verify end results.",
             "technologies": [
               "Flash",
               "ActionScript",
@@ -186,13 +186,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "My recent role at Mobiquity involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%). Previously, at Erics Digital, I led the strangler-fig migration of a massive e-commerce monolith to a modern headless architecture. At A-Dam, I delivered a customized web-shop platform that increased yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
+          "text": "My recent role at Mobiquity (Hexaware) involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%) and writing specifications and release notes. Previously, at EricsDigital, I led migration of a massive e-commerce monolith to a modern micro-frontend architecture. At A-Dam, I delivered a in-house designed web-shop platform and reached a goal of increasing yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
         },
         "developer": {
-          "text": "At Mobiquity, I architected NX monorepos to share UI libraries across dating apps and built complex chat interfaces for AI agents using LangChain and WebSockets. At Erics Digital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state and optimizing for Google Core Web Vitals. I also have deep experience with React Native, building offline-first apps for KLM crew members."
+          "text": "At Mobiquity (Hexaware), I architected NX monorepos to share UI and feature libraries across client apps and built complex chat interfaces for AI agents. At EricsDigital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state management and optimizing for Google Core Web Vitals. I also have good experience with ReactNative, building offline-first apps for KLM crew members. I had worked in different team structures and delivered solutions thru number of pipelines. "
         },
         "friend": {
-          "text": "I've had some wild jobs. I've built systems for luxury ships in the middle of the ocean and the iPad app that KLM flight attendants use to serve your meals. My time at A-Dam was intense—we doubled revenue, and I learned how to handle the pressure of Black Friday traffic. I love roles where I can take initiative, like when I led my first successful hiking trip and realized I enjoyed 'organizing chaos'."
+          "text": "While software development is my main job I had never stop building other systems. From smart home solutions to bind Tado, Hue and ZigBee environments under single interface to building complex home networks to get best possible speed across devices. I love engineering and I can't imagine my-self in other roles. To take initiative, to take a lead, to propose solution - this is challenges I prefer. And in a free time, organize hiking trip and enjoy outdoor and nature"
         }
       }
     },
@@ -206,31 +206,31 @@
             "type":"skills",
             "name": "JavaScript, Node",
             "years": "10+",
-            "icon": "languages"
+            "icon": "Language"
           },
           {
             "type": "skills",
             "name": "TypeScript",
             "years": "7+",
-            "icon": "lanuages"
+            "icon": "Language"
           },
           {
             "type": "skills",
             "name": "React",
             "years": "7+",
-            "icon": "library"
+            "icon": "Library"
           },
           {
             "type": "skills",
             "name": "NestJS",
             "years": "5+",
-            "icon": "framework"
+            "icon": "Framework"
           },
           {
             "type": "skills",
             "name": "NextJS",
             "years": "3+",
-            "icon": "framework"
+            "icon": "Framework"
           },
           {
             "type": "skills",
@@ -248,19 +248,19 @@
             "type": "skills",
             "name": "Redux / Zustand / Context",
             "years": "5+",
-            "icon": "state Managers"
+            "icon": "React State Management"
           },
           {
             "type": "skills",
             "name": "Playwright / Vitest",
             "years": "3+",
-            "icon": "testing"
+            "icon": "Testing"
           },
                     {
             "type": "skills",
             "name": "RTL / Vitest",
             "years": "3+",
-            "icon": "testing"
+            "icon": "Testing"
           },
           {
             "type": "skills",
@@ -272,25 +272,25 @@
             "type": "skills",
             "name": "Docker",
             "years": "3+",
-            "icon": "docker"
+            "icon": "Containerisation"
           },
           {
             "type": "skills",
             "name": "MySQL / MongoDB",
             "years": "5+",
-            "icon": "database"
+            "icon": "Database"
           }
         ]
       },
       "content": {
         "recruiter": {
-          "text": "I possess a comprehensive technical toolkit anchored in TypeScript, React, and Node.js. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities, often splitting my time 60/40 between coding and management to ensure delivery and team health."
+          "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with Vanilla JS and complex long lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities, often splitting my time 60/40 between coding and management to ensure delivery and team health."
         },
         "developer": {
-          "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state. I prioritize reliability through end-to-end testing with Playwright and Jest snapshots. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
+          "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidate. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
         },
         "friend": {
-          "text": "I geek out on the latest tech. Right now, I'm using Cursor and local LLMs to build a custom smart home dashboard. I care deeply about the details—getting that CSS pixel-perfect or optimizing a Docker build is genuinely satisfying to me. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a car engine works."
+          "text": "I geek out on the latest tech. Right now, I'm using fully local LLMs to build a custom smart home dashboard. I care deeply about the UI details but would never trade it for performance as both are critical in providing best user experience. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a browser engine works."
         }
       }
     },
@@ -348,13 +348,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "Beyond technical expertise, I bring proven leadership and communication skills. I've successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+          "text": "Beyond technical expertise, I always try bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
         },
         "developer": {
-          "text": "I believe great engineering goes beyond code. I focus on clear documentation, thorough code reviews, and knowledge sharing. I'm detail-oriented when it comes to implementation—pixel-perfect UI and well-structured architecture matter to me. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications."
+          "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation and utilising best developer tools. I'm detail-oriented when it comes to UX implementation and well-structured architecture matter to me the most. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications. I know that senior role is not only about memorising framework code, but to see system and structure under requirements."
         },
         "friend": {
-          "text": "I genuinely enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others succeed. I'm curious by nature—always learning something new, whether it's a programming language or how to fix a motorcycle. I value honesty and try to create an environment where people feel comfortable asking questions."
+          "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others to get to the best results. I'm curious by nature and always learning from others, whether it's a junior with fresh look on familiar things or 100 years senior who punch holes to save code with needle on punch-cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
         }
       }
     },
@@ -369,7 +369,7 @@
             "title": "Personal portfolio of Serhii",
             "link": "https://github.com/HrudakovSerhii/portfolio",
             "date": "Nov 2025 - Jan 2026",
-            "description": "Simple but features rich VanillaJS portfolio website to replace traditional CV with tailored story path and AI text generation.",
+            "description": "Simple but features rich VanillaJS portfolio website to replace traditional CV with tailored story path and AI text generation. You viewing it now!",
             "stack": [
               "JavaScript",
               "HTML",
@@ -387,7 +387,7 @@
             "title": "TV Show Explorer",
             "link": "https://github.com/HrudakovSerhii/tv-show-explorer",
             "date": "Jan 2026 - Jan 2026",
-            "description": "Developed a simple NextJS application for client demo project. Design was generated using Google Stitch and later implemented in SSR components using App Router",
+            "description": "Developed a simple NextJS application for client demo project. Design was generated using Google Stitch and later implemented in custom SSR components and routed with App Router",
             "stack": [
               "React",
               "NextJS",
@@ -402,7 +402,7 @@
             "type": "project",
             "title": "ChatAgent AI (Banking)",
             "date": "Jun 2025 - Oct 2025",
-            "description": "Developed a custom UI for an AI-powered banking assistant. Integrated WebSocket communication with a Python/LangChain backend and used AgGrid for complex data rendering.",
+            "description": "Developed Frontend Application for an AI-powered banking assistant platform. With goal to display complex data structures provided by model response implemented parser layer and contributed to model system prompt to get best possible predictive response.",
             "stack": [
               "React",
               "Python",
@@ -416,7 +416,7 @@
             "type": "project",
             "title": "Bonfire Dating Platform",
             "date": "Aug 2024 - May 2025",
-            "description": "Led the frontend for a white-label dating app using an NX monorepo. Implemented Zod for validation, Axios interceptors for middleware routing, and SonarCloud for code quality.",
+            "description": "Played lead role in building the Frontend for a Web version of a Dating Application. Implemented multiple applications screens and roadblocking features validations. Helped client team with onboarding and project handover process.",
             "stack": [
               "React",
               "NX Monorepo",
@@ -430,7 +430,7 @@
             "type": "project",
             "title": "Safety Notification System",
             "date": "Jul 2023 - Jun 2024",
-            "description": "Built a safety management dashboard for 6000+ employees. Implemented a BFF (Backend-for-Frontend) strategy to streamline API responses and managed Azure DevOps pipelines.",
+            "description": "Built a safety management dashboard used by for 6000+ client employees. Basic application was later cloned to support multiple client systems and to include custom developed features tailored for user environments. Led client communications and design phase to find best possible solution in strict timeframe.",
             "stack": [
               "React",
               "Azure DevOps",
@@ -443,7 +443,7 @@
             "type": "project",
             "title": "Erics WebShop Migration",
             "date": "Jun 2021 - Jun 2023",
-            "description": "Migrated a legacy WebSphere monolith to a headless React architecture. Improved SEO scores (Lighthouse) and implemented a custom translation tool with Localise.",
+            "description": "Replaced legacy e-commerce platform HTML blocks with multiple React applications. Replaced views helped to improve SEO scores and integrate more custom features like dynamic navigation to the web-shop.",
             "stack": [
               "React",
               "Redux Saga",
@@ -457,7 +457,7 @@
             "type": "project",
             "title": "A-Dam E-commerce",
             "date": "Jan 2020 - Feb 2021",
-            "description": "Forked and customized the Saleor.io platform to drive 100% revenue growth. Optimized Apollo caching to handle high-traffic events like Black Friday.",
+            "description": "Developed and maintained web shop application to drive business and revenue growth. Later migrated stack to SSR for improving SEO and performance. Supported development of fork of backend from Saleor platform to integrate necessary features like warehouse stock tracking and advanced payment methods like Molly",
             "stack": [
               "React",
               "NextJS",
@@ -471,7 +471,7 @@
             "type": "project",
             "title": "KLM Flight Assistant",
             "date": "May 2019 - Jan 2020",
-            "description": "Built an offline-first iPad app for cabin crew to replace classroom training with on-the-job performance support. Replaced paper manuals with rich media instructions.",
+            "description": "Built an offline-first iPad app for cabin crew to support on board customer service. App helped to replace classroom training with on-the-job performance support. Replaced paper manuals with rich media instructions.",
             "stack": [
               "React Native",
               "Express",
@@ -484,7 +484,7 @@
             "type": "project",
             "title": "Taxafax",
             "date": "Sep 2018 - May 2019",
-            "description": "Developed a React Native app for tax advisors to share real-time updates and reports with clients. Included multi-user login flow and secure document sharing.",
+            "description": "Developed a React Native app for tax advisors to share real-time updates and reports with clients. After successful beta-testing included multi-tenant login flow and secure document sharing.",
             "stack": [
               "React Native",
               "Express",
@@ -496,13 +496,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "I recently engineered a Banking AI Chat UI that utilized cost-effective testing strategies to save significant project budget. For the Bonfire Dating Platform, I established an NX monorepo structure that allowed us to deploy multiple brand skins from a single codebase. At A-Dam, my e-commerce solution successfully handled bulk B2B purchases and drove a 150% increase in marketing campaign revenue."
+          "text": "I recently engineered a Frontend for Banking AI Chat platform that utilized cost-effective Agent thru testing strategies to save significant project budget. For the Dating Platform, I delivered user profile pages and roadblocking features to navigate users from different regions to desired resources. At A-Dam, e-commerce solution successfully handled customers across the globe and provided resource for B2B customers to purchases company products in bulk."
         },
         "developer": {
-          "text": "The AI Chat project involved integrating multi-agent configuration in LangChain and visualizing complex financial data with AgGrid. For the Dating Platform, I implemented Zod for strict runtime validation and used Axios interceptors to handle complex user routing logic. My work on the Erics Digital migration involved reverse-engineering legacy JSP modules to rebuild them into a modern headless architecture."
+          "text": "Latest project I have contributed to was the AI Chat Frontend Application to represent complex data structures using LLM generated content. Dating Platform consisted of advanced methods of user navigation using Axios interceptors to handle complex user routing logic. At EricsDigital, main problem was maintaining in app state between multiple React applications mounted to different page blocks, which was successfully resolved by refactor Redux event emitter to shared Zustand state instance. "
         },
         "friend": {
-          "text": "I'm really proud of how these projects turned out. With AI tools available, it became clear that code is just a tool to make things faster. I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website—simple, fast, and designed to tell my story."
+          "text": "I'm really proud of how these projects turned out. With AI tools available, it became clear that code is just a tool to make things faster. I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website — simple, fast, and designed to tell my story."
         }
       }
     },
@@ -517,7 +517,7 @@
             "title": "Send me an email",
             "roleItems": {
               "recruiter": {
-                "subject": "Opportunity Discussion - Lead Frontend Developer Position",
+                "subject": "Opportunity Discussion - Frontend/React Developer Position",
                 "body": "Hi Serhii,\n\nI came across your portfolio and I'm impressed with your experience in frontend development and team leadership.\n\nI'd like to discuss a potential opportunity that aligns with your expertise.\n\nBest regards"
               },
               "developer": {
@@ -526,7 +526,7 @@
               },
               "friend": {
                 "subject": "Coffee & Chat?",
-                "body": "Hey Serhii!\n\nI really enjoyed your portfolio! Would love to grab a coffee sometime and chat about coding, hiking, or whatever's on your mind.\n\nLet me know when you're free!\n\nCheers"
+                "body": "Hey Serhii!\n\nI really enjoyed your portfolio! Would love to grab a coffee sometime and chat about coding, hiking, or whatever on your mind.\n\nLet me know when you're free!\n\nCheers"
               }
             }
           }
@@ -534,13 +534,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "I am seeking a role where I can apply my experience in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
+          "text": "After more then 10 years in software development I decide that it's time to shift from 100% development to more management role. This is why my goal now is to find a lead position in a company. If such opportunity exist in near future after get along with challenges and team - I would be happy to apply my experience to prove my experience in action. My strong side is in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
         },
         "developer": {
-          "text": "I'm always open to discussing frontend architecture, from state management patterns to the latest UI designs and systems integration. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineering professionals."
+          "text": "I'm always open to discussing how Web can be better for everyone. From state management patterns to the latest UI designs, systems integration and accessibility tools. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineers. I would be happy to contribute and lead a way for a new developers."
         },
         "friend": {
-          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, hiking trails, or old motorcycles, hit me up. I love meeting new people and swapping stories about the weirdest coding bugs we've ever encountered. Let's connect and see if we can learn something new from each other!"
+          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, Frontend or extreme sports like alpinism or climbing - lets get in touch!. I love meeting new people and swapping stories about world around us and software role in it. Let's connect and see if we can learn something new from each other!"
         }
       }
     }
