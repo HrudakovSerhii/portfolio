@@ -46,8 +46,9 @@
 
   &__content {
     height: 0;
+    opacity: 0;
     overflow: hidden;
-    transition: height variables.$transition-medium;
+    transition: height variables.$transition-medium, opacity variables.$transition-medium,;
     margin-top: variables.$spacing-md;
 
     [data-collapsed="false"] & {

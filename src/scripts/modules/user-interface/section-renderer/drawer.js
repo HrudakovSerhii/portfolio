@@ -51,6 +51,7 @@ class Drawer {
     toggleButton.setAttribute('aria-expanded', 'true');
 
     content.style.height = content.scrollHeight + 'px';
+    content.style.opacity = 1;
 
     const onTransitionEnd = () => {
       content.style.height = 'auto';

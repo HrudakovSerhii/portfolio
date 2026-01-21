@@ -45,6 +45,7 @@ class SectionRenderer {
       this.stateManager.addRevealedSection(sectionId);
 
       this._updateActionPrompt(sectionId);
+      this._scrollToSection(sectionElement);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
       // this.actionPromptManager.hideTyping(sectionId);
