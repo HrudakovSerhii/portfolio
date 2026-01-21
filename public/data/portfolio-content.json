@@ -18,8 +18,8 @@
       },
       "content": {
         "recruiter": {
-          "text": "Helping to build scalable Frontend and happy Teams",
-          "subText": "I hold a Master of Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments, contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions.",
+          "text": "Helping to build scalable frontend and happy teams",
+          "subText": "I hold a Master's degree in Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments and have contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions.",
           "image": {
             "name": "hero.hr",
             "imageAlt": "Serhii Hrudakov - Senior Frontend Developer",
@@ -28,7 +28,7 @@
         },
         "developer": {
           "text": "On a mission `Impossible` to make complex codebases simple and maintainable",
-          "subText": "My approach is simple: code must be easy to understand, does not matter how complex it is. This helped me to build various systems where each little detail matter: from creating reusable component and functions to configure quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
+          "subText": "My approach is simple: code must be easy to understand, no matter how complex it is. This helped me to build various systems where each little detail matters: from creating reusable components and functions to configuring quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
           "image": {
             "name": "hero.developer",
             "imageAlt": "Serhii Hrudakov - Software Engineer",
@@ -37,7 +37,7 @@
         },
         "friend": {
           "text": "Code is a magic tool that helps to bring ideas to life",
-          "subText": "I am an engineer at heart ready to tackle tasks with head and hands. I believe that using rusty set of tools in garage and keyboard has a lot of in commot: both are instruments to create. Both are tools to help you to do what you love.",
+          "subText": "I am an engineer at heart, ready to tackle tasks with head and hands. I believe that using a rusty set of tools in a garage and a keyboard have a lot in common: both are instruments to create. Both are tools to help you do what you love.",
           "image": {
             "name": "hero.friend",
             "imageAlt": "Serhii Hrudakov",
@@ -186,13 +186,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "My recent role at Mobiquity (Hexaware) involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%) and writing specifications and release notes. Previously, at EricsDigital, I led migration of a massive e-commerce monolith to a modern micro-frontend architecture. At A-Dam, I delivered a in-house designed web-shop platform and reached a goal of increasing yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
+          "text": "My recent role at Mobiquity (Hexaware) involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%) and writing specifications and release notes. Previously, at EricsDigital, I led the migration of a massive e-commerce monolith to a modern micro-frontend architecture. At A-Dam, I delivered an in-house designed web-shop platform that helped increase yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
         },
         "developer": {
-          "text": "At Mobiquity (Hexaware), I architected NX monorepos to share UI and feature libraries across client apps and built complex chat interfaces for AI agents. At EricsDigital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state management and optimizing for Google Core Web Vitals. I also have good experience with ReactNative, building offline-first apps for KLM crew members. I had worked in different team structures and delivered solutions thru number of pipelines. "
+          "text": "At Mobiquity (Hexaware), I architected NX monorepos to share UI and feature libraries across client apps and built complex chat interfaces for AI agents. At EricsDigital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state management and optimizing for Google Core Web Vitals. I also have solid experience with React Native, building offline-first apps for KLM crew members. I have worked in different team structures and delivered solutions through a number of pipelines."
         },
         "friend": {
-          "text": "While software development is my main job I had never stop building other systems. From smart home solutions to bind Tado, Hue and ZigBee environments under single interface to building complex home networks to get best possible speed across devices. I love engineering and I can't imagine my-self in other roles. To take initiative, to take a lead, to propose solution - this is challenges I prefer. And in a free time, organize hiking trip and enjoy outdoor and nature"
+          "text": "While software development is my main job, I have never stopped building other systems. From smart home solutions to bind Tado, Hue, and ZigBee environments under a single interface to building complex home networks to get the best possible speed across devices. I love engineering and I can't imagine myself in other roles. To take initiative, to take a lead, to propose a solution - these are the challenges I prefer. And in my free time, I organize hiking trips and enjoy the outdoors and nature."
         }
       }
     },
@@ -284,13 +284,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with Vanilla JS and complex long lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities, often splitting my time 60/40 between coding and management to ensure delivery and team health."
+          "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with vanilla JavaScript and complex long-lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities, often splitting my time 60/40 between coding and management to ensure delivery and team health."
         },
         "developer": {
-          "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidate. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
+          "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidates. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
         },
         "friend": {
-          "text": "I geek out on the latest tech. Right now, I'm using fully local LLMs to build a custom smart home dashboard. I care deeply about the UI details but would never trade it for performance as both are critical in providing best user experience. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a browser engine works."
+          "text": "I geek out on the latest tech. Right now, I'm using fully local LLMs to build a custom smart home dashboard. I care deeply about the UI details but would never trade them for performance as both are critical in providing the best user experience. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a browser engine works."
         }
       }
     },
@@ -348,13 +348,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "Beyond technical expertise, I always try bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+          "text": "Beyond technical expertise, I always try to bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
         },
         "developer": {
-          "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation and utilising best developer tools. I'm detail-oriented when it comes to UX implementation and well-structured architecture matter to me the most. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications. I know that senior role is not only about memorising framework code, but to see system and structure under requirements."
+          "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation, and utilizing the best developer tools. I'm detail-oriented when it comes to UX implementation, and well-structured architecture matters to me the most. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications. I know that a senior role is not only about memorizing framework code, but about seeing system and structure under requirements."
         },
         "friend": {
-          "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others to get to the best results. I'm curious by nature and always learning from others, whether it's a junior with fresh look on familiar things or 100 years senior who punch holes to save code with needle on punch-cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
+          "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others achieve the best results. I'm curious by nature and always learning from others, whether it's a junior with a fresh look on familiar things or a veteran who punched holes to save code on punch cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
         }
       }
     },
@@ -496,13 +496,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "I recently engineered a Frontend for Banking AI Chat platform that utilized cost-effective Agent thru testing strategies to save significant project budget. For the Dating Platform, I delivered user profile pages and roadblocking features to navigate users from different regions to desired resources. At A-Dam, e-commerce solution successfully handled customers across the globe and provided resource for B2B customers to purchases company products in bulk."
+          "text": "I recently engineered a frontend for a banking AI chat platform that utilized cost-effective testing strategies to save significant project budget. For the dating platform, I delivered user profile pages and roadblocking features to navigate users from different regions to desired resources. At A-Dam, the e-commerce solution successfully handled customers across the globe and provided a resource for B2B customers to purchase company products in bulk."
         },
         "developer": {
-          "text": "Latest project I have contributed to was the AI Chat Frontend Application to represent complex data structures using LLM generated content. Dating Platform consisted of advanced methods of user navigation using Axios interceptors to handle complex user routing logic. At EricsDigital, main problem was maintaining in app state between multiple React applications mounted to different page blocks, which was successfully resolved by refactor Redux event emitter to shared Zustand state instance. "
+          "text": "The latest project I contributed to was the AI chat frontend application to represent complex data structures using LLM-generated content. The dating platform utilized advanced methods of user navigation using Axios interceptors to handle complex user routing logic. At EricsDigital, the main problem was maintaining in-app state between multiple React applications mounted to different page blocks, which was successfully resolved by refactoring the Redux event emitter to a shared Zustand state instance."
         },
         "friend": {
-          "text": "I'm really proud of how these projects turned out. With AI tools available, it became clear that code is just a tool to make things faster. I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website — simple, fast, and designed to tell my story."
+          "text": "I'm really proud of how these projects turned out. With AI tools now available, it became clear that code is just a tool to make things faster. I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website - simple, fast, and designed to tell my story."
         }
       }
     },
@@ -534,13 +534,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "After more then 10 years in software development I decide that it's time to shift from 100% development to more management role. This is why my goal now is to find a lead position in a company. If such opportunity exist in near future after get along with challenges and team - I would be happy to apply my experience to prove my experience in action. My strong side is in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
+          "text": "After more than 10 years in software development, I've decided that it's time to shift from full-time development to a more management-focused role. My goal is to find a lead position where I can grow with the team and tackle challenges together. I would be happy to apply my experience and prove my capabilities in action. My strengths lie in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
         },
         "developer": {
-          "text": "I'm always open to discussing how Web can be better for everyone. From state management patterns to the latest UI designs, systems integration and accessibility tools. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineers. I would be happy to contribute and lead a way for a new developers."
+          "text": "I'm always open to discussing how the web can be better for everyone - from state management patterns to the latest UI designs, systems integration, and accessibility tools. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineers. I would be happy to contribute and lead the way for new developers."
         },
         "friend": {
-          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, Frontend or extreme sports like alpinism or climbing - lets get in touch!. I love meeting new people and swapping stories about world around us and software role in it. Let's connect and see if we can learn something new from each other!"
+          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, frontend, or extreme sports like alpinism or climbing - let's get in touch! I love meeting new people and swapping stories about the world around us and software's role in it. Let's connect and see if we can learn something new from each other!"
         }
       }
     }
