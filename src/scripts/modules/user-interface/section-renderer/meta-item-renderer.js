@@ -133,9 +133,9 @@ class MetaItemRenderer {
     const element = fragment.querySelector('.skill-item');
     if (!element) return null;
 
-    const nameElement = element.querySelector('.skills-item__name');
-    const yearsElement = element.querySelector('.skills-item__years');
-    const iconElement = element.querySelector('.skills-item__icon');
+    const nameElement = element.querySelector('.skill-item__name');
+    const yearsElement = element.querySelector('.skill-item__years');
+    const iconElement = element.querySelector('.skill-item__icon');
 
     if (nameElement) nameElement.textContent = item.name;
     if (yearsElement) yearsElement.textContent = item.years + " Years";

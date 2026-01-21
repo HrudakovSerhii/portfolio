@@ -82,29 +82,41 @@
 
   &__role {
     color: var(--color-text);
-    font-size: variables.$font-size-lg;
+    // Fluid: 1.125rem (18px) → 1.5rem (24px)
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
     font-weight: variables.$font-weight-bold;
     margin: 0;
     line-height: variables.$line-height-tight;
+
+    @include mixins.mobile {
+      font-size: variables.$font-size-base;
+    }
   }
 
   &__period {
     color: var(--color-text-tertiary);
-    font-size: variables.$font-size-xs;
     font-family: variables.$font-family-mono;
     margin-top: variables.$spacing-xs;
+
+    @include mixins.mobile {
+      font-size: variables.$font-size-xs;
+    }
   }
 
   &__company {
     color: var(--color-accent);
-    font-size: variables.$font-size-sm;
+    // Fluid: 1rem (16px) → 1.25rem (20px)
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
     font-weight: variables.$font-weight-medium;
     margin: variables.$spacing-xs 0 0 0;
+
+    @include mixins.mobile {
+      font-size: variables.$font-size-sm;
+    }
   }
 
   &__cta {
     color: var(--color-text-tertiary);
-    font-size: variables.$font-size-xs;
     align-self: flex-end;
     flex-shrink: 0;
     transition: color variables.$transition-fast;
@@ -115,6 +127,10 @@
 
     &:hover {
       color: var(--color-primary);
+    }
+
+    @include mixins.mobile {
+      font-size: variables.$font-size-sm;
     }
   }
 
@@ -132,9 +148,12 @@
 
   &__description {
     color: var(--color-text-secondary);
-    font-size: variables.$font-size-sm;
     line-height: variables.$line-height-relaxed;
     margin: 0;
+
+    @include mixins.mobile {
+      font-size: variables.$font-size-sm;
+    }
   }
 
   &__tech-tags {
@@ -143,5 +162,11 @@
     gap: variables.$spacing-xs;
     padding-top: variables.$spacing-md;
     border-top: 1px solid var(--color-border);
+
+    .meta-tag {
+      @include mixins.mobile {
+        font-size: variables.$font-size-xs;
+      }
+    }
   }
 }

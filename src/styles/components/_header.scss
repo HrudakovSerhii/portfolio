@@ -42,7 +42,8 @@
 }
 
 .header-brand-icon {
-  font-size: 28px;
+  // Fluid: 1.5rem (24px) → 1.75rem (28px)
+  font-size: clamp(1.5rem, 1.25rem + 0.5vw, 1.75rem);
   color: var(--color-primary);
 }
 
@@ -56,7 +57,8 @@
 }
 
 .header-brand-text {
-  font-size: variables.$font-size-lg;
+  // Fluid: 1rem (16px) → 1.125rem (18px)
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: -0.025em;
@@ -108,8 +110,9 @@
   position: relative;
   display: inline-block;
   padding: variables.$spacing-xs;
-  font-size: variables.$font-size-sm;
-  font-weight: 500;
+  // Fluid: 0.75rem (12px) → 0.875rem (14px)
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  font-weight: variables.$font-weight-nominal;
   color: var(--color-text-secondary);
   white-space: nowrap;
   text-decoration: none;
@@ -140,17 +143,16 @@
   flex-shrink: 0;
 }
 
-.header-control-button {
+// Base button styles shared across header controls
+.header-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
   height: 2.5rem;
   border-radius: variables.$radius-lg;
+  border: 1px solid var(--color-text-tertiary);
   background-color: var(--color-bg-secondary);
   color: var(--color-text);
-  border: none;
-  cursor: pointer;
   transition: background-color variables.$transition-base;
 
   &:hover {
@@ -163,44 +165,39 @@
   }
 
   .material-symbols-outlined {
-    font-size: 20px;
+    // Fluid: 1.125rem (18px) → 1.25rem (20px)
+    font-size: clamp(1.125rem, 1rem + 0.25vw, 1.25rem);
+  }
+
+  @include mixins.mobile {
+    border: none;
+    background-color: transparent;
   }
 }
 
-.header-role-badge {
-  width: auto;
-  gap: variables.$spacing-xs;
-  padding: 0 variables.$spacing-sm;
-
-  .header-role-icon {
-    font-size: 18px;
-  }
-
-  .header-role-text {
-    font-size: variables.$font-size-xs;
-    font-weight: 500;
-    white-space: nowrap;
-  }
+// Icon-only button (square)
+.header-theme-button {
+  width: 2.5rem;
 }
 
+// Button with icon and text
+.header-role-badge,
 .header-download-btn {
   width: auto;
   gap: variables.$spacing-xs;
   padding: 0 variables.$spacing-sm;
-  text-decoration: none;
+}
 
-  .header-download-icon {
-    font-size: 18px;
-  }
+// Shared text styles for button labels
+.header-role-text,
+.header-download-text {
+  // Fluid: 0.875rem (14px) → 1rem (16px)
+  font-size: clamp(0.875rem, 0.55rem + 0.25vw, 1rem);
+  font-weight: variables.$font-weight-nominal;
+  white-space: nowrap;
 
-  .header-download-text {
-    font-size: variables.$font-size-xs;
-    font-weight: 500;
-    white-space: nowrap;
-
-    @include mixins.mobile {
-      display: none;
-    }
+  @include mixins.mobile {
+    display: none;
   }
 }
 
@@ -226,7 +223,8 @@
 }
 
 .header-language-icon {
-  font-size: 20px;
+  // Fluid: 1.125rem (18px) → 1.25rem (20px)
+  font-size: clamp(1.125rem, 1rem + 0.25vw, 1.25rem);
   color: var(--color-text);
   pointer-events: none;
 }
@@ -238,8 +236,9 @@
   background: transparent;
   border: none;
   color: var(--color-text);
-  font-size: variables.$font-size-sm;
-  font-weight: 500;
+  // Fluid: 0.75rem (12px) → 0.875rem (14px)
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  font-weight: variables.$font-weight-nominal;
   padding: 0 variables.$spacing-sm 0 variables.$spacing-xs;
   cursor: pointer;
 
@@ -317,36 +316,15 @@
 }
 
 .mobile-nav-title {
-  font-size: variables.$font-size-lg;
+  // Fluid: 1rem (16px) → 1.125rem (18px)
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   font-weight: 600;
   color: var(--color-text);
 }
 
+// Uses .header-button base styles
 .mobile-nav-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2.5rem;
-  height: 2.5rem;
-  border-radius: variables.$radius-lg;
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text);
-  border: none;
-  cursor: pointer;
-  transition: background-color variables.$transition-base;
-
-  &:hover {
-    background-color: var(--color-bg-tertiary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .material-symbols-outlined {
-    font-size: 20px;
-  }
 }
 
 .mobile-nav {
@@ -359,8 +337,9 @@
   display: flex;
   align-items: center;
   padding: variables.$spacing-md variables.$spacing-lg;
-  font-size: variables.$font-size-base;
-  font-weight: 500;
+  // Fluid: 0.875rem (14px) → 1rem (16px)
+  font-size: clamp(0.875rem, 0.8rem + 0.25vw, 1rem);
+  font-weight: variables.$font-weight-nominal;
   color: var(--color-text-secondary);
   text-decoration: none;
   background-color: transparent;

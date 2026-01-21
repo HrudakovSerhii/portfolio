@@ -44,7 +44,7 @@
     <div class="header-controls">
       <a
         id="header-download-btn"
-        class="header-control-button header-download-btn"
+        class="header-button header-download-btn"
         href="data/CV_Hrudakov_2025.pdf"
         download
         aria-label="Download resume"
@@ -55,7 +55,7 @@
 
       <button
         id="header-role-badge"
-        class="header-control-button header-role-badge"
+        class="header-button header-role-badge"
         aria-label="Change role"
         title="Click to change role"
         style="display: none;">
@@ -65,7 +65,7 @@
 
       <button
         id="theme-toggle"
-        class="header-control-button"
+        class="header-button header-theme-button"
         aria-label="Toggle theme"
         aria-pressed="false"
         title="Toggle Theme"
@@ -86,7 +86,7 @@
 
       <button
         id="mobile-nav-toggle"
-        class="header-control-button header-mobile-toggle"
+        class="header-mobile-toggle"
         aria-label="Open navigation menu"
         aria-expanded="false"
         aria-controls="mobile-nav-overlay">
@@ -192,7 +192,7 @@
         </svg>
       </a> -->
     </div>
-    <p class="footer-copyright">Build with love to <span class="text-gradient">people</span>. Designed with passion to machines</p>
+    <p class="footer-copyright">Build with love to <span class="text-gradient">people</span>.</br> Designed with passion to machines</p>
   </footer>
 
   <template id="section-template">
@@ -461,9 +461,9 @@
 
   <template id="skills-meta-item-template">
     <div class="skill-item">
-      <h3 class="skills-item__name"></h3>
-      <span class="skills-item__years"></span>
-      <span class="skills-item__icon"></span>
+      <h3 class="skill-item__name"></h3>
+      <span class="skill-item__years"></span>
+      <span class="skill-item__icon"></span>
     </div>
   </template>
 
@@ -504,7 +504,7 @@
 
   <template id="drawer-template">
     <div class="drawer" data-collapsed="true">
-      <button class="drawer__toggle" aria-expanded="false" aria-label="Toggle experiences content visibility">
+      <button class="button drawer__toggle" aria-expanded="false" aria-label="Toggle experiences content visibility">
         <span class="drawer__toggle-text" aria-hidden="true">Click to see more</span>
         <span class="drawer__toggle-icon material-symbols-outlined" aria-hidden="true">expand_more</span>
       </button>

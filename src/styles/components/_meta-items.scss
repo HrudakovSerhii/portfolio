@@ -107,9 +107,7 @@
     min-width: 160px;
     padding: variables.$spacing-md;
   }
-}
 
-.skills-item {
   &__name {
     // Fluid: 0.875rem (14px) → 1rem (16px)
     font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
