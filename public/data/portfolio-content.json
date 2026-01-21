@@ -284,7 +284,7 @@
       },
       "content": {
         "recruiter": {
-          "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with vanilla JavaScript and complex long-lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities, often splitting my time 60/40 between coding and management to ensure delivery and team health."
+          "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with vanilla JavaScript and complex long-lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities by building trust between the team and business owners to ensure delivery and efficiency."
         },
         "developer": {
           "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidates. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
@@ -351,7 +351,7 @@
           "text": "Beyond technical expertise, I always try to bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
         },
         "developer": {
-          "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation, and utilizing the best developer tools. I'm detail-oriented when it comes to UX implementation, and well-structured architecture matters to me the most. I actively mentor junior developers and contribute to team processes like sprint planning and technical specifications. I know that a senior role is not only about memorizing framework code, but about seeing system and structure under requirements."
+          "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation, and utilizing the best developer tools. I'm detail-oriented when it comes to UX implementation, and well-structured architecture matters to me the most. I actively contribute to team processes like sprint planning and technical specifications and support team members with code reviews and pair programming sessions. I know that a senior role is not only about memorizing framework code, but about seeing system and structure under requirements."
         },
         "friend": {
           "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others achieve the best results. I'm curious by nature and always learning from others, whether it's a junior with a fresh look on familiar things or a veteran who punched holes to save code on punch cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
@@ -496,13 +496,13 @@
       },
       "content": {
         "recruiter": {
-          "text": "I recently engineered a frontend for a banking AI chat platform that utilized cost-effective testing strategies to save significant project budget. For the dating platform, I delivered user profile pages and roadblocking features to navigate users from different regions to desired resources. At A-Dam, the e-commerce solution successfully handled customers across the globe and provided a resource for B2B customers to purchase company products in bulk."
+          "text": "Every project I worked on was unique in setup, team configuration, user audience, and environment where it was running. But all of them had common goals: to bring the best user experience and drive revenue growth. Frontend is not only a cover, but a complex labyrinth of user stories that need clear markers on each pathway for users not to get lost. Understanding these fundamentals and the experience collected over the years by building user interfaces helped me find my strong developer skills and grow as a professional who knows how to build quality frontend."
         },
         "developer": {
-          "text": "The latest project I contributed to was the AI chat frontend application to represent complex data structures using LLM-generated content. The dating platform utilized advanced methods of user navigation using Axios interceptors to handle complex user routing logic. At EricsDigital, the main problem was maintaining in-app state between multiple React applications mounted to different page blocks, which was successfully resolved by refactoring the Redux event emitter to a shared Zustand state instance."
+          "text": "Working on multiple projects across different domains has some pluses and minuses. Pluses: you learn how to build frontend tailored for the user and environment. You study what is important and what tools can help you move faster. You listen, you read, and apply new knowledge until you memorize it. Minuses: you sometimes forget a specific function in a framework you haven't used for a few years. But the biggest prize you win after years of moving — you start to see the system under requirements. This is what true engineering means."
         },
         "friend": {
-          "text": "I'm really proud of how these projects turned out. With AI tools now available, it became clear that code is just a tool to make things faster. I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website - simple, fast, and designed to tell my story."
+          "text": "After a decade of building client projects, I have started to implement my own ideas that buzzed for so long in my head. With AI tools now available, it became clear that code is just a tool to make things faster. While working on commercial projects and learning technologies, approaches, and methodologies, I learned so much to use for my own good. For example, I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website — simple, fast, and designed to tell my story. I hope you enjoy reading it :)"
         }
       }
     },
