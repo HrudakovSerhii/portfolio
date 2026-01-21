@@ -346,15 +346,10 @@
 
   <template id="action-prompt-template">
     <div class="action-prompt" role="region" aria-label="Section interaction">
-      <div class="typing-indicator" role="status" aria-live="polite">
-        <span class="typing-dot"></span>
-        <span class="typing-dot"></span>
-        <span class="typing-dot"></span>
-      </div>
       <button
               class="button prompt-button"
-              aria-label="Submit prompt"
-              data-default-text="Get to know">
+              aria-label="show next section"
+              data-default-text="Next">
         Next:
       </button>
     </div>
@@ -505,6 +500,18 @@
     <a href="#" class="meta-link" target="_blank" rel="noopener noreferrer">
       <span class="meta-link__title"></span>
     </a>
+  </template>
+
+  <template id="drawer-template">
+    <div class="drawer" data-collapsed="true">
+      <button class="drawer__toggle" aria-expanded="false" aria-label="Toggle experiences content visibility">
+        <span class="drawer__toggle-text" aria-hidden="true">Click to see more</span>
+        <span class="drawer__toggle-icon material-symbols-outlined" aria-hidden="true">expand_more</span>
+      </button>
+      <div class="drawer__content">
+        <!-- Content will be inserted here -->
+      </div>
+    </div>
   </template>
 
   <script type="module" src="./scripts/modules/app-controller/index.js"></script>

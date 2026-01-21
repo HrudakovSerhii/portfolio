@@ -2,7 +2,7 @@
 @use '../base/mixins';
 
 .action-prompt {
-  position: relative;
+  position: absolute;
   bottom: 0;
   margin: 0 auto variables.$spacing-md auto;
   opacity: 0;
