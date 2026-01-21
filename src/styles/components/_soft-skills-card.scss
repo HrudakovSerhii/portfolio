@@ -41,7 +41,7 @@
   }
 
   @include mixins.tablet {
-    padding: variables.$spacing-lg;
+    padding: variables.$spacing-md;
   }
 
   &__header {

@@ -6,17 +6,24 @@
   margin: 0 auto;
   background-color: transparent;
   justify-content: center;
+  margin-top: variables.$spacing-lg;
+  min-height: calc(100vh - 56px) !important;
 
-  &:is(#section-hero),
-  &:is(#section-skills),
-  &:is(#section-soft-skills),
-  &:is(#section-contact){
-    min-height: calc(100vh - 3rem) !important;
-
-    @include mixins.desktop {
-      min-height: calc(100vh - 4rem) !important;
-    }
+  @include mixins.desktop {
+    min-height: calc(100vh - 72px) !important;
   }
+
+  &.default-section {
+    justify-content: space-around;
+  }
+
+  // &:is(#section-hero),
+  // &:is(#section-skills),
+  // &:is(#section-soft-skills),
+  // &:is(#section-about),
+  // &:is(#section-contact){
+ 
+  // }
 
   .section-layout {
     display: flex;
@@ -105,18 +112,16 @@
     text-align: start;
 
     .section-title {
-      font-size: variables.$font-size-3xl;
+      // Fluid: 1.5rem (24px) → 2.25rem (36px)
+      font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
       font-weight: 600;
       color: var(--color-text);
       margin-bottom: variables.$spacing-sm;
-
-      @include mixins.desktop {
-        font-size: variables.$font-size-4xl;
-      }
     }
 
     .section-query {
-      font-size: variables.$font-size-lg;
+      // Fluid: 1rem (16px) → 1.125rem (18px)
+      font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
       color: var(--color-text-secondary);
       font-style: italic;
       margin: 0;
@@ -125,31 +130,18 @@
 
   .section-body-content {
     display: flex;
-    justify-content: center;
     align-items: start;
     color: var(--color-text);
     min-width: 30%;
     width: 100%;
     height: 100%;
-
-    &.section-body-text {
-      margin-bottom: variables.$spacing-md;
-      font-size: variables.$font-size-xl;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
+    // Fluid: 1rem (16px) → 1.25rem (20px)
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
   }
 
   .section-carousel {
     position: relative;
-    padding: variables.$spacing-xl;
+    padding: variables.$spacing-md 0;
     max-width: variables.$content-max-width;
   }
 }
-
-
-
-// Contact Card Component (BEM)
-

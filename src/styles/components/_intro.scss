@@ -6,16 +6,18 @@
   align-items: center;
   gap: variables.$spacing-xl;
   z-index: variables.$z-nav;
-  min-height: calc(100vh - 3rem) !important;
+  min-height: calc(100vh - 3rem);
+  height: 100%;
   overflow: hidden;
-  transition: max-height 1s ease-in-out;
+  transition: height 3s ease-in-out;
 
   @include mixins.desktop {
-    min-height: calc(100vh - 4rem) !important;
+    min-height: calc(100vh - 4rem)t;
   }
 
-  &.invisible {
-    max-height: 0;
+  @include mixins.animation-sqwizz;
+
+  &.sqwizzed {
     min-height: 0;
   }
 
@@ -24,7 +26,8 @@
   }
 
   &__title {
-    font-size: variables.$font-size-4xl;
+    // Fluid: 2.25rem (36px) → 3.25rem (52px)
+    font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
     color: var(--color-text);
     letter-spacing: -0.025em;
     font-weight: variables.$font-weight-bold;
@@ -33,22 +36,28 @@
     margin: 0;
 
     @include mixins.desktop {
-      font-size: variables.$font-size-6xl;
       text-align: left;
     }
   }
 
   &__lead {
-    font-size: variables.$font-size-lg;
+    // Fluid: 1.125rem (18px) → 1.25rem (20px)
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
     color: var(--color-text-secondary);
     line-height: variables.$line-height-relaxed;
     text-align: center;
     margin: 0;
 
     @include mixins.desktop {
-      font-size: variables.$font-size-xl;
       text-align: left;
     }
+  }
+
+  &__cta-text {
+    max-width: 400px;
+    // Fluid: 1rem (16px) → 1rem (20px)
+    font-size: clamp(1rem, 1rem + 0.5vw, 1rem);
+    color: var(--color-text-secondary);
   }
 
   &__story-context {
@@ -67,7 +76,7 @@
       text-align: center;
 
       .text-gradient {
-        font-size: 24px;
+        font-size: variables.$font-size-2xl;
       }
     }
   }

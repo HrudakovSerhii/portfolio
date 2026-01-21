@@ -9,6 +9,7 @@ import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
 const MODAL_FADE_DURATION = 300;
+const INTRO_TRANSITION_DURATION = 400;
 
 const ELEMENT_IDS = {
   initialLoader: 'initial-loader',
@@ -17,7 +18,6 @@ const ELEMENT_IDS = {
   themeToggle: 'theme-toggle',
   // languageSelector: 'language-selector',
   mainContent: 'main-content',
-  typingIndicator: 'typing-indicator',
   introSection: 'intro-section',
 };
 
@@ -54,7 +54,6 @@ class AppController {
       // languageSelector: null,
       mainContent: null,
       introSection: null,
-      typingIndicator: null,
     };
 
     this.initialized = false;
@@ -84,7 +83,6 @@ class AppController {
 
       this.sectionRenderer.initialize(
         this.elements.mainContent,
-        this.elements.typingIndicator,
         SECTION_ORDER,
         (nextSectionId) => this.revealSection(nextSectionId, '')
       );
@@ -118,7 +116,6 @@ class AppController {
     // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
-    this.elements.typingIndicator = document.getElementById(ELEMENT_IDS.typingIndicator);
   }
 
   _validateCachedElements(criticalElementKeys) {
@@ -240,15 +237,36 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      if (this.elements.introSection) {
-        this.elements.introSection.classList.add('hidden');
-      }
-
+      await this._hideIntroSection();
       await this.revealSection(SECTION_ORDER[0]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
     }
+  }
+
+  _hideIntroSection() {
+    return new Promise((resolve) => {
+      if (!this.elements.introSection) {
+        resolve();
+        return;
+      }
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        this.elements.introSection.classList.add('hidden');
+        resolve();
+        return;
+      }
+
+      this.elements.introSection.classList.add('sqwizzed');
+
+      setTimeout(() => {
+        this.elements.introSection.classList.add('hidden');
+        resolve();
+      }, INTRO_TRANSITION_DURATION);
+    });
   }
 
   _resetPortfolioState() {
@@ -291,10 +309,6 @@ class AppController {
 
   _handleRevealSectionFailure(sectionId, error) {
     console.error(`Failed to reveal section "${sectionId}":`, error);
-
-    if (this.elements.typingIndicator) {
-      this.elements.typingIndicator.style.display = 'none';
-    }
   }
 }
 

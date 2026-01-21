@@ -1,6 +1,5 @@
 import { GenerativeImage } from '../generative-image/index.js';
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
-import TypingIndicator from './typing-indicator.js';
 import ActionPromptManager from './action-prompt-manager.js';
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
@@ -12,41 +11,42 @@ class SectionRenderer {
     this.templateBuilder = templateBuilder;
 
     this.sectionsContainer = null;
-    this.typingIndicator = null;
     this.actionPromptManager = null;
-    this.sectionAnimator = new SectionAnimator(animationController);
+    this.sectionAnimator = new SectionAnimator(animationController, templateBuilder);
   }
 
-  initialize(sectionsContainerElement, typingIndicatorElement, sectionOrder, onActionPromptClick) {
+  initialize(sectionsContainerElement, sectionOrder, onActionPromptClick) {
     this.sectionsContainer = sectionsContainerElement;
-    this.typingIndicator = new TypingIndicator(typingIndicatorElement);
     this.actionPromptManager = new ActionPromptManager(this.templateBuilder, sectionOrder);
-    this.actionPromptManager.initialize(sectionsContainerElement, onActionPromptClick);
+    this.actionPromptManager.initialize(onActionPromptClick);
   }
 
   async reveal(sectionId, role, customQuery = '') {
-    this.typingIndicator.show();
-
     try {
       const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role, customQuery);
       const profileData = await this._fetchProfileData();
 
       const sectionElement = this._renderSection(sectionId, sectionContent);
 
+      this._populateText(sectionElement, sectionContent.text);
       this._populateSubText(sectionElement, sectionContent.subText);
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 
       this._scrollToSection(sectionElement);
 
+      this.actionPromptManager.showTyping(sectionId);
+
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
+
+      this._revealMetaItems(sectionElement);
+      this.actionPromptManager.hideTyping(sectionId);
 
       this.stateManager.addRevealedSection(sectionId);
 
       this._updateActionPrompt(sectionId);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
-    } finally {
-      this.typingIndicator.hide();
+      this.actionPromptManager.hideTyping(sectionId);
     }
   }
 
@@ -60,14 +60,19 @@ class SectionRenderer {
     this._populateSubText(sectionElement, sectionContent.subText);
     this._populateImage(sectionElement, sectionContent.image);
     this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
+    this._revealMetaItems(sectionElement);
 
     this._updateActionPrompt(sectionId);
   }
 
   _renderSection(sectionId, sectionContent) {
     const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
+    
+    // Create and append action prompt to section before mounting to DOM
+    const promptElement = this.actionPromptManager.createForSection(sectionId);
+    sectionElement.appendChild(promptElement);
+    
     const lastSectionElement = this.sectionsContainer.lastChild;
-
     this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
 
     return sectionElement;
@@ -115,6 +120,8 @@ class SectionRenderer {
       return;
     }
 
+    metaItemsContainer.classList.add('hidden');
+
     metaItemRenderer.renderInCarousel(metaItemsContainer, sectionId, sectionMetadata.mainItems);
   }
 
@@ -125,10 +132,25 @@ class SectionRenderer {
       return;
     }
 
+    metaItemsContainer.classList.add('hidden');
+
     const renderedItems = metaItemRenderer.render(sectionId, sectionMetadata.mainItems, role);
 
     if (renderedItems) {
       metaItemsContainer.appendChild(renderedItems);
+    }
+  }
+
+  _revealMetaItems(sectionElement) {
+    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
+    const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
+
+    if (metaItemsContainer) {
+      metaItemsContainer.classList.remove('hidden');
+    }
+
+    if (carouselContainer) {
+      carouselContainer.classList.remove('hidden');
     }
   }
 
@@ -189,6 +211,7 @@ class SectionRenderer {
     }
 
     const generativeImage = new GenerativeImage({
+      templateBuilder: this.templateBuilder,
       highResSrc: imageData.imageUrl,
       lowResSrc: imageData.lowResImageUrl || '',
       alt: imageData.imageAlt,

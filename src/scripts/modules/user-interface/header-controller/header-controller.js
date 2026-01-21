@@ -92,6 +92,7 @@ class HeaderController {
             mutation.attributeName === 'class') {
               if (mutation.target.classList.contains('active')) {
                 this._moveIndicatorTo(mutation.target);
+                this._scrollNavItemIntoView(mutation.target);
               } else {
                 this._hideNavIndicator();
               }
@@ -135,6 +136,7 @@ class HeaderController {
 
     if (activeItem) {
       this._moveIndicatorTo(activeItem);
+      this._scrollNavItemIntoView(activeItem);
     }
   }
 
@@ -292,6 +294,33 @@ class HeaderController {
   _hideNavIndicator() {
       this.navIndicator.style.opacity = '0';
       this.navIndicator.style.width = '0';
+  }
+
+  /**
+   * Scrolls the nav container horizontally to make the target item visible if it's out of view
+   */
+  _scrollNavItemIntoView(targetItem) {
+    if (!this.headerNav || !targetItem) return;
+
+    const navRect = this.headerNav.getBoundingClientRect();
+    const itemRect = targetItem.getBoundingClientRect();
+
+    // Check if item is fully visible within the nav container
+    const isFullyVisible =
+      itemRect.left >= navRect.left &&
+      itemRect.right <= navRect.right;
+
+    if (!isFullyVisible) {
+      // Calculate scroll position to center the item in the nav
+      const itemCenter = targetItem.offsetLeft + (targetItem.offsetWidth / 2);
+      const navCenter = this.headerNav.clientWidth / 2;
+      const targetScroll = itemCenter - navCenter;
+
+      this.headerNav.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
+    }
   }
 }
 

@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: variables.$spacing-md variables.$spacing-lg;
+  padding: variables.$spacing-xs variables.$spacing-xs;
   background-color: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -21,9 +21,17 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: variables.$spacing-lg;
+  gap: variables.$spacing-xs;
   flex: 1;
   min-width: 0;
+
+  @include mixins.tablet {
+    gap: variables.$spacing-md;
+  }
+
+  @include mixins.desktop {
+    gap: variables.$spacing-lg;
+  }
 }
 
 .header-brand {
@@ -172,6 +180,27 @@
     font-size: variables.$font-size-xs;
     font-weight: 500;
     white-space: nowrap;
+  }
+}
+
+.header-download-btn {
+  width: auto;
+  gap: variables.$spacing-xs;
+  padding: 0 variables.$spacing-sm;
+  text-decoration: none;
+
+  .header-download-icon {
+    font-size: 18px;
+  }
+
+  .header-download-text {
+    font-size: variables.$font-size-xs;
+    font-weight: 500;
+    white-space: nowrap;
+
+    @include mixins.mobile {
+      display: none;
+    }
   }
 }
 
