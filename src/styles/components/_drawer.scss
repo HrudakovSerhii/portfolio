@@ -1,0 +1,40 @@
+@use '../base/variables';
+
+.drawer {
+  position: relative;
+  width: 100%;
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__toggle-icon {
+    color: var(--color-text-secondary);
+    font-size: variables.$font-size-xl;
+    transition: transform variables.$transition-medium;
+
+    [data-collapsed="false"] & {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__toggle_text {
+    color: var(--color-text-secondary);
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  }
+
+  &__content {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height variables.$transition-medium, opacity variables.$transition-medium,;
+    margin-top: variables.$spacing-md;
+
+    [data-collapsed="false"] & {
+      overflow: visible;
+    }
+  }
+}
