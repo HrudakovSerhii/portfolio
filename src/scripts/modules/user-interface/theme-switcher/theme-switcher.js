@@ -2,10 +2,12 @@ class ThemeSwitcher {
   constructor(stateManager) {
     this.stateManager = stateManager;
     this.themeToggle = null;
+    this.mobileThemeToggle = null;
   }
 
-  initialize(themeToggleElement) {
+  initialize(themeToggleElement, mobileThemeToggleElement) {
     this.themeToggle = themeToggleElement;
+    this.mobileThemeToggle = mobileThemeToggleElement;
 
     const theme = this.stateManager.getTheme();
 
@@ -25,14 +27,19 @@ class ThemeSwitcher {
   apply(theme) {
     document.documentElement.setAttribute('data-theme', theme);
 
-    if (this.themeToggle) {
-      this.themeToggle.setAttribute('data-theme', theme);
-      this.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    this._applyToToggle(this.themeToggle, theme);
+    this._applyToToggle(this.mobileThemeToggle, theme);
+  }
 
-      const icon = this.themeToggle.querySelector('.control-icon');
-      if (icon) {
-        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
-      }
+  _applyToToggle(toggleElement, theme) {
+    if (!toggleElement) return;
+
+    toggleElement.setAttribute('data-theme', theme);
+    toggleElement.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+
+    const icon = toggleElement.querySelector('.material-symbols-outlined');
+    if (icon) {
+      icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
     }
   }
 }

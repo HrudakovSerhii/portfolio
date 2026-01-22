@@ -12,7 +12,9 @@ const HEADER_ELEMENTS = {
   mobileNavOverlay: 'mobile-nav-overlay',
   mobileNavClose: 'mobile-nav-close',
   mobileNav: 'mobile-nav',
-  mobileNavItem: 'mobile-nav-item'
+  mobileNavItem: 'mobile-nav-item',
+  mobileRoleBadge: 'mobile-role-badge',
+  mobileRoleText: 'mobile-role-text'
 };
 
 const SECTION_ATTRIBUTES = {
@@ -38,6 +40,8 @@ class HeaderController {
     this.mobileNavOverlay = null;
     this.mobileNavClose = null;
     this.mobileNav = null;
+    this.mobileRoleBadge = null;
+    this.mobileRoleBadgeText = null;
 
     this.visibleSections = [];
     this.activeObserver = null;
@@ -59,6 +63,8 @@ class HeaderController {
     this.mobileNavOverlay = document.getElementById(HEADER_ELEMENTS.mobileNavOverlay);
     this.mobileNavClose = document.getElementById(HEADER_ELEMENTS.mobileNavClose);
     this.mobileNav = document.getElementById(HEADER_ELEMENTS.mobileNav);
+    this.mobileRoleBadge = document.getElementById(HEADER_ELEMENTS.mobileRoleBadge);
+    this.mobileRoleBadgeText = document.getElementById(HEADER_ELEMENTS.mobileRoleText);
 
     this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'main-content', {
       activeClass: 'active',
@@ -148,6 +154,15 @@ class HeaderController {
         }
       });
     }
+
+    if (this.mobileRoleBadge) {
+      this.mobileRoleBadge.addEventListener('click', () => {
+        this._closeMobileNav();
+        if (this.roleManager) {
+          this.roleManager.showChangeModal();
+        }
+      });
+    }
   }
 
   _setupMobileNavOverlay() {
@@ -228,14 +243,28 @@ class HeaderController {
   }
 
   updateRoleBadge(role) {
-    if (!this.roleBadge || !this.roleBadgeText || !this.roleManager) return;
+    if (!this.roleManager) return;
 
-    if (role) {
-      const roleText = role.charAt(0).toUpperCase() + role.slice(1);
-      this.roleBadgeText.textContent = `${roleText === 'Developer' ? 'Engineer' : roleText} View`;
-      this.roleBadge.style.display = 'flex';
-    } else {
-      this.roleBadge.style.display = 'none';
+    const roleText = role ? `${role.charAt(0).toUpperCase() + role.slice(1) === 'Developer' ? 'Engineer' : role.charAt(0).toUpperCase() + role.slice(1)} View` : '';
+
+    // Update desktop role badge
+    if (this.roleBadge && this.roleBadgeText) {
+      if (role) {
+        this.roleBadgeText.textContent = roleText;
+        this.roleBadge.classList.add('visible');
+      } else {
+        this.roleBadge.classList.remove('visible');
+      }
+    }
+
+    // Update mobile role badge
+    if (this.mobileRoleBadge && this.mobileRoleBadgeText) {
+      if (role) {
+        this.mobileRoleBadgeText.textContent = roleText;
+        this.roleBadge.classList.add('visible');
+      } else {
+        this.roleBadge.classList.remove('visible');
+      }
     }
   }
 

@@ -57,8 +57,7 @@
         id="header-role-badge"
         class="header-button header-role-badge"
         aria-label="Change role"
-        title="Click to change role"
-        style="display: none;">
+        title="Click to change role">
         <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
         <span class="header-role-text" id="header-role-text">View</span>
       </button>
@@ -97,6 +96,39 @@
 
   <div id="mobile-nav-overlay" class="mobile-nav-overlay" aria-hidden="true">
     <div class="mobile-nav-panel">
+      <div class="mobile-nav-controls">
+        <a
+          id="mobile-download-btn"
+          class="mobile-nav-control-btn"
+          href="data/CV_Hrudakov_2025.pdf"
+          download
+          aria-label="Download resume"
+          title="Download resume">
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+          <span class="mobile-nav-control-text">Resume</span>
+        </a>
+
+        <button
+          id="mobile-role-badge"
+          class="mobile-nav-control-btn"
+          aria-label="Change role"
+          title="Click to change role">
+          <span class="material-symbols-outlined" aria-hidden="true">person</span>
+          <span class="mobile-nav-control-text" id="mobile-role-text">View</span>
+        </button>
+
+        <button
+          id="mobile-theme-toggle"
+          class="mobile-nav-control-btn"
+          aria-label="Toggle theme"
+          aria-pressed="false"
+          title="Toggle Theme"
+          data-theme="light">
+          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+          <span class="mobile-nav-control-text">Theme</span>
+        </button>
+      </div>
+
       <div class="mobile-nav-header">
         <span class="mobile-nav-title">Navigation</span>
         <button

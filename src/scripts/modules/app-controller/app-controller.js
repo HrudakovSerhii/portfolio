@@ -16,6 +16,7 @@ const ELEMENT_IDS = {
   header: 'header',
   ownerName: 'owner-name',
   themeToggle: 'theme-toggle',
+  mobileThemeToggle: 'mobile-theme-toggle',
   // languageSelector: 'language-selector',
   mainContent: 'main-content',
   introSection: 'intro-section',
@@ -51,6 +52,7 @@ class AppController {
       header: null,
       ownerName: null,
       themeToggle: null,
+      mobileThemeToggle: null,
       // languageSelector: null,
       mainContent: null,
       introSection: null,
@@ -69,7 +71,7 @@ class AppController {
       this._validateCachedElements(CRITICAL_ELEMENT_KEYS);
       this._setupEventListeners();
 
-      this.themeSwitcher.initialize(this.elements.themeToggle);
+      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle);
 
       this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
 
@@ -113,6 +115,7 @@ class AppController {
     this.elements.header = document.getElementById(ELEMENT_IDS.header);
     this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
     this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
+    this.elements.mobileThemeToggle = document.getElementById(ELEMENT_IDS.mobileThemeToggle);
     // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
@@ -130,6 +133,12 @@ class AppController {
     this.elements.themeToggle.addEventListener('click', () => {
       this.themeSwitcher.toggle();
     });
+
+    if (this.elements.mobileThemeToggle) {
+      this.elements.mobileThemeToggle.addEventListener('click', () => {
+        this.themeSwitcher.toggle();
+      });
+    }
 
     // this.elements.languageSelector.addEventListener('change', (e) => {
     //   this.headerController.updateLanguage(e.target.value);

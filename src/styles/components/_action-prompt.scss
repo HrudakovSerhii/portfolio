@@ -4,7 +4,7 @@
 .action-prompt {
   position: relative;
   bottom: 0;
-  margin: 0 auto variables.$spacing-md auto;
+  margin: variables.$spacing-md auto;
   opacity: 0;
   visibility: hidden;
 
