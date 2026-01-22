@@ -39,7 +39,7 @@
 
 .footer-copyright {
   font-size: variables.$font-size-sm;
-  font-weight: 500;
+  font-weight: variables.$font-weight-nominal;
   color: var(--color-text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.05em;

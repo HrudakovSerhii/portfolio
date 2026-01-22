@@ -3,10 +3,9 @@
 
 .content-section {
   position: relative;
-  margin: 0 auto;
   background-color: transparent;
   justify-content: center;
-  margin-top: variables.$spacing-lg;
+  margin: variables.$spacing-lg auto 0;
   min-height: calc(100vh - 56px) !important;
 
   @include mixins.desktop {
@@ -16,14 +15,6 @@
   &.default-section {
     justify-content: space-around;
   }
-
-  // &:is(#section-hero),
-  // &:is(#section-skills),
-  // &:is(#section-soft-skills),
-  // &:is(#section-about),
-  // &:is(#section-contact){
- 
-  // }
 
   .section-layout {
     display: flex;
