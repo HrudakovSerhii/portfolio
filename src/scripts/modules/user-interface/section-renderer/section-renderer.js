@@ -3,6 +3,7 @@ import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants
 import ActionPromptManager from './action-prompt-manager.js';
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
+import Drawer from './drawer.js';
 
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
@@ -30,23 +31,24 @@ class SectionRenderer {
 
       this._populateText(sectionElement, sectionContent.text);
       this._populateSubText(sectionElement, sectionContent.subText);
-      this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
 
       this._scrollToSection(sectionElement);
 
-      this.actionPromptManager.showTyping(sectionId);
+      // this.actionPromptManager.showTyping(sectionId);
 
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
+      this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
       this._revealMetaItems(sectionElement);
-      this.actionPromptManager.hideTyping(sectionId);
+      // this.actionPromptManager.hideTyping(sectionId);
 
       this.stateManager.addRevealedSection(sectionId);
 
       this._updateActionPrompt(sectionId);
+      this._scrollToSection(sectionElement);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
-      this.actionPromptManager.hideTyping(sectionId);
+      // this.actionPromptManager.hideTyping(sectionId);
     }
   }
 
@@ -67,11 +69,11 @@ class SectionRenderer {
 
   _renderSection(sectionId, sectionContent) {
     const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
-    
+
     // Create and append action prompt to section before mounting to DOM
     const promptElement = this.actionPromptManager.createForSection(sectionId);
     sectionElement.appendChild(promptElement);
-    
+
     const lastSectionElement = this.sectionsContainer.lastChild;
     this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
 
@@ -90,6 +92,12 @@ class SectionRenderer {
     }
 
     const metaItemRenderer = new MetaItemRenderer(this.templateBuilder, profileData);
+
+    if (sectionId === 'experience') {
+      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
+
+      return;
+    }
 
     if (sectionId === 'projects') {
       this._renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata);
@@ -125,18 +133,44 @@ class SectionRenderer {
     metaItemRenderer.renderInCarousel(metaItemsContainer, sectionId, sectionMetadata.mainItems);
   }
 
-  _renderDefaultItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role) {
+  _renderDefaultItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, classNames = ['hidden']) {
     const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
 
     if (!metaItemsContainer || !sectionMetadata?.mainItems) {
       return;
     }
 
-    metaItemsContainer.classList.add('hidden');
+    // This is temp fix to pass additional class when render meta items
+    metaItemsContainer.classList.add(...classNames);
 
     const renderedItems = metaItemRenderer.render(sectionId, sectionMetadata.mainItems, role);
 
     if (renderedItems) {
+      metaItemsContainer.appendChild(renderedItems);
+    }
+  }
+
+  _renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, classNames = ['hidden']) {
+    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
+
+    if (!metaItemsContainer || !sectionMetadata?.mainItems) {
+      return;
+    }
+
+    metaItemsContainer.classList.add(...classNames);
+
+    const renderedItems = metaItemRenderer.render(sectionId, sectionMetadata.mainItems, role);
+
+    if (!renderedItems) {
+      return;
+    }
+
+    const drawer = new Drawer(this.templateBuilder);
+    const drawerElement = drawer.wrapContent(renderedItems);
+
+    if (drawerElement) {
+      metaItemsContainer.appendChild(drawerElement);
+    } else {
       metaItemsContainer.appendChild(renderedItems);
     }
   }
@@ -146,6 +180,7 @@ class SectionRenderer {
     const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
 
     if (metaItemsContainer) {
+      metaItemsContainer.classList.remove('non-displayed');
       metaItemsContainer.classList.remove('hidden');
     }
 
