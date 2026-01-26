@@ -234,32 +234,16 @@ class SectionRenderer {
   }
 
   _updateActionPrompt(sectionId) {
-    const revealedSections = this.stateManager.getRevealedSections();
-    const lastRevealedId = revealedSections[revealedSections.length - 1];
-
     const currentSectionIndex = SECTION_ORDER.indexOf(sectionId);
     const nextSectionId = SECTION_ORDER[currentSectionIndex + 1];
 
-    this._updateNextSectionPromptButton(`Read next: ${this.capitaliseString(nextSectionId)}`);
-
     if (nextSectionId !== 'contact') {
+      this._updateNextSectionPromptButton(`Read next: ${this.capitaliseString(nextSectionId)}`);
+
       requestAnimationFrame(() => {
         this.nextSectionPrompt.classList.add('action-prompt--visible');
       });
     }
-
-    // if (nextSectionId && isLastRevealed) {
-    //   this.show(promptElement, nextSectionId);
-    // } else {
-    //   this.hide(promptElement);
-    // }
-    //
-    // if (lastRevealedId === sectionId) {
-    //
-    // }
-    // this.nextSectionPrompt.
-    // ///
-    // this.actionPromptManager.update(sectionId, revealedSections);
   }
 
   async _fetchProfileData() {
