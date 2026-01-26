@@ -1,19 +1,20 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-.intro {
+.section-intro {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: variables.$spacing-md;
   z-index: variables.$z-nav;
-  min-height: calc(100vh - 3rem);
+  min-height: calc(90vh - 52px) !important;
   height: 100%;
   overflow: hidden;
   transition: height 3s ease-in-out;
 
   @include mixins.desktop {
     gap: variables.$spacing-xl;
-    min-height: calc(100vh - 4rem);
+    min-height: calc(90vh - 72px) !important;
   }
 
   @include mixins.animation-sqwizz;

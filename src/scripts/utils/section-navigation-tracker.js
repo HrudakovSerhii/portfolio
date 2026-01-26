@@ -5,7 +5,7 @@ class SectionNavigationTracker {
 
     this.activeClass = options.activeClass || 'active';
     this.minVisibilityThreshold = 0.1;
-    this.sectionSelector = options.sectionSelector || '.content-section';
+    this.sectionSelector = options.sectionSelector || '.section';
     this.navItemSelector = options.navItemSelector || '.header-nav-item';
     this.sectionIdAttribute = options.sectionIdAttribute || 'data-section-id';
 
@@ -70,7 +70,7 @@ class SectionNavigationTracker {
   updateSectionStates(entries) {
     entries.forEach(entry => {
       const sectionId = entry.target.getAttribute(this.sectionIdAttribute);
-      
+
       if (entry.isIntersecting && entry.intersectionRatio >= this.minVisibilityThreshold) {
         this.sectionStates.set(sectionId, {
           ratio: entry.intersectionRatio,
