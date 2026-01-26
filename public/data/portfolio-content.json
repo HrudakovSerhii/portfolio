@@ -6,7 +6,8 @@
     "phone": "+31614848082",
     "location": "Purmerend, Netherlands",
     "socialLinks": {
-      "linkedin": "https://linkedin.com/in/serhii-hrudakov"
+      "linkedin": "https://linkedin.com/in/serhii-hrudakov",
+      "github": "https://github.com/HrudakovSerhii"
     }
   },
   "sections": {
@@ -18,30 +19,45 @@
       },
       "content": {
         "recruiter": {
-          "text": "Helping to build scalable frontend and happy teams",
-          "subText": "I hold a Master's degree in Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments and have contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions.",
-          "image": {
-            "name": "hero.hr",
-            "imageAlt": "Serhii Hrudakov - Senior Frontend Developer",
-            "aspectRatio": "aspect-square"
+          "header": {
+            "text": "Helping to build scalable frontend and happy teams",
+            "subText": ""
+          },
+          "content": {
+            "text": "I hold a Master's degree in Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments and have contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions.",
+            "image": {
+              "name": "hero.hr",
+              "imageAlt": "Serhii Hrudakov - Senior Frontend Developer",
+              "aspectRatio": "aspect-square"
+            }
           }
         },
         "developer": {
-          "text": "On a mission `Impossible` to make complex codebases simple and maintainable",
-          "subText": "My approach is simple: code must be easy to understand, no matter how complex it is. This helped me to build various systems where each little detail matters: from creating reusable components and functions to configuring quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
-          "image": {
-            "name": "hero.developer",
-            "imageAlt": "Serhii Hrudakov - Software Engineer",
-            "aspectRatio": "aspect-square"
+          "header": {
+            "text": "On a mission `Impossible` to make complex codebases simple and maintainable",
+            "subText": ""
+          },
+          "content": {
+            "text": "My approach is simple: code must be easy to understand, no matter how complex it is. This helped me to build various systems where each little detail matters: from creating reusable components and functions to configuring quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
+            "image": {
+              "name": "hero.developer",
+              "imageAlt": "Serhii Hrudakov - Software Engineer",
+              "aspectRatio": "aspect-square"
+            }
           }
         },
         "friend": {
-          "text": "Code is a magic tool that helps to bring ideas to life",
-          "subText": "I am an engineer at heart, ready to tackle tasks with head and hands. I believe that using a rusty set of tools in a garage and a keyboard have a lot in common: both are instruments to create. Both are tools to help you do what you love.",
-          "image": {
-            "name": "hero.friend",
-            "imageAlt": "Serhii Hrudakov",
-            "aspectRatio": "aspect-portrait"
+          "header": {
+            "text": "Code is a magic tool that helps to bring ideas to life",
+            "subText": ""
+          },
+          "content": {
+            "text": "I am an engineer at heart, ready to tackle tasks with head and hands. I believe that using a rusty set of tools in a garage and a keyboard have a lot in common: both are instruments to create. Both are tools to help you do what you love.",
+            "image": {
+              "name": "hero.friend",
+              "imageAlt": "Serhii Hrudakov",
+              "aspectRatio": "aspect-portrait"
+            }
           }
         }
       }
@@ -186,13 +202,31 @@
       },
       "content": {
         "recruiter": {
-          "text": "My recent role at Mobiquity (Hexaware) involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%) and writing specifications and release notes. Previously, at EricsDigital, I led the migration of a massive e-commerce monolith to a modern micro-frontend architecture. At A-Dam, I delivered an in-house designed web-shop platform that helped increase yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
+          "header": {
+            "text": "Work Experience",
+            "subText": ""
+          },
+          "content": {
+            "text": "My recent role at Mobiquity (Hexaware) involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%) and writing specifications and release notes. Previously, at EricsDigital, I led the migration of a massive e-commerce monolith to a modern micro-frontend architecture. At A-Dam, I delivered an in-house designed web-shop platform that helped increase yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
+          }
         },
         "developer": {
-          "text": "At Mobiquity (Hexaware), I architected NX monorepos to share UI and feature libraries across client apps and built complex chat interfaces for AI agents. At EricsDigital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state management and optimizing for Google Core Web Vitals. I also have solid experience with React Native, building offline-first apps for KLM crew members. I have worked in different team structures and delivered solutions through a number of pipelines."
+          "header": {
+            "text": "Work Experience",
+            "subText": ""
+          },
+          "content": {
+            "text": "At Mobiquity (Hexaware), I architected NX monorepos to share UI and feature libraries across client apps and built complex chat interfaces for AI agents. At EricsDigital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state management and optimizing for Google Core Web Vitals. I also have solid experience with React Native, building offline-first apps for KLM crew members. I have worked in different team structures and delivered solutions through a number of pipelines."
+          }
         },
         "friend": {
-          "text": "While software development is my main job, I have never stopped building other systems. From smart home solutions to bind Tado, Hue, and ZigBee environments under a single interface to building complex home networks to get the best possible speed across devices. I love engineering and I can't imagine myself in other roles. To take initiative, to take a lead, to propose a solution - these are the challenges I prefer. And in my free time, I organize hiking trips and enjoy the outdoors and nature."
+          "header": {
+            "text": "Work Experience",
+            "subText": ""
+          },
+          "content": {
+            "text": "While software development is my main job, I have never stopped building other systems. From smart home solutions to bind Tado, Hue, and ZigBee environments under a single interface to building complex home networks to get the best possible speed across devices. I love engineering and I can't imagine myself in other roles. To take initiative, to take a lead, to propose a solution - these are the challenges I prefer. And in my free time, I organize hiking trips and enjoy the outdoors and nature."
+          }
         }
       }
     },
@@ -256,7 +290,7 @@
             "years": "3+",
             "icon": "Testing"
           },
-                    {
+          {
             "type": "skills",
             "name": "RTL / Vitest",
             "years": "3+",
@@ -284,13 +318,31 @@
       },
       "content": {
         "recruiter": {
-          "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with vanilla JavaScript and complex long-lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities by building trust between the team and business owners to ensure delivery and efficiency."
+          "header": {
+            "text": "Technical Skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with vanilla JavaScript and complex long-lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities by building trust between the team and business owners to ensure delivery and efficiency."
+          }
         },
         "developer": {
-          "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidates. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
+          "header": {
+            "text": "Technical Skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidates. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
+          }
         },
         "friend": {
-          "text": "I geek out on the latest tech. Right now, I'm using fully local LLMs to build a custom smart home dashboard. I care deeply about the UI details but would never trade them for performance as both are critical in providing the best user experience. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a browser engine works."
+          "header": {
+            "text": "Technical Skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "I geek out on the latest tech. Right now, I'm using fully local LLMs to build a custom smart home dashboard. I care deeply about the UI details but would never trade them for performance as both are critical in providing the best user experience. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a browser engine works."
+          }
         }
       }
     },
@@ -348,13 +400,31 @@
       },
       "content": {
         "recruiter": {
-          "text": "Beyond technical expertise, I always try to bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+          "header": {
+            "text": "Soft Skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "Beyond technical expertise, I always try to bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+          }
         },
         "developer": {
-          "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation, and utilizing the best developer tools. I'm detail-oriented when it comes to UX implementation, and well-structured architecture matters to me the most. I actively contribute to team processes like sprint planning and technical specifications and support team members with code reviews and pair programming sessions. I know that a senior role is not only about memorizing framework code, but about seeing system and structure under requirements."
+          "header": {
+            "text": "Soft Skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation, and utilizing the best developer tools. I'm detail-oriented when it comes to UX implementation, and well-structured architecture matters to me the most. I actively contribute to team processes like sprint planning and technical specifications and support team members with code reviews and pair programming sessions. I know that a senior role is not only about memorizing framework code, but about seeing system and structure under requirements."
+          }
         },
         "friend": {
-          "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others achieve the best results. I'm curious by nature and always learning from others, whether it's a junior with a fresh look on familiar things or a veteran who punched holes to save code on punch cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
+          "header": {
+            "text": "Soft Skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others achieve the best results. I'm curious by nature and always learning from others, whether it's a junior with a fresh look on familiar things or a veteran who punched holes to save code on punch cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
+          }
         }
       }
     },
@@ -496,13 +566,31 @@
       },
       "content": {
         "recruiter": {
-          "text": "Every project I worked on was unique in setup, team configuration, user audience, and environment where it was running. But all of them had common goals: to bring the best user experience and drive revenue growth. Frontend is not only a cover, but a complex labyrinth of user stories that need clear markers on each pathway for users not to get lost. Understanding these fundamentals and the experience collected over the years by building user interfaces helped me find my strong developer skills and grow as a professional who knows how to build quality frontend."
+          "header": {
+            "text": "Featured Projects",
+            "subText": ""
+          },
+          "content": {
+            "text": "Every project I worked on was unique in setup, team configuration, user audience, and environment where it was running. But all of them had common goals: to bring the best user experience and drive revenue growth. Frontend is not only a cover, but a complex labyrinth of user stories that need clear markers on each pathway for users not to get lost. Understanding these fundamentals and the experience collected over the years by building user interfaces helped me find my strong developer skills and grow as a professional who knows how to build quality frontend."
+          }
         },
         "developer": {
-          "text": "Working on multiple projects across different domains has some pluses and minuses. Pluses: you learn how to build frontend tailored for the user and environment. You study what is important and what tools can help you move faster. You listen, you read, and apply new knowledge until you memorize it. Minuses: you sometimes forget a specific function in a framework you haven't used for a few years. But the biggest prize you win after years of moving — you start to see the system under requirements. This is what true engineering means."
+          "header": {
+            "text": "Featured Projects",
+            "subText": ""
+          },
+          "content": {
+            "text": "Working on multiple projects across different domains has some pluses and minuses. Pluses: you learn how to build frontend tailored for the user and environment. You study what is important and what tools can help you move faster. You listen, you read, and apply new knowledge until you memorize it. Minuses: you sometimes forget a specific function in a framework you haven't used for a few years. But the biggest prize you win after years of moving — you start to see the system under requirements. This is what true engineering means."
+          }
         },
         "friend": {
-          "text": "After a decade of building client projects, I have started to implement my own ideas that buzzed for so long in my head. With AI tools now available, it became clear that code is just a tool to make things faster. While working on commercial projects and learning technologies, approaches, and methodologies, I learned so much to use for my own good. For example, I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website — simple, fast, and designed to tell my story. I hope you enjoy reading it :)"
+          "header": {
+            "text": "Featured Projects",
+            "subText": ""
+          },
+          "content": {
+            "text": "After a decade of building client projects, I have started to implement my own ideas that buzzed for so long in my head. With AI tools now available, it became clear that code is just a tool to make things faster. While working on commercial projects and learning technologies, approaches, and methodologies, I learned so much to use for my own good. For example, I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website — simple, fast, and designed to tell my story. I hope you enjoy reading it :)"
+          }
         }
       }
     },
@@ -513,8 +601,12 @@
         "order": 5,
         "main_items": [
           {
-            "type": "email",
-            "title": "Send me an email",
+            "type": "contact-link",
+            "id": "email",
+            "title": "Email",
+            "subtitle": "Best for job inquiries",
+            "icon": "mail",
+            "href": "mailto:hrudakovserhii@gmail.com",
             "roleItems": {
               "recruiter": {
                 "subject": "Opportunity Discussion - Frontend/React Developer Position",
@@ -529,18 +621,52 @@
                 "body": "Hey Serhii!\n\nI really enjoyed your portfolio! Would love to grab a coffee sometime and chat about coding, hiking, or whatever on your mind.\n\nLet me know when you're free!\n\nCheers"
               }
             }
+          },
+          {
+            "type": "contact-link",
+            "id": "linkedin",
+            "title": "LinkedIn",
+            "subtitle": "Professional Story",
+            "icon": "linkedin",
+            "href": "https://www.linkedin.com/in/serhii-hrudakov/"
+          },
+          {
+            "type": "contact-link",
+            "id": "github",
+            "title": "GitHub",
+            "subtitle": "Code & Contributions",
+            "icon": "github",
+            "href": "https://github.com/HrudakovSerhii"
           }
         ]
       },
       "content": {
         "recruiter": {
-          "text": "After more than 10 years in software development, I've decided that it's time to shift from full-time development to a more management-focused role. My goal is to find a lead position where I can grow with the team and tackle challenges together. I would be happy to apply my experience and prove my capabilities in action. My strengths lie in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
+          "header": {
+            "text": "Let's Build Something Together",
+            "subText": "Reach out for opportunities or just to say hello."
+          },
+          "content": {
+            "text": "After more than 10 years in software development, I've decided that it's time to shift from full-time development to a more management-focused role. My goal is to find a lead position where I can grow with the team and tackle challenges together. I would be happy to apply my experience and prove my capabilities in action. My strengths lie in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
+          }
         },
         "developer": {
-          "text": "I'm always open to discussing how the web can be better for everyone - from state management patterns to the latest UI designs, systems integration, and accessibility tools. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineers. I would be happy to contribute and lead the way for new developers."
+          "header": {
+            "text": "Let's Build Something Together",
+            "subText": "Reach out for opportunities or just to say hello."
+          },
+          "content": {
+            "text": "I'm always open to discussing how the web can be better for everyone - from state management patterns to the latest UI designs, systems integration, and accessibility tools. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineers. I would be happy to contribute and lead the way for new developers."
+          }
         },
         "friend": {
-          "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, frontend, or extreme sports like alpinism or climbing - let's get in touch! I love meeting new people and swapping stories about the world around us and software's role in it. Let's connect and see if we can learn something new from each other!"
+          "header": {
+            "text": "Let's Build Something Together",
+            "subText": "Reach out for opportunities or just to say hello."
+          },
+          "content": {
+            "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, frontend, or extreme sports like alpinism or climbing - let's get in touch! I love meeting new people and swapping stories about the world around us and software's role in it. Let's connect and see if we can learn something new from each other!"
+          }
         }
       }
     }
