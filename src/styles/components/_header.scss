@@ -277,6 +277,7 @@
 // Mobile menu toggle - only visible on mobile
 .header-mobile-toggle {
   display: flex;
+  padding: variables.$spacing-xs;
 
   @include mixins.mobile-up {
     display: none;
