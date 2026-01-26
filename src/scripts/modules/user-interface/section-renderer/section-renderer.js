@@ -1,6 +1,5 @@
 import { GenerativeImage } from '../generative-image/index.js';
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
-import ActionPromptManager from './action-prompt-manager.js';
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
 import Drawer from './drawer.js';
@@ -13,16 +12,12 @@ class SectionRenderer {
     this.templateBuilder = templateBuilder;
 
     this.nextSectionPrompt = null;
-
     this.sectionsContainer = null;
-    this.actionPromptManager = null;
     this.sectionAnimator = new SectionAnimator(animationController, templateBuilder);
   }
 
   initialize(sectionsContainerElement, sectionOrder, onActionPromptClick) {
     this.sectionsContainer = sectionsContainerElement;
-    this.actionPromptManager = new ActionPromptManager(this.templateBuilder, sectionOrder);
-    this.actionPromptManager.initialize(onActionPromptClick);
 
     this._initNextSectionPrompts(onActionPromptClick);
   }
@@ -62,18 +57,15 @@ class SectionRenderer {
 
       const sectionElement = this._renderSection(sectionId, sectionContent);
 
-      this._populateText(sectionElement, sectionContent.text);
-      this._populateSubText(sectionElement, sectionContent.subText);
+      this._populateText(sectionElement, sectionContent.content?.text);
+      this._populateSubText(sectionElement, sectionContent.content?.subText);
 
       this._scrollToSection(sectionElement);
-
-      // this.actionPromptManager.showTyping(sectionId);
 
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
       this._revealMetaItems(sectionElement);
-      // this.actionPromptManager.hideTyping(sectionId);
 
       this.stateManager.addRevealedSection(sectionId);
 
@@ -81,7 +73,6 @@ class SectionRenderer {
       this._scrollToSection(sectionElement);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
-      // this.actionPromptManager.hideTyping(sectionId);
     }
   }
 
@@ -91,9 +82,13 @@ class SectionRenderer {
 
     const sectionElement = this._renderSection(sectionId, sectionContent);
 
-    this._populateText(sectionElement, sectionContent.text);
-    this._populateSubText(sectionElement, sectionContent.subText);
-    this._populateImage(sectionElement, sectionContent.image);
+    this._populateText(sectionElement, sectionContent.content?.text);
+    this._populateSubText(sectionElement, sectionContent.content?.subText);
+
+    if (sectionContent.content?.image) {
+      this._populateImage(sectionElement, sectionContent.content.image);
+    }
+
     this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
     this._revealMetaItems(sectionElement);
 
@@ -166,7 +161,7 @@ class SectionRenderer {
   }
 
   _renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata) {
-    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
+    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselItems}`);
 
     if (!metaItemsContainer || !sectionMetadata?.mainItems) {
       return;
@@ -221,7 +216,7 @@ class SectionRenderer {
 
   _revealMetaItems(sectionElement) {
     const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
-    const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
+    const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselItems}`);
 
     if (metaItemsContainer) {
       metaItemsContainer.classList.remove('non-displayed');
