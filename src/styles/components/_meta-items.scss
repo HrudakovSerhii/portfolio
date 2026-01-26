@@ -1,39 +1,9 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-.section-meta-items {
-  @include mixins.animation-hidden;
-
-  &.default-meta-items {
-    display: flex;
-    gap: variables.$spacing-xs;
-    flex-wrap: wrap;
-  }
-
-  &.skills-meta-items {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: variables.$spacing-md;
-
-    @include mixins.tablet {
-      gap: variables.$spacing-lg;
-    }
-  }
-
-  &.contact-meta-items {
-    display: flex;
-    gap: variables.$spacing-md;
-
-    @include mixins.mobile-max {
-      flex-direction: column;
-      gap: variables.$spacing-md;
-      width: 100%;
-    }
-  }
-}
-
-.section-carousel-meta-items {
+// Animation hidden state for meta items (used by JS)
+.section__meta,
+.section__carousel {
   @include mixins.animation-hidden;
 }
 
