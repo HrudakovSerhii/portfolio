@@ -1,4 +1,4 @@
-import StateManager, { SECTION_ORDER } from '../../utils/state-manager.js';
+import StateManager from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
 import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
 import AnimationController from '../animation-controller';
@@ -8,27 +8,13 @@ import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
-const MODAL_FADE_DURATION = 300;
-const INTRO_TRANSITION_DURATION = 400;
-
-const ELEMENT_IDS = {
-  initialLoader: 'initial-loader',
-  header: 'header',
-  ownerName: 'owner-name',
-  themeToggle: 'theme-toggle',
-  mobileThemeToggle: 'mobile-theme-toggle',
-  // languageSelector: 'language-selector',
-  mainContent: 'main-content',
-  introSection: 'intro-section',
-};
-
-const CRITICAL_ELEMENT_KEYS = [
-  'initialLoader',
-  'themeToggle',
-  // 'languageSelector',
-  'mainContent',
-  'introSection',
-];
+import {
+  SECTION_ORDER,
+  MODAL_FADE_DURATION,
+  INTRO_TRANSITION_DURATION,
+  APP_CRITICAL_ELEMENT_IDS,
+  APP_APP_CRITICAL_ELEMENT_KEYS,
+} from "../../constants.js";
 
 class AppController {
   constructor() {
@@ -68,7 +54,7 @@ class AppController {
 
     try {
       this._cacheElements();
-      this._validateCachedElements(CRITICAL_ELEMENT_KEYS);
+      this._validateCachedElements(APP_APP_CRITICAL_ELEMENT_KEYS);
       this._setupEventListeners();
 
       this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle);
@@ -111,20 +97,20 @@ class AppController {
   }
 
   _cacheElements() {
-    this.elements.initialLoader = document.getElementById(ELEMENT_IDS.initialLoader);
-    this.elements.header = document.getElementById(ELEMENT_IDS.header);
-    this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
-    this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
-    this.elements.mobileThemeToggle = document.getElementById(ELEMENT_IDS.mobileThemeToggle);
-    // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
-    this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
+    this.elements.initialLoader = document.getElementById(APP_CRITICAL_ELEMENT_IDS.initialLoader);
+    this.elements.header = document.getElementById(APP_CRITICAL_ELEMENT_IDS.header);
+    this.elements.ownerName = document.getElementById(APP_CRITICAL_ELEMENT_IDS.ownerName);
+    this.elements.themeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.themeToggle);
+    this.elements.mobileThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileThemeToggle);
+    // this.elements.languageSelector = document.getElementById(APP_CRITICAL_ELEMENT_IDS.languageSelector);
+    this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
+    this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
   }
 
   _validateCachedElements(criticalElementKeys) {
     for (const key of criticalElementKeys) {
       if (!this.elements[key]) {
-        throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
+        throw new Error(`Critical element not found: ${key} (ID: ${APP_CRITICAL_ELEMENT_IDS[key]})`);
       }
     }
   }
@@ -280,10 +266,7 @@ class AppController {
 
   _resetPortfolioState() {
     this.stateManager.resetRevealedSections();
-
-    const sections = this.elements.mainContent.querySelectorAll('.content-section');
-    sections.forEach(section => section.remove());
-
+    this.sectionRenderer.removeRevealedSections();
     this.headerController.clearNavigation();
   }
 

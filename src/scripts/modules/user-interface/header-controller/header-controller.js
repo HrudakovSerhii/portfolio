@@ -5,7 +5,6 @@ const HEADER_ELEMENTS = {
   navItem: 'header-nav-item',
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
-  navToggle: 'header-nav-toggle',
   indicator: 'nav-indicator',
   // Mobile nav elements
   mobileNavToggle: 'mobile-nav-toggle',
@@ -33,7 +32,6 @@ class HeaderController {
     this.navIndicator = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
-    this.navToggle = null;
 
     // Mobile nav elements
     this.mobileNavToggle = null;
@@ -56,7 +54,6 @@ class HeaderController {
     this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
-    this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
 
     // Cache mobile nav elements
     this.mobileNavToggle = document.getElementById(HEADER_ELEMENTS.mobileNavToggle);
@@ -69,7 +66,7 @@ class HeaderController {
     this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'main-content', {
       activeClass: 'active',
       threshold: 0.51,
-      sectionSelector: '.content-section',
+      sectionSelector: '.section',
       navItemSelector: '.header-nav-item',
       sectionIdAttribute: 'data-section-id'
     });

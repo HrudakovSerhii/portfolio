@@ -1,9 +1,13 @@
 import { GenerativeImage } from '../generative-image/index.js';
-import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
+
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
 import Drawer from './drawer.js';
-import {SECTION_ORDER} from "../../../utils/state-manager.js";
+
+import { capitaliseString } from "../../../utils/utils.js";
+
+import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
+import { SECTION_ORDER } from "../../../constants.js";
 
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
@@ -67,10 +71,10 @@ class SectionRenderer {
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
       this._revealMetaItems(sectionElement);
 
-      this.stateManager.addRevealedSection(sectionId);
-
       this._updateActionPrompt(sectionId);
       this._scrollToSection(sectionElement);
+
+      this.stateManager.addRevealedSection(sectionId);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
     }
@@ -95,29 +99,17 @@ class SectionRenderer {
     this._updateActionPrompt(sectionId);
   }
 
-  capitaliseString(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  removeRevealedSections() {
+    const sections = this.sectionsContainer.querySelectorAll(`.${SECTION_ELEMENTS.section}`);
+
+    sections.forEach(section => section.remove());
   }
 
   _renderSection(sectionId, sectionContent) {
     const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
 
     this.nextSectionPrompt.setAttribute('data-section-id', sectionId);
-    //
-    // const button = this.nextSectionPrompt.querySelector('.prompt-button');
-    //
-    // if (button) {
-    //   const defaultText = `Read next: ${this.capitaliseString(sectionId)}`;
-    //   button.textContent = defaultText;
-    //   button.setAttribute('data-default-text', defaultText);
-    //   button.setAttribute('data-section-id', sectionId);
-    // }
 
-    // Create and append action prompt to section before mounting to DOM
-    // const promptElement = this.actionPromptManager.createForSection(sectionId);
-    // sectionElement.appendChild(promptElement);
-    //
-    // const lastSectionElement = this.sectionsContainer.lastChild;
     this.sectionsContainer.insertBefore(sectionElement, this.nextSectionPrompt);
 
     return sectionElement;
@@ -232,11 +224,15 @@ class SectionRenderer {
     const currentSectionIndex = SECTION_ORDER.indexOf(sectionId);
     const nextSectionId = SECTION_ORDER[currentSectionIndex + 1];
 
-    if (nextSectionId !== 'contact') {
-      this._updateNextSectionPromptButton(`Read next: ${this.capitaliseString(nextSectionId)}`);
+    if (nextSectionId && nextSectionId !== 'contact') {
+      this._updateNextSectionPromptButton(`Read next: ${capitaliseString(nextSectionId)}`);
 
       requestAnimationFrame(() => {
         this.nextSectionPrompt.classList.add('action-prompt--visible');
+      });
+    } else {
+      requestAnimationFrame(() => {
+        this.nextSectionPrompt.classList.remove('action-prompt--visible');
       });
     }
   }

@@ -46,6 +46,17 @@
   }
 }
 
+@keyframes typing-pulse {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
