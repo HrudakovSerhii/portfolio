@@ -238,159 +238,37 @@
   </footer>
 
   <template id="section-template">
-    <section class="content-section default-section" id="default-section">
-      <div class="section-layout">
-        <div class="section-visual section-visual-animated">
-          <!-- Image will be inserted here -->
+    <section class="section">
+      <div class="section__layout">
+        <div class="section__visual section__visual--animated">
+          <!-- Image will be inserted here if exists -->
         </div>
-        <div class="section-body">
-          <div class="section-header">
-            <h2 class="section-title"></h2>
-            <p class="section-query"></p>
-          </div>
-          <p class="section-body-content  section-body-content-animated">
-            <!-- Text content will be inserted here -->
-          </p>
-          <div class="section-meta-items default-meta-items">
-            <!-- Meta items will be inserted here based on section type -->
-          </div>
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="experience-section-template">
-    <section class="content-section" id="experience-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-        <div class="section-meta-items experience-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="skills-section-template">
-    <section class="content-section" id="skills-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-        <div class="section-meta-items skills-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="projects-section-template">
-    <section class="content-section" id="projects-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-      </div>
-      <div class="section-carousel">
-        <div class="section-carousel-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="hero-section-template">
-    <section class="content-section hero" id="hero-section">
-      <div class="section-layout">
-        <div class="section-visual section-visual-hero section-visual-animated">
-          <!-- Image will be inserted here -->
-        </div>
-        <div class="section-body">
-          <div class="section-header section-header--hero">
-            <h2 class="section-hero-title section-body-content">
-              <!-- Text content will be inserted here -->
+        <div class="section__body">
+          <div class="section__header">
+            <h2 class="section__title">
+              <!-- Section Title will be inserted here if exists -->
             </h2>
-            <p class="section-hero-query section-subtext-content section-body-content-animated">
-              <!-- Text sub-content will be inserted here -->
+            <p class="section__subtitle">
+              <!-- Section SubTitle will be inserted here if exists -->
             </p>
           </div>
+          <div class="section__content">
+            <p class="section__text section__text--animated">
+              <!-- Section content Text will be inserted here if exists -->
+            </p>
+            <p class="section__subtext">
+              <!-- Section content SubText will be inserted here if exists -->
+            </p>
+          </div>
+          <div class="section__meta">
+            <!-- Meta items inserted here -->
+          </div>
+        </div>
+        <div class="section__carousel">
+          <!-- Carousel items for projects -->
         </div>
       </div>
     </section>
-  </template>
-
-  <template id="contact-section-template">
-    <section class="content-section contact" id="contact-section">
-      <div class="section-header">
-        <h2 class="section-title">Let's Build Something Together</h2>
-        <p class="section-query">Reach out for opportunities or just to say hello.</p>
-      </div>
-      <p class="section-body-content  section-body-content-animated">
-        <!-- Text content will be inserted here -->
-      </p>
-      <div class="section-meta-items contact-meta-items">
-        <!-- Email Card -->
-        <a class="contact-card" href="mailto:hrudakovserhii@gmail.com">
-          <div class="contact-card__header">
-            <div class="contact-card__icon">
-              <span class="material-symbols-outlined">mail</span>
-            </div>
-            <h3 class="contact-card__title">Email</h3>
-          </div>
-          <p class="contact-card__subtitle">Best for job inquiries</p>
-        </a>
-
-        <!-- LinkedIn Card -->
-        <a class="contact-card" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/serhii-hrudakov/">
-          <div class="contact-card__header">
-            <div class="contact-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" focusable="false">
-                <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
-              </svg>
-            </div>
-            <h3 class="contact-card__title">LinkedIn</h3>
-          </div>
-          <p class="contact-card__subtitle">Professional Story</p>
-        </a>
-
-        <!-- GitHub Card -->
-        <a class="contact-card" aria-label="GitHub" rel="noopener noreferrer" target="_blank" href="https://github.com/HrudakovSerhii">
-          <div class="contact-card__header">
-            <div class="contact-card__icon">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"></path>
-              </svg>
-            </div>
-            <h3 class="contact-card__title">GitHub</h3>
-          </div>
-          <p class="contact-card__subtitle">Code &amp; Contributions</p>
-        </a>
-      </div>
-    </section>
-  </template>
-
-  <template id="action-prompt-template">
-    <div class="action-prompt" role="region" aria-label="Section interaction">
-      <button
-              class="button prompt-button"
-              aria-label="show next section"
-              data-default-text="Next">
-        Next:
-      </button>
-    </div>
   </template>
 
   <template id="nav-item-template">
@@ -503,23 +381,6 @@
       <span class="skill-item__years"></span>
       <span class="skill-item__icon"></span>
     </div>
-  </template>
-
-  <template id="soft-skills-section-template">
-    <section class="content-section" id="soft-skills-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content  section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-        <div class="section-meta-items soft-skills-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
   </template>
 
   <template id="soft-skills-meta-item-template">
