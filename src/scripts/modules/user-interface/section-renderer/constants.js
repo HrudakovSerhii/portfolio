@@ -1,12 +1,13 @@
 export const SECTION_ELEMENTS = {
-  text: 'section-body-content',
-  subText: 'section-subtext-content',
-  textAnimated: 'section-body-content-animated',
-  subTextAnimated: 'section-subtext-content-animated',
-  image: 'section-visual',
-  imageAnimated: 'section-visual-animated',
-  metaItems: 'section-meta-items',
-  carouselMetaItems: 'section-carousel-meta-items'
+  title: 'section__title',
+  subtitle: 'section__subtitle',
+  text: 'section__text',
+  textAnimated: 'section__text--animated',
+  subText: 'section__subtext',
+  image: 'section__visual',
+  imageAnimated: 'section__visual--animated',
+  metaItems: 'section__meta',
+  carouselItems: 'section__carousel'
 };
 
 export const DEFAULT_GRID_CONFIG = {
