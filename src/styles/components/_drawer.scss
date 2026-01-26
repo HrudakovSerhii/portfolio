@@ -1,4 +1,5 @@
 @use '../base/variables';
+@use '../base/mixins';
 
 .drawer {
   position: relative;
@@ -7,8 +8,11 @@
   &__toggle {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 100%;
+    justify-self: center;
+
+    @include mixins.desktop {
+      width: 100%;
+    }
   }
 
   &__toggle-icon {

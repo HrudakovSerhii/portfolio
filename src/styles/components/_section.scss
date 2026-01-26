@@ -89,7 +89,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: normal;
+    gap: variables.$spacing-md;
     height: 100%;
     width: 100%;
     background: none;
@@ -107,7 +107,6 @@
       font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
       font-weight: 600;
       color: var(--color-text);
-      margin-bottom: variables.$spacing-sm;
     }
 
     .section-query {
@@ -132,7 +131,7 @@
 
   .section-carousel {
     position: relative;
-    padding: variables.$spacing-md 0;
+    margin-top: variables.$spacing-md;
     max-width: variables.$content-max-width;
   }
 }
