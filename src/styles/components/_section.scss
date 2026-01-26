@@ -4,13 +4,12 @@
 .content-section {
   position: relative;
   background-color: transparent;
-  justify-content: center;
-  margin: variables.$spacing-lg auto 0;
-  min-height: calc(100vh - 56px) !important;
-
-  @include mixins.desktop {
-    min-height: calc(100vh - 72px) !important;
-  }
+  margin: 5vh auto;
+  //min-height: calc(100vh - 56px) !important;
+  //
+  //@include mixins.desktop {
+  //  min-height: calc(100vh - 72px) !important;
+  //}
 
   &.default-section {
     justify-content: space-around;
@@ -20,7 +19,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: variables.$spacing-md;
+    gap: variables.$spacing-lg;
 
     @include mixins.desktop {
       display: grid;
@@ -95,7 +94,9 @@
     background: none;
 
     @include mixins.desktop {
-      gap: variables.$spacing-lg;
+      &:is(:last-child) {
+        gap: variables.$spacing-lg;
+      }
     }
   }
 

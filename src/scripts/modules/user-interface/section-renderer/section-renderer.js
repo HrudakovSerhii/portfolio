@@ -93,14 +93,10 @@ class SectionRenderer {
 
     const metaItemRenderer = new MetaItemRenderer(this.templateBuilder, profileData);
 
-    if (sectionId === 'experience') {
-      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
-
-      return;
-    }
-
     if (sectionId === 'projects') {
       this._renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata);
+    } else if (sectionId === 'experience') {
+      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
     } else {
       this._renderDefaultItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role);
     }
@@ -217,7 +213,7 @@ class SectionRenderer {
     setTimeout(() => {
       sectionElement.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'center'
       });
     }, SCROLL_DELAY);
   }
