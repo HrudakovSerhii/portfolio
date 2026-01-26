@@ -5,11 +5,11 @@
   position: relative;
   background-color: transparent;
   margin: 5vh auto;
-  //min-height: calc(100vh - 56px) !important;
-  //
-  //@include mixins.desktop {
-  //  min-height: calc(100vh - 72px) !important;
-  //}
+  min-height: calc(80vh - 56px) !important; // 5vh top margin + 80vh height + 5vh bottom margin + 10vh action-prompt
+
+  @include mixins.desktop {
+    min-height: calc(80vh - 72px) !important;
+  }
 
   &.default-section {
     justify-content: space-around;
