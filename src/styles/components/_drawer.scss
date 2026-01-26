@@ -4,19 +4,24 @@
 .drawer {
   position: relative;
   width: 100%;
+  color: var(--color-text-secondary);
 
   &__toggle {
     display: flex;
+    width: inherit;
     align-items: center;
     justify-self: center;
+    justify-content: center;
+    gap: variables.$spacing-s;
+    margin: variables.$spacing-md 0;
 
     @include mixins.desktop {
-      width: 100%;
+      max-width: variables.$change-role-modal-min-width;
+      margin: variables.$spacing-lg 0;
     }
   }
 
   &__toggle-icon {
-    color: var(--color-text-secondary);
     font-size: variables.$font-size-xl;
     transition: transform variables.$transition-medium;
 
@@ -25,17 +30,11 @@
     }
   }
 
-  &__toggle_text {
-    color: var(--color-text-secondary);
-    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
-  }
-
   &__content {
     height: 0;
     opacity: 0;
     overflow: hidden;
     transition: height variables.$transition-medium, opacity variables.$transition-medium,;
-    margin-top: variables.$spacing-md;
 
     [data-collapsed="false"] & {
       overflow: visible;

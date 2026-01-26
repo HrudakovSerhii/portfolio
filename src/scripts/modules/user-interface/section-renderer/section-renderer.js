@@ -166,7 +166,7 @@ class SectionRenderer {
     }
 
     const drawer = new Drawer(this.templateBuilder);
-    const drawerElement = drawer.wrapContent(renderedItems);
+    const drawerElement = drawer.wrapContent(renderedItems, sectionMetadata.title );
 
     if (drawerElement) {
       metaItemsContainer.appendChild(drawerElement);
