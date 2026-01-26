@@ -4,7 +4,7 @@
 .intro {
   display: flex;
   align-items: center;
-  gap: variables.$spacing-xl;
+  gap: variables.$spacing-md;
   z-index: variables.$z-nav;
   min-height: calc(100vh - 3rem);
   height: 100%;
@@ -12,7 +12,8 @@
   transition: height 3s ease-in-out;
 
   @include mixins.desktop {
-    min-height: calc(100vh - 4rem)t;
+    gap: variables.$spacing-xl;
+    min-height: calc(100vh - 4rem);
   }
 
   @include mixins.animation-sqwizz;
@@ -44,7 +45,7 @@
     // Fluid: 1.125rem (18px) → 1.25rem (20px)
     font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
     color: var(--color-text-secondary);
-    line-height: variables.$line-height-relaxed;
+    line-height: variables.$line-height-tight;
     text-align: center;
     margin: 0;
 
@@ -55,9 +56,16 @@
 
   &__cta-text {
     max-width: 400px;
+    margin: variables.$spacing-md 0;
+    padding: 0 variables.$spacing-md;
     // Fluid: 1rem (16px) → 1rem (20px)
     font-size: clamp(1rem, 1rem + 0.5vw, 1rem);
     color: var(--color-text-secondary);
+
+    @include mixins.desktop {
+      margin: variables.$spacing-xl 0;
+      padding: 0;
+    }
   }
 
   &__story-context {
@@ -161,7 +169,7 @@
   }
 
   &__cta-prompt {
-    margin-bottom: variables.$spacing-md;
+    margin-top: variables.$spacing-md;
     font-size: variables.$font-size-lg;
   }
 }

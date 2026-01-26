@@ -4,12 +4,15 @@ import ActionPromptManager from './action-prompt-manager.js';
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
 import Drawer from './drawer.js';
+import {SECTION_ORDER} from "../../../utils/state-manager.js";
 
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
     this.stateManager = stateManager;
     this.contentMiddleware = contentMiddleware;
     this.templateBuilder = templateBuilder;
+
+    this.nextSectionPrompt = null;
 
     this.sectionsContainer = null;
     this.actionPromptManager = null;
@@ -20,6 +23,36 @@ class SectionRenderer {
     this.sectionsContainer = sectionsContainerElement;
     this.actionPromptManager = new ActionPromptManager(this.templateBuilder, sectionOrder);
     this.actionPromptManager.initialize(onActionPromptClick);
+
+    this._initNextSectionPrompts(onActionPromptClick);
+  }
+
+  _updateNextSectionPromptButton(promptText = `Read next: sectionId`) {
+    const button = this.nextSectionPrompt.querySelector('.prompt-button');
+
+    button.textContent = promptText;
+    button.setAttribute('data-default-text', promptText);
+  }
+
+  _initNextSectionPrompts(onNextSectionClick) {
+    this.nextSectionPrompt = document.getElementById('next-section-prompt');
+
+    if (!this.nextSectionPrompt) {
+      console.warn('No next section prompt found');
+      return;
+    }
+
+    const button = this.nextSectionPrompt.querySelector('.prompt-button');
+
+    if (button) {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (onNextSectionClick) {
+          onNextSectionClick();
+        }
+      });
+    }
   }
 
   async reveal(sectionId, role, customQuery = '') {
@@ -67,15 +100,30 @@ class SectionRenderer {
     this._updateActionPrompt(sectionId);
   }
 
+  capitaliseString(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   _renderSection(sectionId, sectionContent) {
     const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
 
-    // Create and append action prompt to section before mounting to DOM
-    const promptElement = this.actionPromptManager.createForSection(sectionId);
-    sectionElement.appendChild(promptElement);
+    this.nextSectionPrompt.setAttribute('data-section-id', sectionId);
+    //
+    // const button = this.nextSectionPrompt.querySelector('.prompt-button');
+    //
+    // if (button) {
+    //   const defaultText = `Read next: ${this.capitaliseString(sectionId)}`;
+    //   button.textContent = defaultText;
+    //   button.setAttribute('data-default-text', defaultText);
+    //   button.setAttribute('data-section-id', sectionId);
+    // }
 
-    const lastSectionElement = this.sectionsContainer.lastChild;
-    this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
+    // Create and append action prompt to section before mounting to DOM
+    // const promptElement = this.actionPromptManager.createForSection(sectionId);
+    // sectionElement.appendChild(promptElement);
+    //
+    // const lastSectionElement = this.sectionsContainer.lastChild;
+    this.sectionsContainer.insertBefore(sectionElement, this.nextSectionPrompt);
 
     return sectionElement;
   }
@@ -93,14 +141,10 @@ class SectionRenderer {
 
     const metaItemRenderer = new MetaItemRenderer(this.templateBuilder, profileData);
 
-    if (sectionId === 'experience') {
-      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
-
-      return;
-    }
-
     if (sectionId === 'projects') {
       this._renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata);
+    } else if (sectionId === 'experience') {
+      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
     } else {
       this._renderDefaultItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role);
     }
@@ -166,7 +210,7 @@ class SectionRenderer {
     }
 
     const drawer = new Drawer(this.templateBuilder);
-    const drawerElement = drawer.wrapContent(renderedItems);
+    const drawerElement = drawer.wrapContent(renderedItems, sectionMetadata.title );
 
     if (drawerElement) {
       metaItemsContainer.appendChild(drawerElement);
@@ -190,8 +234,16 @@ class SectionRenderer {
   }
 
   _updateActionPrompt(sectionId) {
-    const revealedSections = this.stateManager.getRevealedSections();
-    this.actionPromptManager.update(sectionId, revealedSections);
+    const currentSectionIndex = SECTION_ORDER.indexOf(sectionId);
+    const nextSectionId = SECTION_ORDER[currentSectionIndex + 1];
+
+    if (nextSectionId !== 'contact') {
+      this._updateNextSectionPromptButton(`Read next: ${this.capitaliseString(nextSectionId)}`);
+
+      requestAnimationFrame(() => {
+        this.nextSectionPrompt.classList.add('action-prompt--visible');
+      });
+    }
   }
 
   async _fetchProfileData() {
@@ -217,7 +269,7 @@ class SectionRenderer {
     setTimeout(() => {
       sectionElement.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'center'
       });
     }, SCROLL_DELAY);
   }

@@ -3,7 +3,6 @@
 
 .section-meta-items {
   @include mixins.animation-hidden;
-  margin: variables.$spacing-lg auto variables.$spacing-lg;
 
   &.default-meta-items {
     display: flex;
@@ -15,10 +14,10 @@
     display: flex;
     width: 100%;
     flex-wrap: wrap;
-    gap: variables.$spacing-xs;
+    gap: variables.$spacing-md;
 
     @include mixins.tablet {
-      gap: variables.$spacing-md;
+      gap: variables.$spacing-lg;
     }
   }
 

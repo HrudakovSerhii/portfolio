@@ -3,7 +3,7 @@ class Drawer {
     this.templateBuilder = templateBuilder;
   }
 
-  create() {
+  create(title) {
     const fragment = this.templateBuilder.cloneMetaItemTemplate('drawer-template');
 
     if (!fragment) {
@@ -12,26 +12,24 @@ class Drawer {
     }
 
     const drawer = fragment.querySelector('.drawer');
-
     if (!drawer) {
+
       return null;
     }
 
-    this._attachEventListeners(drawer);
-
-    return drawer;
-  }
-
-  _attachEventListeners(drawer) {
     const toggleButton = drawer.querySelector('.drawer__toggle');
-
     if (!toggleButton) {
       return;
     }
 
+    const toggleButtonContent = drawer.querySelector('.drawer__toggle-content');
+
+    toggleButtonContent.textContent = title;
     toggleButton.addEventListener('click', () => {
       this._toggle(drawer);
     });
+
+    return drawer;
   }
 
   _toggle(drawer) {
@@ -71,8 +69,8 @@ class Drawer {
     });
   }
 
-  wrapContent(contentElement) {
-    const drawer = this.create();
+  wrapContent(contentElement, contentTitle) {
+    const drawer = this.create(contentTitle);
 
     if (!drawer || !contentElement) {
       return contentElement;

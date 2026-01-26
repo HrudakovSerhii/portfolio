@@ -86,7 +86,7 @@ class AppController {
       this.sectionRenderer.initialize(
         this.elements.mainContent,
         SECTION_ORDER,
-        (nextSectionId) => this.revealSection(nextSectionId, '')
+          () => this.revealNextAvailableSection()
       );
 
       this._hideInitialLoader();
@@ -161,7 +161,7 @@ class AppController {
     if (element) {
       element.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'center'
       });
     }
   }
@@ -285,6 +285,18 @@ class AppController {
     sections.forEach(section => section.remove());
 
     this.headerController.clearNavigation();
+  }
+
+  async revealNextAvailableSection() {
+    const revealedSections = this.stateManager.getRevealedSections();
+    const lastRevealedSection = revealedSections[revealedSections.length - 1];
+    const lastRevealedSectionIndex = SECTION_ORDER.indexOf(lastRevealedSection);
+
+    if (lastRevealedSectionIndex < SECTION_ORDER.length - 1) {
+      const nextSectionID = SECTION_ORDER[lastRevealedSectionIndex + 1];
+
+      await this.revealSection(nextSectionID);
+    }
   }
 
   async revealSection(sectionId, customQuery = '') {

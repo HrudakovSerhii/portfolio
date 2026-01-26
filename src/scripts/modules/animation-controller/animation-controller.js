@@ -34,6 +34,14 @@ class AnimationController {
 
     for (let i = 0; i < text.length; i++) {
       element.textContent += text[i];
+
+      if (i + 1 < text.length) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+
       await new Promise(resolve => setTimeout(resolve, speed));
     }
 
