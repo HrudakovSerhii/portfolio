@@ -69,6 +69,10 @@ class StateManager {
     return [...this.state.revealedSections];
   }
 
+  getNextAvailableSection() {
+    return SECTION_ORDER.find(section => !this.state.revealedSections.includes(section)) || null;
+  }
+
   addRevealedSection(sectionId) {
     if (!this.state.revealedSections.includes(sectionId)) {
       this.state.revealedSections.push(sectionId);

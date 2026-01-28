@@ -1,10 +1,10 @@
 export const SECTION_ELEMENTS = {
   section: 'section',
   title: 'section__title',
-  subtitle: 'section__subtitle',
+  subTitle: 'section__subtitle',
   text: 'section__text',
-  textAnimated: 'section__text--animated',
   subText: 'section__subtext',
+  textAnimated: 'section__text--animated',
   image: 'section__visual',
   imageAnimated: 'section__visual--animated',
   metaItems: 'section__meta',

@@ -206,9 +206,7 @@ class AppController {
       ]);
     }
 
-    const sectionId = `section-${revealedSections[revealedSections.length - 1]}`;
-
-    this._scrollToElementById(sectionId);
+    this._scrollToElementById('next-section-prompt');
   }
 
   async _restoreSingleSection(sectionId, role) {
@@ -270,14 +268,10 @@ class AppController {
   }
 
   async revealNextAvailableSection() {
-    const revealedSections = this.stateManager.getRevealedSections();
-    const lastRevealedSection = revealedSections[revealedSections.length - 1];
-    const lastRevealedSectionIndex = SECTION_ORDER.indexOf(lastRevealedSection);
+    const nextAvailableSection = this.stateManager.getNextAvailableSection();
 
-    if (lastRevealedSectionIndex < SECTION_ORDER.length - 1) {
-      const nextSectionID = SECTION_ORDER[lastRevealedSectionIndex + 1];
-
-      await this.revealSection(nextSectionID);
+    if (nextAvailableSection) {
+      await this.revealSection(nextAvailableSection);
     }
   }
 
