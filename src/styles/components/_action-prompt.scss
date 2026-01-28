@@ -2,8 +2,9 @@
 @use '../base/mixins';
 
 .action-prompt {
-  display: none;
+  visibility: hidden;
   position: relative;
+  height: 10vh;
   bottom: 0;
   margin: variables.$spacing-md auto;
 
@@ -13,7 +14,7 @@
 
   // Show action button after animation completes
   &--visible {
-    display: block;
+    visibility: visible;
 
     .prompt-button {
       display: inline-flex;

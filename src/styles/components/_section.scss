@@ -1,32 +1,24 @@
 @use '../base/variables';
 @use '../base/mixins';
-@use '../utilities/animations';
 
 .section {
   position: relative;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   gap: variables.$spacing-lg;
   background-color: transparent;
-  margin: 5vh auto;
-  min-height: calc(80vh - 56px);
+  margin: 0 auto;
+  min-height: calc(90vh - 56px);
 
   @include mixins.desktop {
-    min-height: calc(80vh - 72px);
+    min-height: calc(90vh - 72px);
   }
 
-  // Header - always left-aligned, max 70% width, outside layout
   &__header {
     display: flex;
     flex-direction: column;
     gap: variables.$spacing-xs;
     text-align: start;
     width: 100%;
-
-    @include mixins.desktop {
-      max-width: 70%;
-    }
 
     &:empty {
       display: none;
@@ -52,7 +44,6 @@
     }
   }
 
-  // Layout container - flex by default, body centered at 70% width
   &__layout {
     display: flex;
     flex-direction: column;
@@ -88,7 +79,6 @@
     }
   }
 
-  // Body container - 70% width on desktop by default
   &__body {
     display: flex;
     flex-direction: column;
@@ -99,7 +89,6 @@
     background: none;
 
     @include mixins.desktop {
-      width: 70%;
       gap: variables.$spacing-lg;
     }
   }
@@ -150,7 +139,6 @@
   &__carousel {
     position: relative;
     margin-top: variables.$spacing-md;
-    max-width: variables.$content-max-width;
 
     &:empty {
       display: none;
@@ -164,60 +152,138 @@
   // Intro section - centered, full-height landing
   &--intro {
     align-items: center;
-    min-height: calc(90vh - 52px);
-    height: 100%;
-    overflow: visible;
-    z-index: 1;
+    gap: variables.$spacing-md;
+    text-align: center;
+    min-height: calc(100vh - 56px);
+
+    @include mixins.desktop {
+      min-height: calc(100vh - 72px);
+    }
 
     @include mixins.animation-sqwizz;
     @include mixins.desktop {
       gap: variables.$spacing-xl;
-      min-height: calc(90vh - 72px);
     }
 
-    &.hidden {
+    .section__text-revealed {
       display: none;
-    }
-
-    &.sqwizzed {
-      min-height: 0;
-    }
-
-    .section__header {
-      max-width: none;
-      text-align: center;
-
-      @include mixins.desktop {
-        text-align: center;
-      }
-    }
-
-    .section__title {
-      letter-spacing: -0.025em;
-    }
-
-    .section__subtitle {
-      font-style: normal;
-      line-height: variables.$line-height-tight;
-    }
-
-    .scroll-cta {
-      display: none;
-      position: fixed;
-      bottom: variables.$spacing-md;
-      padding: variables.$spacing-xs variables.$spacing-md;
-      text-align: center;
-      background-color: var(--color-surface);
-      opacity: 0.6;
-      border: 1px solid var(--color-border);
-      border-radius: variables.$radius-lg;
-
-      &:hover {
-        opacity: 1;
-      }
+      animation: pulse 2s ease-in-out infinite;
 
       &:has(+ .hidden) {
         display: block;
+      }
+    }
+
+    .section__header {
+      text-align: center;
+    }
+
+    .story {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: variables.$spacing-md;
+
+      @include mixins.tablet {
+        gap: variables.$spacing-lg;
+      }
+
+      &.hidden {
+        display: none;
+      }
+
+      &.sqwizzed {
+        min-height: 0;
+      }
+
+      &__title {
+        max-width: 400px;
+        // Fluid: 1rem (16px) → 1rem (20px)
+        font-size: clamp(1rem, 1rem + 0.5vw, 1rem);
+        color: var(--color-text-secondary);
+      }
+
+      &__options {
+        display: grid;
+        gap: variables.$spacing-lg;
+
+        @include mixins.tablet {
+          grid-template-columns: repeat(3, 1fr);
+
+          &:last-child {
+            grid-column: 1 / 2;
+            max-width: 50%;
+          }
+        }
+
+        @include mixins.desktop {
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          max-width: variables.$content-max-width;
+          gap: variables.$spacing-xl;
+
+          &:last-child {
+            max-width: variables.$content-max-width;
+          }
+        }
+      }
+
+      &__option {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        gap: 1rem;
+
+        &-description {
+          position: absolute;
+          bottom: calc(100% + 0.5rem);
+          left: 50%;
+          transform: translateX(-50%);
+          width: max-content;
+          max-width: 280px;
+          padding: variables.$spacing-sm variables.$spacing-md;
+          background-color: var(--color-bg-dark, #1a1a1a);
+          color: var(--color-text-light, #fff);
+          border-radius: variables.$radius-md;
+          font-size: variables.$font-size-sm;
+          line-height: variables.$line-height-normal;
+          text-align: center;
+          margin: 0;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.2s ease, visibility 0.2s ease;
+          z-index: variables.$z-tooltip;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+          // Tooltip arrow
+          &::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--color-bg-dark, #1a1a1a);
+          }
+
+          @include mixins.desktop {
+            max-width: 320px;
+            font-size: variables.$font-size-base;
+          }
+        }
+
+        &:hover {
+          .intro__option-description {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+
+      &__cta-text{
+        margin-top: variables.$spacing-md;
+        font-size: variables.$font-size-lg;
       }
     }
   }
@@ -225,15 +291,10 @@
   // Hero section - grid 50/50 split (always has image)
   &--hero {
     align-items: baseline;
-    gap: variables.$spacing-md;
+    gap: variables.$spacing-xs;
 
     @include mixins.tablet {
-      gap: variables.$spacing-xl;
-    }
-
-    .section__header {
-      gap: variables.$spacing-sm;
-      animation: hero-fade-in variables.$transition-slowest ease-out;
+      gap: variables.$spacing-md;
     }
 
     // Hero uses h1, inherits styles from typography
@@ -253,6 +314,7 @@
 
     .section__body {
       justify-content: start;
+      margin-top: variables.$spacing-xl;
 
       @include mixins.desktop {
         width: 100%;
@@ -278,16 +340,28 @@
       display: flex;
       width: 100%;
       flex-wrap: wrap;
-      gap: variables.$spacing-md;
-
-      @include mixins.tablet {
-        gap: variables.$spacing-lg;
-      }
+      gap: variables.$spacing-xs;
     }
   }
 
   // Projects section - uses carousel
   &--projects {
+    max-width: none;
+    padding: 0;
+
+    .section__header,
+    .section__layout {
+      max-width: variables.$breakpoint-desktop;
+      padding: 0 variables.$spacing-lg;
+
+      @include mixins.tablet {
+        padding: 0 variables.$spacing-xl;
+      }
+
+      @include mixins.desktop {
+        padding: 0 variables.$spacing-2xl;
+      }
+    }
     // Uses carousel instead of meta
   }
 
@@ -295,11 +369,16 @@
   &--soft-skills {
     .section__meta {
       display: grid;
+      margin: 0 auto;
       grid-template-columns: 1fr;
       gap: variables.$spacing-md;
 
       @include mixins.tablet {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include mixins.desktop {
+        max-width: 70%;
       }
     }
   }
@@ -307,7 +386,7 @@
   // Contact section
   &--contact {
     .section__meta {
-      display: flex;
+      justify-content: center;
       gap: variables.$spacing-md;
 
       @include mixins.mobile-max {

@@ -170,34 +170,45 @@
       <div class="parallax-blob parallax-blob--7"></div>
     </div>
 
-    <section class="content-section intro" id="intro-section">
-      <h1 class="intro__title">Hello, I'm <span class="text-gradient">Serhii</span></h1>
-      <h2 class="intro__heading">
-        Senior Frontend Specialist
-      </h2>
-      <p class="intro__lead">
-        I built this site so you can get to know me in the way that matters most - to <span class="text-gradient"><b>You</b></span>
-      </p>
-      <p class="intro__cta-text">
-          I made a three-story so you can explore not only my relevant profile information, but also my personal side. Side that important when you work with <span class="text-gradient"><b>People</b></span>
-      </p>
-
-      <div id="intro-options" class="intro__options">
-        <div class="intro__option">
-          <button class="button button--recruiter" data-role="recruiter">I'm a Recruiter</button>
-          <p class="intro__option-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
-        </div>
-        <div class="intro__option">
-          <button class="button button--developer" data-role="developer">I'm an Engineer</button>
-          <p class="intro__option-description">Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.</p>
-        </div>
-        <div class="intro__option">
-          <button class="button button--friend" data-role="friend">I'm a Friend</button>
-          <p class="intro__option-description">I'll introduce the human side of my self so you can understand what kind of person I am.</p>
-        </div>
+    <section class="section section--intro" id="intro-section">
+      <div class="section__header">
+        <h1 class="section-intro__header">Hello, I'm <span class="text-gradient">Serhii</span></h1>
+        <h2 class="section__title">
+          Senior Frontend Specialist
+        </h2>
       </div>
 
-      <p class="intro__cta-prompt">Which path speaks to you?</p>
+      <div class="section__content">
+        <p class="section__text">
+          I built this site so you can get to know me in the way that matters most - to<span class="text-gradient"><b>You</b></span>
+        </p>
+      </div>
+
+      <p class="section__text section__text-revealed">
+        <span>Scroll down to read more</span>
+      </p>
+
+      <div id="story-cta" class="story" aria-hidden="true">
+        <p class="story__title">
+          I made a three-story so you can explore not only my relevant profile information, but also my personal side. Side that important when you work with <span class="text-gradient"><b>People</b></span>
+        </p>
+
+        <div id="story__options" class="story__options">
+          <div class="story__option">
+            <button class="button button--recruiter" data-role="recruiter">I'm a Recruiter</button>
+            <p class="story__option-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
+          </div>
+          <div class="story__option">
+            <button class="button button--developer" data-role="developer">I'm an Engineer</button>
+            <p class="story__option-description">Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.</p>
+          </div>
+          <div class="story__option">
+            <button class="button button--friend" data-role="friend">I'm a Friend</button>
+            <p class="story__option-description">I'll introduce the human side of my self so you can understand what kind of person I am.</p>
+          </div>
+        </div>
+        <p class="story__cta-text">Which path speaks to you?</p>
+      </div>
     </section>
 
 <!--    Static action prompt element that always rendered after last section.-->
@@ -269,8 +280,8 @@
           </div>
           <div class="section__meta"></div>
         </div>
-        <div class="section__carousel"></div>
       </div>
+      <div class="section__carousel"></div>
     </section>
   </template>
 
