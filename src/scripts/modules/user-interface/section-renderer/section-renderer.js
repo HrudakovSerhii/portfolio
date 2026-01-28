@@ -120,12 +120,6 @@ class SectionRenderer {
       return;
     }
 
-    // Contact section: update existing template links instead of creating new elements
-    if (sectionId === 'contact') {
-      this._updateContactLinks(sectionElement, sectionMetadata.mainItems, profileData, role);
-      return;
-    }
-
     const metaItemRenderer = new MetaItemRenderer(this.templateBuilder, profileData);
 
     if (sectionId === 'projects') {
@@ -135,21 +129,6 @@ class SectionRenderer {
     } else {
       this._renderDefaultItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role);
     }
-  }
-
-  _updateContactLinks(sectionElement, mainItems, profileData, role) {
-    const emailItem = mainItems.find(item => item.type === 'email');
-    if (!emailItem) return;
-
-    const emailLink = sectionElement.querySelector('.contacts-item_email');
-    if (!emailLink) return;
-
-    const email = profileData?.email || '';
-    const roleData = emailItem.roleItems?.[role] || {};
-    const subject = encodeURIComponent(roleData.subject || '');
-    const body = encodeURIComponent(roleData.body || '');
-
-    emailLink.href = `mailto:${email}?subject=${subject}&body=${body}`;
   }
 
   _renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata) {
