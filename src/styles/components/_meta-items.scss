@@ -64,7 +64,6 @@
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: variables.$radius-lg;
-  min-width: 140px;
   transition: all variables.$transition-fast;
 
   &:hover {
@@ -73,13 +72,11 @@
   }
 
   @include mixins.tablet {
-    min-width: 160px;
-    padding: variables.$spacing-md;
+    padding: variables.$spacing-sm;
   }
 
   &__name {
-    // Fluid: 0.875rem (14px) → 1rem (16px)
-    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    font-size: variables.$font-size-sm;
     font-weight: variables.$font-weight-bold;
     color: var(--color-text);
     margin: 0;
