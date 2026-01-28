@@ -601,7 +601,7 @@
         "order": 5,
         "main_items": [
           {
-            "type": "contact-link",
+            "type": "email-contact-link",
             "id": "email",
             "title": "Email",
             "subtitle": "Best for job inquiries",
