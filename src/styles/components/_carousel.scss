@@ -71,12 +71,6 @@
 
     @include mixins.desktop {
       width: 380px;
-      transition: transform variables.$transition-base;
-
-      &:hover {
-        transform: scale(1.05);
-        z-index: 1;
-      }
     }
 
     &--clone {

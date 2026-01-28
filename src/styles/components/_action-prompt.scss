@@ -4,12 +4,11 @@
 .action-prompt {
   visibility: hidden;
   position: relative;
-  height: 10vh;
   bottom: 0;
   margin: variables.$spacing-md auto;
 
   @include mixins.desktop {
-    margin: 0 auto variables.$spacing-lg auto;
+    margin: variables.$spacing-lg auto;
   }
 
   // Show action button after animation completes

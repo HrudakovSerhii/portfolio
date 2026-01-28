@@ -75,7 +75,11 @@ class SectionRenderer {
       this.stateManager.addRevealedSection(sectionId);
 
       this._updateActionPrompt();
-      this._scrollToElement(this.nextSectionPrompt);
+      // this._scrollToElement(this.nextSectionPrompt);
+      this._scrollToElement(sectionElement, {
+        behavior: 'smooth',
+        block: 'end'
+      });
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
     }
@@ -238,16 +242,16 @@ class SectionRenderer {
     return { sectionContent, sectionMetadata };
   }
 
-  _scrollToElement(sectionElement) {
+  _scrollToElement(sectionElement, scrollProps = {
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                  }) {
     if (!sectionElement) {
       return;
     }
 
     setTimeout(() => {
-      sectionElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
+      sectionElement.scrollIntoView(scrollProps);
     }, SCROLL_DELAY);
   }
 

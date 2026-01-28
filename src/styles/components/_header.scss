@@ -17,10 +17,14 @@
     justify-content: space-between;
     max-width: variables.$content-max-width;
     margin: 0 auto;
-    padding: variables.$spacing-xs variables.$spacing-xs;
+    padding: variables.$spacing-xs variables.$spacing-lg;
 
     @include mixins.tablet {
       padding: variables.$spacing-md variables.$spacing-xl;
+    }
+
+    @include mixins.desktop {
+        padding: variables.$spacing-md variables.$spacing-2xl;
     }
   }
 }

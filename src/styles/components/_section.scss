@@ -7,10 +7,19 @@
   gap: variables.$spacing-lg;
   background-color: transparent;
   margin: 0 auto;
-  min-height: calc(90vh - 56px);
+  transition: height variables.$transition-medium;
+  min-height: calc(100vh - 56px);
 
   @include mixins.desktop {
-    min-height: calc(90vh - 72px);
+    min-height: calc(100vh - 72px);
+  }
+
+  &:has(+ .action-prompt) {
+    min-height: calc(100vh - 56px - 108px);
+
+    @include mixins.desktop {
+      min-height: calc(100vh - 72px - 108px);
+    }
   }
 
   &__header {
