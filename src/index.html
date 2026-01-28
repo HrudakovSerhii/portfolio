@@ -27,70 +27,72 @@
   </div>
 
   <header class="header" role="banner">
-    <div class="header-left">
-      <div class="header-brand">
-        <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
-        <a href="#intro-section" class="header-brand-link">
-          <span class="header-brand-text">Serhii Hrudakov</span>
-        </a>
+    <div class="header__container">
+      <div class="header-left">
+        <div class="header-brand">
+          <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
+          <a href="#intro-section" class="header-brand-link">
+            <span class="header-brand-text">Serhii Hrudakov</span>
+          </a>
+        </div>
+
+        <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
+          <!-- Navigation items will be added dynamically -->
+          <div id="nav-indicator" class="nav-indicator"></div>
+        </nav>
       </div>
 
-      <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
-        <!-- Navigation items will be added dynamically -->
-        <div id="nav-indicator" class="nav-indicator"></div>
-      </nav>
-    </div>
+      <div class="header-controls">
+        <a
+                id="header-download-btn"
+                class="header-button header-download-btn"
+                href="data/CV_Hrudakov_2025.pdf"
+                download
+                aria-label="Download resume"
+                title="Download resume">
+          <span class="material-symbols-outlined header-download-icon" aria-hidden="true">download</span>
+          <span class="header-download-text">Resume</span>
+        </a>
 
-    <div class="header-controls">
-      <a
-        id="header-download-btn"
-        class="header-button header-download-btn"
-        href="data/CV_Hrudakov_2025.pdf"
-        download
-        aria-label="Download resume"
-        title="Download resume">
-        <span class="material-symbols-outlined header-download-icon" aria-hidden="true">download</span>
-        <span class="header-download-text">Resume</span>
-      </a>
+        <button
+                id="header-role-badge"
+                class="header-button header-role-badge"
+                aria-label="Change role"
+                title="Click to change role">
+          <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
+          <span class="header-role-text" id="header-role-text">View</span>
+        </button>
 
-      <button
-        id="header-role-badge"
-        class="header-button header-role-badge"
-        aria-label="Change role"
-        title="Click to change role">
-        <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
-        <span class="header-role-text" id="header-role-text">View</span>
-      </button>
+        <button
+                id="theme-toggle"
+                class="header-button header-theme-button"
+                aria-label="Toggle theme"
+                aria-pressed="false"
+                title="Toggle Theme"
+                data-theme="light">
+          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+        </button>
 
-      <button
-        id="theme-toggle"
-        class="header-button header-theme-button"
-        aria-label="Toggle theme"
-        aria-pressed="false"
-        title="Toggle Theme"
-        data-theme="light">
-        <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
-      </button>
+        <!--      <div class="header-language-select">-->
+        <!--        <span class="material-symbols-outlined header-language-icon" aria-hidden="true">language</span>-->
+        <!--        <select-->
+        <!--          id="language-selector"-->
+        <!--          class="header-language-input"-->
+        <!--          aria-label="Select language">-->
+        <!--          <option value="en">EN</option>-->
+        <!--          <option value="es">ES</option>-->
+        <!--        </select>-->
+        <!--      </div>-->
 
-<!--      <div class="header-language-select">-->
-<!--        <span class="material-symbols-outlined header-language-icon" aria-hidden="true">language</span>-->
-<!--        <select-->
-<!--          id="language-selector"-->
-<!--          class="header-language-input"-->
-<!--          aria-label="Select language">-->
-<!--          <option value="en">EN</option>-->
-<!--          <option value="es">ES</option>-->
-<!--        </select>-->
-<!--      </div>-->
-
-      <button
-        id="mobile-nav-toggle"
-        class="header-mobile-toggle"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="mobile-nav-overlay">
-        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
-      </button>
+        <button
+                id="mobile-nav-toggle"
+                class="header-mobile-toggle"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="mobile-nav-overlay">
+          <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+        </button>
+      </div>
     </div>
   </header>
 
