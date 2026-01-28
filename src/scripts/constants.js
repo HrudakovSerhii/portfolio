@@ -14,6 +14,7 @@ export const APP_CRITICAL_ELEMENT_IDS = {
     // languageSelector: 'language-selector',
     mainContent: 'main-content',
     introSection: 'intro-section',
+    introSectionCTA: 'story-intro-cta',
 };
 
 export const APP_APP_CRITICAL_ELEMENT_KEYS = [
@@ -22,4 +23,5 @@ export const APP_APP_CRITICAL_ELEMENT_KEYS = [
     // 'languageSelector',
     'mainContent',
     'introSection',
+    'introSectionCTA'
 ];

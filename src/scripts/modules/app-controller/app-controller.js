@@ -90,9 +90,8 @@ class AppController {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
-      this.elements.introSection.classList.add('hidden');
 
-      await this.restoreState();
+      await Promise.all([this._hideIntroSectionCTA(), this.restoreState()]);
     }
   }
 
@@ -105,6 +104,7 @@ class AppController {
     // this.elements.languageSelector = document.getElementById(APP_CRITICAL_ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
+    this.elements.introSectionCTA = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSectionCTA);
   }
 
   _validateCachedElements(criticalElementKeys) {
@@ -130,7 +130,7 @@ class AppController {
     //   this.headerController.updateLanguage(e.target.value);
     // });
 
-    this.elements.introSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+    this.elements.introSectionCTA.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
         const role = storyPathBtn.getAttribute('data-role');
 
@@ -232,17 +232,16 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      await this._hideIntroSection();
-      await this.revealSection(SECTION_ORDER[0]);
+      await Promise.all([this._hideIntroSectionCTA(), this.revealSection(SECTION_ORDER[0])]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
     }
   }
 
-  _hideIntroSection() {
+  _hideIntroSectionCTA() {
     return new Promise((resolve) => {
-      if (!this.elements.introSection) {
+      if (!this.elements.introSectionCTA) {
         resolve();
         return;
       }
@@ -250,15 +249,15 @@ class AppController {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (prefersReducedMotion) {
-        this.elements.introSection.classList.add('hidden');
+        this.elements.introSectionCTA.classList.add('hidden');
         resolve();
         return;
       }
 
-      this.elements.introSection.classList.add('sqwizzed');
+      this.elements.introSectionCTA.classList.add('sqwizzed');
 
       setTimeout(() => {
-        this.elements.introSection.classList.add('hidden');
+        this.elements.introSectionCTA.classList.add('hidden');
         resolve();
       }, INTRO_TRANSITION_DURATION);
     });

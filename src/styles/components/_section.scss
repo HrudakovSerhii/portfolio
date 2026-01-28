@@ -1,8 +1,13 @@
 @use '../base/variables';
 @use '../base/mixins';
+@use '../utilities/animations';
 
 .section {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: variables.$spacing-lg;
   background-color: transparent;
   margin: 5vh auto;
   min-height: calc(80vh - 56px);
@@ -11,7 +16,43 @@
     min-height: calc(80vh - 72px);
   }
 
-  // Layout container
+  // Header - always left-aligned, max 70% width, outside layout
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-xs;
+    text-align: start;
+    width: 100%;
+
+    @include mixins.desktop {
+      max-width: 70%;
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__title {
+    margin: 0;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__subtitle {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    margin: 0;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  // Layout container - flex by default, body centered at 70% width
   &__layout {
     display: flex;
     flex-direction: column;
@@ -19,18 +60,9 @@
     gap: variables.$spacing-lg;
 
     @include mixins.desktop {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      flex-direction: row;
+      justify-content: center;
       gap: variables.$spacing-xl;
-    }
-
-    // Landscape images: stack vertically
-    &--landscape {
-      @include mixins.desktop {
-        display: flex;
-        flex-direction: column;
-        gap: variables.$spacing-lg;
-      }
     }
   }
 
@@ -41,14 +73,9 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    max-width: 100%;
 
     &:empty {
       display: none;
-    }
-
-    @include mixins.desktop {
-      min-width: 50%;
     }
 
     img,
@@ -61,7 +88,7 @@
     }
   }
 
-  // Body container
+  // Body container - 70% width on desktop by default
   &__body {
     display: flex;
     flex-direction: column;
@@ -72,35 +99,8 @@
     background: none;
 
     @include mixins.desktop {
-      &:is(:last-child) {
-        gap: variables.$spacing-lg;
-      }
-    }
-  }
-
-  // Header with title and subtitle
-  &__header {
-    text-align: start;
-  }
-
-  &__title {
-    font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
-    font-weight: 600;
-    color: var(--color-text);
-
-    &:empty {
-      display: none;
-    }
-  }
-
-  &__subtitle {
-    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-    color: var(--color-text-secondary);
-    font-style: italic;
-    margin: 0;
-
-    &:empty {
-      display: none;
+      width: 70%;
+      gap: variables.$spacing-lg;
     }
   }
 
@@ -112,12 +112,14 @@
   }
 
   &__text {
-    display: flex;
-    align-items: start;
+    display: inline-block;
     color: var(--color-text);
-    min-width: 30%;
     width: 100%;
     font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+
+    span {
+      margin-left: 4px;
+    }
 
     &:empty {
       display: none;
@@ -159,47 +161,110 @@
   // Section Type Modifiers
   // ==========================================
 
-  // Hero section modifier
-  &--hero {
-    justify-content: center;
+  // Intro section - centered, full-height landing
+  &--intro {
+    align-items: center;
+    min-height: calc(90vh - 52px);
+    height: 100%;
+    overflow: visible;
+    z-index: 1;
 
-    .section__visual {
-      align-items: flex-start;
+    @include mixins.animation-sqwizz;
+    @include mixins.desktop {
+      gap: variables.$spacing-xl;
+      min-height: calc(90vh - 72px);
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    &.sqwizzed {
+      min-height: 0;
     }
 
     .section__header {
-      display: flex;
-      flex-direction: column;
-      gap: variables.$spacing-sm;
-      animation: hero-fade-in variables.$transition-slowest ease-out;
-
-      @include mixins.tablet {
-        max-width: 550px;
-        gap: variables.$spacing-md;
-      }
+      max-width: none;
+      text-align: center;
 
       @include mixins.desktop {
-        max-width: 550px;
+        text-align: center;
       }
     }
 
     .section__title {
-      font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
-      font-weight: 900;
-      line-height: 1.1;
       letter-spacing: -0.025em;
     }
 
     .section__subtitle {
-      color: var(--color-text-secondary);
-      font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
-      font-weight: variables.$font-weight-normal;
-      line-height: variables.$line-height-relaxed;
       font-style: normal;
+      line-height: variables.$line-height-tight;
+    }
+
+    .scroll-cta {
+      display: none;
+      position: fixed;
+      bottom: variables.$spacing-md;
+      padding: variables.$spacing-xs variables.$spacing-md;
+      text-align: center;
+      background-color: var(--color-surface);
+      opacity: 0.6;
+      border: 1px solid var(--color-border);
+      border-radius: variables.$radius-lg;
+
+      &:hover {
+        opacity: 1;
+      }
+
+      &:has(+ .hidden) {
+        display: block;
+      }
     }
   }
 
-  // Experience section modifier
+  // Hero section - grid 50/50 split (always has image)
+  &--hero {
+    align-items: baseline;
+    gap: variables.$spacing-md;
+
+    @include mixins.tablet {
+      gap: variables.$spacing-xl;
+    }
+
+    .section__header {
+      gap: variables.$spacing-sm;
+      animation: hero-fade-in variables.$transition-slowest ease-out;
+    }
+
+    // Hero uses h1, inherits styles from typography
+    .section__subtitle {
+      font-style: normal;
+      font-weight: variables.$font-weight-normal;
+      line-height: variables.$line-height-relaxed;
+      font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+    }
+
+    .section__layout {
+      @include mixins.desktop {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .section__body {
+      justify-content: start;
+
+      @include mixins.desktop {
+        width: 100%;
+      }
+    }
+
+    .section__visual {
+      align-items: flex-start;
+    }
+  }
+
+  // Experience section
   &--experience {
     .section__meta {
       flex-direction: column;
@@ -207,7 +272,7 @@
     }
   }
 
-  // Skills section modifier
+  // Skills section
   &--skills {
     .section__meta {
       display: flex;
@@ -221,12 +286,12 @@
     }
   }
 
-  // Projects section modifier
+  // Projects section - uses carousel
   &--projects {
-    // Projects use carousel instead of meta
+    // Uses carousel instead of meta
   }
 
-  // Soft skills section modifier
+  // Soft skills section - grid layout
   &--soft-skills {
     .section__meta {
       display: grid;
@@ -239,7 +304,7 @@
     }
   }
 
-  // Contact section modifier
+  // Contact section
   &--contact {
     .section__meta {
       display: flex;
@@ -247,20 +312,8 @@
 
       @include mixins.mobile-max {
         flex-direction: column;
-        gap: variables.$spacing-md;
         width: 100%;
       }
     }
-  }
-}
-
-@keyframes hero-fade-in {
-  from {
-    opacity: 0;
-    transform: translateX(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
