@@ -258,7 +258,7 @@ class HeaderController {
       this.navIndicator.style.width = '0px';
       this.navIndicator.style.transform = `translateX(0px)`;
       this.navIndicator.style.opacity = '0';
-    };
+    }
 
     const paddingOffset = 16; // Approximate sum of left/right padding ($spacing-xs * 2)
     const itemWidth = targetItem.offsetWidth;

@@ -295,6 +295,12 @@
         font-size: variables.$font-size-lg;
       }
     }
+
+    .cv-download-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   // Hero section - grid 50/50 split (always has image)
