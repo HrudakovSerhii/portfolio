@@ -98,13 +98,30 @@
         <!--      </div>-->
 
         <button
-                id="mobile-nav-toggle"
-                class="header-mobile-toggle"
+                id="header-menu-toggle"
+                class="header-menu-toggle"
                 aria-label="Open navigation menu"
                 aria-expanded="false"
-                aria-controls="mobile-nav-overlay">
-          <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+                aria-controls="header-dropdown mobile-nav-overlay">
+          <span aria-hidden="true">More cool stuff</span>
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_drop_down</span>
+<!--          <span class="material-symbols-outlined" aria-hidden="true">menu</span>-->
         </button>
+
+        <div id="header-dropdown" class="header-dropdown" role="menu" aria-hidden="true">
+          <a class="header-dropdown-item" href="data/CV_Hrudakov_2025.pdf" download role="menuitem">
+            <span class="material-symbols-outlined">download</span>
+            <span class="header-dropdown-text">Resume</span>
+          </a>
+          <button id="dropdown-role-badge" class="header-dropdown-item" role="menuitem">
+            <span class="material-symbols-outlined">person</span>
+            <span class="header-dropdown-text" id="dropdown-role-text">View</span>
+          </button>
+          <button id="dropdown-theme-toggle" class="header-dropdown-item" role="menuitem" data-theme="light">
+            <span class="material-symbols-outlined">dark_mode</span>
+            <span class="header-dropdown-text">Theme</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>

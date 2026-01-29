@@ -39,6 +39,7 @@ class AppController {
       ownerName: null,
       themeToggle: null,
       mobileThemeToggle: null,
+      dropdownThemeToggle: null,
       // languageSelector: null,
       mainContent: null,
       introSection: null,
@@ -57,7 +58,7 @@ class AppController {
       this._validateCachedElements(APP_APP_CRITICAL_ELEMENT_KEYS);
       this._setupEventListeners();
 
-      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle);
+      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle, this.elements.dropdownThemeToggle);
 
       this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
 
@@ -101,6 +102,7 @@ class AppController {
     this.elements.ownerName = document.getElementById(APP_CRITICAL_ELEMENT_IDS.ownerName);
     this.elements.themeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.themeToggle);
     this.elements.mobileThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileThemeToggle);
+    this.elements.dropdownThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownThemeToggle);
     // this.elements.languageSelector = document.getElementById(APP_CRITICAL_ELEMENT_IDS.languageSelector);
     this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
@@ -122,6 +124,12 @@ class AppController {
 
     if (this.elements.mobileThemeToggle) {
       this.elements.mobileThemeToggle.addEventListener('click', () => {
+        this.themeSwitcher.toggle();
+      });
+    }
+
+    if (this.elements.dropdownThemeToggle) {
+      this.elements.dropdownThemeToggle.addEventListener('click', () => {
         this.themeSwitcher.toggle();
       });
     }
