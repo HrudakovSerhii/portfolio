@@ -212,6 +212,11 @@ class HeaderController {
   _closeDropdown() {
     if (!this.dropdown || !this.menuToggle) return;
 
+    // Move focus out of dropdown before hiding to prevent aria-hidden accessibility violation
+    if (this.dropdown.contains(document.activeElement)) {
+      this.menuToggle.focus();
+    }
+
     this.dropdown.classList.remove('is-open');
     this.dropdown.setAttribute('aria-hidden', 'true');
     this.menuToggle.setAttribute('aria-expanded', 'false');
