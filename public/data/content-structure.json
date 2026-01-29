@@ -13,14 +13,14 @@
   "sections": {
     "hero": {
       "metadata": {
-        "title": "generic.title.aboutMe",
+        "title": "generic.title.hero",
         "icon": "home",
         "order": 1
       },
       "content": {
         "recruiter": {
           "header": {
-            "text": "generic.title.aboutMe",
+            "text": "generic.title.hero",
             "subText": "hero.recruiter.header.subText"
           },
           "content": {
@@ -34,7 +34,7 @@
         },
         "developer": {
           "header": {
-            "text": "generic.title.aboutMe",
+            "text": "generic.title.hero",
             "subText": "hero.developer.header.subText"
           },
           "content": {
@@ -48,7 +48,7 @@
         },
         "friend": {
           "header": {
-            "text": "generic.title.aboutMe",
+            "text": "generic.title.hero",
             "subText": "hero.friend.header.subText"
           },
           "content": {
@@ -64,7 +64,7 @@
     },
     "experience": {
       "metadata": {
-        "title": "generic.title.workExperience",
+        "title": "generic.title.experience",
         "icon": "briefcase",
         "order": 2,
         "main_items": [
@@ -203,7 +203,7 @@
       "content": {
         "recruiter": {
           "header": {
-            "text": "generic.title.workExperience",
+            "text": "generic.title.experience",
             "subText": ""
           },
           "content": {
@@ -212,7 +212,7 @@
         },
         "developer": {
           "header": {
-            "text": "generic.title.workExperience",
+            "text": "generic.title.experience",
             "subText": ""
           },
           "content": {
@@ -221,7 +221,7 @@
         },
         "friend": {
           "header": {
-            "text": "generic.title.workExperience",
+            "text": "generic.title.experience",
             "subText": ""
           },
           "content": {
@@ -232,7 +232,7 @@
     },
     "skills": {
       "metadata": {
-        "title": "generic.title.technicalSkills",
+        "title": "generic.title.skills",
         "icon": "code",
         "order": 3,
         "main_items": [
@@ -319,7 +319,7 @@
       "content": {
         "recruiter": {
           "header": {
-            "text": "generic.title.technicalSkills",
+            "text": "generic.title.skills",
             "subText": ""
           },
           "content": {
@@ -328,7 +328,7 @@
         },
         "developer": {
           "header": {
-            "text": "generic.title.technicalSkills",
+            "text": "generic.title.skills",
             "subText": ""
           },
           "content": {
@@ -337,7 +337,7 @@
         },
         "friend": {
           "header": {
-            "text": "generic.title.technicalSkills",
+            "text": "generic.title.skills",
             "subText": ""
           },
           "content": {
@@ -348,7 +348,7 @@
     },
     "soft-skills": {
       "metadata": {
-        "title": "generic.title.softSkills",
+        "title": "generic.title.soft-skills",
         "icon": "diversity_3",
         "order": 4,
         "main_items": [
@@ -401,7 +401,7 @@
       "content": {
         "recruiter": {
           "header": {
-            "text": "generic.title.softSkills",
+            "text": "generic.title.soft-skills",
             "subText": ""
           },
           "content": {
@@ -430,7 +430,7 @@
     },
     "projects": {
       "metadata": {
-        "title": "generic.title.featuredProjects",
+        "title": "generic.title.projects",
         "icon": "folder",
         "order": 4,
         "main_items": [
@@ -567,7 +567,7 @@
       "content": {
         "recruiter": {
           "header": {
-            "text": "generic.title.featuredProjects",
+            "text": "generic.title.projects",
             "subText": ""
           },
           "content": {
@@ -576,7 +576,7 @@
         },
         "developer": {
           "header": {
-            "text": "generic.title.featuredProjects",
+            "text": "generic.title.projects",
             "subText": ""
           },
           "content": {
@@ -585,7 +585,7 @@
         },
         "friend": {
           "header": {
-            "text": "generic.title.featuredProjects",
+            "text": "generic.title.projects",
             "subText": ""
           },
           "content": {
@@ -596,7 +596,7 @@
     },
     "contact": {
       "metadata": {
-        "title": "generic.title.getInTouch",
+        "title": "generic.title.contact",
         "icon": "mail",
         "order": 5,
         "main_items": [

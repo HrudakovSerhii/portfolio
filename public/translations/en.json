@@ -59,12 +59,12 @@
   },
   "generic": {
     "title": {
-      "aboutMe": "About Me",
-      "workExperience": "Work Experience",
-      "technicalSkills": "Technical Skills",
-      "softSkills": "Soft Skills",
-      "featuredProjects": "Featured Projects",
-      "getInTouch": "Get In Touch",
+      "hero": "About Me",
+      "experience": "Work Experience",
+      "skills": "Technical Skills",
+      "soft-skills": "Soft Skills",
+      "projects": "Featured Projects",
+      "contact": "Get In Touch",
       "letsBuild": "Let's Build Something Together"
     },
     "text": {
@@ -244,7 +244,7 @@
       }
     }
   },
-  "softSkills": {
+  "soft-skills": {
     "leadership": {
       "title": "Leadership & Management",
       "item1": "Team Leadership (3-4 developers)",

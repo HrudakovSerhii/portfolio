@@ -59,13 +59,13 @@
   },
   "generic": {
     "title": {
-      "aboutMe": "Про Мене",
-      "workExperience": "Досвід Роботи",
-      "technicalSkills": "Технічний Арсенал",
-      "softSkills": "Особисті Якості",
-      "featuredProjects": "Вибрані Проєкти",
-      "getInTouch": "Зв'язок",
-      "letsBuild": "Створимо щось разом"
+      "hero": "Про Мене",
+      "experience": "Досвід Роботи",
+      "skills": "Технічний Арсенал",
+      "soft-skills": "Особисті Якості",
+      "projects": "Обрані Проєкти",
+      "contact": "Зв'язок",
+      "letsBuild": "Нумо створимо щось разом!"
     },
     "text": {
       "reachOut": "Відкритий до пропозицій та цікавих розмов."

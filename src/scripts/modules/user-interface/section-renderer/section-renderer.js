@@ -292,7 +292,9 @@ class SectionRenderer {
 
     if (nextSectionId) {
       const readNextLabel = TranslationService.t('section.readNext');
-      this._updateNextSectionPromptButton(`${readNextLabel} ${capitaliseString(nextSectionId)}`);
+      const nextSectionLabel = TranslationService.t(`generic.title.${nextSectionId}`);
+
+      this._updateNextSectionPromptButton(`${readNextLabel} ${nextSectionLabel}`);
       this._showActionPrompt();
     } else {
       this._hideActionPrompt();

@@ -59,12 +59,12 @@
   },
   "generic": {
     "title": {
-      "aboutMe": "Over Mij",
-      "workExperience": "Werkervaring",
-      "technicalSkills": "Technische Skills",
-      "softSkills": "Competenties",
-      "featuredProjects": "Uitgelichte Projecten",
-      "getInTouch": "Contact",
+      "hero": "Over Mij",
+      "experience": "Werkervaring",
+      "skills": "Technische Skills",
+      "soft-skills": "Competenties",
+      "projects": "Uitgelichte Projecten",
+      "contact": "Contact",
       "letsBuild": "Laten we samen bouwen"
     },
     "text": {
