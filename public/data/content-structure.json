@@ -410,7 +410,7 @@
         },
         "developer": {
           "header": {
-            "text": "generic.title.softSkills",
+            "text": "generic.title.soft-skills",
             "subText": ""
           },
           "content": {
@@ -419,7 +419,7 @@
         },
         "friend": {
           "header": {
-            "text": "generic.title.softSkills",
+            "text": "generic.title.soft-skills",
             "subText": ""
           },
           "content": {

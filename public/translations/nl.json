@@ -10,6 +10,9 @@
   "nav": {
     "resume": "CV",
     "view": "Weergave",
+    "recruiterView": "Voor recruiters",
+    "developerView": "Voor engineers",
+    "friendView": "Voor vrienden",
     "moreStuff": "Meer",
     "theme": "Thema",
     "title": "Navigatie"
@@ -106,7 +109,7 @@
     },
     "friend": {
       "header": {
-        "subText": "Code is voor mij een stukje magie om ideeën tot leven te wekken."
+        "subText": "Ik beschouw code als een hulpmiddel om ideeën tot leven te brengen. En vaak lukt dat ook."
       },
       "content": {
         "text": "Ik ben een ingenieur in hart en nieren. Of ik nu met roestig gereedschap in de garage sta of achter mijn toetsenbord zit: het gaat om creëren. Beide zijn instrumenten om te doen waar je van houdt."

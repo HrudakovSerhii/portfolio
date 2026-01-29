@@ -394,8 +394,7 @@ class HeaderController {
     if (!this.roleManager) return;
 
     const viewLabel = TranslationService.t('nav.view');
-    const roleTitle = role ? TranslationService.t(`modal.${role}Title`) : '';
-    const roleText = role ? `${roleTitle} ${viewLabel}` : '';
+    const roleText = role ? TranslationService.t(`nav.${role}View`) : '';
 
     // Update desktop role badge
     if (this.roleBadge && this.roleBadgeText) {

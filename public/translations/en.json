@@ -10,12 +10,16 @@
   "nav": {
     "resume": "Resume",
     "view": "View",
+    "recruiterView": "Recruiter View",
+    "developerView": "Engineer View",
+    "friendView": "Friend View",
     "moreStuff": "More cool stuff",
     "theme": "Theme",
     "title": "Navigation"
   },
   "intro": {
     "greeting": "Hello, I'm",
+    "author": "Serhii",
     "title": "Senior Frontend Specialist",
     "text": "I built this site so you can get to know me in the way that matters most - to",
     "you": "You",
@@ -165,7 +169,7 @@
     },
     "friend": {
       "header": {
-        "subText": "I sometimes think that Code is a magic tool that helps to bring ideas to life. And often it does."
+        "subText": "I take a code as a tool that helps to bring amazing ideas to life. And often it does."
       },
       "content": {
         "text": "I am an engineer at heart, ready to tackle tasks with head and hands. I believe that using a rusty set of tools in a garage and a keyboard have a lot in common: both are instruments to create. Both are tools to help you do what you love."
