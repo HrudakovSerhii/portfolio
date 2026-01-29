@@ -6,8 +6,6 @@ import Drawer from './drawer.js';
 
 import TranslationService from '../../translations.js';
 
-import { capitaliseString } from "../../../utils/utils.js";
-
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
 
 export function translateDeep(data) {

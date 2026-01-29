@@ -273,7 +273,7 @@ class AppController {
     }
   }
 
-  _showErrorState(error) {
+  _showErrorState() {
     if (this.elements.initialLoader) {
       const loaderText = this.elements.initialLoader.querySelector('.loader-text');
       if (loaderText) {
