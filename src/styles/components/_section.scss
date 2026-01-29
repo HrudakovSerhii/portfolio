@@ -297,10 +297,19 @@
       }
     }
 
-    .cv-download-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .section__content {
+      gap: variables.$spacing-md;
+
+      .section__content-cv {
+        width: 50%;
+        margin: 0 auto;
+
+        .cv-download-btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
     }
   }
 
