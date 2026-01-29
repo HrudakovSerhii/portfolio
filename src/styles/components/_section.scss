@@ -1,77 +1,82 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-.content-section {
+.section {
   position: relative;
+  justify-content: center;
+  gap: variables.$spacing-lg;
   background-color: transparent;
-  margin: 5vh auto;
-  min-height: calc(80vh - 56px) !important; // 5vh top margin + 80vh height + 5vh bottom margin + 10vh action-prompt
+  margin: 0 auto;
+  transition: height variables.$transition-medium;
+  min-height: calc(100vh - 56px);
 
   @include mixins.desktop {
-    min-height: calc(80vh - 72px) !important;
+    min-height: calc(100vh - 72px);
   }
 
-  &.default-section {
-    justify-content: space-around;
+  &:has(+ .action-prompt) {
+    min-height: calc(100vh - 56px - 108px);
+
+    @include mixins.desktop {
+      min-height: calc(100vh - 72px - 108px);
+    }
   }
 
-  .section-layout {
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-xs;
+    text-align: start;
+    width: 100%;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__title {
+    margin: 0;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__subtitle {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    margin: 0;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__layout {
     display: flex;
     flex-direction: column;
     width: 100%;
     gap: variables.$spacing-lg;
 
     @include mixins.desktop {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      flex-direction: row;
+      justify-content: center;
       gap: variables.$spacing-xl;
-    }
-
-    // Non-square images: always stack vertically (image above text)
-    &.non-square-image {
-      @include mixins.desktop {
-        display: flex;
-        flex-direction: column;
-        gap: variables.$spacing-lg;
-      }
-    }
-
-    // Square images: use zig-zag positioning on desktop
-    &.zig-zag-left {
-      @include mixins.desktop {
-        .section-visual {
-          order: 1;
-        }
-
-        .section-body {
-          order: 2;
-        }
-      }
-    }
-
-    &.zig-zag-right {
-      @include mixins.desktop {
-        .section-visual {
-          order: 2;
-        }
-
-        .section-body {
-          order: 1;
-        }
-      }
     }
   }
 
-  .section-visual {
+  // Visual/Image container - hidden when empty
+  &__visual {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-    max-width: 100%;
+    padding: variables.$spacing-xl;
 
-    @include mixins.desktop {
-      min-width: 50%;
+    &:empty {
+      display: none;
     }
 
     img,
@@ -84,7 +89,7 @@
     }
   }
 
-  .section-body {
+  &__body {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -94,45 +99,316 @@
     background: none;
 
     @include mixins.desktop {
-      &:is(:last-child) {
+      gap: variables.$spacing-lg;
+    }
+  }
+
+  // Content container
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-sm;
+  }
+
+  &__text {
+    display: inline-block;
+    color: var(--color-text);
+    width: 100%;
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+
+    span {
+      margin-left: 4px;
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__subtext {
+    color: var(--color-text-secondary);
+    font-size: clamp(0.875rem, 0.8rem + 0.4vw, 1rem);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  // Meta items container - hidden when empty
+  &__meta {
+    display: flex;
+    gap: variables.$spacing-xs;
+    flex-wrap: wrap;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  // Carousel container - hidden when empty
+  &__carousel {
+    position: relative;
+    margin-top: variables.$spacing-md;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  // ==========================================
+  // Section Type Modifiers
+  // ==========================================
+
+  // Intro section - centered, full-height landing
+  &--intro {
+    align-items: center;
+    gap: variables.$spacing-md;
+    text-align: center;
+    min-height: calc(100vh - 56px);
+
+    @include mixins.desktop {
+      min-height: calc(100vh - 72px);
+    }
+
+    @include mixins.animation-sqwizz;
+    @include mixins.desktop {
+      gap: variables.$spacing-xl;
+    }
+
+    .section__text-revealed {
+      display: none;
+      animation: pulse 2s ease-in-out infinite;
+
+      &:has(+ .hidden) {
+        display: block;
+      }
+    }
+
+    .section__header {
+      text-align: center;
+    }
+
+    .story {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: variables.$spacing-md;
+
+      @include mixins.tablet {
         gap: variables.$spacing-lg;
+      }
+
+      &.hidden {
+        display: none;
+      }
+
+      &.sqwizzed {
+        min-height: 0;
+      }
+
+      &__title {
+        max-width: 400px;
+        // Fluid: 1rem (16px) → 1rem (20px)
+        font-size: clamp(1rem, 1rem + 0.5vw, 1rem);
+        color: var(--color-text-secondary);
+      }
+
+      &__options {
+        display: grid;
+        gap: variables.$spacing-lg;
+
+        @include mixins.tablet {
+          grid-template-columns: repeat(3, 1fr);
+
+          &:last-child {
+            grid-column: 1 / 2;
+            max-width: 50%;
+          }
+        }
+
+        @include mixins.desktop {
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          max-width: variables.$content-max-width;
+          gap: variables.$spacing-xl;
+
+          &:last-child {
+            max-width: variables.$content-max-width;
+          }
+        }
+      }
+
+      &__option {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        gap: 1rem;
+
+        &-description {
+          position: absolute;
+          bottom: calc(100% + 0.5rem);
+          left: 50%;
+          transform: translateX(-50%);
+          width: max-content;
+          max-width: 280px;
+          padding: variables.$spacing-sm variables.$spacing-md;
+          background-color: var(--color-bg-dark, #1a1a1a);
+          color: var(--color-text-light, #fff);
+          border-radius: variables.$radius-md;
+          font-size: variables.$font-size-sm;
+          line-height: variables.$line-height-normal;
+          text-align: center;
+          margin: 0;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.2s ease, visibility 0.2s ease;
+          z-index: variables.$z-tooltip;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+          // Tooltip arrow
+          &::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--color-bg-dark, #1a1a1a);
+          }
+
+          @include mixins.desktop {
+            max-width: 320px;
+            font-size: variables.$font-size-base;
+          }
+        }
+
+        &:hover {
+          .intro__option-description {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+
+      &__cta-text{
+        margin-top: variables.$spacing-md;
+        font-size: variables.$font-size-lg;
+      }
+    }
+
+    .cv-download-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  // Hero section - grid 50/50 split (always has image)
+  &--hero {
+    align-items: baseline;
+    gap: variables.$spacing-xs;
+
+    @include mixins.tablet {
+      gap: variables.$spacing-md;
+    }
+
+    // Hero uses h1, inherits styles from typography
+    .section__subtitle {
+      font-style: normal;
+      font-weight: variables.$font-weight-normal;
+      line-height: variables.$line-height-relaxed;
+      font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+    }
+
+    .section__layout {
+      @include mixins.desktop {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .section__body {
+      justify-content: start;
+      margin-top: variables.$spacing-xl;
+
+      @include mixins.desktop {
+        width: 100%;
+      }
+    }
+
+    .section__visual {
+      align-items: flex-start;
+    }
+  }
+
+  // Experience section
+  &--experience {
+    .section__meta {
+      flex-direction: column;
+      gap: variables.$spacing-md;
+    }
+  }
+
+  // Skills section
+  &--skills {
+    .section__meta {
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: variables.$spacing-xs;
+    }
+  }
+
+  // Projects section - uses carousel
+  &--projects {
+    max-width: none;
+    padding: 0;
+
+    .section__header,
+    .section__layout {
+      max-width: variables.$breakpoint-desktop;
+      padding: 0 variables.$spacing-lg;
+
+      @include mixins.tablet {
+        padding: 0 variables.$spacing-xl;
+      }
+
+      @include mixins.desktop {
+        padding: 0 variables.$spacing-2xl;
+      }
+    }
+    // Uses carousel instead of meta
+  }
+
+  // Soft skills section - grid layout
+  &--soft-skills {
+    .section__meta {
+      display: grid;
+      margin: 0 auto;
+      grid-template-columns: 1fr;
+      gap: variables.$spacing-md;
+
+      @include mixins.tablet {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include mixins.desktop {
+        max-width: 70%;
       }
     }
   }
 
-  .section-header {
-    text-align: start;
+  // Contact section
+  &--contact {
+    .section__meta {
+      justify-content: center;
+      gap: variables.$spacing-md;
 
-    .section-title {
-      // Fluid: 1.5rem (24px) → 2.25rem (36px)
-      font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
-      font-weight: 600;
-      color: var(--color-text);
+      @include mixins.mobile-max {
+        flex-direction: column;
+        width: 100%;
+      }
     }
-
-    .section-query {
-      // Fluid: 1rem (16px) → 1.125rem (18px)
-      font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-      color: var(--color-text-secondary);
-      font-style: italic;
-      margin: 0;
-    }
-  }
-
-  .section-body-content {
-    display: flex;
-    align-items: start;
-    color: var(--color-text);
-    min-width: 30%;
-    width: 100%;
-    height: 100%;
-    // Fluid: 1rem (16px) → 1.25rem (20px)
-    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
-  }
-
-  .section-carousel {
-    position: relative;
-    margin-top: variables.$spacing-md;
-    max-width: variables.$content-max-width;
   }
 }

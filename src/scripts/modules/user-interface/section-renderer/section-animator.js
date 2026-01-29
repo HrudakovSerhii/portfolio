@@ -11,16 +11,17 @@ class SectionAnimator {
   async animateSection(sectionElement, sectionContent) {
     const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.textAnimated}`);
     const imageContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.imageAnimated}`);
+    const contentData = sectionContent.content || {};
 
-    this._createAnimatedImage(imageContainer, sectionContent.image);
+    this._createAnimatedImage(imageContainer, contentData.image);
 
     const animations = [];
 
-    if (textElement && sectionContent.text) {
+    if (textElement && contentData.text) {
       animations.push(this._animateText(textElement))
     }
 
-    if (imageContainer && sectionContent.image) {
+    if (imageContainer && contentData.image) {
       animations.push(this._animateImage(imageContainer));
     }
 

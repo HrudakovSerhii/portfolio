@@ -5,10 +5,14 @@ const HEADER_ELEMENTS = {
   navItem: 'header-nav-item',
   roleBadge: 'header-role-badge',
   roleText: 'header-role-text',
-  navToggle: 'header-nav-toggle',
   indicator: 'nav-indicator',
+  // Menu toggle and dropdown elements
+  menuToggle: 'header-menu-toggle',
+  dropdown: 'header-dropdown',
+  dropdownRoleBadge: 'dropdown-role-badge',
+  dropdownRoleText: 'dropdown-role-text',
+  dropdownThemeToggle: 'dropdown-theme-toggle',
   // Mobile nav elements
-  mobileNavToggle: 'mobile-nav-toggle',
   mobileNavOverlay: 'mobile-nav-overlay',
   mobileNavClose: 'mobile-nav-close',
   mobileNav: 'mobile-nav',
@@ -16,6 +20,8 @@ const HEADER_ELEMENTS = {
   mobileRoleBadge: 'mobile-role-badge',
   mobileRoleText: 'mobile-role-text'
 };
+
+const MOBILE_BREAKPOINT = 640;
 
 const SECTION_ATTRIBUTES = {
   sectionId: 'data-section-id'
@@ -33,10 +39,16 @@ class HeaderController {
     this.navIndicator = null;
     this.roleBadge = null;
     this.roleBadgeText = null;
-    this.navToggle = null;
+
+    // Menu toggle and dropdown elements
+    this.menuToggle = null;
+    this.dropdown = null;
+    this.dropdownRoleBadge = null;
+    this.dropdownRoleBadgeText = null;
+    this.dropdownThemeToggle = null;
+    this.isMobile = false;
 
     // Mobile nav elements
-    this.mobileNavToggle = null;
     this.mobileNavOverlay = null;
     this.mobileNavClose = null;
     this.mobileNav = null;
@@ -46,6 +58,7 @@ class HeaderController {
     this.visibleSections = [];
     this.activeObserver = null;
     this._resizeHandler = this._handleResize.bind(this);
+    this._handleClickOutside = this._handleClickOutside.bind(this);
   }
 
   initialize(ownerNameElement, roleManager) {
@@ -56,10 +69,15 @@ class HeaderController {
     this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
     this.roleBadge = document.getElementById(HEADER_ELEMENTS.roleBadge);
     this.roleBadgeText = document.getElementById(HEADER_ELEMENTS.roleText);
-    this.navToggle = document.getElementById(HEADER_ELEMENTS.navToggle);
+
+    // Cache menu toggle and dropdown elements
+    this.menuToggle = document.getElementById(HEADER_ELEMENTS.menuToggle);
+    this.dropdown = document.getElementById(HEADER_ELEMENTS.dropdown);
+    this.dropdownRoleBadge = document.getElementById(HEADER_ELEMENTS.dropdownRoleBadge);
+    this.dropdownRoleBadgeText = document.getElementById(HEADER_ELEMENTS.dropdownRoleText);
+    this.dropdownThemeToggle = document.getElementById(HEADER_ELEMENTS.dropdownThemeToggle);
 
     // Cache mobile nav elements
-    this.mobileNavToggle = document.getElementById(HEADER_ELEMENTS.mobileNavToggle);
     this.mobileNavOverlay = document.getElementById(HEADER_ELEMENTS.mobileNavOverlay);
     this.mobileNavClose = document.getElementById(HEADER_ELEMENTS.mobileNavClose);
     this.mobileNav = document.getElementById(HEADER_ELEMENTS.mobileNav);
@@ -69,7 +87,7 @@ class HeaderController {
     this.sectionTracker = new SectionNavigationTracker(HEADER_ELEMENTS.nav, 'main-content', {
       activeClass: 'active',
       threshold: 0.51,
-      sectionSelector: '.content-section',
+      sectionSelector: '.section',
       navItemSelector: '.header-nav-item',
       sectionIdAttribute: 'data-section-id'
     });
@@ -81,11 +99,130 @@ class HeaderController {
       }
     }
 
+    this._setupMediaQueryListener();
     this._setupRoleBadgeClick();
+    this._setupMenuToggle();
+    this._setupDropdown();
     this._setupMobileNavOverlay();
     this._setupActiveObserver();
 
     window.addEventListener('resize', this._resizeHandler);
+  }
+
+  _setupMediaQueryListener() {
+    const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    this.isMobile = mediaQuery.matches;
+
+    mediaQuery.addEventListener('change', (e) => {
+      this.isMobile = e.matches;
+      // Close dropdown when switching to mobile
+      if (this.isMobile && this.dropdown?.classList.contains('is-open')) {
+        this._closeDropdown();
+      }
+    });
+  }
+
+  _setupMenuToggle() {
+    if (!this.menuToggle) return;
+
+    this.menuToggle.addEventListener('click', () => {
+      if (this.isMobile) {
+        this._openMobileNav();
+      } else {
+        this._toggleDropdown();
+      }
+    });
+  }
+
+  _setupDropdown() {
+    if (!this.dropdown) return;
+
+    // Click outside to close
+    document.addEventListener('click', this._handleClickOutside);
+
+    // Keyboard navigation
+    this.dropdown.addEventListener('keydown', (e) => {
+      this._handleDropdownKeyboard(e);
+    });
+
+    // Close on Escape (global)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.dropdown.classList.contains('is-open')) {
+        this._closeDropdown();
+        this.menuToggle?.focus();
+      }
+    });
+  }
+
+  _handleClickOutside(e) {
+    if (!this.dropdown || !this.menuToggle) return;
+
+    const isClickInside = this.dropdown.contains(e.target) || this.menuToggle.contains(e.target);
+    if (!isClickInside && this.dropdown.classList.contains('is-open')) {
+      this._closeDropdown();
+    }
+  }
+
+  _handleDropdownKeyboard(e) {
+    const items = Array.from(this.dropdown.querySelectorAll('.header-dropdown-item'));
+    const currentIndex = items.indexOf(document.activeElement);
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        if (currentIndex < items.length - 1) {
+          items[currentIndex + 1].focus();
+        } else {
+          items[0].focus();
+        }
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (currentIndex > 0) {
+          items[currentIndex - 1].focus();
+        } else {
+          items[items.length - 1].focus();
+        }
+        break;
+      case 'Tab':
+        // Allow tab but close dropdown after last item
+        if (!e.shiftKey && currentIndex === items.length - 1) {
+          this._closeDropdown();
+        } else if (e.shiftKey && currentIndex === 0) {
+          this._closeDropdown();
+        }
+        break;
+    }
+  }
+
+  _openDropdown() {
+    if (!this.dropdown || !this.menuToggle) return;
+
+    this.dropdown.classList.add('is-open');
+    this.dropdown.setAttribute('aria-hidden', 'false');
+    this.menuToggle.setAttribute('aria-expanded', 'true');
+
+    // Focus first item
+    const firstItem = this.dropdown.querySelector('.header-dropdown-item');
+    if (firstItem) {
+      firstItem.focus();
+    }
+  }
+
+  _closeDropdown() {
+    if (!this.dropdown || !this.menuToggle) return;
+
+    this.dropdown.classList.remove('is-open');
+    this.dropdown.setAttribute('aria-hidden', 'true');
+    this.menuToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  _toggleDropdown() {
+    if (this.dropdown?.classList.contains('is-open')) {
+      this._closeDropdown();
+    } else {
+      this._openDropdown();
+    }
   }
 
   _setupActiveObserver() {
@@ -121,7 +258,7 @@ class HeaderController {
       this.navIndicator.style.width = '0px';
       this.navIndicator.style.transform = `translateX(0px)`;
       this.navIndicator.style.opacity = '0';
-    };
+    }
 
     const paddingOffset = 16; // Approximate sum of left/right padding ($spacing-xs * 2)
     const itemWidth = targetItem.offsetWidth;
@@ -155,6 +292,15 @@ class HeaderController {
       });
     }
 
+    if (this.dropdownRoleBadge) {
+      this.dropdownRoleBadge.addEventListener('click', () => {
+        this._closeDropdown();
+        if (this.roleManager) {
+          this.roleManager.showChangeModal();
+        }
+      });
+    }
+
     if (this.mobileRoleBadge) {
       this.mobileRoleBadge.addEventListener('click', () => {
         this._closeMobileNav();
@@ -166,11 +312,7 @@ class HeaderController {
   }
 
   _setupMobileNavOverlay() {
-    if (!this.mobileNavToggle || !this.mobileNavOverlay) return;
-
-    this.mobileNavToggle.addEventListener('click', () => {
-      this._openMobileNav();
-    });
+    if (!this.mobileNavOverlay) return;
 
     if (this.mobileNavClose) {
       this.mobileNavClose.addEventListener('click', () => {
@@ -200,20 +342,20 @@ class HeaderController {
   }
 
   _openMobileNav() {
-    if (!this.mobileNavOverlay || !this.mobileNavToggle) return;
+    if (!this.mobileNavOverlay || !this.menuToggle) return;
 
     this.mobileNavOverlay.classList.add('is-open');
     this.mobileNavOverlay.setAttribute('aria-hidden', 'false');
-    this.mobileNavToggle.setAttribute('aria-expanded', 'true');
+    this.menuToggle.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
   }
 
   _closeMobileNav() {
-    if (!this.mobileNavOverlay || !this.mobileNavToggle) return;
+    if (!this.mobileNavOverlay || !this.menuToggle) return;
 
     this.mobileNavOverlay.classList.remove('is-open');
     this.mobileNavOverlay.setAttribute('aria-hidden', 'true');
-    this.mobileNavToggle.setAttribute('aria-expanded', 'false');
+    this.menuToggle.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
   }
 
@@ -255,6 +397,11 @@ class HeaderController {
       } else {
         this.roleBadge.classList.remove('visible');
       }
+    }
+
+    // Update dropdown role badge
+    if (this.dropdownRoleBadgeText) {
+      this.dropdownRoleBadgeText.textContent = role ? roleText : 'View';
     }
 
     // Update mobile role badge

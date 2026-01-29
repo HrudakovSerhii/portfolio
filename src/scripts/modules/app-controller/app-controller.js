@@ -1,4 +1,4 @@
-import StateManager, { SECTION_ORDER } from '../../utils/state-manager.js';
+import StateManager from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
 import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
 import AnimationController from '../animation-controller';
@@ -8,27 +8,13 @@ import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
-const MODAL_FADE_DURATION = 300;
-const INTRO_TRANSITION_DURATION = 400;
-
-const ELEMENT_IDS = {
-  initialLoader: 'initial-loader',
-  header: 'header',
-  ownerName: 'owner-name',
-  themeToggle: 'theme-toggle',
-  mobileThemeToggle: 'mobile-theme-toggle',
-  // languageSelector: 'language-selector',
-  mainContent: 'main-content',
-  introSection: 'intro-section',
-};
-
-const CRITICAL_ELEMENT_KEYS = [
-  'initialLoader',
-  'themeToggle',
-  // 'languageSelector',
-  'mainContent',
-  'introSection',
-];
+import {
+  SECTION_ORDER,
+  MODAL_FADE_DURATION,
+  INTRO_TRANSITION_DURATION,
+  APP_CRITICAL_ELEMENT_IDS,
+  APP_APP_CRITICAL_ELEMENT_KEYS,
+} from "../../constants.js";
 
 class AppController {
   constructor() {
@@ -53,6 +39,7 @@ class AppController {
       ownerName: null,
       themeToggle: null,
       mobileThemeToggle: null,
+      dropdownThemeToggle: null,
       // languageSelector: null,
       mainContent: null,
       introSection: null,
@@ -68,10 +55,10 @@ class AppController {
 
     try {
       this._cacheElements();
-      this._validateCachedElements(CRITICAL_ELEMENT_KEYS);
+      this._validateCachedElements(APP_APP_CRITICAL_ELEMENT_KEYS);
       this._setupEventListeners();
 
-      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle);
+      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle, this.elements.dropdownThemeToggle);
 
       this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
 
@@ -104,27 +91,28 @@ class AppController {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
-      this.elements.introSection.classList.add('hidden');
 
-      await this.restoreState();
+      await Promise.all([this._hideIntroSectionCTA(), this.restoreState()]);
     }
   }
 
   _cacheElements() {
-    this.elements.initialLoader = document.getElementById(ELEMENT_IDS.initialLoader);
-    this.elements.header = document.getElementById(ELEMENT_IDS.header);
-    this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
-    this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
-    this.elements.mobileThemeToggle = document.getElementById(ELEMENT_IDS.mobileThemeToggle);
-    // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
-    this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
+    this.elements.initialLoader = document.getElementById(APP_CRITICAL_ELEMENT_IDS.initialLoader);
+    this.elements.header = document.getElementById(APP_CRITICAL_ELEMENT_IDS.header);
+    this.elements.ownerName = document.getElementById(APP_CRITICAL_ELEMENT_IDS.ownerName);
+    this.elements.themeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.themeToggle);
+    this.elements.mobileThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileThemeToggle);
+    this.elements.dropdownThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownThemeToggle);
+    // this.elements.languageSelector = document.getElementById(APP_CRITICAL_ELEMENT_IDS.languageSelector);
+    this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
+    this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
+    this.elements.introSectionCTA = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSectionCTA);
   }
 
   _validateCachedElements(criticalElementKeys) {
     for (const key of criticalElementKeys) {
       if (!this.elements[key]) {
-        throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
+        throw new Error(`Critical element not found: ${key} (ID: ${APP_CRITICAL_ELEMENT_IDS[key]})`);
       }
     }
   }
@@ -140,11 +128,17 @@ class AppController {
       });
     }
 
+    if (this.elements.dropdownThemeToggle) {
+      this.elements.dropdownThemeToggle.addEventListener('click', () => {
+        this.themeSwitcher.toggle();
+      });
+    }
+
     // this.elements.languageSelector.addEventListener('change', (e) => {
     //   this.headerController.updateLanguage(e.target.value);
     // });
 
-    this.elements.introSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+    this.elements.introSectionCTA.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
         const role = storyPathBtn.getAttribute('data-role');
 
@@ -220,9 +214,7 @@ class AppController {
       ]);
     }
 
-    const sectionId = `section-${revealedSections[revealedSections.length - 1]}`;
-
-    this._scrollToElementById(sectionId);
+    this._scrollToElementById('next-section-prompt');
   }
 
   async _restoreSingleSection(sectionId, role) {
@@ -246,17 +238,16 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      await this._hideIntroSection();
-      await this.revealSection(SECTION_ORDER[0]);
+      await Promise.all([this._hideIntroSectionCTA(), this.revealSection(SECTION_ORDER[0])]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
     }
   }
 
-  _hideIntroSection() {
+  _hideIntroSectionCTA() {
     return new Promise((resolve) => {
-      if (!this.elements.introSection) {
+      if (!this.elements.introSectionCTA) {
         resolve();
         return;
       }
@@ -264,15 +255,15 @@ class AppController {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (prefersReducedMotion) {
-        this.elements.introSection.classList.add('hidden');
+        this.elements.introSectionCTA.classList.add('hidden');
         resolve();
         return;
       }
 
-      this.elements.introSection.classList.add('sqwizzed');
+      this.elements.introSectionCTA.classList.add('sqwizzed');
 
       setTimeout(() => {
-        this.elements.introSection.classList.add('hidden');
+        this.elements.introSectionCTA.classList.add('hidden');
         resolve();
       }, INTRO_TRANSITION_DURATION);
     });
@@ -280,22 +271,15 @@ class AppController {
 
   _resetPortfolioState() {
     this.stateManager.resetRevealedSections();
-
-    const sections = this.elements.mainContent.querySelectorAll('.content-section');
-    sections.forEach(section => section.remove());
-
+    this.sectionRenderer.removeRevealedSections();
     this.headerController.clearNavigation();
   }
 
   async revealNextAvailableSection() {
-    const revealedSections = this.stateManager.getRevealedSections();
-    const lastRevealedSection = revealedSections[revealedSections.length - 1];
-    const lastRevealedSectionIndex = SECTION_ORDER.indexOf(lastRevealedSection);
+    const nextAvailableSection = this.stateManager.getNextAvailableSection();
 
-    if (lastRevealedSectionIndex < SECTION_ORDER.length - 1) {
-      const nextSectionID = SECTION_ORDER[lastRevealedSectionIndex + 1];
-
-      await this.revealSection(nextSectionID);
+    if (nextAvailableSection) {
+      await this.revealSection(nextAvailableSection);
     }
   }
 

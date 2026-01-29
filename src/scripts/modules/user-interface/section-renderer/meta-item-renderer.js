@@ -38,7 +38,7 @@ class MetaItemRenderer {
     const fragment = document.createDocumentFragment();
 
     itemsToRender.forEach(item => {
-      const renderedItem = this._renderItem(sectionId, item);
+      const renderedItem = this._renderItem(sectionId, item, currentRole);
 
       if (renderedItem) {
         fragment.appendChild(renderedItem);
@@ -61,7 +61,7 @@ class MetaItemRenderer {
     });
   }
 
-  _renderItem(sectionId, item) {
+  _renderItem(sectionId, item, role) {
     const templateId = this._getTemplateId(sectionId, item);
     const fragment = this.templateBuilder.cloneMetaItemTemplate(templateId);
 
@@ -80,6 +80,8 @@ class MetaItemRenderer {
         return this._populateExperienceItem(fragment, item);
       case 'projects':
         return this._populateProjectItem(fragment, item);
+      case 'contact':
+        return this._populateContactItem(fragment, item, role);
       default:
         return fragment.firstElementChild;
     }
@@ -236,6 +238,39 @@ class MetaItemRenderer {
       const projectTagsElements = this._generateTagsList(item.stack);
 
       projectTechTags.appendChild(projectTagsElements);
+    }
+
+    return element;
+  }
+
+  _populateContactItem(fragment, item, role) {
+    const element = fragment.querySelector('.contact-card');
+    if (!element) return null;
+
+    const titleElement = element.querySelector('.contact-card__title');
+    const subtitleElement = element.querySelector('.contact-card__subtitle');
+    const iconElement = element.querySelector('.contact-card__icon use');
+    const linkElement = element;
+
+    if (titleElement) titleElement.textContent = item.title;
+    if (subtitleElement) subtitleElement.textContent = item.subtitle;
+    if (iconElement) iconElement.setAttribute('href', `#icon-${item.icon}`);
+
+    if (linkElement) {
+      if (item.type === 'email-contact-link') {
+        const email = this.profileData?.email || '';
+        const roleData = item.roleItems?.[role] || {};
+        const subject = encodeURIComponent(roleData.subject || '');
+        const body = encodeURIComponent(roleData.body || '');
+
+        linkElement.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        linkElement.removeAttribute('target');
+        linkElement.removeAttribute('rel');
+      } else if (item.type === 'contact-link') {
+        linkElement.href = item.href || '#';
+        linkElement.setAttribute('target', '_blank');
+        linkElement.setAttribute('rel', 'noopener noreferrer');
+      }
     }
 
     return element;

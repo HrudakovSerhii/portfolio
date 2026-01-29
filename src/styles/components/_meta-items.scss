@@ -1,39 +1,9 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-.section-meta-items {
-  @include mixins.animation-hidden;
-
-  &.default-meta-items {
-    display: flex;
-    gap: variables.$spacing-xs;
-    flex-wrap: wrap;
-  }
-
-  &.skills-meta-items {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: variables.$spacing-md;
-
-    @include mixins.tablet {
-      gap: variables.$spacing-lg;
-    }
-  }
-
-  &.contact-meta-items {
-    display: flex;
-    gap: variables.$spacing-md;
-
-    @include mixins.mobile-max {
-      flex-direction: column;
-      gap: variables.$spacing-md;
-      width: 100%;
-    }
-  }
-}
-
-.section-carousel-meta-items {
+// Animation hidden state for meta items (used by JS)
+.section__meta,
+.section__carousel {
   @include mixins.animation-hidden;
 }
 
@@ -94,7 +64,6 @@
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: variables.$radius-lg;
-  min-width: 140px;
   transition: all variables.$transition-fast;
 
   &:hover {
@@ -103,13 +72,11 @@
   }
 
   @include mixins.tablet {
-    min-width: 160px;
-    padding: variables.$spacing-md;
+    padding: variables.$spacing-sm;
   }
 
   &__name {
-    // Fluid: 0.875rem (14px) → 1rem (16px)
-    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    font-size: variables.$font-size-sm;
     font-weight: variables.$font-weight-bold;
     color: var(--color-text);
     margin: 0;

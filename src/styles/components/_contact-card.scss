@@ -1,110 +1,76 @@
 @use '../base/variables';
 @use '../base/mixins';
 
-.contact {
-  align-items: flex-start;
-  gap: variables.$spacing-lg;
-  padding-top: variables.$spacing-xl;
-  animation: fadeIn variables.$transition-slowest ease-out 0.2s both;
+.contact-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-xs;
+  padding: variables.$spacing-xs;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-lg;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  transition:
+          border-color variables.$transition-medium,
+          box-shadow variables.$transition-medium;
 
-  .section-header {
-    display: flex;
-    flex-direction: column;
-    gap: variables.$spacing-s;
-  }
-
-  .section-title {
-    // Fluid: 1.5rem (24px) → 1.75rem (28px)
-    font-size: clamp(1.5rem, 1.375rem + 0.5vw, 1.75rem);
-    font-weight: variables.$font-weight-bold;
-    line-height: variables.$line-height-tight;
-    letter-spacing: -0.025em;
-  }
-
-  .section-query {
-    color: var(--color-text-muted);
-    font-size: variables.$font-size-lg;
-    font-style: normal;
-  }
-
-  .contact-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: variables.$spacing-xs;
-    padding: variables.$spacing-xs;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: variables.$radius-lg;
+  @include mixins.tablet {
+    gap: variables.$spacing-md;
     padding: variables.$spacing-md;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    text-decoration: none;
-    transition:
-            border-color variables.$transition-medium,
-            box-shadow variables.$transition-medium;
+  }
 
-    @include mixins.tablet {
-      gap: variables.$spacing-md;
-      padding: variables.$spacing-md;
-    }
-
-    // @include mixins.desktop {
-    //   padding: variables.$spacing-lg;
-    // }
-
-    &:hover {
-      border-color: var(--color-primary);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-
-      &__icon {
-        background-color: var(--color-primary);
-        color: var(--color-text-inverse);
-      }
-
-      &__link {
-        text-decoration: underline;
-      }
-    }
-
-    &__header {
-      display: flex;
-      align-items: center;
-      gap: variables.$spacing-md;
-    }
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 
     &__icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 3rem;
-      height: 3rem;
-      background-color: var(--color-primary-subtle);
-      color: var(--color-primary);
-      border-radius: variables.$radius-lg;
-      transition:
-              background-color variables.$transition-medium,
-              color variables.$transition-medium;
-
-      .material-symbols-outlined {
-        font-size: 28px;
-      }
-
-      svg {
-        width: 24px;
-        height: 24px;
-      }
+      background-color: var(--color-primary);
+      color: var(--color-text-inverse);
     }
 
-    &__title {
-      font-size: variables.$font-size-lg;
-      font-weight: variables.$font-weight-bold;
-      color: var(--color-text);
+    &__link {
+      text-decoration: underline;
     }
+  }
 
-    &__subtitle {
-      font-size: variables.$font-size-sm;
-      color: var(--color-text-muted);
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-md;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.5rem;
+    background-color: var(--color-primary-subtle);
+    color: var(--color-primary);
+    border-radius: variables.$radius-lg;
+    transition:
+            background-color variables.$transition-medium,
+            color variables.$transition-medium;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
     }
+  }
+
+  &__title {
+    font-size: variables.$font-size-lg;
+    font-weight: variables.$font-weight-bold;
+    color: var(--color-text);
+  }
+
+  &__subtitle {
+    font-size: variables.$font-size-sm;
+    color: var(--color-text-muted);
   }
 }
 

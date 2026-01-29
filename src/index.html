@@ -21,76 +21,108 @@
   <link rel="stylesheet" href="./styles/styles.scss">
 </head>
 <body>
+  <!-- SVG Icon Sprite - Hidden, referenced via <use href="#icon-name"> -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-github" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"/>
+    </symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/>
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+    </symbol>
+  </svg>
+
   <div id="initial-loader" class="loader-container" role="status" aria-live="polite" aria-label="Loading portfolio">
     <div class="loader-spinner"></div>
     <p class="loader-text">Preparing your experience...</p>
   </div>
 
   <header class="header" role="banner">
-    <div class="header-left">
-      <div class="header-brand">
-        <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
-        <a href="/" class="header-brand-link">
-          <span class="header-brand-text">Serhii Hrudakov</span>
-        </a>
+    <div class="header__container">
+      <div class="header-left">
+        <div class="header-brand">
+          <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
+          <a href="#intro-section" class="header-brand-link">
+            <span class="header-brand-text">Serhii Hrudakov</span>
+          </a>
+        </div>
+
+        <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
+          <!-- Navigation items will be added dynamically -->
+          <div id="nav-indicator" class="nav-indicator"></div>
+        </nav>
       </div>
 
-      <nav class="header-nav" id="header-nav" role="navigation" aria-label="Section navigation">
-        <!-- Navigation items will be added dynamically -->
-        <div id="nav-indicator" class="nav-indicator"></div>
-      </nav>
-    </div>
+      <div class="header-controls">
+        <a
+                id="header-download-btn"
+                class="header-button header-download-btn"
+                href="data/CV_Hrudakov_2025.pdf"
+                download
+                aria-label="Download resume"
+                title="Download resume">
+          <span class="material-symbols-outlined header-download-icon" aria-hidden="true">download</span>
+          <span class="header-download-text">Resume</span>
+        </a>
 
-    <div class="header-controls">
-      <a
-        id="header-download-btn"
-        class="header-button header-download-btn"
-        href="data/CV_Hrudakov_2025.pdf"
-        download
-        aria-label="Download resume"
-        title="Download resume">
-        <span class="material-symbols-outlined header-download-icon" aria-hidden="true">download</span>
-        <span class="header-download-text">Resume</span>
-      </a>
+        <button
+                id="header-role-badge"
+                class="header-button header-role-badge"
+                aria-label="Change role"
+                title="Click to change role">
+          <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
+          <span class="header-role-text" id="header-role-text">View</span>
+        </button>
 
-      <button
-        id="header-role-badge"
-        class="header-button header-role-badge"
-        aria-label="Change role"
-        title="Click to change role">
-        <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
-        <span class="header-role-text" id="header-role-text">View</span>
-      </button>
+        <button
+                id="theme-toggle"
+                class="header-button header-theme-button"
+                aria-label="Toggle theme"
+                aria-pressed="false"
+                title="Toggle Theme"
+                data-theme="light">
+          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+        </button>
 
-      <button
-        id="theme-toggle"
-        class="header-button header-theme-button"
-        aria-label="Toggle theme"
-        aria-pressed="false"
-        title="Toggle Theme"
-        data-theme="light">
-        <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
-      </button>
+        <!--      <div class="header-language-select">-->
+        <!--        <span class="material-symbols-outlined header-language-icon" aria-hidden="true">language</span>-->
+        <!--        <select-->
+        <!--          id="language-selector"-->
+        <!--          class="header-language-input"-->
+        <!--          aria-label="Select language">-->
+        <!--          <option value="en">EN</option>-->
+        <!--          <option value="es">ES</option>-->
+        <!--        </select>-->
+        <!--      </div>-->
 
-<!--      <div class="header-language-select">-->
-<!--        <span class="material-symbols-outlined header-language-icon" aria-hidden="true">language</span>-->
-<!--        <select-->
-<!--          id="language-selector"-->
-<!--          class="header-language-input"-->
-<!--          aria-label="Select language">-->
-<!--          <option value="en">EN</option>-->
-<!--          <option value="es">ES</option>-->
-<!--        </select>-->
-<!--      </div>-->
+        <button
+                id="header-menu-toggle"
+                class="header-menu-toggle"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="header-dropdown mobile-nav-overlay">
+          <span aria-hidden="true">More cool stuff</span>
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_drop_down</span>
+<!--          <span class="material-symbols-outlined" aria-hidden="true">menu</span>-->
+        </button>
 
-      <button
-        id="mobile-nav-toggle"
-        class="header-mobile-toggle"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="mobile-nav-overlay">
-        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
-      </button>
+        <div id="header-dropdown" class="header-dropdown" role="menu" aria-hidden="true">
+          <a class="header-dropdown-item" href="data/CV_Hrudakov_2025.pdf" download role="menuitem">
+            <span class="material-symbols-outlined">download</span>
+            <span class="header-dropdown-text">Resume</span>
+          </a>
+          <button id="dropdown-role-badge" class="header-dropdown-item" role="menuitem">
+            <span class="material-symbols-outlined">person</span>
+            <span class="header-dropdown-text" id="dropdown-role-text">View</span>
+          </button>
+          <button id="dropdown-theme-toggle" class="header-dropdown-item" role="menuitem" data-theme="light">
+            <span class="material-symbols-outlined">dark_mode</span>
+            <span class="header-dropdown-text">Theme</span>
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -155,38 +187,64 @@
       <div class="parallax-blob parallax-blob--7"></div>
     </div>
 
-    <section class="content-section intro" id="intro-section">
-      <h1 class="intro__title">Hello, I'm <span class="text-gradient">Serhii</span></h1>
-      <h2 class="intro__heading">
-        Senior Frontend Specialist
-      </h2>
-      <p class="intro__lead">
-        I built this site so you can get to know me in the way that matters most - to <span class="text-gradient"><b>You</b></span>
-      </p>
-      <p class="intro__cta-text">
-          I made a three-story so you can explore not only my relevant profile information, but also my personal side. Side that important when you work with <span class="text-gradient"><b>People</b></span>
-      </p>
+    <section class="section section--intro" id="intro-section">
+      <div class="section__header">
+        <h1 class="section-intro__header">Hello, I'm <span class="text-gradient">Serhii</span></h1>
+        <h2 class="section__title">
+          Senior Frontend Specialist
+        </h2>
+      </div>
 
-      <div id="intro-options" class="intro__options">
-        <div class="intro__option">
-          <button class="button button--recruiter" data-role="recruiter">I'm a Recruiter</button>
-          <p class="intro__option-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
-        </div>
-        <div class="intro__option">
-          <button class="button button--developer" data-role="developer">I'm an Engineer</button>
-          <p class="intro__option-description">Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.</p>
-        </div>
-        <div class="intro__option">
-          <button class="button button--friend" data-role="friend">I'm a Friend</button>
-          <p class="intro__option-description">I'll introduce the human side of my self so you can understand what kind of person I am.</p>
+      <div class="section__content">
+        <p class="section__text">
+          I built this site so you can get to know me in the way that matters most - to<span class="text-gradient"><b>You</b></span>
+        </p>
+        <div class="section__content-cv">
+          <a
+                  class="button cv-download-btn"
+                  href="data/CV_Hrudakov_2025.pdf"
+                  download
+                  aria-label="Download Serhii CV"
+                  title="Download resume">
+            <span class="material-symbols-outlined" aria-hidden="true">download</span>
+            <span class="mobile-nav-control-text">Download my CV</span>
+          </a>
         </div>
       </div>
 
-      <p class="intro__cta-prompt">Which path speaks to you?</p>
+      <p class="section__subtext">
+        OR
+      </p>
+
+      <p class="section__text section__text-revealed">
+        Scroll down to read more
+      </p>
+
+      <div id="story-cta" class="story" aria-hidden="true">
+        <p class="story__title">
+          Read one of a three-story I made to explore not only my relevant profile information, but also my personal side. Side that important when you work with <span class="text-gradient"><b>People</b></span>
+        </p>
+
+        <div id="story__options" class="story__options">
+          <div class="story__option">
+            <button class="button button--recruiter" data-role="recruiter">I'm a Recruiter</button>
+            <p class="story__option-description">Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.</p>
+          </div>
+          <div class="story__option">
+            <button class="button button--developer" data-role="developer">I'm an Engineer</button>
+            <p class="story__option-description">Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.</p>
+          </div>
+          <div class="story__option">
+            <button class="button button--friend" data-role="friend">I'm a Friend</button>
+            <p class="story__option-description">I'll introduce the human side of my self so you can understand what kind of person I am.</p>
+          </div>
+        </div>
+        <p class="story__cta-text">Which path speaks to you?</p>
+      </div>
     </section>
 
-<!--    Static action prompt element that always rendered after last section.-->
-    <div id="next-section-prompt" style="height: 10vh; margin: 0" class="action-prompt" role="region" aria-label="Section interaction">
+    <!--    Static action prompt element that always rendered after last section.-->
+    <div id="next-section-prompt" class="action-prompt" role="region" aria-label="Section interaction">
       <button
               class="button prompt-button"
               aria-label="show next section"
@@ -205,8 +263,8 @@
         aria-label="GitHub"
         target="_blank"
         rel="noopener noreferrer">
-        <svg aria-hidden="true" viewBox="0 0 24 24" height="24px" width="24px" fill="currentColor" data-view-component="true">
-          <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"></path>
+        <svg class="footer-social-icon" aria-hidden="true">
+          <use href="#icon-github"></use>
         </svg>
       </a>
       <a
@@ -215,15 +273,17 @@
         aria-label="LinkedIn"
         target="_blank"
         rel="noopener noreferrer">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-supported-dps="24x24" fill="currentColor" width="24" height="24" focusable="false">
-          <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+        <svg class="footer-social-icon" aria-hidden="true">
+          <use href="#icon-linkedin"></use>
         </svg>
       </a>
       <a
         href="mailto:hrudakovserhii@gmail.com"
         class="footer-social-link"
         aria-label="Email">
-        <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+        <svg class="footer-social-icon" aria-hidden="true">
+          <use href="#icon-mail"></use>
+        </svg>
       </a>
       <!-- <a
         href="https://www.threads.com/@serhiykola"
@@ -234,163 +294,28 @@
         </svg>
       </a> -->
     </div>
-    <p class="footer-copyright">Build with love to <span class="text-gradient">people</span>.</br> Designed with passion to machines</p>
+    <p class="footer-copyright">Build with love to <span class="text-gradient">people</span>. Designed with passion to
+      machines</p>
   </footer>
 
   <template id="section-template">
-    <section class="content-section default-section" id="default-section">
-      <div class="section-layout">
-        <div class="section-visual section-visual-animated">
-          <!-- Image will be inserted here -->
-        </div>
-        <div class="section-body">
-          <div class="section-header">
-            <h2 class="section-title"></h2>
-            <p class="section-query"></p>
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title"></h2>
+        <p class="section__subtitle"></p>
+      </div>
+      <div class="section__layout">
+        <div class="section__visual section__visual--animated"></div>
+        <div class="section__body">
+          <div class="section__content">
+            <p class="section__text section__text--animated"></p>
+            <p class="section__subtext"></p>
           </div>
-          <p class="section-body-content  section-body-content-animated">
-            <!-- Text content will be inserted here -->
-          </p>
-          <div class="section-meta-items default-meta-items">
-            <!-- Meta items will be inserted here based on section type -->
-          </div>
+          <div class="section__meta"></div>
         </div>
       </div>
+      <div class="section__carousel"></div>
     </section>
-  </template>
-
-  <template id="experience-section-template">
-    <section class="content-section" id="experience-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-        <div class="section-meta-items experience-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="skills-section-template">
-    <section class="content-section" id="skills-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-        <div class="section-meta-items skills-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="projects-section-template">
-    <section class="content-section" id="projects-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-      </div>
-      <div class="section-carousel">
-        <div class="section-carousel-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="hero-section-template">
-    <section class="content-section hero" id="hero-section">
-      <div class="section-layout">
-        <div class="section-visual section-visual-hero section-visual-animated">
-          <!-- Image will be inserted here -->
-        </div>
-        <div class="section-body">
-          <div class="section-header section-header--hero">
-            <h2 class="section-hero-title section-body-content">
-              <!-- Text content will be inserted here -->
-            </h2>
-            <p class="section-hero-query section-subtext-content section-body-content-animated">
-              <!-- Text sub-content will be inserted here -->
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <template id="contact-section-template">
-    <section class="content-section contact" id="contact-section">
-      <div class="section-header">
-        <h2 class="section-title">Let's Build Something Together</h2>
-        <p class="section-query">Reach out for opportunities or just to say hello.</p>
-      </div>
-      <p class="section-body-content  section-body-content-animated">
-        <!-- Text content will be inserted here -->
-      </p>
-      <div class="section-meta-items contact-meta-items">
-        <!-- Email Card -->
-        <a class="contact-card" href="mailto:hrudakovserhii@gmail.com">
-          <div class="contact-card__header">
-            <div class="contact-card__icon">
-              <span class="material-symbols-outlined">mail</span>
-            </div>
-            <h3 class="contact-card__title">Email</h3>
-          </div>
-          <p class="contact-card__subtitle">Best for job inquiries</p>
-        </a>
-
-        <!-- LinkedIn Card -->
-        <a class="contact-card" aria-label="LinkedIn" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/serhii-hrudakov/">
-          <div class="contact-card__header">
-            <div class="contact-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" focusable="false">
-                <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
-              </svg>
-            </div>
-            <h3 class="contact-card__title">LinkedIn</h3>
-          </div>
-          <p class="contact-card__subtitle">Professional Story</p>
-        </a>
-
-        <!-- GitHub Card -->
-        <a class="contact-card" aria-label="GitHub" rel="noopener noreferrer" target="_blank" href="https://github.com/HrudakovSerhii">
-          <div class="contact-card__header">
-            <div class="contact-card__icon">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"></path>
-              </svg>
-            </div>
-            <h3 class="contact-card__title">GitHub</h3>
-          </div>
-          <p class="contact-card__subtitle">Code &amp; Contributions</p>
-        </a>
-      </div>
-    </section>
-  </template>
-
-  <template id="action-prompt-template">
-    <div class="action-prompt" role="region" aria-label="Section interaction">
-      <button
-              class="button prompt-button"
-              aria-label="show next section"
-              data-default-text="Next">
-        Next:
-      </button>
-    </div>
   </template>
 
   <template id="nav-item-template">
@@ -505,23 +430,6 @@
     </div>
   </template>
 
-  <template id="soft-skills-section-template">
-    <section class="content-section" id="soft-skills-section">
-      <div class="section-body">
-        <div class="section-header">
-          <h2 class="section-title"></h2>
-          <p class="section-query"></p>
-        </div>
-        <p class="section-body-content  section-body-content-animated">
-          <!-- Text content will be inserted here -->
-        </p>
-        <div class="section-meta-items soft-skills-meta-items">
-          <!-- Meta items will be inserted here based on section type -->
-        </div>
-      </div>
-    </section>
-  </template>
-
   <template id="soft-skills-meta-item-template">
     <div class="soft-skills-item">
       <div class="soft-skills-item__header">
@@ -537,6 +445,18 @@
   <template id="link-meta-item-template">
     <a href="#" class="meta-link" target="_blank" rel="noopener noreferrer">
       <span class="meta-link__title"></span>
+    </a>
+  </template>
+
+  <template id="contact-meta-item-template">
+    <a class="contact-card" target="_blank">
+      <div class="contact-card__header">
+        <svg class="contact-card__icon" aria-hidden="true">
+          <use href=""></use>
+        </svg>
+        <h3 class="contact-card__title"></h3>
+      </div>
+      <p class="contact-card__subtitle"></p>
     </a>
   </template>
 

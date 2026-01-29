@@ -89,23 +89,27 @@ class ContentMiddleware {
   }
 
   _buildSectionContent({ sectionId, role, section, roleContent, customQuery }) {
-    const imageName = roleContent.image?.name || `${sectionId}.${role}`;
+    const contentData = roleContent.content || {};
+    const headerData = roleContent.header || {};
+    const imageName = contentData.image?.name || `${sectionId}.${role}`;
 
     return {
       sectionId,
-      title: section.metadata.title,
-      text: roleContent.text,
-      subText: roleContent.subText,
-      link: roleContent.link,
-      image: {
-        imageUrl: `/portfolio/assets/images/${imageName}.full.webp`,
-        lowResImageUrl: `/portfolio/assets/images/${imageName}.low.webp`,
-        imageAlt: roleContent.image?.imageAlt || section.metadata.title,
-        aspectRatio: roleContent.image?.aspectRatio || 'aspect-portrait',
+      header: {
+        text: headerData.text || section.metadata.title,
+        subText: headerData.subText || ''
       },
-      customQuery: customQuery || null,
-      emailSubject: roleContent.emailSubject || null,
-      emailBody: roleContent.emailBody || null,
+      content: {
+        text: contentData.text || '',
+        subText: contentData.subText || '',
+        image: contentData.image ? {
+          imageUrl: `/portfolio/assets/images/${imageName}.full.webp`,
+          lowResImageUrl: `/portfolio/assets/images/${imageName}.low.webp`,
+          imageAlt: contentData.image.imageAlt || section.metadata.title,
+          aspectRatio: contentData.image.aspectRatio || 'aspect-portrait',
+        } : null
+      },
+      customQuery: customQuery || null
     };
   }
 
