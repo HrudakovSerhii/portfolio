@@ -1,0 +1,674 @@
+{
+  "profile": {
+    "name": "Serhii Hrudakov",
+    "title": "profile.title",
+    "email": "hrudakovserhii@gmail.com",
+    "phone": "+31614848082",
+    "location": "profile.location",
+    "socialLinks": {
+      "linkedin": "https://linkedin.com/in/serhii-hrudakov",
+      "github": "https://github.com/HrudakovSerhii"
+    }
+  },
+  "sections": {
+    "hero": {
+      "metadata": {
+        "title": "generic.title.hero",
+        "icon": "home",
+        "order": 1
+      },
+      "content": {
+        "recruiter": {
+          "header": {
+            "text": "generic.title.hero",
+            "subText": "hero.recruiter.header.subText"
+          },
+          "content": {
+            "text": "hero.recruiter.content.text",
+            "image": {
+              "name": "hero.hr",
+              "imageAlt": "hero.recruiter.image.alt",
+              "aspectRatio": "aspect-square"
+            }
+          }
+        },
+        "developer": {
+          "header": {
+            "text": "generic.title.hero",
+            "subText": "hero.developer.header.subText"
+          },
+          "content": {
+            "text": "hero.developer.content.text",
+            "image": {
+              "name": "hero.developer",
+              "imageAlt": "hero.developer.image.alt",
+              "aspectRatio": "aspect-square"
+            }
+          }
+        },
+        "friend": {
+          "header": {
+            "text": "generic.title.hero",
+            "subText": "hero.friend.header.subText"
+          },
+          "content": {
+            "text": "hero.friend.content.text",
+            "image": {
+              "name": "hero.friend",
+              "imageAlt": "hero.friend.image.alt",
+              "aspectRatio": "aspect-portrait"
+            }
+          }
+        }
+      }
+    },
+    "experience": {
+      "metadata": {
+        "title": "generic.title.experience",
+        "icon": "briefcase",
+        "order": 2,
+        "main_items": [
+          {
+            "type": "experience",
+            "id": "mobiquity-hexaware",
+            "role": "experience.mobiquity.role",
+            "company": "experience.mobiquity.company",
+            "period": "Jul 2023 - Oct 2025",
+            "impactScore": 9,
+            "description": "experience.mobiquity.description",
+            "technologies": [
+              "generic.tech.react",
+              "generic.tech.typescript",
+              "generic.tech.langchain",
+              "generic.tech.python",
+              "generic.tech.websocket",
+              "generic.tech.azure",
+              "generic.tech.nxMonorepo",
+              "generic.tech.zod",
+              "generic.tech.playwright"
+            ],
+            "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Hexaware_new_logo.svg"
+          },
+          {
+            "type": "experience",
+            "id": "erics-digital",
+            "role": "experience.erics.role",
+            "company": "experience.erics.company",
+            "period": "Jun 2021 - Jun 2023",
+            "impactScore": 8,
+            "description": "experience.erics.description",
+            "technologies": [
+              "generic.tech.react",
+              "generic.tech.reduxSaga",
+              "generic.tech.websphere",
+              "generic.tech.localise",
+              "generic.tech.jsp",
+              "generic.tech.googleAnalytics",
+              "generic.tech.typescript"
+            ],
+            "logoUrl": "https://shop.eriks.nl/webapp/wcs/stores/servlet/ERIKSStorefrontAssetStore/images/layout/logo-eriks-blue.svg"
+          },
+          {
+            "type": "experience",
+            "id": "a-dam",
+            "role": "experience.adam.role",
+            "company": "experience.adam.company",
+            "period": "Jan 2020 - Feb 2021",
+            "impactScore": 8,
+            "description": "experience.adam.description",
+            "technologies": [
+              "generic.tech.react",
+              "generic.tech.nextjs",
+              "generic.tech.saleor",
+              "generic.tech.apolloGraphql",
+              "generic.tech.redis",
+              "generic.tech.python",
+              "generic.tech.nestjs"
+            ],
+            "logoUrl": "https://www.vanuffelenmode.nl/img/a-dam-underwear_300x300_326078.webp"
+          },
+          {
+            "type": "experience",
+            "id": "digitalchefs",
+            "role": "experience.digitalchefs.role",
+            "company": "experience.digitalchefs.company",
+            "period": "Sep 2018 - Jan 2020",
+            "impactScore": 6,
+            "description": "experience.digitalchefs.description",
+            "technologies": [
+              "generic.tech.reactNative",
+              "generic.tech.express",
+              "generic.tech.mysql",
+              "generic.tech.androidStudio",
+              "generic.tech.xcode",
+              "generic.tech.restapi"
+            ],
+            "logoUrl": "https://digitalchefs.nl/wp-content/uploads/2025/01/digitalchefs.svg"
+          },
+          {
+            "type": "experience",
+            "id": "abiggercircle",
+            "role": "experience.abiggercircle.role",
+            "company": "experience.abiggercircle.company",
+            "period": "Feb 2017 - Sep 2018",
+            "impactScore": 5,
+            "description": "experience.abiggercircle.description",
+            "technologies": [
+              "generic.tech.php",
+              "generic.tech.laravel",
+              "generic.tech.backbonejs",
+              "generic.tech.vanillajs",
+              "generic.tech.jquery",
+              "generic.tech.gulp"
+            ],
+            "logoUrl": "https://www.abiggercircle.com/assets/logo/ULTRAMARINE_Center.svg"
+          },
+          {
+            "type": "experience",
+            "id": "it-transit",
+            "role": "experience.ittransit.role",
+            "company": "experience.ittransit.company",
+            "period": "Mar 2015 - Nov 2016",
+            "impactScore": 4,
+            "description": "experience.ittransit.description",
+            "technologies": [
+              "generic.tech.javascript",
+              "generic.tech.flex",
+              "generic.tech.actionscript",
+              "generic.tech.restapi",
+              "generic.tech.cms"
+            ],
+            "logoUrl": "https://it-transit.com/wp-content/plugins/website-logo/images/Logo_distr.png"
+          },
+          {
+            "type": "experience",
+            "id": "luxoft",
+            "role": "experience.luxoft.role",
+            "company": "experience.luxoft.company",
+            "period": "Oct 2014 - Mar 2015",
+            "impactScore": 3,
+            "description": "experience.luxoft.description",
+            "technologies": [
+              "generic.tech.flash",
+              "generic.tech.actionscript",
+              "generic.tech.jira",
+              "generic.tech.git",
+              "generic.tech.sourcetree",
+              "generic.tech.javascript"
+            ],
+            "logoUrl": "https://www.luxoft.com/theme/luxoft/assets/images/logo/luxoft-new-black.svg"
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "header": {
+            "text": "generic.title.experience",
+            "subText": ""
+          },
+          "content": {
+            "text": "experience.recruiter.content.text"
+          }
+        },
+        "developer": {
+          "header": {
+            "text": "generic.title.experience",
+            "subText": ""
+          },
+          "content": {
+            "text": "experience.developer.content.text"
+          }
+        },
+        "friend": {
+          "header": {
+            "text": "generic.title.experience",
+            "subText": ""
+          },
+          "content": {
+            "text": "experience.friend.content.text"
+          }
+        }
+      }
+    },
+    "skills": {
+      "metadata": {
+        "title": "generic.title.skills",
+        "icon": "code",
+        "order": 3,
+        "main_items": [
+          {
+            "type": "skills",
+            "name": "generic.tech.javascriptNode",
+            "years": "10+",
+            "icon": "Language"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.typescript",
+            "years": "7+",
+            "icon": "Language"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.react",
+            "years": "7+",
+            "icon": "Library"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.nestjs",
+            "years": "5+",
+            "icon": "Framework"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.nextjs",
+            "years": "3+",
+            "icon": "Framework"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.htmlCssScss",
+            "years": "10+",
+            "icon": "Web Basics"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.graphqlRestApi",
+            "years": "5+",
+            "icon": "API"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.stateManagement",
+            "years": "5+",
+            "icon": "React State Management"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.playwrightVitest",
+            "years": "3+",
+            "icon": "Testing"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.rtlVitest",
+            "years": "3+",
+            "icon": "Testing"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.azureGitlab",
+            "years": "3+",
+            "icon": "DevOps"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.docker",
+            "years": "3+",
+            "icon": "Containerisation"
+          },
+          {
+            "type": "skills",
+            "name": "generic.tech.mysqlMongodb",
+            "years": "5+",
+            "icon": "Database"
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "header": {
+            "text": "generic.title.skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "skills.recruiter.content.text"
+          }
+        },
+        "developer": {
+          "header": {
+            "text": "generic.title.skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "skills.developer.content.text"
+          }
+        },
+        "friend": {
+          "header": {
+            "text": "generic.title.skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "skills.friend.content.text"
+          }
+        }
+      }
+    },
+    "soft-skills": {
+      "metadata": {
+        "title": "generic.title.soft-skills",
+        "icon": "diversity_3",
+        "order": 4,
+        "main_items": [
+          {
+            "type": "soft-skills",
+            "title": "softSkills.leadership.title",
+            "icon": "groups",
+            "items": [
+              "softSkills.leadership.item1",
+              "softSkills.leadership.item2",
+              "softSkills.leadership.item3",
+              "softSkills.leadership.item4"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "softSkills.communication.title",
+            "icon": "forum",
+            "items": [
+              "softSkills.communication.item1",
+              "softSkills.communication.item2",
+              "softSkills.communication.item3",
+              "softSkills.communication.item4"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "softSkills.personal.title",
+            "icon": "psychology",
+            "items": [
+              "softSkills.personal.item1",
+              "softSkills.personal.item2",
+              "softSkills.personal.item3",
+              "softSkills.personal.item4"
+            ]
+          },
+          {
+            "type": "soft-skills",
+            "title": "softSkills.background.title",
+            "icon": "school",
+            "items": [
+              "softSkills.background.item1",
+              "softSkills.background.item2",
+              "softSkills.background.item3",
+              "softSkills.background.item4"
+            ]
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "header": {
+            "text": "generic.title.soft-skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "softSkills.recruiter.content.text"
+          }
+        },
+        "developer": {
+          "header": {
+            "text": "generic.title.soft-skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "softSkills.developer.content.text"
+          }
+        },
+        "friend": {
+          "header": {
+            "text": "generic.title.soft-skills",
+            "subText": ""
+          },
+          "content": {
+            "text": "softSkills.friend.content.text"
+          }
+        }
+      }
+    },
+    "projects": {
+      "metadata": {
+        "title": "generic.title.projects",
+        "icon": "folder",
+        "order": 4,
+        "main_items": [
+          {
+            "type": "project",
+            "title": "projects.portfolio.title",
+            "link": "https://github.com/HrudakovSerhii/portfolio",
+            "date": "Nov 2025 - Jan 2026",
+            "description": "projects.portfolio.description",
+            "stack": [
+              "generic.tech.javascript",
+              "generic.tech.html",
+              "generic.tech.scss",
+              "generic.tech.vitest",
+              "generic.tech.stitch",
+              "generic.tech.vite",
+              "generic.tech.webworkers",
+              "generic.tech.embeddingModel",
+              "generic.tech.inBrowserModel"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.tvShowExplorer.title",
+            "link": "https://github.com/HrudakovSerhii/tv-show-explorer",
+            "date": "Jan 2026 - Jan 2026",
+            "description": "projects.tvShowExplorer.description",
+            "stack": [
+              "generic.tech.react",
+              "generic.tech.nextjs",
+              "generic.tech.tailwind",
+              "generic.tech.vitest",
+              "generic.tech.restapi",
+              "generic.tech.stitch",
+              "generic.tech.atlassianDesign"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.chatAgent.title",
+            "date": "Jun 2025 - Oct 2025",
+            "description": "projects.chatAgent.description",
+            "stack": [
+              "generic.tech.react",
+              "generic.tech.python",
+              "generic.tech.langchain",
+              "generic.tech.websocket",
+              "generic.tech.aggrid",
+              "generic.tech.keycloak"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.bonfire.title",
+            "date": "Aug 2024 - May 2025",
+            "description": "projects.bonfire.description",
+            "stack": [
+              "generic.tech.react",
+              "generic.tech.nxMonorepo",
+              "generic.tech.zod",
+              "generic.tech.reactRouterV7",
+              "generic.tech.sonarcloud",
+              "generic.tech.playwright"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.safetyNotification.title",
+            "date": "Jul 2023 - Jun 2024",
+            "description": "projects.safetyNotification.description",
+            "stack": [
+              "generic.tech.react",
+              "generic.tech.azureDevops",
+              "generic.tech.bffPattern",
+              "generic.tech.typescript",
+              "generic.tech.jest"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.ericsMigration.title",
+            "date": "Jun 2021 - Jun 2023",
+            "description": "projects.ericsMigration.description",
+            "stack": [
+              "generic.tech.react",
+              "generic.tech.reduxSaga",
+              "generic.tech.websphereLegacy",
+              "generic.tech.localise",
+              "generic.tech.jsp",
+              "generic.tech.googleAnalytics"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.adamEcommerce.title",
+            "date": "Jan 2020 - Feb 2021",
+            "description": "projects.adamEcommerce.description",
+            "stack": [
+              "generic.tech.react",
+              "generic.tech.nextjs",
+              "generic.tech.saleor",
+              "generic.tech.apolloGraphql",
+              "generic.tech.redis",
+              "generic.tech.python"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.klmAssistant.title",
+            "date": "May 2019 - Jan 2020",
+            "description": "projects.klmAssistant.description",
+            "stack": [
+              "generic.tech.reactNative",
+              "generic.tech.express",
+              "generic.tech.mysql",
+              "generic.tech.androidStudio",
+              "generic.tech.xcode"
+            ]
+          },
+          {
+            "type": "project",
+            "title": "projects.taxafax.title",
+            "date": "Sep 2018 - May 2019",
+            "description": "projects.taxafax.description",
+            "stack": [
+              "generic.tech.reactNative",
+              "generic.tech.express",
+              "generic.tech.restapi",
+              "generic.tech.mobileSecurity"
+            ]
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "header": {
+            "text": "generic.title.projects",
+            "subText": ""
+          },
+          "content": {
+            "text": "projects.recruiter.content.text"
+          }
+        },
+        "developer": {
+          "header": {
+            "text": "generic.title.projects",
+            "subText": ""
+          },
+          "content": {
+            "text": "projects.developer.content.text"
+          }
+        },
+        "friend": {
+          "header": {
+            "text": "generic.title.projects",
+            "subText": ""
+          },
+          "content": {
+            "text": "projects.friend.content.text"
+          }
+        }
+      }
+    },
+    "contact": {
+      "metadata": {
+        "title": "generic.title.contact",
+        "icon": "mail",
+        "order": 5,
+        "main_items": [
+          {
+            "type": "email-contact-link",
+            "id": "email",
+            "title": "contact.email.title",
+            "subtitle": "contact.email.subtitle",
+            "icon": "mail",
+            "href": "mailto:hrudakovserhii@gmail.com",
+            "roleItems": {
+              "recruiter": {
+                "subject": "contact.email.recruiter.subject",
+                "body": "contact.email.recruiter.body"
+              },
+              "developer": {
+                "subject": "contact.email.developer.subject",
+                "body": "contact.email.developer.body"
+              },
+              "friend": {
+                "subject": "contact.email.friend.subject",
+                "body": "contact.email.friend.body"
+              }
+            }
+          },
+          {
+            "type": "contact-link",
+            "id": "linkedin",
+            "title": "contact.linkedin.title",
+            "subtitle": "contact.linkedin.subtitle",
+            "icon": "linkedin",
+            "href": "https://www.linkedin.com/in/serhii-hrudakov/"
+          },
+          {
+            "type": "contact-link",
+            "id": "github",
+            "title": "contact.github.title",
+            "subtitle": "contact.github.subtitle",
+            "icon": "github",
+            "href": "https://github.com/HrudakovSerhii"
+          }
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "header": {
+            "text": "generic.title.letsBuild",
+            "subText": "generic.text.reachOut"
+          },
+          "content": {
+            "text": "contact.recruiter.content.text"
+          }
+        },
+        "developer": {
+          "header": {
+            "text": "generic.title.letsBuild",
+            "subText": "generic.text.reachOut"
+          },
+          "content": {
+            "text": "contact.developer.content.text"
+          }
+        },
+        "friend": {
+          "header": {
+            "text": "generic.title.letsBuild",
+            "subText": "generic.text.reachOut"
+          },
+          "content": {
+            "text": "contact.friend.content.text"
+          }
+        }
+      }
+    }
+  }
+}

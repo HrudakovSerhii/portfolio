@@ -1,5 +1,6 @@
-import StateManager, { SECTION_ORDER } from '../../utils/state-manager.js';
+import StateManager from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
+import TranslationService from '../translations.js';
 import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
 import AnimationController from '../animation-controller';
 import ParallaxController from '../parallax-controller';
@@ -8,32 +9,20 @@ import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
-const MODAL_FADE_DURATION = 300;
-const INTRO_TRANSITION_DURATION = 400;
-
-const ELEMENT_IDS = {
-  initialLoader: 'initial-loader',
-  header: 'header',
-  ownerName: 'owner-name',
-  themeToggle: 'theme-toggle',
-  mobileThemeToggle: 'mobile-theme-toggle',
-  // languageSelector: 'language-selector',
-  mainContent: 'main-content',
-  introSection: 'intro-section',
-};
-
-const CRITICAL_ELEMENT_KEYS = [
-  'initialLoader',
-  'themeToggle',
-  // 'languageSelector',
-  'mainContent',
-  'introSection',
-];
+import {
+  SECTION_ORDER,
+  MODAL_FADE_DURATION,
+  INTRO_TRANSITION_DURATION,
+  APP_CRITICAL_ELEMENT_IDS,
+  APP_APP_CRITICAL_ELEMENT_KEYS,
+  SUPPORTED_LANGUAGES,
+  LANGUAGE_LABELS,
+} from "../../constants.js";
 
 class AppController {
   constructor() {
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-content.json');
+    this.contentMiddleware = new ContentMiddleware('/portfolio/data/content-structure.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
     this.parallaxController = new ParallaxController();
@@ -53,7 +42,11 @@ class AppController {
       ownerName: null,
       themeToggle: null,
       mobileThemeToggle: null,
-      // languageSelector: null,
+      dropdownThemeToggle: null,
+      dropdownLanguage: null,
+      dropdownLanguageText: null,
+      mobileLanguageToggle: null,
+      mobileLanguageText: null,
       mainContent: null,
       introSection: null,
     };
@@ -67,17 +60,31 @@ class AppController {
     }
 
     try {
+      const savedLanguage = this.stateManager.getLanguage();
+
+      await this.contentMiddleware.initialize();
+
+      await TranslationService.initialize(savedLanguage);
+
+      const actualLanguage = TranslationService.getCurrentLanguage();
+
+      if (actualLanguage !== savedLanguage) {
+        this.stateManager.setLanguage(actualLanguage);
+      }
+
       this._cacheElements();
-      this._validateCachedElements(CRITICAL_ELEMENT_KEYS);
+      this._validateCachedElements(APP_APP_CRITICAL_ELEMENT_KEYS);
+
+      TranslationService.applyToDOM();
+
       this._setupEventListeners();
 
-      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle);
+      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle, this.elements.dropdownThemeToggle);
 
       this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
 
       this.headerController.initialize(
         this.elements.ownerName,
-        // this.elements.languageSelector,
         this.roleManager
       );
 
@@ -86,9 +93,10 @@ class AppController {
       this.sectionRenderer.initialize(
         this.elements.mainContent,
         SECTION_ORDER,
-        (nextSectionId) => this.revealSection(nextSectionId, '')
+          () => this.revealNextAvailableSection()
       );
 
+      this._updateLanguageLabels(actualLanguage);
       this._hideInitialLoader();
       this.initialized = true;
     } catch (error) {
@@ -104,27 +112,31 @@ class AppController {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
-      this.elements.introSection.classList.add('hidden');
 
-      await this.restoreState();
+      await Promise.all([this._hideIntroSectionCTA(), this.restoreState()]);
     }
   }
 
   _cacheElements() {
-    this.elements.initialLoader = document.getElementById(ELEMENT_IDS.initialLoader);
-    this.elements.header = document.getElementById(ELEMENT_IDS.header);
-    this.elements.ownerName = document.getElementById(ELEMENT_IDS.ownerName);
-    this.elements.themeToggle = document.getElementById(ELEMENT_IDS.themeToggle);
-    this.elements.mobileThemeToggle = document.getElementById(ELEMENT_IDS.mobileThemeToggle);
-    // this.elements.languageSelector = document.getElementById(ELEMENT_IDS.languageSelector);
-    this.elements.mainContent = document.getElementById(ELEMENT_IDS.mainContent);
-    this.elements.introSection = document.getElementById(ELEMENT_IDS.introSection);
+    this.elements.initialLoader = document.getElementById(APP_CRITICAL_ELEMENT_IDS.initialLoader);
+    this.elements.header = document.getElementById(APP_CRITICAL_ELEMENT_IDS.header);
+    this.elements.ownerName = document.getElementById(APP_CRITICAL_ELEMENT_IDS.ownerName);
+    this.elements.themeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.themeToggle);
+    this.elements.mobileThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileThemeToggle);
+    this.elements.dropdownThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownThemeToggle);
+    this.elements.dropdownLanguage = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguage);
+    this.elements.dropdownLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguageText);
+    this.elements.mobileLanguageToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageToggle);
+    this.elements.mobileLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageText);
+    this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
+    this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
+    this.elements.introSectionCTA = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSectionCTA);
   }
 
   _validateCachedElements(criticalElementKeys) {
     for (const key of criticalElementKeys) {
       if (!this.elements[key]) {
-        throw new Error(`Critical element not found: ${key} (ID: ${ELEMENT_IDS[key]})`);
+        throw new Error(`Critical element not found: ${key} (ID: ${APP_CRITICAL_ELEMENT_IDS[key]})`);
       }
     }
   }
@@ -140,11 +152,25 @@ class AppController {
       });
     }
 
-    // this.elements.languageSelector.addEventListener('change', (e) => {
-    //   this.headerController.updateLanguage(e.target.value);
-    // });
+    if (this.elements.dropdownThemeToggle) {
+      this.elements.dropdownThemeToggle.addEventListener('click', () => {
+        this.themeSwitcher.toggle();
+      });
+    }
 
-    this.elements.introSection.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
+    if (this.elements.dropdownLanguage) {
+      this.elements.dropdownLanguage.addEventListener('click', () => {
+        this._cycleLanguage();
+      });
+    }
+
+    if (this.elements.mobileLanguageToggle) {
+      this.elements.mobileLanguageToggle.addEventListener('click', () => {
+        this._cycleLanguage();
+      });
+    }
+
+    this.elements.introSectionCTA.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
         const role = storyPathBtn.getAttribute('data-role');
 
@@ -155,13 +181,76 @@ class AppController {
     });
   }
 
+  async _cycleLanguage() {
+    const current = this.stateManager.getLanguage();
+    const currentIndex = SUPPORTED_LANGUAGES.indexOf(current);
+    const next = SUPPORTED_LANGUAGES[(currentIndex + 1) % SUPPORTED_LANGUAGES.length];
+
+    await this._switchLanguage(next);
+  }
+
+  async _switchLanguage(language) {
+    try {
+      this.stateManager.setLanguage(language);
+
+      await TranslationService.switchLanguage(language);
+
+      this._updateLanguageLabels(language);
+
+      await this._reRenderSectionsForLanguage();
+      await this._loadUserProfile();
+      await this._refreshNavigationItems();
+    } catch (error) {
+      console.error('Failed to switch language:', error);
+    }
+  }
+
+  _updateLanguageLabels(language) {
+    const label = LANGUAGE_LABELS[language] || language.toUpperCase();
+
+    if (this.elements.dropdownLanguageText) {
+      this.elements.dropdownLanguageText.textContent = label;
+    }
+
+    if (this.elements.mobileLanguageText) {
+      this.elements.mobileLanguageText.textContent = label;
+    }
+  }
+
+  async _reRenderSectionsForLanguage() {
+    const revealedSections = this.stateManager.getRevealedSections();
+    const role = this.stateManager.getRole();
+
+    if (!role || revealedSections.length === 0) {
+      return;
+    }
+
+    for (const sectionId of revealedSections) {
+      await this.sectionRenderer.updateContent(sectionId, role);
+    }
+  }
+
+  async _refreshNavigationItems() {
+    const revealedSections = this.stateManager.getRevealedSections();
+
+    this.headerController.clearNavigation();
+
+    for (const sectionId of revealedSections) {
+      const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+      if (sectionMetadata && sectionMetadata.title) {
+        const translatedTitle = TranslationService.t(sectionMetadata.title);
+        this.headerController.addNavigationItem(sectionId, translatedTitle);
+      }
+    }
+  }
+
   _scrollToElementById(id) {
     const element = this.elements.mainContent.querySelector(`#${id}`);
 
     if (element) {
       element.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'center'
       });
     }
   }
@@ -184,11 +273,11 @@ class AppController {
     }
   }
 
-  _showErrorState(error) {
+  _showErrorState() {
     if (this.elements.initialLoader) {
       const loaderText = this.elements.initialLoader.querySelector('.loader-text');
       if (loaderText) {
-        loaderText.textContent = `Failed to load: ${error.message}`;
+        loaderText.textContent = TranslationService.t('loader.failed');
       }
     }
   }
@@ -220,9 +309,7 @@ class AppController {
       ]);
     }
 
-    const sectionId = `section-${revealedSections[revealedSections.length - 1]}`;
-
-    this._scrollToElementById(sectionId);
+    this._scrollToElementById('next-section-prompt');
   }
 
   async _restoreSingleSection(sectionId, role) {
@@ -246,17 +333,16 @@ class AppController {
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
 
-      await this._hideIntroSection();
-      await this.revealSection(SECTION_ORDER[0]);
+      await Promise.all([this._hideIntroSectionCTA(), this.revealSection(SECTION_ORDER[0])]);
     } catch (error) {
       console.error('Failed to handle role selection:', error);
       this._showErrorState(error);
     }
   }
 
-  _hideIntroSection() {
+  _hideIntroSectionCTA() {
     return new Promise((resolve) => {
-      if (!this.elements.introSection) {
+      if (!this.elements.introSectionCTA) {
         resolve();
         return;
       }
@@ -264,15 +350,15 @@ class AppController {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (prefersReducedMotion) {
-        this.elements.introSection.classList.add('hidden');
+        this.elements.introSectionCTA.classList.add('hidden');
         resolve();
         return;
       }
 
-      this.elements.introSection.classList.add('sqwizzed');
+      this.elements.introSectionCTA.classList.add('sqwizzed');
 
       setTimeout(() => {
-        this.elements.introSection.classList.add('hidden');
+        this.elements.introSectionCTA.classList.add('hidden');
         resolve();
       }, INTRO_TRANSITION_DURATION);
     });
@@ -280,11 +366,16 @@ class AppController {
 
   _resetPortfolioState() {
     this.stateManager.resetRevealedSections();
-
-    const sections = this.elements.mainContent.querySelectorAll('.content-section');
-    sections.forEach(section => section.remove());
-
+    this.sectionRenderer.removeRevealedSections();
     this.headerController.clearNavigation();
+  }
+
+  async revealNextAvailableSection() {
+    const nextAvailableSection = this.stateManager.getNextAvailableSection();
+
+    if (nextAvailableSection) {
+      await this.revealSection(nextAvailableSection);
+    }
   }
 
   async revealSection(sectionId, customQuery = '') {
@@ -303,16 +394,19 @@ class AppController {
       throw new Error('No role selected. Cannot reveal section.');
     }
 
-    await this._handleRevealNavigationItem(sectionId);
-
-    await this.sectionRenderer.reveal(sectionId, role, customQuery);
+    await Promise.all([
+      this._handleRevealNavigationItem(sectionId),
+      this.sectionRenderer.reveal(sectionId, role, customQuery)
+    ]);
   }
 
   async _handleRevealNavigationItem(sectionId) {
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
 
     if (sectionMetadata && sectionMetadata.title) {
-      this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
+      const translatedTitle = TranslationService.t(sectionMetadata.title);
+
+      this.headerController.addNavigationItem(sectionId, translatedTitle);
     }
   }
 

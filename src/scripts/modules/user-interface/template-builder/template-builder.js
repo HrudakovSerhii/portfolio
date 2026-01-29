@@ -1,9 +1,9 @@
+import TranslationService from '../../translations.js';
+
 class TemplateBuilder {
   constructor() {
     this.templates = {
       section: null,
-      heroSection: null,
-      actionPrompt: null,
       navItem: null,
       loader: null,
       generativeImage: null,
@@ -44,26 +44,22 @@ class TemplateBuilder {
   }
 
   _createSectionElement(id, sectionData) {
-    const EXCEPTIONS = ['hero', 'experience', 'skills', 'soft-skills', 'projects', 'contact'];
-    let templateId = 'section-template';
-    let sectionId = 'default-section';
-
-    if (EXCEPTIONS.includes(id)) {
-      templateId = `${id}-`+ templateId;
-      sectionId = `${id}-section`;
-    }
-
-    const fragment = this._cloneTemplate(templateId);
-    const section = fragment.querySelector(`#${sectionId}`);
+    const fragment = this._cloneTemplate('section-template');
+    const section = fragment.querySelector('.section');
 
     if (!section) {
-      throw new Error(`Section element not found in template: ${templateId}`);
+      throw new Error('Section element not found in template');
     }
+
+    // Add section-specific modifier class
+    section.classList.add(`section--${id}`);
 
     this._setSectionAttributes(section, sectionData);
     this._setSectionHeader(section, sectionData);
     this._setSectionLayout(section, sectionData);
     this._setSectionContent(section, sectionData);
+
+    TranslationService.applyToElement(section);
 
     return section;
   }
@@ -74,77 +70,45 @@ class TemplateBuilder {
   }
 
   _setSectionHeader(section, sectionData) {
-    const titleElement = section.querySelector('.section-title');
+    const headerData = sectionData.header || {};
+
+    const titleElement = section.querySelector('.section__title');
     if (titleElement) {
-      titleElement.textContent = sectionData.title;
+      titleElement.textContent = headerData.text || '';
     }
 
-    const queryElement = section.querySelector('.section-query');
-    if (queryElement) {
-      if (sectionData.customQuery) {
-        queryElement.textContent = `"${sectionData.customQuery}"`;
-        queryElement.style.display = 'block';
-      } else {
-        queryElement.style.display = 'none';
-      }
+    const subtitleElement = section.querySelector('.section__subtitle');
+    if (subtitleElement) {
+      subtitleElement.textContent = headerData.subText || '';
     }
   }
 
   _setSectionLayout(section, sectionData) {
-    const layoutElement = section.querySelector('.section-layout');
+    const layoutElement = section.querySelector('.section__layout');
     if (!layoutElement) return;
 
-    const aspectRatio = sectionData.image.aspectRatio;
-    const isLandscape = aspectRatio === 'aspect-landscape';
+    const contentData = sectionData.content || {};
+    const aspectRatio = contentData.image?.aspectRatio;
 
-    if (isLandscape) {
-      layoutElement.classList.add('non-square-image');
+    if (aspectRatio === 'aspect-landscape') {
+      layoutElement.classList.add('section__layout--landscape');
     }
-
-    layoutElement.classList.add('zig-zag-left');
   }
 
   _setSectionContent(section, sectionData) {
-    const textElement = section.querySelector('.section-body-content');
+    const contentData = sectionData.content || {};
+
+    const textElement = section.querySelector('.section__text');
     if (textElement) {
-      textElement.setAttribute('data-text', sectionData.text);
+      const translatedText = contentData.text ? TranslationService.t(contentData.text) : '';
+      textElement.setAttribute('data-text', translatedText);
     }
 
-    const subTextElement = section.querySelector('.section-subtext-content');
+    const subTextElement = section.querySelector('.section__subtext');
     if (subTextElement) {
-      subTextElement.setAttribute('data-text', sectionData.subText);
+      const translatedSubText = contentData.subText ? TranslationService.t(contentData.subText) : '';
+      subTextElement.setAttribute('data-text', translatedSubText);
     }
-
-    const imageContainer = section.querySelector('.content-image');
-    if (imageContainer) {
-      imageContainer.setAttribute('data-image-url', sectionData.image.imageUrl);
-      imageContainer.setAttribute('data-image-alt', sectionData.image.imageAlt);
-      imageContainer.setAttribute('data-aspect-ratio', sectionData.image.aspectRatio);
-    }
-  }
-
-  renderActionPrompt(sectionId) {
-    // TODO: move usage of placeholder to chat feature that can be called on each section.
-    const fragment = this._cloneTemplate('action-prompt-template');
-    const actionPrompt = fragment.querySelector('.action-prompt');
-
-    if (!actionPrompt) {
-      throw new Error('Action prompt element not found in template');
-    }
-
-    actionPrompt.id = `action-prompt-${sectionId}`;
-    actionPrompt.setAttribute('data-section-id', sectionId);
-
-    const button = actionPrompt.querySelector('.prompt-button');
-    if (button) {
-      const sectionName = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-      const defaultText = `Read next: ${sectionName}`;
-      button.textContent = defaultText;
-      button.setAttribute('data-default-text', defaultText);
-      button.setAttribute('data-section-id', sectionId);
-    }
-
-    return actionPrompt;
   }
 
   renderNavigationItem(sectionMetadata) {
@@ -218,6 +182,8 @@ class TemplateBuilder {
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
+
+    TranslationService.applyToElement(modal);
 
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {
