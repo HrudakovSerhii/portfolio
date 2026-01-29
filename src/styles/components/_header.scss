@@ -471,7 +471,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: variables.$spacing-sm;
+  gap: variables.$spacing-xs;
   padding: variables.$spacing-xs variables.$spacing-sm;
   border-bottom: 1px solid var(--color-border);
 }
