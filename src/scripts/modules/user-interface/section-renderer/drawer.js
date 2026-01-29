@@ -1,3 +1,5 @@
+import TranslationService from '../../translations.js';
+
 class Drawer {
   constructor(templateBuilder) {
     this.templateBuilder = templateBuilder;
@@ -16,6 +18,9 @@ class Drawer {
 
       return null;
     }
+
+    // Apply translations to cloned template elements
+    TranslationService.applyToElement(drawer);
 
     const toggleButton = drawer.querySelector('.drawer__toggle');
     if (!toggleButton) {

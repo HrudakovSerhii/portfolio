@@ -4,9 +4,42 @@ import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
 import Drawer from './drawer.js';
 
+import TranslationService from '../../translations.js';
+
 import { capitaliseString } from "../../../utils/utils.js";
 
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
+
+export function translateDeep(data) {
+  if (data === null || data === undefined) {
+    return data;
+  }
+
+  if (typeof data === 'string') {
+    return translateValue(data);
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(item => translateDeep(item));
+  }
+
+  if (typeof data === 'object') {
+    const result = {};
+    for (const key of Object.keys(data)) {
+      result[key] = translateDeep(data[key]);
+    }
+    return result;
+  }
+
+  return data;
+}
+
+function translateValue(value) {
+  if (typeof value !== 'string' || !value) {
+    return value;
+  }
+  return TranslationService.t(value);
+}
 
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
@@ -108,6 +141,44 @@ class SectionRenderer {
     const sections = this.sectionsContainer.querySelectorAll(`.${SECTION_ELEMENTS.section}`);
 
     sections.forEach(section => section.remove());
+  }
+
+  async updateContent(sectionId, role) {
+    try {
+      const sectionElement = this.sectionsContainer.querySelector(`#section-${sectionId}`);
+
+      if (!sectionElement) {
+        return;
+      }
+
+      const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role);
+      const profileData = await this._fetchProfileData();
+
+      // Update header and content text
+      this._populateHeader(sectionElement, sectionContent.header);
+      this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
+
+      // Clear and re-render meta items
+      const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
+      const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselItems}`);
+
+      if (metaItemsContainer) {
+        metaItemsContainer.innerHTML = '';
+      }
+
+      if (carouselContainer) {
+        carouselContainer.innerHTML = '';
+      }
+
+      // Re-render meta items with new language content
+      this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
+      this._revealMetaItems(sectionElement);
+
+      // Update action prompt
+      this._updateActionPrompt();
+    } catch (error) {
+      console.error(`Failed to update section ${sectionId}:`, error);
+    }
   }
 
   _renderSection(sectionId, sectionContent) {
@@ -220,7 +291,8 @@ class SectionRenderer {
     const nextSectionId = this.stateManager.getNextAvailableSection();
 
     if (nextSectionId) {
-      this._updateNextSectionPromptButton(`Read next: ${capitaliseString(nextSectionId)}`);
+      const readNextLabel = TranslationService.t('section.readNext');
+      this._updateNextSectionPromptButton(`${readNextLabel} ${capitaliseString(nextSectionId)}`);
       this._showActionPrompt();
     } else {
       this._hideActionPrompt();
@@ -239,7 +311,14 @@ class SectionRenderer {
     );
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
 
-    return { sectionContent, sectionMetadata };
+    // Translate metadata (title, mainItems) for current language
+    const translatedMetadata = {
+      ...sectionMetadata,
+      title: translateValue(sectionMetadata.title),
+      mainItems: sectionMetadata.mainItems ? translateDeep(sectionMetadata.mainItems) : undefined
+    };
+
+    return { sectionContent, sectionMetadata: translatedMetadata };
   }
 
   _scrollToElement(sectionElement, scrollProps = {
@@ -259,13 +338,13 @@ class SectionRenderer {
     const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.text}`);
 
     if (textElement && contentData?.text) {
-      textElement.textContent = contentData.text;
+      textElement.textContent = translateValue(contentData.text);
     }
 
     const subTextElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.subText}`);
 
     if (subTextElement && contentData?.subText) {
-      subTextElement.textContent = contentData.subText;
+      subTextElement.textContent = translateValue(contentData.subText);
     }
   }
 
@@ -273,13 +352,13 @@ class SectionRenderer {
     const headerTitleElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.title}`);
 
     if (headerTitleElement && headerData.text) {
-      headerTitleElement.textContent = headerData.text;
+      headerTitleElement.textContent = translateValue(headerData.text);
     }
 
     const headerSubtitleElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.subTitle}`);
 
     if (headerSubtitleElement && headerData.subText) {
-      headerSubtitleElement.textContent = headerData.subText;
+      headerSubtitleElement.textContent = translateValue(headerData.subText);
     }
   }
 

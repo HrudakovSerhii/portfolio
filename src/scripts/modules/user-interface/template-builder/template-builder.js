@@ -1,3 +1,5 @@
+import TranslationService from '../../translations.js';
+
 class TemplateBuilder {
   constructor() {
     this.templates = {
@@ -176,6 +178,8 @@ class TemplateBuilder {
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
+
+    TranslationService.applyToElement(modal);
 
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {

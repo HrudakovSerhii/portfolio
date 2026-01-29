@@ -1,0 +1,386 @@
+{
+  "profile": {
+    "title": "Senior Frontend Engineer",
+    "location": "Purmerend, Netherlands"
+  },
+  "loader": {
+    "preparing": "Preparing your experience...",
+    "failed": "Failed to load content. Please refresh the page."
+  },
+  "nav": {
+    "resume": "Resume",
+    "view": "View",
+    "moreStuff": "More cool stuff",
+    "theme": "Theme",
+    "title": "Navigation"
+  },
+  "intro": {
+    "greeting": "Hello, I'm",
+    "title": "Senior Frontend Specialist",
+    "text": "I built this site so you can get to know me in the way that matters most - to",
+    "you": "You",
+    "download": "Download my CV",
+    "or": "OR",
+    "scrollHint": "Scroll down to read more"
+  },
+  "story": {
+    "title": "Read one of a three-story I made to explore not only my relevant profile information, but also my personal side. Side that important when you work with",
+    "people": "People",
+    "recruiter": "I'm a Recruiter",
+    "recruiterDesc": "Find my experience, skills, and career highlights - everything you need to evaluate fit, fast.",
+    "developer": "I'm an Engineer",
+    "developerDesc": "Explore the technologies I love, the projects I'm proud of, and what makes me tick as a builder.",
+    "friend": "I'm a Friend",
+    "friendDesc": "I'll introduce the human side of my self so you can understand what kind of person I am.",
+    "ctaText": "Which path speaks to you?"
+  },
+  "section": {
+    "next": "Next:",
+    "readNext": "Read next:"
+  },
+  "footer": {
+    "copyright": "Build with love to",
+    "people": "people",
+    "designed": "Designed with passion to machines"
+  },
+  "modal": {
+    "changeRole": "Change Your Role",
+    "selectPerspective": "Select a different perspective to see other sides of my",
+    "portfolio": "portfolio",
+    "recruiterDesc": "I'll focus on reliability, estimations, and delivery experience",
+    "recruiterTitle": "Recruiter",
+    "developerDesc": "I'll dive into the tech stack, architecture, and tools I used in my projects.",
+    "developerTitle": "Engineer",
+    "friendDesc": "I'll introduce the human side of my self so you can understand what kind of person I am.",
+    "friendTitle": "Friend"
+  },
+  "drawer": {
+    "all": "All"
+  },
+  "generic": {
+    "title": {
+      "aboutMe": "About Me",
+      "workExperience": "Work Experience",
+      "technicalSkills": "Technical Skills",
+      "softSkills": "Soft Skills",
+      "featuredProjects": "Featured Projects",
+      "getInTouch": "Get In Touch",
+      "letsBuild": "Let's Build Something Together"
+    },
+    "text": {
+      "reachOut": "Reach out for opportunities or just to say hello."
+    },
+    "tech": {
+      "react": "React",
+      "typescript": "TypeScript",
+      "langchain": "LangChain",
+      "python": "Python",
+      "websocket": "WebSocket",
+      "azure": "Azure",
+      "nxMonorepo": "NX Monorepo",
+      "zod": "Zod",
+      "playwright": "Playwright",
+      "reduxSaga": "Redux Saga",
+      "websphere": "WebSphere",
+      "localise": "Localise",
+      "jsp": "JSP",
+      "googleAnalytics": "Google Analytics",
+      "nextjs": "NextJS",
+      "saleor": "Saleor.io",
+      "apolloGraphql": "Apollo GraphQL",
+      "redis": "Redis",
+      "nestjs": "NestJS",
+      "reactNative": "React Native",
+      "express": "Express",
+      "mysql": "MySQL",
+      "androidStudio": "Android Studio",
+      "xcode": "XCode",
+      "restapi": "RestAPI",
+      "php": "PHP",
+      "laravel": "Laravel",
+      "backbonejs": "BackboneJS",
+      "vanillajs": "VanillaJS",
+      "jquery": "JQuery",
+      "gulp": "Gulp",
+      "javascript": "JavaScript",
+      "flex": "Flex",
+      "actionscript": "ActionScript",
+      "cms": "CMS",
+      "flash": "Flash",
+      "jira": "Jira",
+      "git": "Git",
+      "sourcetree": "SourceTree",
+      "javascriptNode": "JavaScript, Node",
+      "htmlCssScss": "HTML/CSS/SCSS",
+      "graphqlRestApi": "GraphQL / REST API",
+      "stateManagement": "Redux / Zustand / Context",
+      "playwrightVitest": "Playwright / Vitest",
+      "rtlVitest": "RTL / Vitest",
+      "azureGitlab": "Azure / GitLab",
+      "docker": "Docker",
+      "mysqlMongodb": "MySQL / MongoDB",
+      "html": "HTML",
+      "scss": "SCSS",
+      "vitest": "Vitest",
+      "stitch": "Stitch",
+      "vite": "Vite",
+      "webworkers": "WebWorkers",
+      "embeddingModel": "Embedding model",
+      "inBrowserModel": "In-browser model",
+      "tailwind": "Tailwind",
+      "atlassianDesign": "Atlassian Design",
+      "aggrid": "AgGrid",
+      "keycloak": "Keycloak",
+      "reactRouterV7": "React Router v7",
+      "sonarcloud": "SonarCloud",
+      "azureDevops": "Azure DevOps",
+      "bffPattern": "BFF Pattern",
+      "jest": "Jest",
+      "websphereLegacy": "WebSphere (Legacy)",
+      "mobileSecurity": "Mobile Security"
+    }
+  },
+  "hero": {
+    "recruiter": {
+      "header": {
+        "subText": "My goal is clear - help to build scalable frontend and happy teams"
+      },
+      "content": {
+        "text": "I hold a Master's degree in Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments and have contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions."
+      },
+      "image": {
+        "alt": "Serhii Hrudakov - Senior Frontend Developer"
+      }
+    },
+    "developer": {
+      "header": {
+        "subText": "I challenge my self with a mission `Impossible` to make complex codebases simple and maintainable"
+      },
+      "content": {
+        "text": "My approach is simple: code must be easy to understand, no matter how complex it is. This helped me to build various systems where each little detail matters: from creating reusable components and functions to configuring quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs."
+      },
+      "image": {
+        "alt": "Serhii Hrudakov - Software Engineer"
+      }
+    },
+    "friend": {
+      "header": {
+        "subText": "I sometimes think that Code is a magic tool that helps to bring ideas to life. And often it does."
+      },
+      "content": {
+        "text": "I am an engineer at heart, ready to tackle tasks with head and hands. I believe that using a rusty set of tools in a garage and a keyboard have a lot in common: both are instruments to create. Both are tools to help you do what you love."
+      },
+      "image": {
+        "alt": "Serhii Hrudakov"
+      }
+    }
+  },
+  "experience": {
+    "mobiquity": {
+      "role": "Senior Full-Stack Engineer / Lead",
+      "company": "Mobiquity (Hexaware)",
+      "description": "Led Frontend team for various clients projects in Banking, Social Network and Notifications platforms. Architected NX monorepos for multiple client solutions that required common style and features. Defined team goals and worked on specifications to help team get onboard faster. Navigated clients in feature implementation plan to find best returned value."
+    },
+    "erics": {
+      "role": "Senior Frontend Engineer / Team Lead",
+      "company": "Erics Digital",
+      "description": "Took over and led Web-Shop Frontend migration from a monolith to a micro frontend architecture. Managed a team of 3 developers and 2 QA Engineers from code review to tasks estimation and assigment. Resolved complex problem with state sync across the apps. Improved SEO (Lighthouse) scores and webshop navigation to get top positions in search engines"
+    },
+    "adam": {
+      "role": "Senior Frontend Engineer",
+      "company": "A-Dam",
+      "description": "Developed a Web-Shop application to extend traditional retail sales. Archived brand yearly revenue by over 100%+ after first release. After one year we migrated the application stack to NestJS to get best SEO scores and performance boosts. This helped to increase client retention and to grow sales via social media commercial campaigns. Built a B2B bulk purchase system on a base of Web-Shop"
+    },
+    "digitalchefs": {
+      "role": "Frontend Engineer",
+      "company": "DigitalChefs",
+      "description": "Developed number of client applications using React Native and React. Was responsible for extending components library used to resolve at a time common issues (Navigation, Animation) with in ReactNative infrastructure. Supported new developer onboarding process and release management"
+    },
+    "abiggercircle": {
+      "role": "Middle Frontend Engineer",
+      "company": "ABiggerCircle",
+      "description": "Contributed to development of in-house Web platform by implementing UI and tools. Marketing team has lead delivered features testing to get best speed/experience ratio when platform was used to build marketing campaign. Aside of main product, I have also developed embedded entertainment system for marine closed-network environments."
+    },
+    "ittransit": {
+      "role": "Junior Frontend Engineer",
+      "company": "IT-Transit",
+      "description": "Developed landscape measurement and pipe inspection tools for the Oil & Gas industry. Worked closely with engineers and business analysts to integrate tools and utilities strictly following industry requirements. Migrated previously developed tools to JavaScript from ActionScript"
+    },
+    "luxoft": {
+      "role": "Junior Frontend Engineer",
+      "company": "Luxoft",
+      "description": "Supported project leads on feature development. Developed screen scanner feature to copy design details from AC3 Flash files to HTML templates. Tested features on device by installing updates and manually verify end results."
+    },
+    "recruiter": {
+      "content": {
+        "text": "My recent role at Mobiquity (Hexaware) involved leading frontend teams for banking and dating platforms, balancing hands-on coding (60%) with management (40%) and writing specifications and release notes. Previously, at EricsDigital, I led the migration of a massive e-commerce monolith to a modern micro-frontend architecture. At A-Dam, I delivered an in-house designed web-shop platform that helped increase yearly revenue by over 100%. I consistently take ownership of full development cycles, from architectural design to hiring."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "At Mobiquity (Hexaware), I architected NX monorepos to share UI and feature libraries across client apps and built complex chat interfaces for AI agents. At EricsDigital, I tackled the challenge of migrating a legacy WebSphere environment to React, using Redux Saga for complex state management and optimizing for Google Core Web Vitals. I also have solid experience with React Native, building offline-first apps for KLM crew members. I have worked in different team structures and delivered solutions through a number of pipelines."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "While software development is my main job, I have never stopped building other systems. From smart home solutions to bind Tado, Hue, and ZigBee environments under a single interface to building complex home networks to get the best possible speed across devices. I love engineering and I can't imagine myself in other roles. To take initiative, to take a lead, to propose a solution - these are the challenges I prefer. And in my free time, I organize hiking trips and enjoy the outdoors and nature."
+      }
+    }
+  },
+  "skills": {
+    "recruiter": {
+      "content": {
+        "text": "I possess a comprehensive technical toolkit anchored in TypeScript. I have built simple web pages with vanilla JavaScript and complex long-lasting products using React. I have extensive experience with cloud DevOps (Azure, GitLab) and have successfully managed high-stakes integrations for banking and insurance sectors. I bring strong leadership capabilities by building trust between the team and business owners to ensure delivery and efficiency."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "I live in the modern JavaScript ecosystem. I use NX for monorepo management, Zod for schema validation, and Redux/Zustand for state management. I prioritize reliability through end-to-end testing with Playwright and Jest and have used quality gates to validate release candidates. My workflow is heavily optimized with CI/CD pipelines, Docker containers, and strict TypeScript typing to ensure backend-frontend contracts are never broken."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "I geek out on the latest tech. Right now, I'm using fully local LLMs to build a custom smart home dashboard. I care deeply about the UI details but would never trade them for performance as both are critical in providing the best user experience. I'm always happy to share what I know, whether it's helping you with a git merge or explaining how a browser engine works."
+      }
+    }
+  },
+  "softSkills": {
+    "leadership": {
+      "title": "Leadership & Management",
+      "item1": "Team Leadership (3-4 developers)",
+      "item2": "Hiring & Recruitment",
+      "item3": "Project Planning & Estimation",
+      "item4": "Code Review Management"
+    },
+    "communication": {
+      "title": "Communication",
+      "item1": "Client Communication",
+      "item2": "Cross-functional Collaboration",
+      "item3": "Technical Documentation",
+      "item4": "Stakeholder Management"
+    },
+    "personal": {
+      "title": "Personal Qualities",
+      "item1": "Problem-solving",
+      "item2": "Attention to Detail",
+      "item3": "Initiative & Ownership",
+      "item4": "Continuous Learning"
+    },
+    "background": {
+      "title": "Background & Education",
+      "item1": "Master's in Computer Science",
+      "item2": "Sales Experience",
+      "item3": "Engineering Passion",
+      "item4": "Multicultural Experience"
+    },
+    "recruiter": {
+      "content": {
+        "text": "Beyond technical expertise, I always try to bring my leadership and communication skills to the table. I have successfully led teams of 3-4 developers, managed hiring processes that closed senior positions, and maintained strong stakeholder relationships. My Master's degree in Computer Science provides a solid theoretical foundation, while my sales experience helps me understand business priorities and communicate technical concepts clearly."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "I believe great engineering goes beyond code. I focus on code reviews, clear documentation, and utilizing the best developer tools. I'm detail-oriented when it comes to UX implementation, and well-structured architecture matters to me the most. I actively contribute to team processes like sprint planning and technical specifications and support team members with code reviews and pair programming sessions. I know that a senior role is not only about memorizing framework code, but about seeing system and structure under requirements."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "I always enjoy working with people. Whether it's organizing a hiking trip or leading a sprint planning session, I like bringing structure to chaos and helping others achieve the best results. I'm curious by nature and always learning from others, whether it's a junior with a fresh look on familiar things or a veteran who punched holes to save code on punch cards. I value honesty and openness and try to create an environment where people feel comfortable asking questions."
+      }
+    }
+  },
+  "projects": {
+    "portfolio": {
+      "title": "Personal portfolio of Serhii",
+      "description": "Simple but features rich VanillaJS portfolio website to replace traditional CV with tailored story path and AI text generation. You viewing it now!"
+    },
+    "tvShowExplorer": {
+      "title": "TV Show Explorer",
+      "description": "Developed a simple NextJS application for client demo project. Design was generated using Google Stitch and later implemented in custom SSR components and routed with App Router"
+    },
+    "chatAgent": {
+      "title": "ChatAgent AI (Banking)",
+      "description": "Developed Frontend Application for an AI-powered banking assistant platform. With goal to display complex data structures provided by model response implemented parser layer and contributed to model system prompt to get best possible predictive response."
+    },
+    "bonfire": {
+      "title": "Bonfire Dating Platform",
+      "description": "Played lead role in building the Frontend for a Web version of a Dating Application. Implemented multiple applications screens and roadblocking features validations. Helped client team with onboarding and project handover process."
+    },
+    "safetyNotification": {
+      "title": "Safety Notification System",
+      "description": "Built a safety management dashboard used by for 6000+ client employees. Basic application was later cloned to support multiple client systems and to include custom developed features tailored for user environments. Led client communications and design phase to find best possible solution in strict timeframe."
+    },
+    "ericsMigration": {
+      "title": "Erics WebShop Migration",
+      "description": "Replaced legacy e-commerce platform HTML blocks with multiple React applications. Replaced views helped to improve SEO scores and integrate more custom features like dynamic navigation to the web-shop."
+    },
+    "adamEcommerce": {
+      "title": "A-Dam E-commerce",
+      "description": "Developed and maintained web shop application to drive business and revenue growth. Later migrated stack to SSR for improving SEO and performance. Supported development of fork of backend from Saleor platform to integrate necessary features like warehouse stock tracking and advanced payment methods like Molly"
+    },
+    "klmAssistant": {
+      "title": "KLM Flight Assistant",
+      "description": "Built an offline-first iPad app for cabin crew to support on board customer service. App helped to replace classroom training with on-the-job performance support. Replaced paper manuals with rich media instructions."
+    },
+    "taxafax": {
+      "title": "Taxafax",
+      "description": "Developed a React Native app for tax advisors to share real-time updates and reports with clients. After successful beta-testing included multi-tenant login flow and secure document sharing."
+    },
+    "recruiter": {
+      "content": {
+        "text": "Every project I worked on was unique in setup, team configuration, user audience, and environment where it was running. But all of them had common goals: to bring the best user experience and drive revenue growth. Frontend is not only a cover, but a complex labyrinth of user stories that need clear markers on each pathway for users not to get lost. Understanding these fundamentals and the experience collected over the years by building user interfaces helped me find my strong developer skills and grow as a professional who knows how to build quality frontend."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "Working on multiple projects across different domains has some pluses and minuses. Pluses: you learn how to build frontend tailored for the user and environment. You study what is important and what tools can help you move faster. You listen, you read, and apply new knowledge until you memorize it. Minuses: you sometimes forget a specific function in a framework you haven't used for a few years. But the biggest prize you win after years of moving — you start to see the system under requirements. This is what true engineering means."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "After a decade of building client projects, I have started to implement my own ideas that buzzed for so long in my head. With AI tools now available, it became clear that code is just a tool to make things faster. While working on commercial projects and learning technologies, approaches, and methodologies, I learned so much to use for my own good. For example, I've started working on a solution to analyze my emails with a local AI, and another for suggesting trading strategies. But the best so far is this portfolio website — simple, fast, and designed to tell my story. I hope you enjoy reading it :)"
+      }
+    }
+  },
+  "contact": {
+    "email": {
+      "title": "Email",
+      "subtitle": "Best for job inquiries",
+      "recruiter": {
+        "subject": "Opportunity Discussion - Frontend/React Developer Position",
+        "body": "Hi Serhii,\n\nI came across your portfolio and I'm impressed with your experience in frontend development and team leadership.\n\nI'd like to discuss a potential opportunity that aligns with your expertise.\n\nBest regards"
+      },
+      "developer": {
+        "subject": "Let's Talk Tech - Frontend Architecture & Development",
+        "body": "Hey Serhii,\n\nI checked out your portfolio and would love to connect about frontend development, architecture patterns, or the projects you've been working on.\n\nLooking forward to exchanging ideas!\n\nCheers"
+      },
+      "friend": {
+        "subject": "Coffee & Chat?",
+        "body": "Hey Serhii!\n\nI really enjoyed your portfolio! Would love to grab a coffee sometime and chat about coding, hiking, or whatever on your mind.\n\nLet me know when you're free!\n\nCheers"
+      }
+    },
+    "linkedin": {
+      "title": "LinkedIn",
+      "subtitle": "Professional Story"
+    },
+    "github": {
+      "title": "GitHub",
+      "subtitle": "Code & Contributions"
+    },
+    "recruiter": {
+      "content": {
+        "text": "After more than 10 years in software development, I've decided that it's time to shift from full-time development to a more management-focused role. My goal is to find a lead position where I can grow with the team and tackle challenges together. I would be happy to apply my experience and prove my capabilities in action. My strengths lie in system architecture and team leadership to drive tangible business results. Based in Amsterdam, I am available for opportunities that value accurate planning, technical excellence, and multicultural collaboration. Please contact me to discuss how I can contribute to your organization's goals."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "I'm always open to discussing how the web can be better for everyone - from state management patterns to the latest UI designs, systems integration, and accessibility tools. If you want to talk about modernizing your software or optimizing team efforts to get better results, contact me. I value technical honesty and am eager to exchange knowledge with other engineers. I would be happy to contribute and lead the way for new developers."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "If you want to grab a coffee in Amsterdam and chat about the future of AI, frontend, or extreme sports like alpinism or climbing - let's get in touch! I love meeting new people and swapping stories about the world around us and software's role in it. Let's connect and see if we can learn something new from each other!"
+      }
+    }
+  }
+}

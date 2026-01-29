@@ -1,5 +1,6 @@
 import StateManager from '../../utils/state-manager.js';
 import ContentMiddleware from '../content-middleware/content-middleware.js';
+import TranslationService from '../translations.js';
 import TemplateBuilder from '../user-interface/template-builder/template-builder.js';
 import AnimationController from '../animation-controller';
 import ParallaxController from '../parallax-controller';
@@ -14,12 +15,14 @@ import {
   INTRO_TRANSITION_DURATION,
   APP_CRITICAL_ELEMENT_IDS,
   APP_APP_CRITICAL_ELEMENT_KEYS,
+  SUPPORTED_LANGUAGES,
+  LANGUAGE_LABELS,
 } from "../../constants.js";
 
 class AppController {
   constructor() {
     this.stateManager = new StateManager();
-    this.contentMiddleware = new ContentMiddleware('/portfolio/data/portfolio-content.json');
+    this.contentMiddleware = new ContentMiddleware('/portfolio/data/content-structure.json');
     this.templateBuilder = new TemplateBuilder();
     this.animationController = new AnimationController();
     this.parallaxController = new ParallaxController();
@@ -40,7 +43,10 @@ class AppController {
       themeToggle: null,
       mobileThemeToggle: null,
       dropdownThemeToggle: null,
-      // languageSelector: null,
+      dropdownLanguage: null,
+      dropdownLanguageText: null,
+      mobileLanguageToggle: null,
+      mobileLanguageText: null,
       mainContent: null,
       introSection: null,
     };
@@ -54,8 +60,23 @@ class AppController {
     }
 
     try {
+      const savedLanguage = this.stateManager.getLanguage();
+
+      await this.contentMiddleware.initialize();
+
+      await TranslationService.initialize(savedLanguage);
+
+      const actualLanguage = TranslationService.getCurrentLanguage();
+
+      if (actualLanguage !== savedLanguage) {
+        this.stateManager.setLanguage(actualLanguage);
+      }
+
       this._cacheElements();
       this._validateCachedElements(APP_APP_CRITICAL_ELEMENT_KEYS);
+
+      TranslationService.applyToDOM();
+
       this._setupEventListeners();
 
       this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle, this.elements.dropdownThemeToggle);
@@ -64,7 +85,6 @@ class AppController {
 
       this.headerController.initialize(
         this.elements.ownerName,
-        // this.elements.languageSelector,
         this.roleManager
       );
 
@@ -76,6 +96,7 @@ class AppController {
           () => this.revealNextAvailableSection()
       );
 
+      this._updateLanguageLabels(actualLanguage);
       this._hideInitialLoader();
       this.initialized = true;
     } catch (error) {
@@ -103,7 +124,10 @@ class AppController {
     this.elements.themeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.themeToggle);
     this.elements.mobileThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileThemeToggle);
     this.elements.dropdownThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownThemeToggle);
-    // this.elements.languageSelector = document.getElementById(APP_CRITICAL_ELEMENT_IDS.languageSelector);
+    this.elements.dropdownLanguage = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguage);
+    this.elements.dropdownLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguageText);
+    this.elements.mobileLanguageToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageToggle);
+    this.elements.mobileLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageText);
     this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
     this.elements.introSectionCTA = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSectionCTA);
@@ -134,9 +158,17 @@ class AppController {
       });
     }
 
-    // this.elements.languageSelector.addEventListener('change', (e) => {
-    //   this.headerController.updateLanguage(e.target.value);
-    // });
+    if (this.elements.dropdownLanguage) {
+      this.elements.dropdownLanguage.addEventListener('click', () => {
+        this._cycleLanguage();
+      });
+    }
+
+    if (this.elements.mobileLanguageToggle) {
+      this.elements.mobileLanguageToggle.addEventListener('click', () => {
+        this._cycleLanguage();
+      });
+    }
 
     this.elements.introSectionCTA.querySelectorAll('.button[data-role]').forEach(storyPathBtn => {
       storyPathBtn.addEventListener('click', async () => {
@@ -147,6 +179,69 @@ class AppController {
         }
       });
     });
+  }
+
+  async _cycleLanguage() {
+    const current = this.stateManager.getLanguage();
+    const currentIndex = SUPPORTED_LANGUAGES.indexOf(current);
+    const next = SUPPORTED_LANGUAGES[(currentIndex + 1) % SUPPORTED_LANGUAGES.length];
+
+    await this._switchLanguage(next);
+  }
+
+  async _switchLanguage(language) {
+    try {
+      this.stateManager.setLanguage(language);
+
+      await TranslationService.switchLanguage(language);
+
+      this._updateLanguageLabels(language);
+
+      await this._reRenderSectionsForLanguage();
+      await this._loadUserProfile();
+      await this._refreshNavigationItems();
+    } catch (error) {
+      console.error('Failed to switch language:', error);
+    }
+  }
+
+  _updateLanguageLabels(language) {
+    const label = LANGUAGE_LABELS[language] || language.toUpperCase();
+
+    if (this.elements.dropdownLanguageText) {
+      this.elements.dropdownLanguageText.textContent = label;
+    }
+
+    if (this.elements.mobileLanguageText) {
+      this.elements.mobileLanguageText.textContent = label;
+    }
+  }
+
+  async _reRenderSectionsForLanguage() {
+    const revealedSections = this.stateManager.getRevealedSections();
+    const role = this.stateManager.getRole();
+
+    if (!role || revealedSections.length === 0) {
+      return;
+    }
+
+    for (const sectionId of revealedSections) {
+      await this.sectionRenderer.updateContent(sectionId, role);
+    }
+  }
+
+  async _refreshNavigationItems() {
+    const revealedSections = this.stateManager.getRevealedSections();
+
+    this.headerController.clearNavigation();
+
+    for (const sectionId of revealedSections) {
+      const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
+      if (sectionMetadata && sectionMetadata.title) {
+        const translatedTitle = TranslationService.t(sectionMetadata.title);
+        this.headerController.addNavigationItem(sectionId, translatedTitle);
+      }
+    }
   }
 
   _scrollToElementById(id) {
@@ -182,7 +277,7 @@ class AppController {
     if (this.elements.initialLoader) {
       const loaderText = this.elements.initialLoader.querySelector('.loader-text');
       if (loaderText) {
-        loaderText.textContent = `Failed to load: ${error.message}`;
+        loaderText.textContent = TranslationService.t('loader.failed');
       }
     }
   }
@@ -308,7 +403,9 @@ class AppController {
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
 
     if (sectionMetadata && sectionMetadata.title) {
-      this.headerController.addNavigationItem(sectionId, sectionMetadata.title);
+      const translatedTitle = TranslationService.t(sectionMetadata.title);
+
+      this.headerController.addNavigationItem(sectionId, translatedTitle);
     }
   }
 
