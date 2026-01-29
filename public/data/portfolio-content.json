@@ -20,8 +20,8 @@
       "content": {
         "recruiter": {
           "header": {
-            "text": "Helping to build scalable frontend and happy teams",
-            "subText": ""
+            "text": "About Me",
+            "subText": "My goal is clear - help to build scalable frontend and happy teams"
           },
           "content": {
             "text": "I hold a Master's degree in Computer Science and have spent a decade bridging the gap between technical execution and business requirements. My leadership style is defined by proactive mentorship. I believe the best way to master a skill is to teach it. I thrive in multicultural environments and have contributed to building efficient and happy teams that translate complex technical challenges into clear business solutions.",
@@ -34,8 +34,8 @@
         },
         "developer": {
           "header": {
-            "text": "On a mission `Impossible` to make complex codebases simple and maintainable",
-            "subText": ""
+            "text": "About Me",
+            "subText": "I challenge my self with a mission `Impossible` to make complex codebases simple and maintainable"
           },
           "content": {
             "text": "My approach is simple: code must be easy to understand, no matter how complex it is. This helped me to build various systems where each little detail matters: from creating reusable components and functions to configuring quality gate analysis and tests. I believe in contributing to the community by reviewing code, documenting systems, and helping teams define better specs.",
@@ -48,8 +48,8 @@
         },
         "friend": {
           "header": {
-            "text": "Code is a magic tool that helps to bring ideas to life",
-            "subText": ""
+            "text": "About Me",
+            "subText": "I sometimes think that Code is a magic tool that helps to bring ideas to life. And often it does."
           },
           "content": {
             "text": "I am an engineer at heart, ready to tackle tasks with head and hands. I believe that using a rusty set of tools in a garage and a keyboard have a lot in common: both are instruments to create. Both are tools to help you do what you love.",
