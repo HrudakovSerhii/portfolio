@@ -6,11 +6,12 @@
   justify-content: center;
   gap: variables.$spacing-lg;
   background-color: transparent;
-  margin: 0 auto;
+  margin: variables.$spacing-xl auto;
   transition: height variables.$transition-medium;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 56px - 64px);
 
   @include mixins.desktop {
+    margin: 0 auto;
     min-height: calc(100vh - 72px);
   }
 
@@ -73,7 +74,10 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: variables.$spacing-xl;
+
+    @include mixins.desktop {
+      padding: variables.$spacing-xl;
+    }
 
     &:empty {
       display: none;
@@ -297,10 +301,19 @@
       }
     }
 
-    .cv-download-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .section__content {
+      gap: variables.$spacing-md;
+
+      .section__content-cv {
+        width: 50%;
+        margin: 0 auto;
+
+        .cv-download-btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
     }
   }
 
@@ -330,9 +343,9 @@
 
     .section__body {
       justify-content: start;
-      margin-top: variables.$spacing-xl;
 
       @include mixins.desktop {
+        margin-top: variables.$spacing-xl;
         width: 100%;
       }
     }
@@ -385,11 +398,11 @@
   &--soft-skills {
     .section__meta {
       display: grid;
-      margin: 0 auto;
       grid-template-columns: 1fr;
       gap: variables.$spacing-md;
 
       @include mixins.tablet {
+        margin: 0 auto;
         grid-template-columns: repeat(2, 1fr);
       }
 

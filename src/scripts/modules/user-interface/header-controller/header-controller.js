@@ -1,4 +1,5 @@
 import SectionNavigationTracker from "../../../utils/section-navigation-tracker.js";
+import TranslationService from "../../translations.js";
 
 const HEADER_ELEMENTS = {
   nav: 'header-nav',
@@ -212,6 +213,11 @@ class HeaderController {
   _closeDropdown() {
     if (!this.dropdown || !this.menuToggle) return;
 
+    // Move focus out of dropdown before hiding to prevent aria-hidden accessibility violation
+    if (this.dropdown.contains(document.activeElement)) {
+      this.menuToggle.focus();
+    }
+
     this.dropdown.classList.remove('is-open');
     this.dropdown.setAttribute('aria-hidden', 'true');
     this.menuToggle.setAttribute('aria-expanded', 'false');
@@ -387,7 +393,8 @@ class HeaderController {
   updateRoleBadge(role) {
     if (!this.roleManager) return;
 
-    const roleText = role ? `${role.charAt(0).toUpperCase() + role.slice(1) === 'Developer' ? 'Engineer' : role.charAt(0).toUpperCase() + role.slice(1)} View` : '';
+    const viewLabel = TranslationService.t('nav.view');
+    const roleText = role ? TranslationService.t(`nav.${role}View`) : '';
 
     // Update desktop role badge
     if (this.roleBadge && this.roleBadgeText) {
@@ -401,7 +408,7 @@ class HeaderController {
 
     // Update dropdown role badge
     if (this.dropdownRoleBadgeText) {
-      this.dropdownRoleBadgeText.textContent = role ? roleText : 'View';
+      this.dropdownRoleBadgeText.textContent = role ? roleText : viewLabel;
     }
 
     // Update mobile role badge

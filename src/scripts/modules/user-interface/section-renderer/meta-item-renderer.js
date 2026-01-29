@@ -1,4 +1,5 @@
 import { Carousel } from "../carousel/index.js";
+import TranslationService from "../../translations.js";
 
 const LINK_TYPES = ['link', 'email-link'];
 
@@ -229,7 +230,10 @@ class MetaItemRenderer {
     if (descriptionElement) descriptionElement.textContent = item.description;
 
     if (item.link) {
-      if (linkElement) linkElement.href = item.link;
+      if (linkElement) {
+        linkElement.href = item.link;
+        linkElement.textContent = TranslationService.t('generic.title.linkToProject');
+      }
     } else {
       if (linkElement) linkElement.style = 'display:none';
     }

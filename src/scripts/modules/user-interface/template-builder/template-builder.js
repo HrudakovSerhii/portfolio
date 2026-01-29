@@ -1,3 +1,5 @@
+import TranslationService from '../../translations.js';
+
 class TemplateBuilder {
   constructor() {
     this.templates = {
@@ -57,6 +59,8 @@ class TemplateBuilder {
     this._setSectionLayout(section, sectionData);
     this._setSectionContent(section, sectionData);
 
+    TranslationService.applyToElement(section);
+
     return section;
   }
 
@@ -96,12 +100,14 @@ class TemplateBuilder {
 
     const textElement = section.querySelector('.section__text');
     if (textElement) {
-      textElement.setAttribute('data-text', contentData.text || '');
+      const translatedText = contentData.text ? TranslationService.t(contentData.text) : '';
+      textElement.setAttribute('data-text', translatedText);
     }
 
     const subTextElement = section.querySelector('.section__subtext');
     if (subTextElement) {
-      subTextElement.setAttribute('data-text', contentData.subText || '');
+      const translatedSubText = contentData.subText ? TranslationService.t(contentData.subText) : '';
+      subTextElement.setAttribute('data-text', translatedSubText);
     }
   }
 
@@ -176,6 +182,8 @@ class TemplateBuilder {
     if (!modal) {
       throw new Error('Modal overlay element not found in template');
     }
+
+    TranslationService.applyToElement(modal);
 
     const currentButton = modal.querySelector(`[data-role="${currentRole}"]`);
     if (currentButton) {
