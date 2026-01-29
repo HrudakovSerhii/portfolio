@@ -394,9 +394,10 @@ class AppController {
       throw new Error('No role selected. Cannot reveal section.');
     }
 
-    await this._handleRevealNavigationItem(sectionId);
-
-    await this.sectionRenderer.reveal(sectionId, role, customQuery);
+    await Promise.all([
+      this._handleRevealNavigationItem(sectionId),
+      this.sectionRenderer.reveal(sectionId, role, customQuery)
+    ]);
   }
 
   async _handleRevealNavigationItem(sectionId) {
