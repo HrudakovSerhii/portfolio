@@ -636,6 +636,15 @@
             "subtitle": "contact.github.subtitle",
             "icon": "github",
             "href": "https://github.com/HrudakovSerhii"
+          },
+          {
+            "type": "contact-link",
+            "id": "cv",
+            "title": "contact.cv.title",
+            "subtitle": "contact.cv.subtitle",
+            "icon": "resume",
+            "href": "data/CV_Hrudakov_2026.pdf",
+            "download": true
           }
         ]
       },
