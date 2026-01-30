@@ -141,8 +141,7 @@
       "azureDevops": "Azure DevOps",
       "bffPattern": "BFF Pattern",
       "jest": "Jest",
-      "websphereLegacy": "WebSphere (Legacy)",
-      "mobileSecurity": "Mobile Security"
+      "websphereLegacy": "WebSphere (Legacy)"
     }
   },
   "hero": {
@@ -249,7 +248,7 @@
       }
     }
   },
-  "soft-skills": {
+  "softSkills": {
     "leadership": {
       "title": "Leadership & Management",
       "item1": "Team Leadership (3-4 developers)",
@@ -371,6 +370,10 @@
     "github": {
       "title": "GitHub",
       "subtitle": "Code & Contributions"
+    },
+    "cv": {
+      "title": "Resume",
+      "subtitle": "Download CV"
     },
     "recruiter": {
       "content": {
