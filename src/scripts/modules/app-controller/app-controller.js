@@ -110,7 +110,7 @@ class AppController {
   async loadAppState() {
     await this._loadUserProfile();
 
-    if (this.stateManager.hasCompletedPersonalization()) {
+    if (this.stateManager.hasCompletedPersonalization() && this.stateManager.hasRevealedSections()) {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
