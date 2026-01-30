@@ -98,7 +98,10 @@ class SectionRenderer {
       this._populateHeader(sectionElement, sectionContent.header);
       this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
 
-      this._scrollToElement(sectionElement);
+      this._scrollToElement(sectionElement, {
+        behavior: 'smooth',
+        block: 'end'
+      });
 
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
@@ -109,10 +112,10 @@ class SectionRenderer {
       trackSectionView(sectionId);
 
       this._updateActionPrompt();
-      // this._scrollToElement(this.nextSectionPrompt);
+
       this._scrollToElement(sectionElement, {
         behavior: 'smooth',
-        block: 'end'
+        block: 'start'
       });
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);

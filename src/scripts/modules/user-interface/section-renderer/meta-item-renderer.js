@@ -104,34 +104,6 @@ class MetaItemRenderer {
     return element;
   }
 
-  _populateLinkItem(fragment, item) {
-    const element = fragment.querySelector('.meta-link');
-    if (!element) return null;
-
-    const titleElement = element.querySelector('.meta-link__title');
-    if (titleElement) {
-      titleElement.textContent = item.title;
-    }
-
-    if (item.type === 'email-link') {
-      const email = this.profileData?.email || '';
-      const subject = encodeURIComponent(item.props?.subject || '');
-      const body = encodeURIComponent(item.props?.body || '');
-      element.href = `mailto:${email}?subject=${subject}&body=${body}`;
-      element.removeAttribute('target');
-      element.removeAttribute('rel');
-    } else if (item.type === 'link') {
-      element.href = item.props?.url || '#';
-      if (item.props?.type === 'download') {
-        element.setAttribute('download', '');
-        element.removeAttribute('target');
-        element.removeAttribute('rel');
-      }
-    }
-
-    return element;
-  }
-
   _populateSkillItem(fragment, item) {
     const element = fragment.querySelector('.skill-item');
     if (!element) return null;
@@ -274,6 +246,10 @@ class MetaItemRenderer {
         linkElement.href = item.href || '#';
         linkElement.setAttribute('target', '_blank');
         linkElement.setAttribute('rel', 'noopener noreferrer');
+
+        if (item.download) {
+          linkElement.setAttribute('download', 'true');
+        }
       }
     }
 

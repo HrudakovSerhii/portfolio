@@ -68,7 +68,7 @@
       "skills": "Технічний Арсенал",
       "soft-skills": "Особисті Якості",
       "projects": "Обрані Проєкти",
-      "contact": "Зв'язок",
+      "contact": "Звязатись",
       "letsBuild": "Нумо створимо щось разом!",
       "linkToProject": "Посилання на проєкт"
     },
@@ -80,9 +80,8 @@
       "stateManagement": "Управління станом (State Management)",
       "containerisation": "Контейнеризація",
       "database": "Бази даних",
-      "embeddingModel": "Embedding модель",
-      "inBrowserModel": "Локальна модель у браузері",
-      "mobileSecurity": "Мобільна безпека",
+      "embeddingModel": "Embedding моделі",
+      "inBrowserModel": "Модель у браузері",
       "websphereLegacy": "WebSphere (Legacy)"
     }
   },
@@ -310,6 +309,10 @@
     },
     "github": {
       "subtitle": "Код та внесок (Open Source)"
+    },
+    "cv": {
+      "title": "Резюме",
+      "subtitle": "Завантажити CV"
     },
     "recruiter": {
       "content": {
