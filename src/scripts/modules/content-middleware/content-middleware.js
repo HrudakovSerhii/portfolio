@@ -1,37 +1,29 @@
 class ContentMiddleware {
-  constructor(dataSourceUrl) {
-    this.dataSourceUrl = dataSourceUrl;
+  constructor(baseDataUrl) {
+    // baseDataUrl should be the full path to content-structure.json
+    // e.g., '/portfolio/data/content-structure.json'
+    this.dataUrl = baseDataUrl;
     this.contentData = null;
     this.loadPromise = null;
-    this._initializeData();
   }
 
-  _initializeData() {
-    this.loadPromise = this._fetchData()
-      .then(data => this._parseData(data))
-      .then(parsedData => {
-        this.contentData = parsedData;
-        this.loadPromise = null;
-      })
-      .catch(error => {
-        this.loadPromise = null;
-        throw error;
-      });
+  async initialize() {
+    await this._loadContent();
   }
 
-  async _fetchData() {
-    const fetchFn = this._getFetch();
-    const response = await fetchFn(this.dataSourceUrl);
+  async _loadContent() {
+    try {
+      const fetchFn = this._getFetch();
+      const response = await fetchFn(this.dataUrl);
 
-    if (!response.ok) {
-      throw new Error(`Failed to load content: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      this.contentData = await response.json();
+    } catch (error) {
+      throw new Error(`Failed to load content: ${error.message}`);
     }
-
-    return response.json();
-  }
-
-  _parseData(data) {
-    return data;
   }
 
   _getFetch() {
@@ -49,7 +41,7 @@ class ContentMiddleware {
       await this.loadPromise;
     }
     if (!this.contentData) {
-      throw new Error('Content data not loaded');
+      throw new Error('Content data not loaded. Call initialize() first.');
     }
   }
 
@@ -89,43 +81,29 @@ class ContentMiddleware {
   }
 
   _buildSectionContent({ sectionId, role, section, roleContent, customQuery }) {
-    const imageName = roleContent.image?.name || `${sectionId}.${role}`;
+    const contentData = roleContent.content || {};
+    const headerData = roleContent.header || {};
+    const imageName = contentData.image?.name || `${sectionId}.${role}`;
 
     return {
       sectionId,
-      title: section.metadata.title,
-      text: roleContent.text,
-      subText: roleContent.subText,
-      link: roleContent.link,
-      image: {
-        imageUrl: `/portfolio/assets/images/${imageName}.full.webp`,
-        lowResImageUrl: `/portfolio/assets/images/${imageName}.low.webp`,
-        imageAlt: roleContent.image?.imageAlt || section.metadata.title,
-        aspectRatio: roleContent.image?.aspectRatio || 'aspect-portrait',
+      header: {
+        text: headerData.text || section.metadata.title,
+        subText: headerData.subText || ''
       },
-      customQuery: customQuery || null,
-      emailSubject: roleContent.emailSubject || null,
-      emailBody: roleContent.emailBody || null,
+      content: {
+        text: contentData.text || '',
+        subText: contentData.subText || '',
+        image: contentData.image ? {
+          imageUrl: `/portfolio/assets/images/${imageName}.full.webp`,
+          lowResImageUrl: `/portfolio/assets/images/${imageName}.low.webp`,
+          imageAlt: contentData.image.imageAlt || section.metadata.title,
+          aspectRatio: contentData.image.aspectRatio || 'aspect-portrait',
+        } : null
+      },
+      customQuery: customQuery || null
     };
   }
-
-  // TODO: Use when chat AI interface will be included
-  // async getActionPromptPlaceholder(sectionId) {
-  //   await this._ensureDataLoaded();
-  //
-  //   const section = this._getSection(sectionId);
-  //   return this._extractPlaceholder(section);
-  // }
-  //
-  // _extractPlaceholder(section) {
-  //   const mainItems = section.metadata?.main_items;
-  //
-  //   if (mainItems && mainItems.length > 0) {
-  //     return mainItems.join(', ');
-  //   }
-  //
-  //   return `Ask about ${section.metadata.title}...`;
-  // }
 
   async getSectionMetadata(sectionId) {
     await this._ensureDataLoaded();

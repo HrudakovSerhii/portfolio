@@ -4,7 +4,6 @@
 .carousel {
   position: relative;
   width: 100%;
-  max-width: 100vw;
   overflow: hidden;
   padding: 0;
 
@@ -17,12 +16,7 @@
     --edge-fade-width: 4rem;
   }
 
-  @include mixins.desktop {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  // Gradient edge shadows (hidden on desktop where container is constrained)
+  // Gradient edge shadows
   &::before,
   &::after {
     content: '';
@@ -34,12 +28,24 @@
     pointer-events: none;
 
     @include mixins.desktop {
-      display: none;
+      // Extend shadow to cover padding area + fade width
+      width: calc(max(0px, (100vw - 1200px) / 2) + var(--edge-fade-width));
     }
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, var(--color-bg), transparent);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, var(--color-bg), transparent);
   }
 
   &__track {
     display: flex;
+    align-items: stretch;
     transition: transform 300ms ease-in-out;
     will-change: transform;
     gap: variables.$spacing-sm;
@@ -50,10 +56,14 @@
   }
 
   &__item {
-    display: flex;
-    align-items: center;
+    display: grid;
     flex-shrink: 0;
     width: min(100%, 320px);
+
+    // Direct child stretches to fill item height
+    > * {
+      height: 100%;
+    }
 
     @include mixins.tablet {
       width: min(100%, 380px);
@@ -61,12 +71,6 @@
 
     @include mixins.desktop {
       width: 380px;
-      transition: transform variables.$transition-base;
-
-      &:hover {
-        transform: scale(1.05);
-        z-index: 1;
-      }
     }
 
     &--clone {

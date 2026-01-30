@@ -10,7 +10,7 @@ class ScrollObserver {
       root: options.root || null,
       rootMargin: options.rootMargin || '0px',
       threshold: options.threshold || [0, 0.1, 0.5, 1.0],
-      selector: options.selector || '.content-section',
+      selector: options.selector || '.section',
       container: options.container || null,
       observeOnInit: options.observeOnInit !== false
     };

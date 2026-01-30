@@ -4,17 +4,28 @@
 .header {
   position: sticky;
   top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: variables.$spacing-xs variables.$spacing-xs;
+  left: 0;
+  right: 0;
   background-color: rgba(var(--color-bg-rgb), 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: variables.$z-header;
 
-  @include mixins.tablet {
-    padding: variables.$spacing-md variables.$spacing-xl;
+  &__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: variables.$content-max-width;
+    margin: 0 auto;
+    padding: variables.$spacing-xs variables.$spacing-lg;
+
+    @include mixins.tablet {
+      padding: variables.$spacing-md variables.$spacing-xl;
+    }
+
+    @include mixins.desktop {
+        padding: variables.$spacing-md variables.$spacing-2xl;
+    }
   }
 }
 
@@ -126,7 +137,7 @@
   animation: slideInNav 300ms ease forwards;
 
   &.active {
-    font-weight: 600;
+    font-weight:  variables.$font-weight-medium;
   }
 
   @for $i from 1 through 10 {
@@ -137,6 +148,7 @@
 }
 
 .header-controls {
+  position: relative;
   display: flex;
   align-items: center;
   gap: variables.$spacing-xs;
@@ -182,6 +194,10 @@
   @include mixins.mobile {
     display: none;
   }
+
+  @include mixins.tablet {
+    display: none !important;
+  }
 }
 
 .header-role-badge {
@@ -207,6 +223,10 @@
 
   @include mixins.mobile {
     display: none;
+  }
+
+  @include mixins.tablet {
+    display: none !important;
   }
 }
 
@@ -295,12 +315,70 @@
   }
 }
 
-// Mobile menu toggle - only visible on mobile
-.header-mobile-toggle {
+// Menu toggle - visible on all viewports
+.header-menu-toggle {
   display: flex;
+  padding: variables.$spacing-xs;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+}
 
-  @include mixins.mobile-up {
-    display: none;
+// Dropdown menu for desktop
+.header-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 180px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-lg;
+  box-shadow: var(--shadow-lg);
+  z-index: variables.$z-header + 1;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transform: translateY(-8px);
+  transition: opacity variables.$transition-base, visibility variables.$transition-base, transform variables.$transition-base;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  @include mixins.mobile {
+    display: none; // On mobile, use overlay instead
+  }
+}
+
+.header-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: variables.$spacing-xs;
+  width: 100%;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  // Fluid: 0.75rem (12px) → 0.875rem (14px) - matches header-nav-item
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  font-weight: variables.$font-weight-nominal;
+  transition: background-color variables.$transition-base, color variables.$transition-base;
+
+  &:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 1.25rem;
   }
 }
 
@@ -414,7 +492,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: variables.$spacing-sm;
+  gap: variables.$spacing-xs;
   padding: variables.$spacing-xs variables.$spacing-sm;
   border-bottom: 1px solid var(--color-border);
 }

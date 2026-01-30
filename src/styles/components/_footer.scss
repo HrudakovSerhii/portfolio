@@ -31,10 +31,12 @@
   &:hover {
     color: var(--color-primary);
   }
+}
 
-  .material-symbols-outlined {
-    font-size: 24px;
-  }
+.footer-social-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 
 .footer-copyright {

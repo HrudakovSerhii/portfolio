@@ -1,4 +1,4 @@
-export const SECTION_ORDER = ['hero', 'experience', 'skills', 'soft-skills', 'projects', 'contact'];
+import { APP_STATE_KEY, SECTION_ORDER } from "../constants.js";
 
 const VALID_ROLES = ['recruiter', 'developer', 'friend'];
 const VALID_THEMES = ['light', 'dark'];
@@ -38,7 +38,7 @@ class StorageAdapter {
 
 class StateManager {
   constructor() {
-    this.storage = new StorageAdapter('portfolioState');
+    this.storage = new StorageAdapter(APP_STATE_KEY);
     let state = this.storage.load();
 
     if (!state) {
@@ -67,6 +67,10 @@ class StateManager {
 
   getRevealedSections() {
     return [...this.state.revealedSections];
+  }
+
+  getNextAvailableSection() {
+    return SECTION_ORDER.find(section => !this.state.revealedSections.includes(section)) || null;
   }
 
   addRevealedSection(sectionId) {

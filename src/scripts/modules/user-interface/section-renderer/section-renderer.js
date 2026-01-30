@@ -1,9 +1,43 @@
 import { GenerativeImage } from '../generative-image/index.js';
-import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
-import ActionPromptManager from './action-prompt-manager.js';
+
 import SectionAnimator from './section-animator.js';
 import MetaItemRenderer from './meta-item-renderer.js';
 import Drawer from './drawer.js';
+
+import TranslationService from '../../translations.js';
+
+import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
+
+export function translateDeep(data) {
+  if (data === null || data === undefined) {
+    return data;
+  }
+
+  if (typeof data === 'string') {
+    return translateValue(data);
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(item => translateDeep(item));
+  }
+
+  if (typeof data === 'object') {
+    const result = {};
+    for (const key of Object.keys(data)) {
+      result[key] = translateDeep(data[key]);
+    }
+    return result;
+  }
+
+  return data;
+}
+
+function translateValue(value) {
+  if (typeof value !== 'string' || !value) {
+    return value;
+  }
+  return TranslationService.t(value);
+}
 
 class SectionRenderer {
   constructor(stateManager, contentMiddleware, templateBuilder, animationController) {
@@ -11,15 +45,45 @@ class SectionRenderer {
     this.contentMiddleware = contentMiddleware;
     this.templateBuilder = templateBuilder;
 
+    this.nextSectionPrompt = null;
     this.sectionsContainer = null;
-    this.actionPromptManager = null;
     this.sectionAnimator = new SectionAnimator(animationController, templateBuilder);
   }
 
   initialize(sectionsContainerElement, sectionOrder, onActionPromptClick) {
     this.sectionsContainer = sectionsContainerElement;
-    this.actionPromptManager = new ActionPromptManager(this.templateBuilder, sectionOrder);
-    this.actionPromptManager.initialize(onActionPromptClick);
+
+    this._initNextSectionPrompts(onActionPromptClick);
+  }
+
+  _updateNextSectionPromptButton(promptText = `Read next: sectionId`) {
+    const button = this.nextSectionPrompt.querySelector('.prompt-button');
+
+    button.textContent = promptText;
+    button.setAttribute('data-default-text', promptText);
+  }
+
+  _initNextSectionPrompts(onNextSectionClick) {
+    this.nextSectionPrompt = document.getElementById('next-section-prompt');
+
+    if (!this.nextSectionPrompt) {
+      console.warn('No next section prompt found');
+      return;
+    }
+
+    const button = this.nextSectionPrompt.querySelector('.prompt-button');
+
+    if (button) {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        this._hideActionPrompt();
+
+        if (onNextSectionClick) {
+          onNextSectionClick();
+        }
+      });
+    }
   }
 
   async reveal(sectionId, role, customQuery = '') {
@@ -29,26 +93,26 @@ class SectionRenderer {
 
       const sectionElement = this._renderSection(sectionId, sectionContent);
 
-      this._populateText(sectionElement, sectionContent.text);
-      this._populateSubText(sectionElement, sectionContent.subText);
+      this._populateHeader(sectionElement, sectionContent.header);
+      this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
 
-      this._scrollToSection(sectionElement);
-
-      // this.actionPromptManager.showTyping(sectionId);
+      this._scrollToElement(sectionElement);
 
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
       this._revealMetaItems(sectionElement);
-      // this.actionPromptManager.hideTyping(sectionId);
 
       this.stateManager.addRevealedSection(sectionId);
 
-      this._updateActionPrompt(sectionId);
-      this._scrollToSection(sectionElement);
+      this._updateActionPrompt();
+      // this._scrollToElement(this.nextSectionPrompt);
+      this._scrollToElement(sectionElement, {
+        behavior: 'smooth',
+        block: 'end'
+      });
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
-      // this.actionPromptManager.hideTyping(sectionId);
     }
   }
 
@@ -58,24 +122,69 @@ class SectionRenderer {
 
     const sectionElement = this._renderSection(sectionId, sectionContent);
 
-    this._populateText(sectionElement, sectionContent.text);
-    this._populateSubText(sectionElement, sectionContent.subText);
-    this._populateImage(sectionElement, sectionContent.image);
+    this._populateHeader(sectionElement, sectionContent.header);
+    this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
+
+    if (sectionContent.content?.image) {
+      this._populateImage(sectionElement, sectionContent.content.image);
+    }
+
     this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
     this._revealMetaItems(sectionElement);
 
-    this._updateActionPrompt(sectionId);
+    this._updateActionPrompt();
+  }
+
+  removeRevealedSections() {
+    const sections = this.sectionsContainer.querySelectorAll(`.${SECTION_ELEMENTS.section}`);
+
+    sections.forEach(section => section.remove());
+  }
+
+  async updateContent(sectionId, role) {
+    try {
+      const sectionElement = this.sectionsContainer.querySelector(`#section-${sectionId}`);
+
+      if (!sectionElement) {
+        return;
+      }
+
+      const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role);
+      const profileData = await this._fetchProfileData();
+
+      // Update header and content text
+      this._populateHeader(sectionElement, sectionContent.header);
+      this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
+
+      // Clear and re-render meta items
+      const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
+      const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselItems}`);
+
+      if (metaItemsContainer) {
+        metaItemsContainer.innerHTML = '';
+      }
+
+      if (carouselContainer) {
+        carouselContainer.innerHTML = '';
+      }
+
+      // Re-render meta items with new language content
+      this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
+      this._revealMetaItems(sectionElement);
+
+      // Update action prompt
+      this._updateActionPrompt();
+    } catch (error) {
+      console.error(`Failed to update section ${sectionId}:`, error);
+    }
   }
 
   _renderSection(sectionId, sectionContent) {
     const sectionElement = this.templateBuilder.renderSection(sectionId, sectionContent);
 
-    // Create and append action prompt to section before mounting to DOM
-    const promptElement = this.actionPromptManager.createForSection(sectionId);
-    sectionElement.appendChild(promptElement);
+    this.nextSectionPrompt.setAttribute('data-section-id', sectionId);
 
-    const lastSectionElement = this.sectionsContainer.lastChild;
-    this.sectionsContainer.insertBefore(sectionElement, lastSectionElement);
+    this.sectionsContainer.insertBefore(sectionElement, this.nextSectionPrompt);
 
     return sectionElement;
   }
@@ -85,44 +194,19 @@ class SectionRenderer {
       return;
     }
 
-    // Contact section: update existing template links instead of creating new elements
-    if (sectionId === 'contact') {
-      this._updateContactLinks(sectionElement, sectionMetadata.mainItems, profileData, role);
-      return;
-    }
-
     const metaItemRenderer = new MetaItemRenderer(this.templateBuilder, profileData);
-
-    if (sectionId === 'experience') {
-      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
-
-      return;
-    }
 
     if (sectionId === 'projects') {
       this._renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata);
+    } else if (sectionId === 'experience') {
+      this._renderCollapsibleMetaItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role, ["hidden", "non-displayed"]);
     } else {
       this._renderDefaultItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata, role);
     }
   }
 
-  _updateContactLinks(sectionElement, mainItems, profileData, role) {
-    const emailItem = mainItems.find(item => item.type === 'email');
-    if (!emailItem) return;
-
-    const emailLink = sectionElement.querySelector('.contacts-item_email');
-    if (!emailLink) return;
-
-    const email = profileData?.email || '';
-    const roleData = emailItem.roleItems?.[role] || {};
-    const subject = encodeURIComponent(roleData.subject || '');
-    const body = encodeURIComponent(roleData.body || '');
-
-    emailLink.href = `mailto:${email}?subject=${subject}&body=${body}`;
-  }
-
   _renderCarouselItems(metaItemRenderer, sectionElement, sectionId, sectionMetadata) {
-    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
+    const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselItems}`);
 
     if (!metaItemsContainer || !sectionMetadata?.mainItems) {
       return;
@@ -166,7 +250,7 @@ class SectionRenderer {
     }
 
     const drawer = new Drawer(this.templateBuilder);
-    const drawerElement = drawer.wrapContent(renderedItems);
+    const drawerElement = drawer.wrapContent(renderedItems, sectionMetadata.title );
 
     if (drawerElement) {
       metaItemsContainer.appendChild(drawerElement);
@@ -177,7 +261,7 @@ class SectionRenderer {
 
   _revealMetaItems(sectionElement) {
     const metaItemsContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.metaItems}`);
-    const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselMetaItems}`);
+    const carouselContainer = sectionElement.querySelector(`.${SECTION_ELEMENTS.carouselItems}`);
 
     if (metaItemsContainer) {
       metaItemsContainer.classList.remove('non-displayed');
@@ -189,9 +273,30 @@ class SectionRenderer {
     }
   }
 
-  _updateActionPrompt(sectionId) {
-    const revealedSections = this.stateManager.getRevealedSections();
-    this.actionPromptManager.update(sectionId, revealedSections);
+  _hideActionPrompt() {
+    requestAnimationFrame(() => {
+      this.nextSectionPrompt.classList.remove('action-prompt--visible');
+    });
+  }
+
+  _showActionPrompt() {
+    requestAnimationFrame(() => {
+      this.nextSectionPrompt.classList.add('action-prompt--visible');
+    });
+  }
+
+  _updateActionPrompt() {
+    const nextSectionId = this.stateManager.getNextAvailableSection();
+
+    if (nextSectionId) {
+      const readNextLabel = TranslationService.t('section.readNext');
+      const nextSectionLabel = TranslationService.t(`generic.title.${nextSectionId}`);
+
+      this._updateNextSectionPromptButton(`${readNextLabel} ${nextSectionLabel}`);
+      this._showActionPrompt();
+    } else {
+      this._hideActionPrompt();
+    }
   }
 
   async _fetchProfileData() {
@@ -206,35 +311,54 @@ class SectionRenderer {
     );
     const sectionMetadata = await this.contentMiddleware.getSectionMetadata(sectionId);
 
-    return { sectionContent, sectionMetadata };
+    // Translate metadata (title, mainItems) for current language
+    const translatedMetadata = {
+      ...sectionMetadata,
+      title: translateValue(sectionMetadata.title),
+      mainItems: sectionMetadata.mainItems ? translateDeep(sectionMetadata.mainItems) : undefined
+    };
+
+    return { sectionContent, sectionMetadata: translatedMetadata };
   }
 
-  _scrollToSection(sectionElement) {
+  _scrollToElement(sectionElement, scrollProps = {
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                  }) {
     if (!sectionElement) {
       return;
     }
 
     setTimeout(() => {
-      sectionElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+      sectionElement.scrollIntoView(scrollProps);
     }, SCROLL_DELAY);
   }
 
-  _populateText(sectionElement, text) {
+  _populateContent(sectionElement, contentData) {
     const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.text}`);
 
-    if (textElement) {
-      textElement.textContent = text;
+    if (textElement && contentData?.text) {
+      textElement.textContent = translateValue(contentData.text);
+    }
+
+    const subTextElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.subText}`);
+
+    if (subTextElement && contentData?.subText) {
+      subTextElement.textContent = translateValue(contentData.subText);
     }
   }
 
-  _populateSubText(sectionElement, text) {
-    const textElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.subText}`);
+  _populateHeader(sectionElement, headerData) {
+    const headerTitleElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.title}`);
 
-    if (textElement) {
-      textElement.textContent = text;
+    if (headerTitleElement && headerData.text) {
+      headerTitleElement.textContent = translateValue(headerData.text);
+    }
+
+    const headerSubtitleElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.subTitle}`);
+
+    if (headerSubtitleElement && headerData.subText) {
+      headerSubtitleElement.textContent = translateValue(headerData.subText);
     }
   }
 

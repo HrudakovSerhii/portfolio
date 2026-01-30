@@ -1,0 +1,329 @@
+{
+  "profile": {
+    "title": "Senior Frontend Engineer",
+    "location": "Purmerend, Nederland"
+  },
+  "loader": {
+    "preparing": "Even geduld...",
+    "failed": "Laden mislukt. Ververs de pagina."
+  },
+  "nav": {
+    "resume": "CV",
+    "view": "Weergave",
+    "recruiterView": "Voor recruiters",
+    "developerView": "Voor engineers",
+    "friendView": "Voor vrienden",
+    "moreStuff": "Meer",
+    "theme": "Thema",
+    "title": "Navigatie"
+  },
+  "intro": {
+    "greeting": "Hallo, ik ben",
+    "title": "Senior Frontend Specialist",
+    "text": "Ik heb deze site gebouwd zodat je me kunt leren kennen op de manier die voor jou het belangrijkst is -",
+    "you": "Jij",
+    "download": "Download mijn CV",
+    "or": "OF",
+    "scrollHint": "Scroll naar beneden om meer te lezen"
+  },
+  "story": {
+    "title": "Lees een van de drie verhalen die ik heb gemaakt om niet alleen mijn relevante profielinformatie te verkennen, maar ook mijn persoonlijke kant. De kant die belangrijk is als je werkt met",
+    "people": "Mensen",
+    "recruiter": "Ik ben een Recruiter",
+    "recruiterDesc": "Vind mijn ervaring, vaardigheden en carrièrehoogtepunten - alles wat je nodig hebt om snel een match te beoordelen.",
+    "developer": "Ik ben een Engineer",
+    "developerDesc": "Ontdek de technologieën waar ik van hou, de projecten waar ik trots op ben, en wat mij drijft als bouwer.",
+    "friend": "Ik ben een Vriend",
+    "friendDesc": "Ik zal de menselijke kant van mezelf introduceren zodat je kunt begrijpen wat voor persoon ik ben.",
+    "ctaText": "Welk pad spreekt jou aan?"
+  },
+  "section": {
+    "next": "Volgende:",
+    "readNext": "Lees verder:"
+  },
+  "footer": {
+    "copyright": "Gebouwd met liefde voor",
+    "people": "mensen",
+    "designed": "Ontworpen met passie voor machines"
+  },
+  "modal": {
+    "changeRole": "Verander je Rol",
+    "selectPerspective": "Selecteer een ander perspectief om andere kanten van mijn portfolio te zien",
+    "portfolio": "portfolio",
+    "recruiterDesc": "Ik focus op betrouwbaarheid, schattingen en delivery-ervaring",
+    "recruiterTitle": "Recruiter",
+    "developerDesc": "Ik duik in de tech stack, architectuur en tools die ik heb gebruikt.",
+    "developerTitle": "Engineer",
+    "friendDesc": "Ik zal de menselijke kant van mezelf introduceren zodat je kunt begrijpen wat voor persoon ik ben.",
+    "friendTitle": "Vriend"
+  },
+  "drawer": {
+    "all": "Alle"
+  },
+  "generic": {
+    "title": {
+      "hero": "Over Mij",
+      "experience": "Werkervaring",
+      "skills": "Technische Skills",
+      "soft-skills": "Competenties",
+      "projects": "Uitgelichte Projecten",
+      "contact": "Contact",
+      "letsBuild": "Laten we samen bouwen",
+      "linkToProject": "Link naar project"
+    },
+    "text": {
+      "reachOut": "Sta open voor nieuwe kansen of gewoon een goed gesprek."
+    },
+    "tech": {
+      "webBasics": "Web Standaarden",
+      "stateManagement": "State Management",
+      "containerisation": "Containerisatie",
+      "database": "Databases",
+      "embeddingModel": "Embedding model",
+      "inBrowserModel": "Lokaal browser-model",
+      "mobileSecurity": "Mobiele Beveiliging",
+      "websphereLegacy": "WebSphere (Legacy)"
+    }
+  },
+  "hero": {
+    "recruiter": {
+      "header": {
+        "subText": "Mijn doel is helder: schaalbare frontend bouwen en teams laten bloeien."
+      },
+      "content": {
+        "text": "Met een Master in Computer Science en tien jaar ervaring sla ik de brug tussen technische executie en business requirements. Mijn leiderschapsstijl kenmerkt zich door proactief mentorschap; ik geloof dat je een skill pas echt beheerst als je het een ander kunt leren. Ik voel me thuis in multiculturele omgevingen en bouw efficiënte teams die complexe puzzels vertalen naar heldere zakelijke oplossingen."
+      },
+      "image": {
+        "alt": "Serhii Hrudakov - Senior Frontend Developer"
+      }
+    },
+    "developer": {
+      "header": {
+        "subText": "Mijn missie: complexe codebases simpel en onderhoudbaar maken."
+      },
+      "content": {
+        "text": "Mijn filosofie is simpel: code moet begrijpelijk zijn, ongeacht de complexiteit. Dit principe pas ik overal toe: van herbruikbare componenten tot strenge quality gates. Ik draag graag bij aan de community door code reviews, documentatie en het aanscherpen van specificaties samen met het team."
+      },
+      "image": {
+        "alt": "Serhii Hrudakov - Software Engineer"
+      }
+    },
+    "friend": {
+      "header": {
+        "subText": "Ik beschouw code als een hulpmiddel om ideeën tot leven te brengen. En vaak lukt dat ook."
+      },
+      "content": {
+        "text": "Ik ben een ingenieur in hart en nieren. Of ik nu met roestig gereedschap in de garage sta of achter mijn toetsenbord zit: het gaat om creëren. Beide zijn instrumenten om te doen waar je van houdt."
+      },
+      "image": {
+        "alt": "Serhii Hrudakov"
+      }
+    }
+  },
+  "experience": {
+    "mobiquity": {
+      "role": "Senior Full-Stack Engineer / Lead",
+      "company": "Mobiquity (Hexaware)",
+      "description": "Leidde het frontend-team voor diverse klanten (Banking, Social, Notifications). Architectuur opgezet voor NX monorepo's om code te delen tussen projecten. Doelen gedefinieerd en specificaties geschreven voor vlottere onboarding. Klanten begeleid in feature-planning voor maximale business value."
+    },
+    "erics": {
+      "role": "Senior Frontend Engineer / Team Lead",
+      "company": "Erics Digital",
+      "description": "Verantwoordelijk voor de migratie van een monolithische webshop naar micro-frontends. Gaf leiding aan 3 developers en 2 QA engineers, van code review tot planning. Complexe state-sync problemen opgelost en SEO (Lighthouse) scores drastisch verbeterd."
+    },
+    "adam": {
+      "role": "Senior Frontend Engineer",
+      "company": "A-Dam",
+      "description": "Webshop ontwikkeld ter uitbreiding van retail sales. Omzet verdubbeld (100%+) na eerste release. Stack gemigreerd naar NestJS voor betere SEO en performance. B2B bulk-aankoopsysteem gebouwd bovenop de bestaande shop."
+    },
+    "digitalchefs": {
+      "role": "Frontend Engineer",
+      "company": "DigitalChefs",
+      "description": "Diverse React en React Native apps ontwikkeld voor klanten. Verantwoordelijk voor component libraries om veelvoorkomende issues (Navigatie, Animatie) op te lossen. Onboarding van nieuwe developers ondersteund."
+    },
+    "abiggercircle": {
+      "role": "Medior Frontend Engineer",
+      "company": "ABiggerCircle",
+      "description": "Bijgedragen aan in-house web platform. Features getest in samenwerking met marketing voor optimale UX. Daarnaast een embedded entertainment-systeem ontwikkeld voor de maritieme sector (gesloten netwerken)."
+    },
+    "ittransit": {
+      "role": "Junior Frontend Engineer",
+      "company": "IT-Transit",
+      "description": "Tools ontwikkeld voor landschapsmeting en pijplijninspectie (Olie & Gas). Nauw samengewerkt met analisten om aan strikte industrie-eisen te voldoen. Migratie van ActionScript naar JavaScript uitgevoerd."
+    },
+    "luxoft": {
+      "role": "Junior Frontend Engineer",
+      "company": "Luxoft",
+      "description": "Ondersteuning van project leads. Features ontwikkeld om design details van AC3 Flash files naar HTML te vertalen. Handmatig testen van updates op devices."
+    },
+    "recruiter": {
+      "content": {
+        "text": "Bij Mobiquity (Hexaware) stuurde ik frontend teams aan voor bank- en datingplatforms, met een verdeling van 60% coding en 40% management. Eerder bij EricsDigital leidde ik de migratie van een e-commerce monoliet naar micro-frontends. Bij A-Dam bouwde ik een platform dat de jaaromzet verdubbelde. Ik neem ownership over de volledige cyclus: van architectuur tot het aannemen van nieuw talent."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "Bij Mobiquity heb ik NX monorepo's opgezet om UI-libraries te delen en complexe chat-interfaces voor AI-agents gebouwd. Bij EricsDigital heb ik een legacy WebSphere omgeving gemigreerd naar React met Redux Saga, geoptimaliseerd voor Core Web Vitals. Ook heb ik ruime ervaring met offline-first React Native apps (KLM). Ik pas me moeiteloos aan verschillende teamstructuren en pipelines aan."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "Naast mijn werk blijf ik bouwen. Van smart home oplossingen die Tado, Hue en ZigBee verenigen, tot het optimaliseren van mijn thuisnetwerk. Ik houd van engineering en neem graag het voortouw om oplossingen aan te dragen. In mijn vrije tijd organiseer ik hike-trips en ben ik graag in de natuur."
+      }
+    }
+  },
+  "skills": {
+    "recruiter": {
+      "content": {
+        "text": "Mijn technische basis is verankerd in TypeScript. Ik heb alles gebouwd: van simpele sites in Vanilla JS tot complexe React-producten. Ik heb ruime ervaring met Cloud DevOps (Azure, GitLab) en kritieke integraties in de bank- en verzekeringssector. Ik bouw vertrouwen op tussen team en stakeholders om levering en efficiëntie te garanderen."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "Ik leef in het moderne JS ecosysteem. Ik gebruik NX, Zod voor validatie en Redux/Zustand voor state. Betrouwbaarheid staat voorop met Playwright E2E tests en quality gates. Mijn workflow is geoptimaliseerd met CI/CD, Docker en strikte TypeScript typing zodat backend-frontend contracten nooit breken."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "Ik ben gek op nieuwe tech. Momenteel draai ik lokale LLM's voor een smart home dashboard. Ik geef om UI-details, maar offer nooit performance op. Ik deel mijn kennis graag, of het nu gaat om een git merge of hoe een browser engine werkt."
+      }
+    }
+  },
+  "softSkills": {
+    "leadership": {
+      "title": "Leiderschap & Management",
+      "item1": "Team Leiderschap (3-4 devs)",
+      "item2": "Werving & Selectie",
+      "item3": "Projectplanning & Inschatting",
+      "item4": "Code Review Management"
+    },
+    "communication": {
+      "title": "Communicatie",
+      "item1": "Klantcontact",
+      "item2": "Cross-functional Samenwerking",
+      "item3": "Technische Documentatie",
+      "item4": "Stakeholder Management"
+    },
+    "personal": {
+      "title": "Persoonlijke Kwaliteiten",
+      "item1": "Probleemoplossend",
+      "item2": "Oog voor Detail",
+      "item3": "Initiatief & Eigenaarschap",
+      "item4": "Continu Leren"
+    },
+    "background": {
+      "title": "Achtergrond & Educatie",
+      "item1": "Master in Computer Science",
+      "item2": "Sales Ervaring",
+      "item3": "Passie voor Engineering",
+      "item4": "Multiculturele Ervaring"
+    },
+    "recruiter": {
+      "content": {
+        "text": "Naast code breng ik leiderschap en communicatie aan tafel. Ik heb teams geleid, senior posities ingevuld en relaties met stakeholders onderhouden. Mijn Master-diploma biedt een theoretische basis, terwijl mijn sales-ervaring me helpt business-prioriteiten te begrijpen en technisch jargon te vertalen."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "Goed engineering gaat verder dan code. Ik focus op reviews, documentatie en de beste tools. UX-details en een solide architectuur zijn voor mij cruciaal. Ik draag actief bij aan sprint planning en specs, en ondersteun teamleden via pair programming. Een senior rol betekent voor mij: het systeem en de structuur zien achter de requirements."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "Ik werk graag met mensen. Of het nu gaat om een hike organiseren of een sprint planning: ik breng graag structuur in de chaos. Ik ben nieuwsgierig en leer van iedereen, junior of veteraan. Ik waardeer eerlijkheid en creëer een omgeving waarin iedereen vragen durft te stellen."
+      }
+    }
+  },
+  "projects": {
+    "portfolio": {
+      "title": "Persoonlijk Portfolio",
+      "description": "Eenvoudige maar feature-rijke VanillaJS site. Vervangt het traditionele CV met een interactief verhaal en AI-tekstgeneratie."
+    },
+    "tvShowExplorer": {
+      "title": "TV Show Explorer",
+      "description": "NextJS demo-applicatie. Design gegenereerd met Google Stitch en geïmplementeerd met custom SSR componenten en App Router."
+    },
+    "chatAgent": {
+      "title": "ChatAgent AI (Banking)",
+      "description": "Frontend voor een AI-bankassistent. Parser-laag gebouwd om complexe AI-data weer te geven en bijgedragen aan de systeem-prompts."
+    },
+    "bonfire": {
+      "title": "Bonfire Dating Platform",
+      "description": "Lead rol in de webversie van een dating app. Complexe validaties en flows geïmplementeerd. Klantteam ondersteund bij onboarding."
+    },
+    "safetyNotification": {
+      "title": "Safety Notification System",
+      "description": "Veiligheidsdashboard voor 6000+ medewerkers. Gekloond voor meerdere klanten met custom features. Leiding over designfase en klantcommunicatie."
+    },
+    "ericsMigration": {
+      "title": "Erics WebShop Migratie",
+      "description": "Vervanging van legacy e-commerce HTML door React apps. Verbeterde SEO scores en maakte dynamische navigatie mogelijk."
+    },
+    "adamEcommerce": {
+      "title": "A-Dam E-commerce",
+      "description": "Webshop ontwikkeld en onderhouden voor omzetgroei. Later gemigreerd naar SSR voor SEO. Backend-fork van Saleor ondersteund voor voorraadbeheer."
+    },
+    "klmAssistant": {
+      "title": "KLM Flight Assistant",
+      "description": "Offline-first iPad app voor cabinepersoneel. Verving klassikale training door performance support on-the-job en papieren handleidingen door media."
+    },
+    "taxafax": {
+      "title": "Taxafax",
+      "description": "React Native app voor belastingadviseurs. Real-time updates en rapporten voor cliënten. Later uitgebreid met multi-tenant login en beveiligd delen."
+    },
+    "recruiter": {
+      "content": {
+        "text": "Elk project was uniek in setup en team, maar het doel was altijd hetzelfde: de beste gebruikerservaring en omzetgroei. Frontend is een doolhof van user stories die duidelijke bewegwijzering nodig hebben. Door deze fundamenten te begrijpen ben ik gegroeid tot een professional die weet hoe je kwaliteit levert."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "Werken in diverse domeinen leert je bouwen voor de gebruiker én de omgeving. Je leert welke tools snelheid brengen. Soms vergeet je syntax van een oud framework, maar de hoofdprijs is inzicht: je ziet het systeem achter de vraag. Dat is wat engineering voor mij betekent."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "Na tien jaar klantprojecten ben ik mijn eigen ideeën gaan bouwen. Met AI-tools is code slechts een middel. Ik bouw nu tools om mijn e-mail te analyseren of trading strategieën te bedenken. Maar de favoriet is dit portfolio: simpel, snel en mijn eigen verhaal. Veel leesplezier!"
+      }
+    }
+  },
+  "contact": {
+    "email": {
+      "title": "E-mail",
+      "subtitle": "Voor vacatures & vragen",
+      "recruiter": {
+        "subject": "Vacature Frontend/React Developer",
+        "body": "Hi Serhii,\n\nIk zag je portfolio en ben onder de indruk van je ervaring.\n\nIk zou graag een mogelijke rol bespreken die goed aansluit bij je expertise.\n\nGroet"
+      },
+      "developer": {
+        "subject": "Tech Talk - Frontend Architectuur",
+        "body": "Hey Serhii,\n\nIk heb je portfolio bekeken en zou graag eens sparren over frontend development en de projecten waar je aan werkt.\n\nGroet"
+      },
+      "friend": {
+        "subject": "Koffie doen?",
+        "body": "Hoi Serhii!\n\nLeuk portfolio! Zullen we binnenkort een keer koffie drinken en praten over code, hiken of iets anders?\n\nLaat maar weten!\n\nGroetjes"
+      }
+    },
+    "linkedin": {
+      "subtitle": "Mijn professionele verhaal"
+    },
+    "github": {
+      "subtitle": "Code & Contributions"
+    },
+    "recruiter": {
+      "content": {
+        "text": "Na 10+ jaar development zoek ik een rol die meer richting management en leiderschap gaat. Ik wil groeien met een team en samen uitdagingen aangaan. Mijn kracht ligt in systeemarchitectuur en teamleiderschap. Ik woon in Amsterdam en ben beschikbaar voor kansen waar planning, kwaliteit en samenwerking centraal staan. Neem contact op om te bespreken hoe ik kan bijdragen."
+      }
+    },
+    "developer": {
+      "content": {
+        "text": "Ik sta altijd open voor een gesprek over hoe het web beter kan - van state management tot UI design en accessibility. Als je wilt praten over modernisatie van software of team-optimalisatie, stuur een bericht. Ik waardeer technische eerlijkheid en deel graag kennis met andere engineers."
+      }
+    },
+    "friend": {
+      "content": {
+        "text": "Wil je koffie drinken in Amsterdam en praten over de toekomst van AI, frontend, of extreme sporten zoals klimmen? Let's connect! Ik ontmoet graag nieuwe mensen om verhalen uit te wisselen."
+      }
+    }
+  }
+}
