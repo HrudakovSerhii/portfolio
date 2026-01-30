@@ -144,7 +144,11 @@ class SectionRenderer {
   removeRevealedSections() {
     const sections = this.sectionsContainer.querySelectorAll(`.${SECTION_ELEMENTS.section}`);
 
-    sections.forEach(section => section.remove());
+    sections.forEach(section => {
+      if (!section.classList.contains('section--intro')) {
+        section.remove()
+      }
+    });
   }
 
   async updateContent(sectionId, role) {
