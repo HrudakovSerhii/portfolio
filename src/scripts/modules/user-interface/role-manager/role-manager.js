@@ -1,3 +1,5 @@
+import { trackRoleSelect } from '../../analytics';
+
 const MODAL_FADE_DURATION = 300;
 const MODAL_FOCUS_DELAY = 100;
 
@@ -93,6 +95,7 @@ class RoleManager {
         const newRole = card.getAttribute(SECTION_ATTRIBUTES.role);
 
         if (newRole && newRole !== currentRole) {
+          trackRoleSelect(newRole, true);
           this._closeModal(modal);
           await this.selectRole(newRole);
         }
