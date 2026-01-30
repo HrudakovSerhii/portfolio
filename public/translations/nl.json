@@ -81,7 +81,6 @@
       "database": "Databases",
       "embeddingModel": "Embedding model",
       "inBrowserModel": "Lokaal browser-model",
-      "mobileSecurity": "Mobiele Beveiliging",
       "websphereLegacy": "WebSphere (Legacy)"
     }
   },

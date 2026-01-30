@@ -558,8 +558,7 @@
             "stack": [
               "generic.tech.reactNative",
               "generic.tech.express",
-              "generic.tech.restapi",
-              "generic.tech.mobileSecurity"
+              "generic.tech.restapi"
             ]
           }
         ]
