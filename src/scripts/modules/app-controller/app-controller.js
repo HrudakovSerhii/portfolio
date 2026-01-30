@@ -9,6 +9,8 @@ import HeaderController from '../user-interface/header-controller';
 import SectionRenderer from '../user-interface/section-renderer';
 import RoleManager from '../user-interface/role-manager';
 
+import { trackRoleSelect, initCVDownloadTracking } from '../analytics';
+
 import {
   SECTION_ORDER,
   MODAL_FADE_DURATION,
@@ -175,10 +177,13 @@ class AppController {
         const role = storyPathBtn.getAttribute('data-role');
 
         if (role) {
+          trackRoleSelect(role, false);
           await this.roleManager.selectRole(role);
         }
       });
     });
+
+    initCVDownloadTracking();
   }
 
   async _cycleLanguage() {
