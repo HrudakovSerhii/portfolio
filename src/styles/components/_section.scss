@@ -194,9 +194,10 @@
 
     .story {
       display: flex;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
       width: 100%;
-      flex-wrap: wrap;
       gap: variables.$spacing-md;
 
       @include mixins.tablet {
