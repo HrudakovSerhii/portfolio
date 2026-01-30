@@ -6,6 +6,8 @@ import Drawer from './drawer.js';
 
 import TranslationService from '../../translations.js';
 
+import { trackSectionView } from '../../analytics';
+
 import { SECTION_ELEMENTS, DEFAULT_GRID_CONFIG, SCROLL_DELAY } from './constants.js';
 
 export function translateDeep(data) {
@@ -104,6 +106,7 @@ class SectionRenderer {
       this._revealMetaItems(sectionElement);
 
       this.stateManager.addRevealedSection(sectionId);
+      trackSectionView(sectionId);
 
       this._updateActionPrompt();
       // this._scrollToElement(this.nextSectionPrompt);
