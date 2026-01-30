@@ -314,7 +314,11 @@ class AppController {
       ]);
     }
 
-    this._scrollToElementById('next-section-prompt');
+    if (revealedSections.length < SECTION_ORDER.length) {
+      this._scrollToElementById('next-section-prompt');
+    } else {
+      this._scrollToElementById(`section-${revealedSections[revealedSections.length - 1]}`);
+    }
   }
 
   async _restoreSingleSection(sectionId, role) {
