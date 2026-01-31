@@ -10,8 +10,6 @@ const HEADER_ELEMENTS = {
   // Menu toggle and dropdown elements
   menuToggle: 'header-menu-toggle',
   dropdown: 'header-dropdown',
-  dropdownRoleBadge: 'dropdown-role-badge',
-  dropdownRoleText: 'dropdown-role-text',
   // Mobile nav elements
   mobileNavOverlay: 'mobile-nav-overlay',
   mobileNavClose: 'mobile-nav-close',
@@ -43,8 +41,6 @@ class HeaderController {
     // Menu toggle and dropdown elements
     this.menuToggle = null;
     this.dropdown = null;
-    this.dropdownRoleBadge = null;
-    this.dropdownRoleBadgeText = null;
     this.isMobile = false;
 
     // Mobile nav elements
@@ -72,8 +68,6 @@ class HeaderController {
     // Cache menu toggle and dropdown elements
     this.menuToggle = document.getElementById(HEADER_ELEMENTS.menuToggle);
     this.dropdown = document.getElementById(HEADER_ELEMENTS.dropdown);
-    this.dropdownRoleBadge = document.getElementById(HEADER_ELEMENTS.dropdownRoleBadge);
-    this.dropdownRoleBadgeText = document.getElementById(HEADER_ELEMENTS.dropdownRoleText);
 
     // Cache mobile nav elements
     this.mobileNavOverlay = document.getElementById(HEADER_ELEMENTS.mobileNavOverlay);
@@ -295,15 +289,6 @@ class HeaderController {
       });
     }
 
-    if (this.dropdownRoleBadge) {
-      this.dropdownRoleBadge.addEventListener('click', () => {
-        this._closeDropdown();
-        if (this.roleManager) {
-          this.roleManager.showChangeModal();
-        }
-      });
-    }
-
     if (this.mobileRoleBadge) {
       this.mobileRoleBadge.addEventListener('click', () => {
         this._closeMobileNav();
@@ -401,11 +386,6 @@ class HeaderController {
       } else {
         this.roleBadge.classList.remove('visible');
       }
-    }
-
-    // Update dropdown role badge
-    if (this.dropdownRoleBadgeText) {
-      this.dropdownRoleBadgeText.textContent = role ? roleText : viewLabel;
     }
 
     // Update mobile role badge

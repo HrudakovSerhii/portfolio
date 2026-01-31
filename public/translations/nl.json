@@ -15,7 +15,8 @@
     "friendView": "Voor vrienden",
     "moreStuff": "Meer",
     "theme": "Thema",
-    "title": "Navigatie"
+    "title": "Navigatie",
+    "roleHint": "Bekijk een ander verhaal!"
   },
   "intro": {
     "greeting": "Hallo, ik ben",

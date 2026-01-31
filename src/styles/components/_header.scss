@@ -198,10 +198,19 @@
 .header-role-badge {
   display: none;
   position: relative;
+  width: auto;
+  gap: variables.$spacing-xs;
+  padding: 0 variables.$spacing-sm;
 
-  @include mixins.tablet {
+  &.visible {
+    display: flex;
+  }
+
+  @include mixins.mobile {
+    display: none;
+
     &.visible {
-      display: flex;
+      display: none;
     }
   }
 
@@ -258,8 +267,7 @@
   color: inherit;
 }
 
-// Button with icon and text
-.header-role-badge,
+// Download button - hidden on mobile/tablet (shown in dropdown)
 .header-download-btn {
   width: auto;
   gap: variables.$spacing-xs;
@@ -270,7 +278,7 @@
   }
 
   @include mixins.tablet {
-    display: none !important;
+    display: none;
   }
 }
 

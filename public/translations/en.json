@@ -15,7 +15,8 @@
     "friendView": "Friend View",
     "moreStuff": "More cool stuff",
     "theme": "Theme",
-    "title": "Navigation"
+    "title": "Navigation",
+    "roleHint": "See a different story!"
   },
   "intro": {
     "greeting": "Hello, I'm",
