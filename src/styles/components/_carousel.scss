@@ -21,8 +21,8 @@
   &::after {
     content: '';
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: variables.$spacing-xs;
+    bottom: variables.$spacing-xs;
     width: var(--edge-fade-width);
     z-index: 2;
     pointer-events: none;
@@ -49,9 +49,28 @@
     transition: transform 300ms ease-in-out;
     will-change: transform;
     gap: variables.$spacing-xs;
+    padding-left: var(--carousel-edge-padding, 1rem);
+    padding-right: var(--carousel-edge-padding, 1rem);
 
     @include mixins.tablet {
       gap: variables.$spacing-sm;
+    }
+  }
+
+  // Mobile mode: enable native horizontal scroll
+  &--mobile {
+    overflow: visible;
+
+    .carousel__track {
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+
+      // Hide scrollbar but keep functionality
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
   }
 
@@ -59,7 +78,8 @@
     display: grid;
     flex-shrink: 0;
     margin: variables.$spacing-xs;
-    width: min(100%, 320px);
+    // Smaller width for very small screens
+    width: min(85vw, 300px);
 
     // Direct child stretches to fill item height
     > * {
@@ -72,10 +92,6 @@
 
     @include mixins.desktop {
       width: 380px;
-    }
-
-    &--clone {
-      pointer-events: none;
     }
   }
 
