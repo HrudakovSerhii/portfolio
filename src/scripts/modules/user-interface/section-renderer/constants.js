@@ -1,5 +1,6 @@
 export const SECTION_ELEMENTS = {
   section: 'section',
+  header: 'section__header',
   content: 'section__content',
   title: 'section__title',
   subTitle: 'section__subtitle',

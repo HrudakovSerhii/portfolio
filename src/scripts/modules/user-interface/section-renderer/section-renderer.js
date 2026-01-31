@@ -103,9 +103,9 @@ class SectionRenderer {
       this._populateHeader(sectionElement, sectionContent.header);
       this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
 
-      // Scroll to content element for stable reading position
-      const contentElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.content}`);
-      this._scrollToElement(contentElement || sectionElement, {
+      // Scroll to header element to ensure it's visible
+      const headerElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.header}`);
+      this._scrollToElement(headerElement || sectionElement, {
         behavior: 'smooth',
         block: 'start'
       });

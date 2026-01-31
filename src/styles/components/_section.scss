@@ -29,6 +29,11 @@
     gap: variables.$spacing-xs;
     text-align: start;
     width: 100%;
+    scroll-margin-top: calc(variables.$header-mobile-height + variables.$spacing-md);
+
+    @include mixins.desktop {
+      scroll-margin-top: calc(variables.$header-height + variables.$spacing-lg);
+    }
 
     &:empty {
       display: none;
