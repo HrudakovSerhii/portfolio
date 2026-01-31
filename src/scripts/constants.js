@@ -19,11 +19,14 @@ export const APP_CRITICAL_ELEMENT_IDS = {
     ownerName: 'owner-name',
     themeToggle: 'theme-toggle',
     mobileThemeToggle: 'mobile-theme-toggle',
-    dropdownThemeToggle: 'dropdown-theme-toggle',
-    dropdownLanguage: 'dropdown-language',
-    dropdownLanguageText: 'dropdown-language-text',
+    // Header language selector
+    headerLanguageToggle: 'header-language-toggle',
+    headerLanguageText: 'header-language-text',
+    headerLanguageDropdown: 'header-language-dropdown',
+    // Mobile language
     mobileLanguageToggle: 'mobile-language-toggle',
     mobileLanguageText: 'mobile-language-text',
+    mobileLanguageDropdown: 'mobile-language-dropdown',
     mainContent: 'main-content',
     introSection: 'intro-section',
     introSectionCTA: 'story-cta',

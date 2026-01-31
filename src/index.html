@@ -74,63 +74,78 @@
       </div>
 
       <div class="header-controls">
-        <a
-                id="header-download-btn"
-                class="header-button header-download-btn"
-                href="data/CV_Hrudakov_2026.pdf"
-                download
-                aria-label="Download resume"
-                title="Download resume">
-          <span class="material-symbols-outlined header-download-icon" aria-hidden="true">download</span>
-          <span class="header-download-text" data-i18n="nav.resume">Resume</span>
-        </a>
-
         <button
                 id="header-role-badge"
                 class="header-button header-role-badge"
-                aria-label="Change role"
-                title="Click to change role">
-          <span class="material-symbols-outlined header-role-icon" aria-hidden="true">person</span>
+                aria-label="Switch to a different story perspective"
+                data-tooltip-i18n="nav.roleHint">
+          <span class="material-symbols-outlined header-role-icon" aria-hidden="true">switch_account</span>
           <span class="header-role-text" id="header-role-text" data-i18n="nav.view">View</span>
-        </button>
-
-        <button
-                id="theme-toggle"
-                class="header-button header-theme-button"
-                aria-label="Toggle theme"
-                aria-pressed="false"
-                title="Toggle Theme"
-                data-theme="light">
-          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+          <span class="header-role-badge-tooltip" data-i18n="nav.roleHint">See a different story!</span>
         </button>
 
         <button
                 id="header-menu-toggle"
-                class="header-menu-toggle"
+                class="header-button header-menu-toggle"
                 aria-label="Open navigation menu"
                 aria-expanded="false"
                 aria-controls="header-dropdown mobile-nav-overlay">
-          <span aria-hidden="true" data-i18n="nav.moreStuff">More cool stuff</span>
-          <span class="material-symbols-outlined" aria-hidden="true">arrow_drop_down</span>
+          <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+          <span class="header-menu-tooltip" data-i18n="nav.moreStuff">More cool stuff</span>
         </button>
 
         <div id="header-dropdown" class="header-dropdown" role="menu" aria-hidden="true">
-          <a class="header-dropdown-item" href="data/CV_Hrudakov_2025.pdf" download role="menuitem">
+          <!-- Theme switch toggle -->
+          <div class="header-dropdown-row">
+            <span class="header-dropdown-label" data-i18n="nav.theme">Theme</span>
+            <button
+                    id="theme-toggle"
+                    class="theme-switch"
+                    aria-label="Toggle theme"
+                    aria-pressed="false"
+                    data-theme="light">
+              <span class="theme-switch__icon theme-switch__icon--light material-symbols-outlined" aria-hidden="true">light_mode</span>
+              <span class="theme-switch__icon theme-switch__icon--dark material-symbols-outlined" aria-hidden="true">dark_mode</span>
+              <span class="theme-switch__slider"></span>
+            </button>
+          </div>
+
+          <!-- Language selector -->
+          <div class="header-dropdown-row header-dropdown-row--language">
+            <span class="header-dropdown-label" data-i18n="nav.language">Language</span>
+            <div class="header-language-selector">
+              <button
+                      id="header-language-toggle"
+                      class="header-language-toggle"
+                      aria-label="Change language"
+                      aria-expanded="false"
+                      aria-controls="header-language-dropdown">
+                <span class="header-language-text" id="header-language-text">EN</span>
+                <span class="material-symbols-outlined header-language-chevron" aria-hidden="true">expand_more</span>
+              </button>
+              <div id="header-language-dropdown" class="header-language-dropdown" role="menu" aria-hidden="true">
+                <button class="header-language-option" data-lang="en" role="menuitem">
+                  <span class="header-language-option-text">English</span>
+                  <span class="header-language-option-code">EN</span>
+                </button>
+                <button class="header-language-option" data-lang="nl" role="menuitem">
+                  <span class="header-language-option-text">Nederlands</span>
+                  <span class="header-language-option-code">NL</span>
+                </button>
+                <button class="header-language-option" data-lang="ua" role="menuitem">
+                  <span class="header-language-option-text">Українська</span>
+                  <span class="header-language-option-code">UA</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="header-dropdown-divider"></div>
+
+          <a class="header-dropdown-item" href="data/CV_Hrudakov_2026.pdf" download="CV_Hrudakov_2026" role="menuitem">
             <span class="material-symbols-outlined">download</span>
             <span class="header-dropdown-text" data-i18n="nav.resume">Resume</span>
           </a>
-          <button id="dropdown-role-badge" class="header-dropdown-item" role="menuitem">
-            <span class="material-symbols-outlined">person</span>
-            <span class="header-dropdown-text" id="dropdown-role-text" data-i18n="nav.view">View</span>
-          </button>
-          <button id="dropdown-theme-toggle" class="header-dropdown-item" role="menuitem" data-theme="light">
-            <span class="material-symbols-outlined">dark_mode</span>
-            <span class="header-dropdown-text" data-i18n="nav.theme">Theme</span>
-          </button>
-          <button id="dropdown-language" class="header-dropdown-item" role="menuitem">
-            <span class="material-symbols-outlined">language</span>
-            <span class="header-dropdown-text" id="dropdown-language-text">EN</span>
-          </button>
         </div>
       </div>
     </div>
@@ -142,10 +157,9 @@
         <a
           id="mobile-download-btn"
           class="mobile-nav-control-btn"
-          href="data/CV_Hrudakov_2025.pdf"
-          download
-          aria-label="Download resume"
-          title="Download resume">
+          href="data/CV_Hrudakov_2026.pdf"
+          download="CV_Hrudakov_2026"
+          aria-label="Download resume">
           <span class="material-symbols-outlined" aria-hidden="true">download</span>
           <span class="mobile-nav-control-text" data-i18n="nav.resume">Resume</span>
         </a>
@@ -153,9 +167,8 @@
         <button
           id="mobile-role-badge"
           class="mobile-nav-control-btn"
-          aria-label="Change role"
-          title="Click to change role">
-          <span class="material-symbols-outlined" aria-hidden="true">person</span>
+          aria-label="Switch to a different story perspective">
+          <span class="material-symbols-outlined" aria-hidden="true">switch_account</span>
           <span class="mobile-nav-control-text" id="mobile-role-text" data-i18n="nav.view">View</span>
         </button>
 
@@ -164,20 +177,37 @@
           class="mobile-nav-control-btn"
           aria-label="Toggle theme"
           aria-pressed="false"
-          title="Toggle Theme"
           data-theme="light">
           <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
           <span class="mobile-nav-control-text" data-i18n="nav.theme">Theme</span>
         </button>
 
-        <button
-          id="mobile-language-toggle"
-          class="mobile-nav-control-btn"
-          aria-label="Change language"
-          title="Change language">
-          <span class="material-symbols-outlined" aria-hidden="true">language</span>
-          <span class="mobile-nav-control-text" id="mobile-language-text">EN</span>
-        </button>
+        <div class="mobile-nav-control-btn mobile-language-wrapper">
+          <button
+            id="mobile-language-toggle"
+            class="mobile-language-toggle"
+            aria-label="Change language"
+            aria-expanded="false"
+            aria-controls="mobile-language-dropdown">
+            <span class="material-symbols-outlined" aria-hidden="true">language</span>
+            <span class="mobile-nav-control-text" id="mobile-language-text">EN</span>
+            <span class="material-symbols-outlined mobile-language-chevron" aria-hidden="true">expand_more</span>
+          </button>
+          <div id="mobile-language-dropdown" class="mobile-language-dropdown" role="menu" aria-hidden="true">
+            <button class="mobile-language-option" data-lang="en" role="menuitem">
+              <span class="mobile-language-option-text">English</span>
+              <span class="mobile-language-option-code">EN</span>
+            </button>
+            <button class="mobile-language-option" data-lang="nl" role="menuitem">
+              <span class="mobile-language-option-text">Nederlands</span>
+              <span class="mobile-language-option-code">NL</span>
+            </button>
+            <button class="mobile-language-option" data-lang="ua" role="menuitem">
+              <span class="mobile-language-option-text">Українська</span>
+              <span class="mobile-language-option-code">UA</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="mobile-nav-header">
@@ -221,8 +251,8 @@
         <div class="section__content-cv">
           <a
                   class="button cv-download-btn"
-                  href="data/CV_Hrudakov_2025.pdf"
-                  download
+                  href="data/CV_Hrudakov_2026.pdf"
+                  download="CV_Hrudakov_2026"
                   aria-label="Download Serhii CV"
                   title="Download resume">
             <span class="material-symbols-outlined" aria-hidden="true">download</span>
@@ -239,7 +269,7 @@
         Scroll down to read more
       </p>
 
-      <div id="story-cta" class="story" aria-hidden="true">
+      <div id="story-cta" class="story">
         <p class="story__title">
           <span data-i18n="story.title">Read one of a three-story I made to explore not only my relevant profile information, but also my personal side. Side that important when you work with</span> <span class="text-gradient"><b data-i18n="story.people">People</b></span>
         </p>
