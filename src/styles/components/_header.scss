@@ -59,8 +59,17 @@
 }
 
 .header-brand-link {
+  display: flex;
+  align-items: center;
+  gap: variables.$spacing-sm;
   text-decoration: none;
   color: inherit;
+
+
+  @include mixins.mobile-max {
+    width: 2.5rem;
+    justify-content: right;
+  }
 
   &:hover {
     opacity: 0.9;
