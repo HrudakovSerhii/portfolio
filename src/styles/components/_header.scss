@@ -175,7 +175,7 @@
   color: inherit;
 
 
-  @include mixins.mobile-max {
+  @include mixins.mobile {
     width: 2.5rem;
     justify-content: right;
   }
