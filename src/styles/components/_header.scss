@@ -297,6 +297,90 @@
   font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
 }
 
+// Language selector with dropdown
+.header-language-wrapper {
+  position: relative;
+
+  @include mixins.mobile {
+    display: none;
+  }
+}
+
+.header-language-button {
+  width: auto;
+  gap: variables.$spacing-xs;
+  padding: 0 variables.$spacing-sm;
+  cursor: pointer;
+}
+
+.header-language-text {
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  font-weight: variables.$font-weight-medium;
+}
+
+.header-language-dropdown {
+  position: absolute;
+  top: calc(100% + variables.$spacing-xs);
+  right: 0;
+  min-width: 140px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-lg;
+  box-shadow: var(--shadow-lg);
+  z-index: variables.$z-header + 1;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transform: translateY(-8px);
+  transition: opacity variables.$transition-base, visibility variables.$transition-base, transform variables.$transition-base;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.header-language-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  transition: background-color variables.$transition-base, color variables.$transition-base;
+
+  &:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  &.is-active {
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    font-weight: variables.$font-weight-medium;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}
+
+.header-language-option-text {
+  flex: 1;
+  text-align: left;
+}
+
+.header-language-option-code {
+  font-weight: variables.$font-weight-medium;
+  opacity: 0.7;
+}
+
 // Dropdown menu for desktop
 .header-dropdown {
   position: absolute;

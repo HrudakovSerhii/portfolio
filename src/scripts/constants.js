@@ -19,6 +19,11 @@ export const APP_CRITICAL_ELEMENT_IDS = {
     ownerName: 'owner-name',
     themeToggle: 'theme-toggle',
     mobileThemeToggle: 'mobile-theme-toggle',
+    // Header language selector
+    headerLanguageToggle: 'header-language-toggle',
+    headerLanguageText: 'header-language-text',
+    headerLanguageDropdown: 'header-language-dropdown',
+    // Dropdown and mobile language
     dropdownLanguage: 'dropdown-language',
     dropdownLanguageText: 'dropdown-language-text',
     mobileLanguageToggle: 'mobile-language-toggle',

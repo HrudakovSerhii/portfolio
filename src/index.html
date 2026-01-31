@@ -104,6 +104,32 @@
           <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
         </button>
 
+        <div class="header-language-wrapper">
+          <button
+                  id="header-language-toggle"
+                  class="header-button header-language-button"
+                  aria-label="Change language"
+                  aria-expanded="false"
+                  aria-controls="header-language-dropdown">
+            <span class="material-symbols-outlined" aria-hidden="true">language</span>
+            <span class="header-language-text" id="header-language-text">EN</span>
+          </button>
+          <div id="header-language-dropdown" class="header-language-dropdown" role="menu" aria-hidden="true">
+            <button class="header-language-option" data-lang="en" role="menuitem">
+              <span class="header-language-option-text">English</span>
+              <span class="header-language-option-code">EN</span>
+            </button>
+            <button class="header-language-option" data-lang="nl" role="menuitem">
+              <span class="header-language-option-text">Nederlands</span>
+              <span class="header-language-option-code">NL</span>
+            </button>
+            <button class="header-language-option" data-lang="ua" role="menuitem">
+              <span class="header-language-option-text">Українська</span>
+              <span class="header-language-option-code">UA</span>
+            </button>
+          </div>
+        </div>
+
         <button
                 id="header-menu-toggle"
                 class="header-menu-toggle"
