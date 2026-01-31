@@ -56,9 +56,10 @@ class HeaderController {
     this._handleClickOutside = this._handleClickOutside.bind(this);
   }
 
-  initialize(ownerNameElement, roleManager) {
+  initialize(ownerNameElement, roleManager, { onMenuToggleClick } = {}) {
     this.roleManager = roleManager;
     this.ownerName = ownerNameElement;
+    this.onMenuToggleClick = onMenuToggleClick;
     // this.languageSelector = languageSelectorElement;
     this.headerNav = document.getElementById(HEADER_ELEMENTS.nav);
     this.navIndicator = document.getElementById(HEADER_ELEMENTS.indicator);
@@ -118,6 +119,10 @@ class HeaderController {
     if (!this.menuToggle) return;
 
     this.menuToggle.addEventListener('click', () => {
+      if (this.onMenuToggleClick) {
+        this.onMenuToggleClick();
+      }
+
       if (this.isMobile) {
         this._openMobileNav();
       } else {

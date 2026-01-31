@@ -74,17 +74,6 @@
       </div>
 
       <div class="header-controls">
-        <a
-                id="header-download-btn"
-                class="header-button header-download-btn"
-                href="data/CV_Hrudakov_2026.pdf"
-                download="CV_Hrudakov_2026"
-                aria-label="Download resume"
-                title="Download resume">
-          <span class="material-symbols-outlined header-download-icon" aria-hidden="true">download</span>
-          <span class="header-download-text" data-i18n="nav.resume">Resume</span>
-        </a>
-
         <button
                 id="header-role-badge"
                 class="header-button header-role-badge"
@@ -94,42 +83,6 @@
           <span class="header-role-text" id="header-role-text" data-i18n="nav.view">View</span>
           <span class="header-role-badge-tooltip" data-i18n="nav.roleHint">See a different story!</span>
         </button>
-
-        <button
-                id="theme-toggle"
-                class="header-button header-theme-button"
-                aria-label="Toggle theme"
-                aria-pressed="false"
-                title="Toggle Theme"
-                data-theme="light">
-          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
-        </button>
-
-        <div class="header-language-wrapper">
-          <button
-                  id="header-language-toggle"
-                  class="header-button header-language-button"
-                  aria-label="Change language"
-                  aria-expanded="false"
-                  aria-controls="header-language-dropdown">
-            <span class="material-symbols-outlined" aria-hidden="true">language</span>
-            <span class="header-language-text" id="header-language-text">EN</span>
-          </button>
-          <div id="header-language-dropdown" class="header-language-dropdown" role="menu" aria-hidden="true">
-            <button class="header-language-option" data-lang="en" role="menuitem">
-              <span class="header-language-option-text">English</span>
-              <span class="header-language-option-code">EN</span>
-            </button>
-            <button class="header-language-option" data-lang="nl" role="menuitem">
-              <span class="header-language-option-text">Nederlands</span>
-              <span class="header-language-option-code">NL</span>
-            </button>
-            <button class="header-language-option" data-lang="ua" role="menuitem">
-              <span class="header-language-option-text">Українська</span>
-              <span class="header-language-option-code">UA</span>
-            </button>
-          </div>
-        </div>
 
         <button
                 id="header-menu-toggle"
@@ -142,6 +95,53 @@
         </button>
 
         <div id="header-dropdown" class="header-dropdown" role="menu" aria-hidden="true">
+          <!-- Theme switch toggle -->
+          <div class="header-dropdown-row">
+            <span class="header-dropdown-label" data-i18n="nav.theme">Theme</span>
+            <button
+                    id="theme-toggle"
+                    class="theme-switch"
+                    aria-label="Toggle theme"
+                    aria-pressed="false"
+                    data-theme="light">
+              <span class="theme-switch__icon theme-switch__icon--light material-symbols-outlined" aria-hidden="true">light_mode</span>
+              <span class="theme-switch__icon theme-switch__icon--dark material-symbols-outlined" aria-hidden="true">dark_mode</span>
+              <span class="theme-switch__slider"></span>
+            </button>
+          </div>
+
+          <!-- Language selector -->
+          <div class="header-dropdown-row header-dropdown-row--language">
+            <span class="header-dropdown-label" data-i18n="nav.language">Language</span>
+            <div class="header-language-selector">
+              <button
+                      id="header-language-toggle"
+                      class="header-language-toggle"
+                      aria-label="Change language"
+                      aria-expanded="false"
+                      aria-controls="header-language-dropdown">
+                <span class="header-language-text" id="header-language-text">EN</span>
+                <span class="material-symbols-outlined header-language-chevron" aria-hidden="true">expand_more</span>
+              </button>
+              <div id="header-language-dropdown" class="header-language-dropdown" role="menu" aria-hidden="true">
+                <button class="header-language-option" data-lang="en" role="menuitem">
+                  <span class="header-language-option-text">English</span>
+                  <span class="header-language-option-code">EN</span>
+                </button>
+                <button class="header-language-option" data-lang="nl" role="menuitem">
+                  <span class="header-language-option-text">Nederlands</span>
+                  <span class="header-language-option-code">NL</span>
+                </button>
+                <button class="header-language-option" data-lang="ua" role="menuitem">
+                  <span class="header-language-option-text">Українська</span>
+                  <span class="header-language-option-code">UA</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="header-dropdown-divider"></div>
+
           <a class="header-dropdown-item" href="data/CV_Hrudakov_2026.pdf" download="CV_Hrudakov_2026" role="menuitem">
             <span class="material-symbols-outlined">download</span>
             <span class="header-dropdown-text" data-i18n="nav.resume">Resume</span>
@@ -159,8 +159,7 @@
           class="mobile-nav-control-btn"
           href="data/CV_Hrudakov_2026.pdf"
           download="CV_Hrudakov_2026"
-          aria-label="Download resume"
-          title="Download resume">
+          aria-label="Download resume">
           <span class="material-symbols-outlined" aria-hidden="true">download</span>
           <span class="mobile-nav-control-text" data-i18n="nav.resume">Resume</span>
         </a>
@@ -168,8 +167,7 @@
         <button
           id="mobile-role-badge"
           class="mobile-nav-control-btn"
-          aria-label="Switch to a different story perspective"
-          title="See a different story!">
+          aria-label="Switch to a different story perspective">
           <span class="material-symbols-outlined" aria-hidden="true">switch_account</span>
           <span class="mobile-nav-control-text" id="mobile-role-text" data-i18n="nav.view">View</span>
         </button>
@@ -179,20 +177,37 @@
           class="mobile-nav-control-btn"
           aria-label="Toggle theme"
           aria-pressed="false"
-          title="Toggle Theme"
           data-theme="light">
           <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
           <span class="mobile-nav-control-text" data-i18n="nav.theme">Theme</span>
         </button>
 
-        <button
-          id="mobile-language-toggle"
-          class="mobile-nav-control-btn"
-          aria-label="Change language"
-          title="Change language">
-          <span class="material-symbols-outlined" aria-hidden="true">language</span>
-          <span class="mobile-nav-control-text" id="mobile-language-text">EN</span>
-        </button>
+        <div class="mobile-nav-control-btn mobile-language-wrapper">
+          <button
+            id="mobile-language-toggle"
+            class="mobile-language-toggle"
+            aria-label="Change language"
+            aria-expanded="false"
+            aria-controls="mobile-language-dropdown">
+            <span class="material-symbols-outlined" aria-hidden="true">language</span>
+            <span class="mobile-nav-control-text" id="mobile-language-text">EN</span>
+            <span class="material-symbols-outlined mobile-language-chevron" aria-hidden="true">expand_more</span>
+          </button>
+          <div id="mobile-language-dropdown" class="mobile-language-dropdown" role="menu" aria-hidden="true">
+            <button class="mobile-language-option" data-lang="en" role="menuitem">
+              <span class="mobile-language-option-text">English</span>
+              <span class="mobile-language-option-code">EN</span>
+            </button>
+            <button class="mobile-language-option" data-lang="nl" role="menuitem">
+              <span class="mobile-language-option-text">Nederlands</span>
+              <span class="mobile-language-option-code">NL</span>
+            </button>
+            <button class="mobile-language-option" data-lang="ua" role="menuitem">
+              <span class="mobile-language-option-text">Українська</span>
+              <span class="mobile-language-option-code">UA</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="mobile-nav-header">

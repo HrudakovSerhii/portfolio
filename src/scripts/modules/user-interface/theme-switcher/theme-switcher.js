@@ -37,7 +37,7 @@ class ThemeSwitcher {
     toggleElement.setAttribute('data-theme', theme);
     toggleElement.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
 
-    const icon = toggleElement.querySelector('.material-symbols-outlined');
+    const icon = toggleElement.querySelector('.material-symbols-outlined:not(.theme-switch__icon--light):not(.theme-switch__icon--dark)');
     if (icon) {
       icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
     }

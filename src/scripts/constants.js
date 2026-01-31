@@ -26,6 +26,7 @@ export const APP_CRITICAL_ELEMENT_IDS = {
     // Mobile language
     mobileLanguageToggle: 'mobile-language-toggle',
     mobileLanguageText: 'mobile-language-text',
+    mobileLanguageDropdown: 'mobile-language-dropdown',
     mainContent: 'main-content',
     introSection: 'intro-section',
     introSectionCTA: 'story-cta',
