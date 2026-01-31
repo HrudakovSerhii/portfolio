@@ -194,9 +194,10 @@
 
     .story {
       display: flex;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
       width: 100%;
-      flex-wrap: wrap;
       gap: variables.$spacing-md;
 
       @include mixins.tablet {
@@ -370,6 +371,22 @@
       width: 100%;
       flex-wrap: wrap;
       gap: variables.$spacing-xs;
+    }
+
+    .section__meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: variables.$spacing-md;
+
+      @include mixins.tablet {
+        margin: 0 auto;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @include mixins.desktop {
+        margin: 0 auto;
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
   }
 

@@ -644,7 +644,7 @@
             "subtitle": "contact.cv.subtitle",
             "icon": "resume",
             "href": "data/CV_Hrudakov_2026.pdf",
-            "download": true
+            "download": "CV_Hrudakov_2026"
           }
         ]
       },

@@ -127,6 +127,10 @@ class StateManager {
     return this.state.role !== null;
   }
 
+  hasRevealedSections() {
+    return this.state.revealedSections.length > 0;
+  }
+
   hasRevealedAllSections() {
     return this.state.revealedSections.length === SECTION_ORDER.length;
   }
