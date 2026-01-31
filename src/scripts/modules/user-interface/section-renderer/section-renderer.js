@@ -103,12 +103,13 @@ class SectionRenderer {
         block: 'end'
       });
 
+      this.stateManager.addRevealedSection(sectionId);
+
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
       this._revealMetaItems(sectionElement);
 
-      this.stateManager.addRevealedSection(sectionId);
       trackSectionView(sectionId);
 
       this._updateActionPrompt();
@@ -144,7 +145,11 @@ class SectionRenderer {
   removeRevealedSections() {
     const sections = this.sectionsContainer.querySelectorAll(`.${SECTION_ELEMENTS.section}`);
 
-    sections.forEach(section => section.remove());
+    sections.forEach(section => {
+      if (!section.classList.contains('section--intro')) {
+        section.remove()
+      }
+    });
   }
 
   async updateContent(sectionId, role) {

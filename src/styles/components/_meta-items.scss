@@ -17,12 +17,6 @@
   font-size: variables.$font-size-sm;
   font-weight: variables.$font-weight-medium;
   color: var(--color-text-secondary);
-  transition: all variables.$transition-fast;
-
-  &:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
-  }
 }
 
 .meta-link {

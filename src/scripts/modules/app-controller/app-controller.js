@@ -44,14 +44,19 @@ class AppController {
       ownerName: null,
       themeToggle: null,
       mobileThemeToggle: null,
-      dropdownThemeToggle: null,
-      dropdownLanguage: null,
-      dropdownLanguageText: null,
+      // Header language selector
+      headerLanguageToggle: null,
+      headerLanguageText: null,
+      headerLanguageDropdown: null,
+      // Mobile language
       mobileLanguageToggle: null,
       mobileLanguageText: null,
+      mobileLanguageDropdown: null,
       mainContent: null,
       introSection: null,
     };
+
+    this._handleLanguageDropdownClickOutside = this._handleLanguageDropdownClickOutside.bind(this);
 
     this.initialized = false;
   }
@@ -81,13 +86,14 @@ class AppController {
 
       this._setupEventListeners();
 
-      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle, this.elements.dropdownThemeToggle);
+      this.themeSwitcher.initialize(this.elements.themeToggle, this.elements.mobileThemeToggle);
 
       this.roleManager.onRoleSelect((role, isRoleChange) => this.handleRoleSelect(role, isRoleChange));
 
       this.headerController.initialize(
         this.elements.ownerName,
-        this.roleManager
+        this.roleManager,
+        { onMenuToggleClick: () => this._closeLanguageDropdown() }
       );
 
       this.parallaxController.init();
@@ -110,7 +116,7 @@ class AppController {
   async loadAppState() {
     await this._loadUserProfile();
 
-    if (this.stateManager.hasCompletedPersonalization()) {
+    if (this.stateManager.hasCompletedPersonalization() && this.stateManager.hasRevealedSections()) {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
@@ -125,11 +131,14 @@ class AppController {
     this.elements.ownerName = document.getElementById(APP_CRITICAL_ELEMENT_IDS.ownerName);
     this.elements.themeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.themeToggle);
     this.elements.mobileThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileThemeToggle);
-    this.elements.dropdownThemeToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownThemeToggle);
-    this.elements.dropdownLanguage = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguage);
-    this.elements.dropdownLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguageText);
+    // Header language selector
+    this.elements.headerLanguageToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.headerLanguageToggle);
+    this.elements.headerLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.headerLanguageText);
+    this.elements.headerLanguageDropdown = document.getElementById(APP_CRITICAL_ELEMENT_IDS.headerLanguageDropdown);
+    // Mobile language
     this.elements.mobileLanguageToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageToggle);
     this.elements.mobileLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageText);
+    this.elements.mobileLanguageDropdown = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageDropdown);
     this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
     this.elements.introSectionCTA = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSectionCTA);
@@ -154,21 +163,52 @@ class AppController {
       });
     }
 
-    if (this.elements.dropdownThemeToggle) {
-      this.elements.dropdownThemeToggle.addEventListener('click', () => {
-        this.themeSwitcher.toggle();
+    // Header language dropdown toggle
+    if (this.elements.headerLanguageToggle) {
+      this.elements.headerLanguageToggle.addEventListener('click', () => {
+        this._toggleLanguageDropdown();
+      });
+
+      // Click outside to close
+      document.addEventListener('click', this._handleLanguageDropdownClickOutside);
+
+      // Close on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.elements.headerLanguageDropdown?.classList.contains('is-open')) {
+          this._closeLanguageDropdown();
+        }
       });
     }
 
-    if (this.elements.dropdownLanguage) {
-      this.elements.dropdownLanguage.addEventListener('click', () => {
-        this._cycleLanguage();
+    // Header language options
+    if (this.elements.headerLanguageDropdown) {
+      this.elements.headerLanguageDropdown.querySelectorAll('.header-language-option').forEach(option => {
+        option.addEventListener('click', async () => {
+          const lang = option.getAttribute('data-lang');
+          if (lang) {
+            await this._switchLanguage(lang);
+            this._closeLanguageDropdown();
+          }
+        });
       });
     }
 
     if (this.elements.mobileLanguageToggle) {
-      this.elements.mobileLanguageToggle.addEventListener('click', () => {
-        this._cycleLanguage();
+      this.elements.mobileLanguageToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggleMobileLanguageDropdown();
+      });
+    }
+
+    if (this.elements.mobileLanguageDropdown) {
+      this.elements.mobileLanguageDropdown.querySelectorAll('.mobile-language-option').forEach(option => {
+        option.addEventListener('click', async () => {
+          const lang = option.getAttribute('data-lang');
+          if (lang) {
+            await this._switchLanguage(lang);
+            this._closeMobileLanguageDropdown();
+          }
+        });
       });
     }
 
@@ -186,12 +226,68 @@ class AppController {
     initCVDownloadTracking();
   }
 
-  async _cycleLanguage() {
-    const current = this.stateManager.getLanguage();
-    const currentIndex = SUPPORTED_LANGUAGES.indexOf(current);
-    const next = SUPPORTED_LANGUAGES[(currentIndex + 1) % SUPPORTED_LANGUAGES.length];
+  _toggleLanguageDropdown() {
+    if (this.elements.headerLanguageDropdown?.classList.contains('is-open')) {
+      this._closeLanguageDropdown();
+    } else {
+      this._openLanguageDropdown();
+    }
+  }
 
-    await this._switchLanguage(next);
+  _openLanguageDropdown() {
+    if (!this.elements.headerLanguageDropdown || !this.elements.headerLanguageToggle) return;
+
+    this.elements.headerLanguageDropdown.classList.add('is-open');
+    this.elements.headerLanguageDropdown.setAttribute('aria-hidden', 'false');
+    this.elements.headerLanguageToggle.setAttribute('aria-expanded', 'true');
+  }
+
+  _closeLanguageDropdown() {
+    if (!this.elements.headerLanguageDropdown || !this.elements.headerLanguageToggle) return;
+
+    this.elements.headerLanguageDropdown.classList.remove('is-open');
+    this.elements.headerLanguageDropdown.setAttribute('aria-hidden', 'true');
+    this.elements.headerLanguageToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  _handleLanguageDropdownClickOutside(e) {
+    if (!this.elements.headerLanguageDropdown || !this.elements.headerLanguageToggle) return;
+
+    const wrapper = this.elements.headerLanguageToggle.parentElement;
+    if (wrapper && !wrapper.contains(e.target) && this.elements.headerLanguageDropdown.classList.contains('is-open')) {
+      this._closeLanguageDropdown();
+    }
+
+    if (this.elements.mobileLanguageDropdown && this.elements.mobileLanguageToggle) {
+      const mobileWrapper = this.elements.mobileLanguageToggle.parentElement;
+      if (mobileWrapper && !mobileWrapper.contains(e.target) && this.elements.mobileLanguageDropdown.classList.contains('is-open')) {
+        this._closeMobileLanguageDropdown();
+      }
+    }
+  }
+
+  _toggleMobileLanguageDropdown() {
+    if (this.elements.mobileLanguageDropdown?.classList.contains('is-open')) {
+      this._closeMobileLanguageDropdown();
+    } else {
+      this._openMobileLanguageDropdown();
+    }
+  }
+
+  _openMobileLanguageDropdown() {
+    if (!this.elements.mobileLanguageDropdown || !this.elements.mobileLanguageToggle) return;
+
+    this.elements.mobileLanguageDropdown.classList.add('is-open');
+    this.elements.mobileLanguageDropdown.setAttribute('aria-hidden', 'false');
+    this.elements.mobileLanguageToggle.setAttribute('aria-expanded', 'true');
+  }
+
+  _closeMobileLanguageDropdown() {
+    if (!this.elements.mobileLanguageDropdown || !this.elements.mobileLanguageToggle) return;
+
+    this.elements.mobileLanguageDropdown.classList.remove('is-open');
+    this.elements.mobileLanguageDropdown.setAttribute('aria-hidden', 'true');
+    this.elements.mobileLanguageToggle.setAttribute('aria-expanded', 'false');
   }
 
   async _switchLanguage(language) {
@@ -213,12 +309,28 @@ class AppController {
   _updateLanguageLabels(language) {
     const label = LANGUAGE_LABELS[language] || language.toUpperCase();
 
-    if (this.elements.dropdownLanguageText) {
-      this.elements.dropdownLanguageText.textContent = label;
+    // Update header language text
+    if (this.elements.headerLanguageText) {
+      this.elements.headerLanguageText.textContent = label;
+    }
+
+    // Update active state in header language dropdown
+    if (this.elements.headerLanguageDropdown) {
+      this.elements.headerLanguageDropdown.querySelectorAll('.header-language-option').forEach(option => {
+        const optionLang = option.getAttribute('data-lang');
+        option.classList.toggle('is-active', optionLang === language);
+      });
     }
 
     if (this.elements.mobileLanguageText) {
       this.elements.mobileLanguageText.textContent = label;
+    }
+
+    if (this.elements.mobileLanguageDropdown) {
+      this.elements.mobileLanguageDropdown.querySelectorAll('.mobile-language-option').forEach(option => {
+        const optionLang = option.getAttribute('data-lang');
+        option.classList.toggle('is-active', optionLang === language);
+      });
     }
   }
 
