@@ -5,7 +5,6 @@ class Carousel {
     this.options = {
       itemsPerView: options.itemsPerView || 'auto',
       gap: options.gap || 16,
-      loop: options.loop !== false,
       navigation: options.navigation !== false,
       swipeThreshold: options.swipeThreshold || 50,
       ...options
@@ -17,7 +16,7 @@ class Carousel {
     this.nextButton = null;
     this.navContainer = null;
 
-    // Touch/swipe state
+    // Touch/swipe state (desktop only)
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.touchCurrentX = 0;
@@ -29,6 +28,10 @@ class Carousel {
     this._handleTouchMove = this._handleTouchMove.bind(this);
     this._handleTouchEnd = this._handleTouchEnd.bind(this);
     this._handleResize = this._handleResize.bind(this);
+  }
+
+  _isMobile() {
+    return window.innerWidth < 1024;
   }
 
   render() {
@@ -44,10 +47,6 @@ class Carousel {
       this.track.appendChild(wrapper);
     });
 
-    if (this.options.loop && this.items.length > 1) {
-      this._setupInfiniteLoop();
-    }
-
     this.container.appendChild(this.track);
 
     if (this.options.navigation) {
@@ -58,32 +57,23 @@ class Carousel {
     this._setupResizeListener();
 
     requestAnimationFrame(() => {
-      this._updatePosition(false);
+      this._updateMode();
       this._updateNavigation();
       this._updateNavigationVisibility();
     });
   }
 
-  _setupInfiniteLoop() {
-    const firstClones = this.items.slice(0, 3).map(item => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'carousel__item carousel__item--clone';
-      wrapper.appendChild(item.cloneNode(true));
-      return wrapper;
-    });
-
-    const lastClones = this.items.slice(-3).map(item => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'carousel__item carousel__item--clone';
-      wrapper.appendChild(item.cloneNode(true));
-      return wrapper;
-    });
-
-    lastClones.reverse().forEach(clone => this.track.insertBefore(clone, this.track.firstChild));
-    firstClones.forEach(clone => this.track.appendChild(clone));
-
-    this.currentIndex = 3;
-    this._updatePosition(false);
+  _updateMode() {
+    if (this._isMobile()) {
+      // Mobile: enable native scroll
+      this.track.style.transform = '';
+      this.track.style.transition = '';
+      this.container.classList.add('carousel--mobile');
+    } else {
+      // Desktop: use transform-based positioning
+      this.container.classList.remove('carousel--mobile');
+      this._updatePosition(false);
+    }
   }
 
   _createNavigationButtons() {
@@ -108,45 +98,34 @@ class Carousel {
   }
 
   next() {
+    if (this.currentIndex >= this.items.length - 1) return;
+
     this.currentIndex++;
     this._updatePosition();
-
-    if (this.options.loop && this.currentIndex > this.items.length + 2) {
-      setTimeout(() => {
-        this.currentIndex = 3;
-        this._updatePosition(false);
-      }, 300);
-    }
-
     this._updateNavigation();
   }
 
   prev() {
+    if (this.currentIndex <= 0) return;
+
     this.currentIndex--;
     this._updatePosition();
-
-    if (this.options.loop && this.currentIndex < 3) {
-      setTimeout(() => {
-        this.currentIndex = this.items.length + 2;
-        this._updatePosition(false);
-      }, 300);
-    }
-
     this._updateNavigation();
   }
 
   _updatePosition(animate = true) {
+    if (this._isMobile()) return;
+
     const firstItem = this.track.querySelector('.carousel__item');
     if (!firstItem) return;
 
-    const containerWidth = this.container.offsetWidth;
     const itemWidth = firstItem.offsetWidth;
     const gap = parseFloat(getComputedStyle(this.track).gap) || 0;
     const totalItemWidth = itemWidth + gap;
 
-    // Center the active card in the viewport
-    const centerOffset = (containerWidth - itemWidth) / 2;
-    const offset = centerOffset - (this.currentIndex * totalItemWidth);
+    // Align first item to left edge with padding
+    const edgePadding = 16; // 1rem
+    const offset = edgePadding - (this.currentIndex * totalItemWidth);
 
     if (animate) {
       this.track.style.transition = 'transform 300ms ease-in-out';
@@ -160,13 +139,13 @@ class Carousel {
   _updateNavigation() {
     if (!this.options.navigation) return;
 
-    if (!this.options.loop) {
-      this.prevButton.disabled = this.currentIndex === 0;
-      this.nextButton.disabled = this.currentIndex >= this.items.length - 1;
-    }
+    this.prevButton.disabled = this.currentIndex === 0;
+    this.nextButton.disabled = this.currentIndex >= this.items.length - 1;
   }
 
   _setupTouchEvents() {
+    // Only set up touch events for desktop swipe navigation
+    // Mobile uses native scroll
     this.track.addEventListener('touchstart', this._handleTouchStart, { passive: true });
     this.track.addEventListener('touchmove', this._handleTouchMove, { passive: false });
     this.track.addEventListener('touchend', this._handleTouchEnd);
@@ -174,6 +153,9 @@ class Carousel {
   }
 
   _handleTouchStart(e) {
+    // On mobile, let native scroll handle touch
+    if (this._isMobile()) return;
+
     this.isDragging = true;
     this.touchStartX = e.touches[0].clientX;
     this.touchStartY = e.touches[0].clientY;
@@ -192,6 +174,8 @@ class Carousel {
   }
 
   _handleTouchMove(e) {
+    // On mobile, let native scroll handle touch
+    if (this._isMobile()) return;
     if (!this.isDragging) return;
 
     this.touchCurrentX = e.touches[0].clientX;
@@ -213,6 +197,8 @@ class Carousel {
   }
 
   _handleTouchEnd() {
+    // On mobile, let native scroll handle touch
+    if (this._isMobile()) return;
     if (!this.isDragging) return;
 
     this.isDragging = false;
@@ -235,7 +221,8 @@ class Carousel {
   }
 
   _handleResize() {
-    this._updatePosition(false);
+    this._updateMode();
+    this._updateNavigation();
     this._updateNavigationVisibility();
   }
 
