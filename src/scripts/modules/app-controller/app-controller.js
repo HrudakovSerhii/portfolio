@@ -48,9 +48,7 @@ class AppController {
       headerLanguageToggle: null,
       headerLanguageText: null,
       headerLanguageDropdown: null,
-      // Dropdown and mobile language
-      dropdownLanguage: null,
-      dropdownLanguageText: null,
+      // Mobile language
       mobileLanguageToggle: null,
       mobileLanguageText: null,
       mainContent: null,
@@ -135,9 +133,7 @@ class AppController {
     this.elements.headerLanguageToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.headerLanguageToggle);
     this.elements.headerLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.headerLanguageText);
     this.elements.headerLanguageDropdown = document.getElementById(APP_CRITICAL_ELEMENT_IDS.headerLanguageDropdown);
-    // Dropdown and mobile language
-    this.elements.dropdownLanguage = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguage);
-    this.elements.dropdownLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.dropdownLanguageText);
+    // Mobile language
     this.elements.mobileLanguageToggle = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageToggle);
     this.elements.mobileLanguageText = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mobileLanguageText);
     this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
@@ -191,12 +187,6 @@ class AppController {
             this._closeLanguageDropdown();
           }
         });
-      });
-    }
-
-    if (this.elements.dropdownLanguage) {
-      this.elements.dropdownLanguage.addEventListener('click', () => {
-        this._cycleLanguage();
       });
     }
 
@@ -291,10 +281,6 @@ class AppController {
         const optionLang = option.getAttribute('data-lang');
         option.classList.toggle('is-active', optionLang === language);
       });
-    }
-
-    if (this.elements.dropdownLanguageText) {
-      this.elements.dropdownLanguageText.textContent = label;
     }
 
     if (this.elements.mobileLanguageText) {

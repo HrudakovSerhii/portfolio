@@ -221,19 +221,19 @@
   }
 }
 
-// Tooltip for role badge
-.header-role-badge-tooltip {
+// Shared tooltip styles for header buttons
+.header-role-badge-tooltip,
+.header-menu-tooltip {
   position: absolute;
   top: calc(100% + variables.$spacing-xs);
   left: 50%;
   transform: translateX(-50%) translateY(-4px);
   padding: variables.$spacing-xs variables.$spacing-sm;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background-color: var(--color-text);
   border-radius: variables.$radius-md;
   font-size: 0.75rem;
   font-weight: variables.$font-weight-medium;
-  color: var(--color-primary);
+  color: var(--color-bg);
   white-space: nowrap;
   box-shadow: var(--shadow-md);
   opacity: 0;
@@ -249,17 +249,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-bottom-color: var(--color-border);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-bottom-color: var(--color-bg-secondary);
+    border-bottom-color: var(--color-text);
   }
 }
 
@@ -346,12 +336,20 @@
   }
 }
 
-// Menu toggle - visible on all viewports
+// Menu toggle - icon button with tooltip
 .header-menu-toggle {
-  display: flex;
-  padding: variables.$spacing-xs;
-  color: var(--color-text-secondary);
-  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  position: relative;
+  width: 2.5rem;
+
+  @include mixins.mobile {
+    display: none;
+  }
+
+  &:hover .header-menu-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 // Language selector with dropdown

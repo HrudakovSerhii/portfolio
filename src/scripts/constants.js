@@ -23,9 +23,7 @@ export const APP_CRITICAL_ELEMENT_IDS = {
     headerLanguageToggle: 'header-language-toggle',
     headerLanguageText: 'header-language-text',
     headerLanguageDropdown: 'header-language-dropdown',
-    // Dropdown and mobile language
-    dropdownLanguage: 'dropdown-language',
-    dropdownLanguageText: 'dropdown-language-text',
+    // Mobile language
     mobileLanguageToggle: 'mobile-language-toggle',
     mobileLanguageText: 'mobile-language-text',
     mainContent: 'main-content',
