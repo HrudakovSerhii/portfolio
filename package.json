@@ -1,6 +1,6 @@
 {
   "name": "portfolio-website",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "A fast-loading static portfolio website built with vanilla JS, HTML, and SCSS",
   "type": "module",
   "main": "src/scripts/app.js",

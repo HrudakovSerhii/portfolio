@@ -325,6 +325,7 @@
 
     .section__content {
       gap: variables.$spacing-md;
+      align-self: center;
 
       .section__content-cv {
         width: 50%;
