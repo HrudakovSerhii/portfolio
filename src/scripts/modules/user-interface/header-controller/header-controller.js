@@ -12,7 +12,6 @@ const HEADER_ELEMENTS = {
   dropdown: 'header-dropdown',
   dropdownRoleBadge: 'dropdown-role-badge',
   dropdownRoleText: 'dropdown-role-text',
-  dropdownThemeToggle: 'dropdown-theme-toggle',
   // Mobile nav elements
   mobileNavOverlay: 'mobile-nav-overlay',
   mobileNavClose: 'mobile-nav-close',
@@ -46,7 +45,6 @@ class HeaderController {
     this.dropdown = null;
     this.dropdownRoleBadge = null;
     this.dropdownRoleBadgeText = null;
-    this.dropdownThemeToggle = null;
     this.isMobile = false;
 
     // Mobile nav elements
@@ -76,7 +74,6 @@ class HeaderController {
     this.dropdown = document.getElementById(HEADER_ELEMENTS.dropdown);
     this.dropdownRoleBadge = document.getElementById(HEADER_ELEMENTS.dropdownRoleBadge);
     this.dropdownRoleBadgeText = document.getElementById(HEADER_ELEMENTS.dropdownRoleText);
-    this.dropdownThemeToggle = document.getElementById(HEADER_ELEMENTS.dropdownThemeToggle);
 
     // Cache mobile nav elements
     this.mobileNavOverlay = document.getElementById(HEADER_ELEMENTS.mobileNavOverlay);

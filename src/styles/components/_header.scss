@@ -85,7 +85,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: variables.$spacing-s;
   overflow-x: auto;
   flex: 1;
   min-width: 0;
@@ -193,10 +192,6 @@
 
   @include mixins.mobile {
     display: none;
-  }
-
-  @include mixins.tablet {
-    display: none !important;
   }
 }
 
