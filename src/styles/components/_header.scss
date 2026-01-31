@@ -496,7 +496,6 @@
 
     &--light {
       margin-left: 4px;
-      margin-top: 3px;
       color: var(--color-warning);
       opacity: 1;
     }
@@ -504,7 +503,6 @@
     &--dark {
       margin-left: auto;
       margin-right: 4px;
-      margin-top: 3px;
       color: var(--color-text);
       opacity: 0.5;
     }
@@ -700,6 +698,16 @@
   &:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: -2px;
+  }
+}
+
+.nav-title {
+  &.nav-no-items {
+    display: none;
+
+    &:last-child {
+      display: block;
+    }
   }
 }
 
