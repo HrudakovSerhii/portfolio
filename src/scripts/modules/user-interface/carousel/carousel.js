@@ -34,6 +34,23 @@ class Carousel {
     return window.innerWidth < 1024;
   }
 
+  _getVisibleItemsCount() {
+    const firstItem = this.track.querySelector('.carousel__item');
+    if (!firstItem) return 1;
+
+    const containerWidth = this.container.offsetWidth;
+    const itemWidth = firstItem.offsetWidth;
+    const gap = parseFloat(getComputedStyle(this.track).gap) || 0;
+
+    const visibleItems = Math.floor((containerWidth + gap) / (itemWidth + gap));
+    return Math.max(1, visibleItems);
+  }
+
+  _getMaxIndex() {
+    const visibleItems = this._getVisibleItemsCount();
+    return Math.max(0, this.items.length - visibleItems);
+  }
+
   render() {
     this.container.classList.add('carousel');
 
@@ -98,7 +115,7 @@ class Carousel {
   }
 
   next() {
-    if (this.currentIndex >= this.items.length - 1) return;
+    if (this.currentIndex >= this._getMaxIndex()) return;
 
     this.currentIndex++;
     this._updatePosition();
@@ -140,7 +157,7 @@ class Carousel {
     if (!this.options.navigation) return;
 
     this.prevButton.disabled = this.currentIndex === 0;
-    this.nextButton.disabled = this.currentIndex >= this.items.length - 1;
+    this.nextButton.disabled = this.currentIndex >= this._getMaxIndex();
   }
 
   _setupTouchEvents() {
