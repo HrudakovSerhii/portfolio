@@ -103,12 +103,13 @@ class SectionRenderer {
         block: 'end'
       });
 
+      this.stateManager.addRevealedSection(sectionId);
+
       await this.sectionAnimator.animateSection(sectionElement, sectionContent);
 
       this._renderMetaItems(sectionElement, sectionId, sectionMetadata, profileData, role);
       this._revealMetaItems(sectionElement);
 
-      this.stateManager.addRevealedSection(sectionId);
       trackSectionView(sectionId);
 
       this._updateActionPrompt();
