@@ -61,7 +61,7 @@
   transition: all variables.$transition-fast;
 
   &:hover {
-    border-color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
   }
 

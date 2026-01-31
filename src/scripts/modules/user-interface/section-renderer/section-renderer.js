@@ -49,6 +49,7 @@ class SectionRenderer {
 
     this.nextSectionPrompt = null;
     this.sectionsContainer = null;
+    this.scrollIndicator = null;
     this.sectionAnimator = new SectionAnimator(animationController, templateBuilder);
   }
 
@@ -56,6 +57,7 @@ class SectionRenderer {
     this.sectionsContainer = sectionsContainerElement;
 
     this._initNextSectionPrompts(onActionPromptClick);
+    this._initScrollIndicator();
   }
 
   _updateNextSectionPromptButton(promptText = `Read next: sectionId`) {
@@ -90,6 +92,9 @@ class SectionRenderer {
 
   async reveal(sectionId, role, customQuery = '') {
     try {
+      this._hideActionPrompt();
+      this._hideScrollIndicator();
+
       const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role, customQuery);
       const profileData = await this._fetchProfileData();
 
@@ -98,9 +103,11 @@ class SectionRenderer {
       this._populateHeader(sectionElement, sectionContent.header);
       this._populateContent(sectionElement, sectionContent.content, sectionMetadata);
 
-      this._scrollToElement(sectionElement, {
+      // Scroll to header element to ensure it's visible
+      const headerElement = sectionElement.querySelector(`.${SECTION_ELEMENTS.header}`);
+      this._scrollToElement(headerElement || sectionElement, {
         behavior: 'smooth',
-        block: 'end'
+        block: 'start'
       });
 
       this.stateManager.addRevealedSection(sectionId);
@@ -113,11 +120,7 @@ class SectionRenderer {
       trackSectionView(sectionId);
 
       this._updateActionPrompt();
-
-      this._scrollToElement(sectionElement, {
-        behavior: 'smooth',
-        block: 'start'
-      });
+      this._showScrollIndicatorIfNeeded(sectionElement);
     } catch (error) {
       console.error(`Failed to reveal section ${sectionId}:`, error);
     }
@@ -392,6 +395,58 @@ class SectionRenderer {
 
     const imageElement = generativeImage.create();
     imageContainer.appendChild(imageElement);
+  }
+
+  _initScrollIndicator() {
+    this.scrollIndicator = document.getElementById('scroll-indicator');
+
+    if (!this.scrollIndicator) {
+      return;
+    }
+
+    // Click to scroll down
+    this.scrollIndicator.addEventListener('click', () => {
+      window.scrollBy({
+        top: window.innerHeight * 0.5,
+        behavior: 'smooth'
+      });
+      this._hideScrollIndicator();
+    });
+
+    // Hide on scroll
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      scrollTimeout = setTimeout(() => {
+        this._hideScrollIndicator();
+      }, 100);
+    }, { passive: true });
+  }
+
+  _showScrollIndicatorIfNeeded(sectionElement) {
+    if (!this.scrollIndicator) {
+      return;
+    }
+
+    // Check if there's content below the viewport
+    requestAnimationFrame(() => {
+      const sectionRect = sectionElement.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const contentBelowViewport = sectionRect.bottom > viewportHeight;
+
+      if (contentBelowViewport) {
+        this.scrollIndicator.classList.add('scroll-indicator--visible');
+      }
+    });
+  }
+
+  _hideScrollIndicator() {
+    if (!this.scrollIndicator) {
+      return;
+    }
+    this.scrollIndicator.classList.remove('scroll-indicator--visible');
   }
 }
 

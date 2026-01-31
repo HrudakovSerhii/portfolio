@@ -61,8 +61,8 @@
     <div class="header__container">
       <div class="header-left">
         <div class="header-brand">
-          <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
           <a href="#intro-section" class="header-brand-link">
+            <span class="material-symbols-outlined header-brand-icon" aria-hidden="true">terminal</span>
             <span class="header-brand-text">Serhii Hrudakov</span>
           </a>
         </div>
@@ -125,16 +125,16 @@
               </button>
               <div id="header-language-dropdown" class="header-language-dropdown" role="menu" aria-hidden="true">
                 <button class="header-language-option" data-lang="en" role="menuitem">
-                  <span class="header-language-option-text">English</span>
-                  <span class="header-language-option-code">EN</span>
+                  <span class="lang-option-text">English</span>
+                  <span class="lang-option-code">EN</span>
                 </button>
                 <button class="header-language-option" data-lang="nl" role="menuitem">
-                  <span class="header-language-option-text">Nederlands</span>
-                  <span class="header-language-option-code">NL</span>
+                  <span class="lang-option-text">Nederlands</span>
+                  <span class="lang-option-code">NL</span>
                 </button>
                 <button class="header-language-option" data-lang="ua" role="menuitem">
-                  <span class="header-language-option-text">Українська</span>
-                  <span class="header-language-option-code">UA</span>
+                  <span class="lang-option-text">Українська</span>
+                  <span class="lang-option-code">UA</span>
                 </button>
               </div>
             </div>
@@ -195,16 +195,16 @@
           </button>
           <div id="mobile-language-dropdown" class="mobile-language-dropdown" role="menu" aria-hidden="true">
             <button class="mobile-language-option" data-lang="en" role="menuitem">
-              <span class="mobile-language-option-text">English</span>
-              <span class="mobile-language-option-code">EN</span>
+              <span class="lang-option-text">English</span>
+              <span class="lang-option-code">EN</span>
             </button>
             <button class="mobile-language-option" data-lang="nl" role="menuitem">
-              <span class="mobile-language-option-text">Nederlands</span>
-              <span class="mobile-language-option-code">NL</span>
+              <span class="lang-option-text">Nederlands</span>
+              <span class="lang-option-code">NL</span>
             </button>
             <button class="mobile-language-option" data-lang="ua" role="menuitem">
-              <span class="mobile-language-option-text">Українська</span>
-              <span class="mobile-language-option-code">UA</span>
+              <span class="lang-option-text">Українська</span>
+              <span class="lang-option-code">UA</span>
             </button>
           </div>
         </div>
@@ -220,6 +220,7 @@
         </button>
       </div>
       <nav id="mobile-nav" class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+        <span class="nav-title nav-no-items">More items will be visible when you read through the story</span>
         <!-- Navigation items will be synced dynamically from header-nav -->
       </nav>
     </div>
@@ -256,7 +257,7 @@
                   aria-label="Download Serhii CV"
                   title="Download resume">
             <span class="material-symbols-outlined" aria-hidden="true">download</span>
-            <span class="mobile-nav-control-text" data-i18n="intro.download">Download my CV</span>
+            <span data-i18n="intro.download">Download my CV</span>
           </a>
         </div>
       </div>
@@ -300,6 +301,14 @@
               data-default-text="Next">
         <span data-i18n="section.next">Next:</span>
       </button>
+    </div>
+
+    <!-- Scroll indicator - shown when content extends below viewport -->
+    <div id="scroll-indicator" class="scroll-indicator" aria-hidden="true">
+      <span class="scroll-indicator__text" data-i18n="section.moreBelow">More below</span>
+      <svg class="scroll-indicator__arrow" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
     </div>
 
   </main>
