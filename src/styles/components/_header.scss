@@ -1,6 +1,115 @@
 @use '../base/variables';
 @use '../base/mixins';
 
+// =============================================================================
+// SHARED LANGUAGE DROPDOWN STYLES
+// =============================================================================
+
+// Shared language dropdown base
+%lang-dropdown-base {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-md;
+  box-shadow: var(--shadow-md);
+  z-index: variables.$z-header + 2;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: opacity variables.$transition-base,
+              visibility variables.$transition-base,
+              transform variables.$transition-base;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+// Shared language option base
+%lang-option-base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color variables.$transition-base,
+              color variables.$transition-base;
+
+  &:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  &.is-active {
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    font-weight: variables.$font-weight-medium;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}
+
+%lang-option-text {
+  flex: 1;
+  text-align: left;
+}
+
+%lang-option-code {
+  font-weight: variables.$font-weight-medium;
+  opacity: 0.7;
+}
+
+// =============================================================================
+// SHARED MOBILE CONTROL CARD STYLES
+// =============================================================================
+
+@mixin control-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: variables.$spacing-xs;
+  min-height: 64px;
+  padding: variables.$spacing-sm;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-lg;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color variables.$transition-base,
+              border-color variables.$transition-base;
+
+  &:hover,
+  &:active {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-text-tertiary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 1.5rem;
+  }
+}
+
+// =============================================================================
+// HEADER STYLES
+// =============================================================================
+
 .header {
   position: sticky;
   top: 0;
@@ -337,68 +446,22 @@
 }
 
 
+// Desktop language dropdown - extends shared base
 .header-language-dropdown {
-  position: absolute;
+  @extend %lang-dropdown-base;
   top: calc(100% + 4px);
-  right: 0;
   min-width: 140px;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: variables.$radius-md;
-  box-shadow: var(--shadow-md);
-  z-index: variables.$z-header + 2;
-  opacity: 0;
-  visibility: hidden;
-  overflow: hidden;
   transform: translateY(-4px);
-  transition: opacity variables.$transition-base, visibility variables.$transition-base, transform variables.$transition-base;
-
-  &.is-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
 }
 
 .header-language-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: variables.$spacing-sm variables.$spacing-md;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
+  @extend %lang-option-base;
   font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  transition: background-color variables.$transition-base, color variables.$transition-base;
-
-  &:hover {
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text);
-  }
-
-  &.is-active {
-    background-color: rgba(var(--color-primary-rgb), 0.1);
-    color: var(--color-primary);
-    font-weight: variables.$font-weight-medium;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
-  }
 }
 
-.header-language-option-text {
-  flex: 1;
-  text-align: left;
-}
-
-.header-language-option-code {
-  font-weight: variables.$font-weight-medium;
-  opacity: 0.7;
-}
+// Shared language option inner classes (used by both desktop and mobile)
+.lang-option-text { @extend %lang-option-text; }
+.lang-option-code { @extend %lang-option-code; }
 
 // Dropdown menu for desktop
 .header-dropdown {
@@ -646,7 +709,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: variables.$spacing-md variables.$spacing-lg;
+  padding: variables.$spacing-md;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -665,7 +728,7 @@
 .mobile-nav {
   display: flex;
   flex-direction: column;
-  padding: variables.$spacing-md 0;
+  padding: variables.$spacing-md;
 }
 
 .mobile-nav-item {
@@ -720,36 +783,10 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+// Mobile control buttons - uses shared control-card mixin
 .mobile-nav-control-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: variables.$spacing-xs;
-  min-height: 64px;
-  padding: variables.$spacing-sm;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: variables.$radius-lg;
-  color: var(--color-text);
+  @include control-card;
   text-decoration: none;
-  cursor: pointer;
-  transition: background-color variables.$transition-base, border-color variables.$transition-base;
-
-  &:hover,
-  &:active {
-    background-color: var(--color-bg-tertiary);
-    border-color: var(--color-text-tertiary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .material-symbols-outlined {
-    font-size: 1.5rem;
-  }
 }
 
 .mobile-nav-control-text {
@@ -773,36 +810,10 @@
   }
 }
 
+// Mobile language toggle - uses shared control-card mixin
 .mobile-language-toggle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: variables.$spacing-xs;
+  @include control-card;
   width: 100%;
-  min-height: 64px;
-  padding: variables.$spacing-sm;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: variables.$radius-lg;
-  color: var(--color-text);
-  cursor: pointer;
-  transition: background-color variables.$transition-base, border-color variables.$transition-base;
-
-  &:hover,
-  &:active {
-    background-color: var(--color-bg-tertiary);
-    border-color: var(--color-text-tertiary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .material-symbols-outlined {
-    font-size: 1.5rem;
-  }
 
   &[aria-expanded="true"] {
     border-color: var(--color-primary);
@@ -822,65 +833,17 @@
   transition: transform variables.$transition-base;
 }
 
+// Mobile language dropdown - extends shared base
 .mobile-language-dropdown {
-  position: absolute;
+  @extend %lang-dropdown-base;
   bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
   border-radius: variables.$radius-lg;
   box-shadow: var(--shadow-lg);
-  z-index: variables.$z-header + 2;
-  opacity: 0;
-  visibility: hidden;
-  overflow: hidden;
   transform: translateY(8px);
-  transition: opacity variables.$transition-base, visibility variables.$transition-base, transform variables.$transition-base;
-
-  &.is-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
 }
 
 .mobile-language-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: variables.$spacing-sm variables.$spacing-md;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
+  @extend %lang-option-base;
   font-size: 0.875rem;
-  transition: background-color variables.$transition-base, color variables.$transition-base;
-
-  &:hover {
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text);
-  }
-
-  &.is-active {
-    background-color: rgba(var(--color-primary-rgb), 0.1);
-    color: var(--color-primary);
-    font-weight: variables.$font-weight-medium;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
-  }
 }
 
-.mobile-language-option-text {
-  flex: 1;
-  text-align: left;
-}
-
-.mobile-language-option-code {
-  font-weight: variables.$font-weight-medium;
-  opacity: 0.7;
-}

@@ -42,21 +42,6 @@
     }
   }
 
-  &--recruiter:hover {
-    border-color: var(--color-blue-500);
-    background-color: var(--color-blue-hover-bg);
-  }
-
-  &--developer:hover {
-    border-color: var(--color-indigo-500);
-    background-color: var(--color-indigo-hover-bg);
-  }
-
-  &--friend:hover {
-    border-color: var(--color-teal-500);
-    background-color: var(--color-teal-hover-bg);
-  }
-
   &__title {
     font-size: variables.$font-size-base;
     font-weight: 600;
