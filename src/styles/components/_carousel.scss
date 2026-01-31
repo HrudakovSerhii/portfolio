@@ -48,16 +48,17 @@
     align-items: stretch;
     transition: transform 300ms ease-in-out;
     will-change: transform;
-    gap: variables.$spacing-sm;
+    gap: variables.$spacing-xs;
 
     @include mixins.tablet {
-      gap: variables.$spacing-md;
+      gap: variables.$spacing-sm;
     }
   }
 
   &__item {
     display: grid;
     flex-shrink: 0;
+    margin: variables.$spacing-xs;
     width: min(100%, 320px);
 
     // Direct child stretches to fill item height

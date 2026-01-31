@@ -90,6 +90,8 @@ class SectionRenderer {
 
   async reveal(sectionId, role, customQuery = '') {
     try {
+      this._hideActionPrompt();
+
       const { sectionContent, sectionMetadata } = await this._fetchSectionData(sectionId, role, customQuery);
       const profileData = await this._fetchProfileData();
 
