@@ -197,11 +197,60 @@
 
 .header-role-badge {
   display: none;
+  position: relative;
 
   @include mixins.tablet {
     &.visible {
       display: flex;
     }
+  }
+
+  &:hover .header-role-badge-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+// Tooltip for role badge
+.header-role-badge-tooltip {
+  position: absolute;
+  top: calc(100% + variables.$spacing-xs);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: variables.$spacing-xs variables.$spacing-sm;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: variables.$radius-md;
+  font-size: 0.75rem;
+  font-weight: variables.$font-weight-medium;
+  color: var(--color-primary);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity variables.$transition-base, visibility variables.$transition-base, transform variables.$transition-base;
+  z-index: variables.$z-header + 1;
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: var(--color-border);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: var(--color-bg-secondary);
   }
 }
 
