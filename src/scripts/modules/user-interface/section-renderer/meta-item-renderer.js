@@ -22,7 +22,6 @@ class MetaItemRenderer {
 
     if (elements.length > 0) {
       const carousel = new Carousel(container, elements, {
-        loop: true,
         navigation: true
       });
 
