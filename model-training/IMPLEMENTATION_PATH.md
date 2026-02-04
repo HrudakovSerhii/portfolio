@@ -28,19 +28,25 @@
 ### Artifacts
 ```
 model-training/
-├── cv-training-data.jsonl          # 500+ Q&A training pairs
-├── serhii-qwen-lora-v2/            # Trained model checkpoints
-│   ├── checkpoint-50/              # Best performance (recommend using this)
-│   ├── checkpoint-100/
-│   ├── checkpoint-160/
-│   └── checkpoint-200/
+├── data/cv-training-data.jsonl     # 569 Q&A training pairs
+├── serhii-qwen-lora-v2/            # Trained model (v2) with tokenizer files
+├── run-scripts/train_hf_jobs.py    # HF Jobs cloud training script
 ├── test/test_qwen_model.py         # Automated testing script
-└── train_local.py                  # Training script
+└── test/test_rag.py                # RAG testing script
 ```
 
 ---
 
-## Phase 2: RAG + Fine-tuned Model Hybrid 🎯 NEXT STEP
+## Phase 2: RAG + Fine-tuned Model Hybrid 🚧 IN PROGRESS
+
+### Progress Summary
+| Step | Status | Description |
+|------|--------|-------------|
+| Step 1: Knowledge Base | ✅ Complete | 569 chunks, embeddings ready |
+| Step 2: RAG Pipeline | ❌ Pending | Need `retriever.py` |
+| Step 3: Integration | ❌ Pending | Need `hybrid_chat.py` |
+| Step 4: Testing | ⏳ Waiting | Test files ready, need RAG |
+| Step 5: Frontend | ❌ Pending | Need API server |
 
 ### Architecture Overview
 Combine the strengths of both approaches:
@@ -70,35 +76,38 @@ User Question
 
 ### Implementation Steps
 
-#### Step 1: Create Knowledge Base
+#### Step 1: Create Knowledge Base ✅ COMPLETED
 **Goal**: Convert CV data into semantic chunks for retrieval
 
 **Tasks:**
-- [ ] Extract facts from `cv-training-data.jsonl`
-- [ ] Create structured knowledge chunks:
-  ```json
-  {
-    "id": "project_adam_impact",
-    "category": "project",
-    "company": "A-Dam",
-    "content": "Led A-Dam web-shop development using NextJS and React. Achieved 100% revenue increase and 75% client retention through GraphQL API optimization.",
-    "keywords": ["A-Dam", "NextJS", "React", "GraphQL", "100%", "revenue"]
-  }
-  ```
-- [ ] Generate embeddings using `sentence-transformers/all-MiniLM-L6-v2`
-- [ ] Store in vector database (options: FAISS, ChromaDB, or simple numpy array)
+- [x] Extract facts from `cv-training-data.jsonl`
+- [x] Create structured knowledge chunks with id, category, role, question, content, company, keywords
+- [x] Generate embeddings using `sentence-transformers/all-MiniLM-L6-v2` (384 dimensions)
+- [x] Export role-specific JSON files for browser deployment
 
-**Files to create:**
+**Results:**
+- 569 semantic chunks created
+- 3 role-specific embedding files: hr (174), developer (226), friend (169)
+- Browser-compatible JSON format for client-side vector search
+
+**Files created:**
 ```
 model-training/rag/
 ├── create_knowledge_base.py        # Convert JSONL → knowledge chunks
 ├── generate_embeddings.py          # Create vector embeddings
-└── knowledge_base/
-    ├── chunks.json                 # Structured fact chunks
-    └── embeddings.npy              # Vector embeddings
+├── export_browser_embeddings.py    # Export for browser deployment
+├── RAG_README.md                   # Implementation specification
+├── knowledge_base/
+│   ├── chunks.json                 # 569 structured fact chunks
+│   ├── chunks_stats.json           # Category/role distribution stats
+│   └── embedding_metadata.json     # Model config (384 dims, L2 normalized)
+└── embedding-data/
+    ├── embeddings-hr.json          # Professional/leadership chunks (1.9MB)
+    ├── embeddings-developer.json   # Technical chunks (2.4MB)
+    └── embeddings-friend.json      # Personal/hobbies chunks (1.8MB)
 ```
 
-#### Step 2: Build RAG Pipeline
+#### Step 2: Build RAG Pipeline ❌ PENDING
 **Goal**: Retrieve relevant facts for any question
 
 **Tasks:**
@@ -119,7 +128,7 @@ model-training/rag/
 └── retriever.py                    # Semantic search implementation
 ```
 
-#### Step 3: Integrate with Fine-tuned Model
+#### Step 3: Integrate with Fine-tuned Model ❌ PENDING
 **Goal**: Use Qwen to generate responses from retrieved facts
 
 **Tasks:**
@@ -144,23 +153,24 @@ model-training/rag/
 └── hybrid_chat.py                  # RAG + Qwen integration
 ```
 
-#### Step 4: Test & Optimize
+#### Step 4: Test & Optimize ⏳ WAITING
 **Goal**: Validate accuracy and quality
 
 **Tasks:**
-- [ ] Run test suite from `test_qwen_model.py` with RAG
+- [ ] Run test suite with RAG (test files exist, waiting for retriever)
 - [ ] Target: >90% factual accuracy
 - [ ] Tune retrieval parameters (top_k, similarity threshold)
 - [ ] Optimize response generation (temperature, max_tokens)
 - [ ] Compare with Phase 1 results
 
-**Files to update:**
+**Files (created, awaiting integration):**
 ```
 model-training/test/
-└── test_hybrid_system.py           # Test RAG + model integration
+├── test_rag.py                     # RAG system testing (manual)
+└── test_rag_automated.py           # Automated RAG testing
 ```
 
-#### Step 5: Frontend Integration
+#### Step 5: Frontend Integration ❌ PENDING
 **Goal**: Connect to portfolio chat interface
 
 **Tasks:**
@@ -201,15 +211,16 @@ model-training/api/
 ## Technology Stack
 
 ### Current
-- **Model**: Qwen2.5-0.5B-Instruct + LoRA
+- **Model**: Qwen2.5-0.5B-Instruct + LoRA (v2)
 - **Framework**: Hugging Face Transformers, PEFT
-- **Training**: Local (Mac mini)
+- **Training**: HF Jobs (cloud) or local (Mac mini)
 
-### Phase 2 Additions
-- **Embeddings**: sentence-transformers/all-MiniLM-L6-v2 (~80MB)
-- **Vector DB**: FAISS (lightweight) or ChromaDB
-- **API**: FastAPI (Python) or Express (Node.js)
-- **Deployment**: Local inference or Hugging Face Spaces
+### Phase 2 Progress
+- **Embeddings**: sentence-transformers/all-MiniLM-L6-v2 ✅ Implemented
+- **Vector Storage**: JSON files for browser-side search ✅ Implemented
+- **Retriever**: Pending implementation
+- **API**: FastAPI (Python) - pending
+- **Deployment**: Browser-side inference planned (ONNX)
 
 ---
 
@@ -270,7 +281,8 @@ Phase 2 is successful if:
 
 ## References
 
-- Training data: `cv-training-data.jsonl`
-- Test results: `test/test_qwen_model.py` output
-- Model metrics: `serhii-qwen-lora-v2/checkpoint-*/trainer_state.json`
-- Overfitting analysis: `TRACKIO_METRICS_GUIDE.md`
+- Training data: `data/cv-training-data.jsonl` (569 Q&A pairs)
+- Knowledge base: `rag/knowledge_base/chunks.json` (569 semantic chunks)
+- Embeddings: `rag/embedding-data/` (role-specific JSON files)
+- Test scripts: `test/test_qwen_model.py`, `test/test_rag.py`
+- DPO Guide: `DPO_TRAINING_GUIDE.md` (alternative training approach)

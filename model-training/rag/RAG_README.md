@@ -1,4 +1,4 @@
-# RAG Test Script Agent Description
+# RAG Test Script Agent Readme
 
 ## Mission
 Build a Python test script that demonstrates RAG (Retrieval-Augmented Generation) by:
@@ -11,7 +11,7 @@ Build a Python test script that demonstrates RAG (Retrieval-Augmented Generation
 ## Existing Infrastructure
 
 ### Embedding Files (Already Generated)
-**Location:** `/Users/serhiihrudakov/Documents/Code/FE/portfolio/public/data/`
+**Location:** `/Users/serhiihrudakov/Documents/Code/FE/portfolio/model-training/rag/embedding-data/`
 
 Three role-specific JSON files:
 - `embeddings-hr.json` (1.9 MB, 174 chunks) - Professional/leadership focus
@@ -93,18 +93,20 @@ model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 ```
 
 ### Step 2: Load Role-Specific Embeddings
+
 ```python
 import json
 
+
 def load_embeddings(role):
-    """Load embeddings for specified role (hr, developer, friend)"""
-    base_path = "/Users/serhiihrudakov/Documents/Code/FE/portfolio/public/data"
-    file_path = f"{base_path}/embeddings-{role}.json"
+   """Load embeddings for specified role (hr, developer, friend)"""
+   base_path = "/data"
+   file_path = f"{base_path}/embeddings-{role}.json"
 
-    with open(file_path, 'r') as f:
-        chunks = json.load(f)
+   with open(file_path, 'r') as f:
+      chunks = json.load(f)
 
-    return chunks
+   return chunks
 ```
 
 ### Step 3: Generate Query Embedding
