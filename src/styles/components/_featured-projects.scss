@@ -1,0 +1,18 @@
+// Skills section
+
+.featured-projects {
+  height: 100vh;
+
+  &__container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 50%;
+  }
+
+  &__details__container {
+    background-color: var(--color-surface);
+  }
+}

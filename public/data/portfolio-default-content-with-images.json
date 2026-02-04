@@ -1,0 +1,303 @@
+{
+  "profile": {
+    "name": "Serhii Hrudakov",
+    "title": "Lead Frontend Developer",
+    "email": "hrudakovserhii@gmail.com",
+    "phone": "+31614848082",
+    "location": "Purmerend, Netherlands",
+    "socialLinks": {
+      "linkedin": "https://linkedin.com/in/serhii-hrudakov"
+    }
+  },
+  "sections": {
+    "hero": {
+      "metadata": {
+        "title": "Welcome",
+        "icon": "home",
+        "order": 1,
+        "main_items": [
+          "Lead Frontend Developer",
+          "10+ years experience",
+          "TypeScript & React specialist"
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Serhii is a Lead Frontend Developer with over 10 years of commercial experience and a solid computer science background. He is a result-driven engineer who excels at building efficient teams and solving complex technical challenges. His expertise spans modern frontend architectures, team leadership, and delivering high-quality solutions for international clients.",
+          "image": {
+            "name": "hero.hr",
+            "imageAlt": "Serhii Hrudakov - Lead Frontend Developer",
+            "aspectRatio": "aspect-portrait",
+            "metadata": {
+              "prompt": "A professional, high-quality headshot of Serhii in a smart-casual blazer, standing in a modern, well-lit office in Amsterdam with blurred glass walls in the background. The lighting is soft and confident, conveying trustworthiness and European business experience[cite: 27, 147]."
+            }
+          }
+        },
+        "developer": {
+          "text": "I'm Serhii, a Lead Frontend Developer with a decade of experience navigating the evolving landscape of web technology. From migrating legacy monoliths to building AI-powered agents with WebSockets, I love tackling hard engineering problems. My core stack is TypeScript and React, but I'm equally comfortable designing backend APIs and configuring CI/CD pipelines.",
+          "image": {
+            "name": "hero.developer",
+            "imageAlt": "Serhii Hrudakov - Software Engineer",
+            "aspectRatio": "aspect-portrait",
+            "metadata": {
+              "prompt": "A moody, cinematic shot of a workspace at night. Focus is on a dual-monitor setup displaying VS Code with TypeScript syntax highlighting and a terminal window. A coffee mug is visible, but the developer is slightly out of focus in the background, deep in thought, representing the 'sleepless nights' of passion for coding[cite: 188]."
+            }
+          }
+        },
+        "friend": {
+          "text": "Hey! I'm Serhii, and I've been an engineer at heart since I started fixing old motorcycles in my dad's garage 30 years ago. Whether I'm coding a smart home system or hiking up a mountain, I'm always looking for the next challenge to solve. I believe in learning by doing, sharing knowledge, and having a great time while building cool stuff! 🚀",
+          "image": {
+            "name": "hero.friend",
+            "imageAlt": "Serhii Hrudakov",
+            "aspectRatio": "aspect-portrait",
+            "metadata": {
+              "prompt": "A candid, outdoor shot of Serhii hiking in the mountains, wearing a backpack and windbreaker against the wind. The background shows a stunning vista or a sunset near a campfire. He is smiling naturally, looking away from the camera, representing his love for active sports and nature[cite: 2, 4, 5]."
+            }
+          }
+        }
+      }
+    },
+    "about": {
+      "metadata": {
+        "title": "About Me",
+        "icon": "user",
+        "order": 2,
+        "main_items": [
+          "Master's in Computer Science",
+          "Engineering Passion",
+          "Leadership",
+          "Mentorship"
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "I hold a Master's degree in Computer Science and Engineering from Lviv Polytechnic University and have spent the last 10+ years driving success in commercial projects. My leadership philosophy focuses on building efficient, happy teams through collaborative learning and structured mentorship. I am currently based in the Netherlands, bringing a unique blend of technical excellence and multicultural adaptability to every project I lead.",
+          "image": {
+            "name": "hero.hr",
+            "imageAlt": "Professional background",
+            "aspectRatio": "aspect-portrait",
+            "metadata": {
+              "prompt": "Serhii standing near a whiteboard, sketching a high-level system architecture diagram. He is gesturing as if explaining a concept to a team member (off-camera). The environment is a clean, collaborative meeting room, symbolizing his role in mentorship and planning[cite: 140, 141]."
+            }
+          }
+        },
+        "developer": {
+          "text": "My engineering journey is built on a strong CS foundation, but my real education came from 10 years of shipping code in the trenches. I believe you don't truly master a skill until you can teach it, which is why I prioritize code reviews, knowledge sharing, and clear documentation. I've moved from building UI components to architecting full-scale platforms, always focusing on clean code, testing, and improving the developer experience.",
+          "image": {
+            "name": "hero.developer",
+            "imageAlt": "Engineering journey",
+            "aspectRatio": "aspect-portrait",
+            "metadata": {
+              "prompt": "A 'digital archaeology' concept image. A split composition: on the left, an old, dusty CRT monitor displaying 'Legacy Code' (WebSphere); on the right, a sleek MacBook Pro displaying clean React/Next.js code. Connected by a glowing 'migration bridge' visual to represent his expertise in modernizing legacy systems[cite: 139, 142]."
+            }
+          }
+        },
+        "friend": {
+          "text": "I'm a builder through and through—it started with a rusty set of tools in a garage and evolved into building smart home solutions with local LLMs today. I grew up near the mountains, so when I'm not coding, I'm usually organizing hiking trips to reconnect with nature and recharge. I believe that happy teams write better code, so I always try to bring positive energy and a collaborative spirit to my work! 🏔️",
+          "image": {
+            "name": "hero.friend",
+            "imageAlt": "Personal story",
+            "aspectRatio": "aspect-portrait",
+            "metadata": {
+              "prompt": "A nostalgic, warm-toned photo of a messy garage workbench. On the table: motorcycle parts, greasy tools, and a partially disassembled engine. In the foreground, a modern laptop is open, contrasting the mechanical roots with the digital present[cite: 67, 69]."
+            }
+          }
+        }
+      }
+    },
+    "skills": {
+      "metadata": {
+        "title": "Technical Skills",
+        "icon": "code",
+        "order": 3,
+        "main_items": [
+          "TypeScript",
+          "React",
+          "Node.js",
+          "DevOps",
+          "Testing",
+          "Architecture"
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "My technical toolkit is comprehensive, anchored by expert-level proficiency in TypeScript, React, and Next.js for frontend development. On the backend, I utilize Node.js, NestJS, and various API standards including GraphQL and WebSocket to build robust systems. I also bring strong DevOps capabilities with Azure and Docker, ensuring streamlined CI/CD pipelines and quality assurance through automated testing frameworks.",
+          "image": {
+            "name": "hero.hr",
+            "imageAlt": "Technical skills overview",
+            "aspectRatio": "aspect-square",
+            "metadata": {
+              "prompt": "A clean, isometric 3D illustration of a modern tech stack. Floating icons of TypeScript, React, Node.js, and Docker connected by sleek lines on a white background. It looks like a high-end enterprise infrastructure diagram, representing a comprehensive toolkit[cite: 157, 180]."
+            }
+          }
+        },
+        "developer": {
+          "text": "I live in the modern JS ecosystem: TypeScript is my default, and I build UIs with React, Next.js, and Redux/Saga for complex state management. For the backend, I rely on Node.js and NestJS, working with Prisma ORM and both REST and GraphQL APIs. I'm also big on testing hygiene—using Jest, Playwright, and RTL to keep coverage high—and I handle my own deployments using Docker and GitLab pipelines.",
+          "image": {
+            "name": "hero.developer",
+            "imageAlt": "Tech stack",
+            "aspectRatio": "aspect-square",
+            "metadata": {
+              "prompt": "Macro photography of a mechanical keyboard with RGB lighting. The screen behind it is blurred but clearly shows a green 'Test Passed' checkmark in a CLI environment (Jest/Playwright). Dark, cyber-punk aesthetic focusing on testing hygiene and developer experience[cite: 108, 143]."
+            }
+          }
+        },
+        "friend": {
+          "text": "Frontend is definitely my jam—I've been working with React since the early days and love how TypeScript keeps everything sane! But I also get a kick out of backend work, like hooking up WebSockets for real-time apps or designing database schemas. And don't get me started on DevOps—there is something oddly satisfying about setting up a perfect deployment pipeline that just works every time! 🛠️",
+          "image": {
+            "name": "hero.friend",
+            "imageAlt": "Technology passion",
+            "aspectRatio": "aspect-square",
+            "metadata": {
+              "prompt": "A shot of a 'Smart Home' hobby project. A Raspberry Pi or microcontroller with wires connecting to a sensor, sitting on a wooden desk next to a soldering iron. A tablet nearby displays a Home Assistant dashboard, representing his passion for automation and IoT[cite: 102, 106, 108]."
+            }
+          }
+        }
+      }
+    },
+    "experience": {
+      "metadata": {
+        "title": "Work Experience",
+        "icon": "briefcase",
+        "order": 4,
+        "main_items": [
+          "Hexaware",
+          "EriksDigital",
+          "A-Dam",
+          "DigitalChefs"
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "Currently, I serve as a Senior Plus FullStack Engineer at Hexaware, following successful tenures as a Frontend Team Lead at EriksDigital and a Senior Engineer at A-Dam. My career trajectory shows consistent growth in responsibility, from developing specific modules to leading teams and architecting enterprise-level solutions. I have successfully managed projects across diverse sectors including AI technology, e-commerce, and safety regulation systems.",
+          "image": {
+            "name": "hero.hr",
+            "imageAlt": "Professional experience",
+            "aspectRatio": "aspect-video",
+            "metadata": {
+              "prompt": "A timeline visualization on a glass surface. It ascends from left to right, with checkpoints labeled 'Retail', 'KLM', 'A-Dam', and 'Hexaware'. The background is the Amsterdam skyline, symbolizing the move to the Netherlands and steady career growth[cite: 11, 27, 40, 147]."
+            }
+          }
+        },
+        "developer": {
+          "text": "My recent work at Hexaware involves building the 'ChatAgent' system with AI and managing the 'Bonfire' dating platform using an NX monorepo. Before that, I tackled a massive legacy migration at EriksDigital, gradually strangling a WebSphere monolith into a headless React architecture. I also built a high-performance e-commerce SPA for A-Dam that handled massive traffic spikes and doubled the company's revenue.",
+          "image": {
+            "name": "hero.developer",
+            "imageAlt": "Technical projects",
+            "aspectRatio": "aspect-video",
+            "metadata": {
+              "prompt": "A conceptual image of 'Strangling the Monolith'. A large, heavy stone block (the monolith) being chipped away by laser tools to reveal a shiny, agile diamond structure underneath. Represents the complex refactoring and inverse engineering work done at EriksDigital[cite: 142]."
+            }
+          }
+        },
+        "friend": {
+          "text": "I'm currently working on a futuristic AI project called ChatAgent, but I've had some wild rides before this! I led a team building a dating app where we had to make one codebase work for multiple brands, which was a fun puzzle. One of my proudest moments was at A-Dam, where the webshop we built literally doubled the company's revenue—seeing that impact was an amazing feeling! 📈",
+          "image": {
+            "name": "hero.friend",
+            "imageAlt": "Career journey",
+            "aspectRatio": "aspect-video",
+            "metadata": {
+              "prompt": "A candid shot of a team lunch with pizza boxes and laptops on a table, people laughing. It captures the 'startup grind' atmosphere at A-Dam where the team worked long hours but achieved great success, representing camaraderie and hard work[cite: 44, 45, 48]."
+            }
+          }
+        }
+      }
+    },
+    "projects": {
+      "metadata": {
+        "title": "Featured Projects",
+        "icon": "folder",
+        "order": 5,
+        "main_items": [
+          "ChatAgent AI",
+          "Bonfire Platform",
+          "Eriks WebShop",
+          "A-Dam WebShop"
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "My portfolio includes 'ChatAgent', a customizable AI system featuring MCP server integration and WebSocket APIs. I also led the development of 'Bonfire', a white-label dating platform built with NX monorepo and comprehensive testing protocols. At A-Dam, I engineered a revenue-doubling e-commerce solution that successfully expanded the business into US and Chinese markets.",
+          "image": {
+            "name": "hero.hr",
+            "imageAlt": "Featured projects",
+            "aspectRatio": "aspect-video",
+            "metadata": {
+              "prompt": "A close-up of an iPad held by a flight attendant (model) in a uniform, tapping a screen. The screen shows a clean UI (the KLM app Serhii built). Represents a real-world, high-impact professional achievement that made him proud[cite: 38, 39]."
+            }
+          }
+        },
+        "developer": {
+          "text": "The ChatAgent project is a highlight, using React, Python, and LangChain to create agents that actually use tools via MCP. For the Bonfire dating app, we used an NX monorepo to manage code for multiple brands, with SonarCloud ensuring quality. I'm also proud of the A-Dam webshop, where we migrated to Next.js and used Apollo caching strategies to optimize for speed and SEO.",
+          "image": {
+            "name": "hero.developer",
+            "imageAlt": "Technical projects",
+            "aspectRatio": "aspect-video",
+            "metadata": {
+              "prompt": "A visualization of the 'ChatAgent' AI. A wireframe mesh of a brain glowing in blue, connected to nodes labeled 'MCP', 'Python', and 'LangChain'. The background is dark data streams, representing his recent work with AI and complex system architecture[cite: 154]."
+            }
+          }
+        },
+        "friend": {
+          "text": "ChatAgent is my latest cool project—it's like building a brain that can use tools to help users! I also really enjoyed the 'digital archaeology' of modernizing the Eriks WebShop, turning old legacy code into something shiny and fast. On the side, I'm constantly tinkering with my smart home setup, using local LLMs to automate everything for my family's comfort! 🏠",
+          "image": {
+            "name": "hero.friend",
+            "imageAlt": "Personal projects",
+            "aspectRatio": "aspect-video",
+            "metadata": {
+              "prompt": "Illustration where multiple engineering tools and directions are combined. Software development (code, testing, using AI, using smart devices),  tools for wood working, electrician tools and soldering tools and tools for fixing bikes, motorcycles. "
+            }
+          }
+        }
+      }
+    },
+    "contact": {
+      "metadata": {
+        "title": "Get In Touch",
+        "icon": "mail",
+        "order": 6,
+        "main_items": [
+          "Email",
+          "LinkedIn",
+          "Phone",
+          "Amsterdam"
+        ]
+      },
+      "content": {
+        "recruiter": {
+          "text": "I am interested in finding a team that values collaborative learning and offers challenging development tasks. You can reach me via email at hrudakovserhii@gmail.com, by phone at +31614848082, or connect with me on LinkedIn. I am based in Amsterdam, Netherlands, and look forward to discussing how my experience can add value to your organization.",
+          "image": {
+            "name": "hero.hr",
+            "imageAlt": "Contact Serhii Hrudakov",
+            "aspectRatio": "aspect-square",
+            "metadata": {
+              "prompt": "Serhii sitting in a modern coffee shop in Amsterdam, looking at the camera with an open, inviting posture. A laptop and a notebook are on the table. It exudes a professional yet approachable 'Let's talk business' vibe[cite: 85, 147]."
+            }
+          }
+        },
+        "developer": {
+          "text": "I'm always up for a chat about architecture, new tech stacks, or the latest in frontend development. Drop me a line at hrudakovserhii@gmail.com or find me on LinkedIn as 'serhii-hrudakov' if you want to connect. Whether it's discussing legacy migrations or the newest AI integrations, I'm keen to hear what you're working on.",
+          "image": {
+            "name": "hero.developer",
+            "imageAlt": "Connect with Serhii",
+            "aspectRatio": "aspect-square",
+            "metadata": {
+              "prompt": "A screen capture of a GitHub profile contribution graph (green squares) that is very active. Overlaid is a 'Connect' button in a terminal font. Represents the concept that 'Code is my language' and professional dedication[cite: 149, 186]."
+            }
+          }
+        },
+        "friend": {
+          "text": "Want to grab a coffee or just chat? You can email me at hrudakovserhii@gmail.com or find me on LinkedIn! I'm always happy to swap stories about coding adventures, hiking trails, or smart home projects. I'm in Amsterdam, so reach out—I'd love to connect! ☕",
+          "image": {
+            "name": "hero.friend",
+            "imageAlt": "Let's connect",
+            "aspectRatio": "aspect-square",
+            "metadata": {
+              "prompt": "Two cups of coffee on a wooden table with a map of hiking trails spread out underneath. Warm sunlight is hitting the table. Represents an invitation to 'grab a coffee and swap stories' about hobbies and life[cite: 9, 191]."
+            }
+          }
+        }
+      }
+    }
+  }
+}
