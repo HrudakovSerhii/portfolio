@@ -44,7 +44,6 @@ class ChatUI {
 
     // Store references to key elements
     this.loadingContainer = this.chatContainer.querySelector('.chat-loading');
-    this.styleSelection = this.chatContainer.querySelector('.chat-style-selection');
     this.messagesContainer = this.chatContainer.querySelector('.messages-container');
     this.inputContainer = this.chatContainer.querySelector('.chat-input');
     this.typingIndicator = this.chatContainer.querySelector('.typing-indicator');
@@ -131,7 +130,7 @@ class ChatUI {
       retryBtn.addEventListener('click', () => {
         this.hideError();
         this.showLoadingState();
-        
+
         // Trigger re-initialization if callback is available
         if (this.onRetry) {
           this.onRetry();
@@ -154,16 +153,16 @@ class ChatUI {
     if (fallbackForm) {
       fallbackForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const name = this.chatContainer.querySelector('.fallback-name').value.trim();
         const email = this.chatContainer.querySelector('.fallback-email').value.trim();
-        
+
         // Clear previous validation errors
         this.clearFormValidationErrors();
-        
+
         // Validate form data
         const validation = this.validateFallbackForm(name, email);
-        
+
         if (!validation.isValid) {
           // Show validation errors
           validation.errors.forEach(error => {
@@ -208,7 +207,7 @@ class ChatUI {
 
     // Store progress bar reference for external updates
     this.progressBar = progressBar;
-    
+
     // Initialize progress tracking
     this.progressState = {
       embedding: 0,
@@ -237,7 +236,7 @@ class ChatUI {
       textGen: 0.76
     };
 
-    const totalProgress = 
+    const totalProgress =
       (this.progressState.embedding * weights.embedding) +
       (this.progressState.eqa * weights.eqa) +
       (this.progressState.textGen * weights.textGen);
@@ -350,7 +349,7 @@ class ChatUI {
   showFallbackForm(message = null) {
     this.hideAllStates();
     const fallbackContainer = this.chatContainer.querySelector('.chat-fallback');
-    
+
     // Update message if provided
     if (message) {
       const fallbackMessage = fallbackContainer.querySelector('.fallback-message');
@@ -358,7 +357,7 @@ class ChatUI {
         fallbackMessage.textContent = message;
       }
     }
-    
+
     fallbackContainer.classList.remove('hidden');
 
     // Clear previous form data
@@ -405,9 +404,7 @@ Looking forward to hearing from you!
 
 Best regards,
 ${name}`);
-
-      const mailtoLink = `mailto:serhii@example.com?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
+      window.location.href = `mailto:serhii@example.com?subject=${subject}&body=${body}`;
     }
 
     // Show style-appropriate confirmation message
@@ -522,7 +519,7 @@ ${name}`);
   showFormValidationError(field, message) {
     const fallbackContainer = this.chatContainer.querySelector('.chat-fallback');
     const errorElement = fallbackContainer.querySelector(`.${field}-error`);
-    
+
     if (errorElement) {
       errorElement.textContent = message;
       errorElement.classList.remove('hidden');
