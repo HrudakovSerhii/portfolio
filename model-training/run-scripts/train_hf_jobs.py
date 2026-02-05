@@ -1,60 +1,36 @@
 # /// script
 # dependencies = ["trl>=0.12.0", "peft>=0.7.0", "trackio", "datasets", "transformers>=4.44.0", "accelerate", "bitsandbytes"]
 # ///
-
 """
-TinyLlama-1.1B DPO Training on Hugging Face Jobs Infrastructure
-Following HF Skills Training Best Practices
+TinyLlama-1.1B DPO Training on Hugging Face Jobs
 
-This script trains TinyLlama-1.1B using Direct Preference Optimization (DPO)
+Trains TinyLlama-1.1B using Direct Preference Optimization (DPO)
 to improve RAG context adherence and reduce hallucination.
 
-Author: HrudakovSerhii
-Dataset: HrudakovSerhii/rag-cv-preference-data
-Output Model: HrudakovSerhii/tinyllama-1.1b-rag-cv-v1
-
-Training Configuration:
-- Base Model: TinyLlama/TinyLlama-1.1B-Chat-v1.0
-- Method: DPO (Direct Preference Optimization)
-- Hardware: a10g-large (16GB VRAM)
-- Estimated Time: 2-3 hours
-- Estimated Cost: $12-15
-- Real-time Monitoring: Trackio dashboard
-
-Expected Output:
-- Full precision model: ~2.2GB
-- After Q4_0 quantization: ~550MB (browser-compatible)
+Run with: hf jobs uv run --flavor a10g-large --timeout 2h --secrets HF_TOKEN train_hf_jobs.py
 """
 
-import os
 from datasets import load_dataset
 from peft import LoraConfig
 from trl import DPOTrainer, DPOConfig
-import trackio
-
-print("=" * 80)
-print("TinyLlama-1.1B DPO Training for RAG-Optimized CV Chatbot")
-print("=" * 80)
 
 # ============================================================================
 # Configuration
 # ============================================================================
-
-# Model Configuration
 BASE_MODEL = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 DATASET_NAME = "HrudakovSerhii/portfolio-dpo-dataset"
 OUTPUT_DIR = "tinyllama-rag-cv-dpo"
 HUB_MODEL_ID = "HrudakovSerhii/tinyllama-1.1b-rag-cv-v1"
 
-# Trackio Configuration (Real-time Monitoring)
-TRACKIO_SPACE = "HrudakovSerhii/trackio"  # Your Trackio dashboard
-PROJECT_NAME = "cv-chatbot-training"       # Project grouping
-RUN_NAME = "tinyllama-dpo-rag-v1"         # This specific run
+# Trackio (real-time monitoring)
+PROJECT_NAME = "cv-chatbot-training"
+RUN_NAME = "tinyllama-dpo-rag-v1"
 
-print(f"Base Model: {BASE_MODEL}")
+print("=" * 80)
+print("TinyLlama-1.1B DPO Training for RAG CV Chatbot")
+print(f"Model: {BASE_MODEL}")
 print(f"Dataset: {DATASET_NAME}")
 print(f"Output: {HUB_MODEL_ID}")
-print(f"Trackio Dashboard: https://huggingface.co/spaces/{TRACKIO_SPACE}")
 print("=" * 80)
 
 # ============================================================================
@@ -190,6 +166,7 @@ training_args = DPOConfig(
     # Trackio Integration (Real-time Monitoring)
     # ========================================================================
     report_to="trackio",                    # Send metrics to Trackio
+    project=PROJECT_NAME,                   # Project grouping in Trackio
     run_name=RUN_NAME,                      # Descriptive run name
 
     # ========================================================================
@@ -241,18 +218,9 @@ print("✅ Trainer initialized successfully")
 print("\n" + "=" * 80)
 print("Starting DPO Training...")
 print("=" * 80)
-print(f"\n📊 Real-time monitoring:")
-print(f"   https://huggingface.co/spaces/{TRACKIO_SPACE}")
-print(f"\n   Project: {PROJECT_NAME}")
-print(f"   Run: {RUN_NAME}")
-print("\n💡 Key metrics to watch:")
-print("   - train/loss (should decrease)")
-print("   - eval/loss (should track train/loss)")
-print("   - train/rewards/chosen (should increase)")
-print("   - train/rewards/rejected (should decrease)")
-print("   - train/rewards/margins (should be positive and increasing)")
-print("\n⏱️  Estimated time: 2-3 hours")
-print("💰 Estimated cost: $12-15")
+print(f"\nMonitor: https://huggingface.co/spaces/HrudakovSerhii/trackio")
+print(f"Project: {PROJECT_NAME} | Run: {RUN_NAME}")
+print("\nKey metrics: train/loss, eval/loss, rewards/margins")
 print("=" * 80 + "\n")
 
 # Train!
@@ -278,26 +246,9 @@ print(f"✅ Model uploaded to: https://huggingface.co/{HUB_MODEL_ID}")
 # ============================================================================
 
 print("\n" + "=" * 80)
-print("🎉 TRAINING COMPLETE!")
+print("TRAINING COMPLETE!")
 print("=" * 80)
-print(f"\n📦 Model Details:")
-print(f"   Hub: https://huggingface.co/{HUB_MODEL_ID}")
-print(f"   Size (full precision): ~2.2GB")
-print(f"   Size (Q4_0 quantized): ~550MB")
-print(f"\n📊 Training Metrics:")
-print(f"   Dashboard: https://huggingface.co/spaces/{TRACKIO_SPACE}")
-print(f"   Run: {RUN_NAME}")
-print(f"\n🚀 Next Steps:")
-print(f"   1. Review training metrics on Trackio")
-print(f"   2. Convert to GGUF for browser deployment:")
-print(f"      - Run GGUF conversion script")
-print(f"      - Target: Q4_0 quantization (~550MB)")
-print(f"   3. Test with your RAG pipeline:")
-print(f"      - Compare against current 0.5B model")
-print(f"      - Evaluate context adherence")
-print(f"      - Check for hallucination reduction")
-print(f"\n💡 Model Usage:")
-print(f"   from transformers import AutoModelForCausalLM, AutoTokenizer")
-print(f"   model = AutoModelForCausalLM.from_pretrained('{HUB_MODEL_ID}')")
-print(f"   tokenizer = AutoTokenizer.from_pretrained('{HUB_MODEL_ID}')")
+print(f"Model: https://huggingface.co/{HUB_MODEL_ID}")
+print(f"Metrics: https://huggingface.co/spaces/HrudakovSerhii/trackio")
+print("\nNext: Convert to GGUF for browser deployment")
 print("=" * 80)
