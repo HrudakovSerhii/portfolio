@@ -1,0 +1,16 @@
+litellm_settings:
+  drop_params: true  # Drop unsupported parameters like reasoning_effort
+
+model_list:
+  - model_name: "qwen/qwen2.5-coder-14b"
+    litellm_params:
+      model: "openai/qwen/qwen2.5-coder-14b"
+      api_base: "http://host.docker.internal:1234/v1"
+      api_key: "lm-studio"
+
+  # Wildcard for any Anthropic model requests
+  - model_name: "anthropic/*"
+    litellm_params:
+      model: "openai/qwen/qwen2.5-coder-14b"
+      api_base: "http://host.docker.internal:1234/v1"
+      api_key: "lm-studio"

@@ -1,0 +1,243 @@
+#!/bin/zsh
+
+# Claude Local - Single entry point for running Claude Code with local LLMs
+#
+# Usage: ./claude-local [options] [-- claude_args...]
+#
+# Options:
+#   --help, -h     Show this help message
+#   --status       Check status of LM Studio and LiteLLM
+#
+# Examples:
+#   ./claude-local                    # Auto-detect and launch
+#   ./claude-local --status           # Check status
+#   ./claude-local -- --help          # Pass --help to Claude
+
+set -e
+
+# Get the directory where this script lives
+SCRIPT_DIR="${0:A:h}"
+
+# Source library functions
+source "${SCRIPT_DIR}/lib/common.sh"
+source "${SCRIPT_DIR}/lib/lmstudio.sh"
+source "${SCRIPT_DIR}/lib/litellm.sh"
+
+# ============================================================================
+# Help
+# ============================================================================
+
+show_help() {
+    cat << 'EOF'
+Claude Local - Run Claude Code with local LLMs via LM Studio
+
+USAGE:
+    ./claude-local [options] [-- claude_args...]
+
+OPTIONS:
+    --help, -h     Show this help message
+    --status       Check status of LM Studio and LiteLLM
+
+EXAMPLES:
+    ./claude-local                    # Auto-detect models and launch
+    ./claude-local --status           # Check if services are running
+    ./claude-local -- /help           # Pass /help to Claude
+
+REQUIREMENTS:
+    - LM Studio running with at least one model loaded
+    - Docker and Docker Compose installed
+
+HOW IT WORKS:
+    1. Detects loaded models from LM Studio (port 1234)
+    2. Generates LiteLLM config with available models
+    3. Starts/restarts LiteLLM proxy (port 4000)
+    4. Launches Claude Code with local configuration
+
+    If local setup fails, offers to fall back to Claude API.
+EOF
+}
+
+# ============================================================================
+# Status Check
+# ============================================================================
+
+show_status() {
+    ui_header "Service Status"
+
+    # Check LM Studio
+    if lms_check_running; then
+        ui_success "LM Studio is running on port ${LMSTUDIO_PORT}"
+
+        # Get loaded models
+        local models=($(lms_get_loaded_models))
+        if [[ ${#models[@]} -gt 0 ]]; then
+            ui_success "Loaded models: ${#models[@]}"
+            for model in "${models[@]}"; do
+                echo "       - $model"
+            done
+        else
+            ui_warn "No models loaded"
+        fi
+    else
+        ui_error "LM Studio is not running on port ${LMSTUDIO_PORT}"
+    fi
+
+    echo ""
+
+    # Check LiteLLM
+    if litellm_check_health; then
+        ui_success "LiteLLM proxy is healthy on port ${LITELLM_PORT}"
+    else
+        ui_error "LiteLLM proxy is not running or unhealthy"
+    fi
+
+    echo ""
+}
+
+# ============================================================================
+# Model Selection
+# ============================================================================
+
+select_model() {
+    local models=("$@")
+    local count=${#models[@]}
+
+    if [[ $count -eq 1 ]]; then
+        # Only one model, use it
+        SELECTED_MODEL="${models[1]}"
+        ui_success "Using model: ${SELECTED_MODEL}"
+        return 0
+    fi
+
+    # Multiple models - let user choose
+    ui_header "Available Models"
+
+    for i in {1..${#models[@]}}; do
+        echo "  [$i] ${models[$i]}"
+    done
+    echo ""
+
+    ui_prompt "Select model [1-${count}] (default: 1):"
+    read choice
+    choice=${choice:-1}
+
+    # Validate choice
+    if [[ ! "$choice" =~ ^[0-9]+$ ]] || [[ "$choice" -lt 1 ]] || [[ "$choice" -gt $count ]]; then
+        ui_warn "Invalid choice, using first model"
+        choice=1
+    fi
+
+    SELECTED_MODEL="${models[$choice]}"
+    ui_success "Selected: ${SELECTED_MODEL}"
+}
+
+# ============================================================================
+# Fallback to Claude API
+# ============================================================================
+
+offer_fallback() {
+    echo ""
+    ui_prompt "Use Claude API instead? [y/N]:"
+    read answer
+
+    if [[ "$answer" == "y" ]] || [[ "$answer" == "Y" ]]; then
+        ui_info "Launching Claude with default API configuration..."
+        unset ANTHROPIC_BASE_URL
+        unset ANTHROPIC_MODEL
+        unset ANTHROPIC_SMALL_FAST_MODEL
+        exec claude "$@"
+    else
+        ui_info "Exiting"
+        exit 1
+    fi
+}
+
+# ============================================================================
+# Main
+# ============================================================================
+
+main() {
+    # Parse arguments
+    local claude_args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            --status)
+                show_status
+                exit 0
+                ;;
+            --)
+                shift
+                claude_args=("$@")
+                break
+                ;;
+            *)
+                claude_args+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    ui_header "Claude Local"
+
+    # Step 1: Check LM Studio
+    ui_info "Checking LM Studio..."
+    if ! lms_check_running; then
+        ui_error "LM Studio is not running on port ${LMSTUDIO_PORT}"
+        ui_info "Please start LM Studio and load a model"
+        offer_fallback "${claude_args[@]}"
+    fi
+    ui_success "LM Studio is running"
+
+    # Step 2: Get loaded models
+    local all_models=($(lms_get_loaded_models))
+    if [[ ${#all_models[@]} -eq 0 ]]; then
+        ui_error "No models loaded in LM Studio"
+        ui_info "Please load a model in LM Studio"
+        offer_fallback "${claude_args[@]}"
+    fi
+
+    # Step 3: Filter to chat models only
+    local chat_models=($(lms_filter_chat_models "${all_models[@]}"))
+    if [[ ${#chat_models[@]} -eq 0 ]]; then
+        ui_error "No chat models loaded (only embedding models found)"
+        ui_info "Please load a chat-capable model in LM Studio"
+        offer_fallback "${claude_args[@]}"
+    fi
+    ui_success "Found ${#chat_models[@]} chat model(s)"
+
+    # Step 4: Select model (prompts if multiple)
+    select_model "${chat_models[@]}"
+
+    # Step 5: Generate LiteLLM config
+    ui_info "Generating LiteLLM configuration..."
+    litellm_generate_config "${all_models[@]}"
+    ui_success "Configuration updated"
+
+    # Step 6: Start/restart LiteLLM
+    if ! litellm_ensure_running; then
+        ui_error "LiteLLM proxy failed to start"
+        ui_info "Check logs: docker logs litellm"
+        offer_fallback "${claude_args[@]}"
+    fi
+    ui_success "LiteLLM proxy is ready"
+
+    # Step 7: Configure environment and launch Claude
+    export ANTHROPIC_AUTH_TOKEN="${LITELLM_API_KEY}"
+    export ANTHROPIC_BASE_URL="${LITELLM_URL}"
+    export ANTHROPIC_MODEL="${SELECTED_MODEL}"
+    export ANTHROPIC_SMALL_FAST_MODEL="${SELECTED_MODEL}"
+    export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+
+    ui_header "Launching Claude Code"
+    ui_info "Model: ${SELECTED_MODEL}"
+    ui_info "Proxy: ${LITELLM_URL}"
+    echo ""
+
+    exec claude "${claude_args[@]}"
+}
+
+main "$@"
