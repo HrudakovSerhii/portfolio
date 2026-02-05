@@ -497,47 +497,53 @@
   }
 }
 
-// Chat Trigger Button
+// Chat Trigger Button - Floating action button to open chat
 .chat-trigger {
   position: fixed;
   bottom: variables.$spacing-xl;
   right: variables.$spacing-xl;
-  width: 60px;
-  height: 60px;
-  background: var(--color-bg);
-  color: var(--color-text);
+  width: 56px;
+  height: 56px;
+  background: var(--color-accent, var(--color-primary));
+  color: var(--color-text-inverse, #fff);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 999;
+
+  // Hidden state - initially hidden until role is selected
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
 
   &:active {
     transform: scale(0.95);
   }
 
-  .chat-trigger__icon {
-    font-size: variables.$font-size-xl;
-    margin-bottom: 2px;
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
 
-  .chat-trigger__text {
-    font-size: variables.$font-size-sm;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .material-symbols-outlined {
+    font-size: 28px;
   }
 }
 
-// Utility Classes
-.hidden {
-  // display: none !important;
-}
+// Utility Classes - Hidden is handled per component for transition support
 
 // Responsive Design
 @media (max-width: variables.$breakpoint-desktop) {

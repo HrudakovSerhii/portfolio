@@ -285,32 +285,58 @@
             </div>
           </div>
 
-          <!-- Style Selection -->
-          <div class="chat-style-selection hidden">
-            <h4 data-translate="chat.styleSelection.title.text">How would you like to chat with Serhii?</h4>
-            <div class="style-options">
-              <button class="style-option" data-style="hr" type="button">
-                <span class="style-icon">👔</span>
-                <div>
-                  <span class="style-title" data-translate="chat.styleSelection.hr.title.text">Professional (HR)</span>
-                  <span class="style-description" data-translate="chat.styleSelection.hr.description.text">Formal, structured responses about experience and achievements</span>
-                </div>
-              </button>
-              <button class="style-option" data-style="developer" type="button">
-                <span class="style-icon">💻</span>
-                <div>
-                  <span class="style-title" data-translate="chat.styleSelection.developer.title.text">Technical (Developer)</span>
-                  <span class="style-description" data-translate="chat.styleSelection.developer.description.text">Conversational, technical discussion about projects and skills</span>
-                </div>
-              </button>
-              <button class="style-option" data-style="friend" type="button">
-                <span class="style-icon">😊</span>
-                <div>
-                  <span class="style-title" data-translate="chat.styleSelection.friend.title.text">Casual (Friend)</span>
-                  <span class="style-description" data-translate="chat.styleSelection.friend.description.text">Friendly, enthusiastic chat with personality and emojis</span>
-                </div>
-              </button>
+          <!-- Messages Container -->
+          <div class="chat-messages hidden">
+            <div class="messages-container"></div>
+            <div class="typing-indicator hidden">
+              <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span class="typing-text">Serhii is typing...</span>
             </div>
+          </div>
+
+          <!-- Error State -->
+          <div class="chat-error hidden">
+            <div class="error-content">
+              <span class="error-icon">😔</span>
+              <p class="error-message">Something went wrong. Please try again.</p>
+              <div class="error-actions">
+                <button class="error-retry" type="button">Try Again</button>
+                <button class="error-close" type="button">Close</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fallback Form -->
+          <div class="chat-fallback hidden">
+            <div class="fallback-content">
+              <h4>Let's connect directly!</h4>
+              <p class="fallback-message">I'd love to hear from you. Leave your details and I'll get back to you soon.</p>
+            </div>
+            <form class="fallback-form">
+              <input type="text" class="fallback-name" placeholder="Your name" required>
+              <span class="validation-error name-error hidden"></span>
+              <input type="email" class="fallback-email" placeholder="Your email" required>
+              <span class="validation-error email-error hidden"></span>
+              <button type="submit" class="fallback-submit">Send Email</button>
+              <button type="button" class="fallback-cancel">Cancel</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input hidden">
+          <div class="input-container">
+            <input type="text" class="message-input" placeholder="Type your message..." aria-label="Chat message">
+            <button class="send-button" type="button" aria-label="Send message">
+              <span class="material-symbols-outlined">send</span>
+            </button>
+          </div>
+          <div class="chat-actions">
+            <button class="restart-button" type="button">Start over</button>
           </div>
         </div>
       </div>
@@ -570,6 +596,12 @@
       </div>
     </div>
   </template>
+
+  <!-- Chat trigger button - shown after role selection -->
+  <button id="chat-trigger" class="chat-trigger hidden"
+          aria-label="Chat with Serhii AI" aria-expanded="false">
+    <span class="material-symbols-outlined">chat</span>
+  </button>
 
   <script type="module" src="./scripts/modules/app-controller/index.js"></script>
 </body>

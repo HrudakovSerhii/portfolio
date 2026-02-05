@@ -54,10 +54,12 @@ class AppController {
       mobileLanguageDropdown: null,
       mainContent: null,
       introSection: null,
+      chatTrigger: null,
     };
 
     this._handleLanguageDropdownClickOutside = this._handleLanguageDropdownClickOutside.bind(this);
 
+    this.chatController = null;
     this.initialized = false;
   }
 
@@ -120,6 +122,7 @@ class AppController {
       const role = this.stateManager.getRole();
 
       this.headerController.updateRoleBadge(role);
+      this._showChatTrigger();
 
       await Promise.all([this._hideIntroSectionCTA(), this.restoreState()]);
     }
@@ -142,6 +145,7 @@ class AppController {
     this.elements.mainContent = document.getElementById(APP_CRITICAL_ELEMENT_IDS.mainContent);
     this.elements.introSection = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSection);
     this.elements.introSectionCTA = document.getElementById(APP_CRITICAL_ELEMENT_IDS.introSectionCTA);
+    this.elements.chatTrigger = document.getElementById(APP_CRITICAL_ELEMENT_IDS.chatTrigger);
   }
 
   _validateCachedElements(criticalElementKeys) {
@@ -222,6 +226,11 @@ class AppController {
         }
       });
     });
+
+    // Chat trigger button
+    if (this.elements.chatTrigger) {
+      this.elements.chatTrigger.addEventListener('click', () => this._openChat());
+    }
 
     initCVDownloadTracking();
   }
@@ -453,6 +462,7 @@ class AppController {
 
       this.stateManager.setRole(role);
       this.headerController.updateRoleBadge(role);
+      this._showChatTrigger();
 
       await Promise.all([this._hideIntroSectionCTA(), this.revealSection(SECTION_ORDER[0])]);
     } catch (error) {
@@ -483,6 +493,24 @@ class AppController {
         resolve();
       }, INTRO_TRANSITION_DURATION);
     });
+  }
+
+  _showChatTrigger() {
+    if (this.elements.chatTrigger) {
+      this.elements.chatTrigger.classList.remove('hidden');
+    }
+  }
+
+  async _openChat() {
+    const role = this.stateManager.getRole();
+    if (!role) return;
+
+    if (!this.chatController) {
+      const { default: ChatController } = await import('../chat-bot/chat-controller.js');
+      this.chatController = new ChatController();
+    }
+
+    await this.chatController.openWithRole(role);
   }
 
   _resetPortfolioState() {

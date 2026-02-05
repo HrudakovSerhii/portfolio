@@ -30,6 +30,7 @@ export const APP_CRITICAL_ELEMENT_IDS = {
     mainContent: 'main-content',
     introSection: 'intro-section',
     introSectionCTA: 'story-cta',
+    chatTrigger: 'chat-trigger',
 };
 
 export const APP_APP_CRITICAL_ELEMENT_KEYS = [
@@ -39,3 +40,11 @@ export const APP_APP_CRITICAL_ELEMENT_KEYS = [
     'introSection',
     'introSectionCTA'
 ];
+
+// Maps portfolio roles to chat conversation styles
+// Note: 'recruiter' role maps to 'hr' chat style for professional tone
+export const ROLE_TO_CHAT_STYLE = {
+  'recruiter': 'hr',
+  'developer': 'developer',
+  'friend': 'friend'
+};

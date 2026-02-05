@@ -48,10 +48,12 @@ class ChatUI {
     this.inputContainer = this.chatContainer.querySelector('.chat-input');
     this.typingIndicator = this.chatContainer.querySelector('.typing-indicator');
 
-    // Validate all required elements exist
+    // Style selection is now optional (role selection handles this via ChatController)
+    this.styleSelection = this.chatContainer.querySelector('.chat-style-selection');
+
+    // Validate required elements exist (style selection is optional)
     const requiredElements = [
       { element: this.loadingContainer, name: 'loading container' },
-      { element: this.styleSelection, name: 'style selection' },
       { element: this.messagesContainer, name: 'messages container' },
       { element: this.inputContainer, name: 'input container' },
       { element: this.typingIndicator, name: 'typing indicator' }
@@ -256,8 +258,18 @@ class ChatUI {
 
   /**
    * Show conversation style selection interface
+   * @deprecated Style selection is now handled via role selection in AppController.
+   * This method is kept for backwards compatibility but logs a warning.
    */
   showStyleSelection() {
+    console.warn('ChatUI.showStyleSelection() is deprecated. Style is now set via role selection.');
+
+    // Only show if style selection element exists
+    if (!this.styleSelection) {
+      console.warn('Style selection element not found in DOM');
+      return;
+    }
+
     this.hideAllStates();
     this.styleSelection.classList.remove('hidden');
 

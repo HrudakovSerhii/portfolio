@@ -1,6 +1,10 @@
 /**
  * Chat Integration - Lazy loading entry point for chatbot feature
  * This module handles the initial loading and integration with the main portfolio
+ *
+ * Note: Auto-initialization has been removed. Chat is now initialized
+ * programmatically via ChatController when user clicks the chat trigger
+ * after selecting a role.
  */
 
 let chatBotInstance = null;
@@ -94,7 +98,7 @@ function showInitialLoadingState() {
   // Show the chat container
   chatContainer.classList.add('visible');
 
-  // Hide all states first
+  // Hide all states first (style selection is now optional)
   const states = [
     '.chat-style-selection',
     '.chat-messages',
@@ -114,7 +118,7 @@ function showInitialLoadingState() {
   const loadingContainer = chatContainer.querySelector('.chat-loading');
   if (loadingContainer) {
     loadingContainer.classList.remove('hidden');
-    
+
     // Update loading message
     const loadingMessage = loadingContainer.querySelector('.loading-message');
     if (loadingMessage) {
@@ -125,7 +129,7 @@ function showInitialLoadingState() {
     const progressBar = loadingContainer.querySelector('.progress-bar');
     if (progressBar) {
       progressBar.style.width = '0%';
-      
+
       // Animate progress
       let progress = 0;
       const interval = setInterval(() => {
@@ -136,7 +140,7 @@ function showInitialLoadingState() {
         }
         progressBar.style.width = `${progress}%`;
       }, 300);
-      
+
       // Store interval for cleanup
       chatContainer._progressInterval = interval;
     }
@@ -192,20 +196,15 @@ function cleanupChat() {
 // Cleanup on page unload
 window.addEventListener('beforeunload', cleanupChat);
 
-// Make functions available globally for HTML onclick handlers
-window.initializeChat = initializeChat;
+// Note: Auto-initialization removed. Chat is now initialized via ChatController
+// when user clicks the chat trigger after selecting a role.
+// Global functions are still available for backwards compatibility if needed.
 window.closeChatOverlay = closeChatOverlay;
-
-if (document.readyState === "loading") {
-  // Loading hasn't finished yet, initialize application on load complete
-  document.addEventListener("DOMContentLoaded", initializeChat);
-} else {
-  // `DOMContentLoaded` has already fired, initialize application
-  initializeChat().finally();
-}
 
 export default {
   initializeChat,
+  closeChatOverlay,
+  cleanupChat
 };
 
-export { initializeChat };
+export { initializeChat, closeChatOverlay, cleanupChat };
