@@ -22,7 +22,7 @@ export default defineConfig({
       minifyJS: true
     })
   ],
-  base: '/portfolio/',
+  base: '',
   root: 'src',
   publicDir: '../public',
   server: {

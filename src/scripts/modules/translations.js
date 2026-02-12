@@ -32,7 +32,7 @@ class TranslationService {
     }
 
     try {
-      const response = await fetch(`/portfolio/translations/${lang}.json`);
+      const response = await fetch(`/translations/${lang}.json`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
