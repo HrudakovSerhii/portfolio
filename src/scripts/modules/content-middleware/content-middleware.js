@@ -1,7 +1,7 @@
 class ContentMiddleware {
   constructor(baseDataUrl) {
     // baseDataUrl should be the full path to content-structure.json
-    // e.g., '/portfolio/data/content-structure.json'
+    // e.g., '/data/content-structure.json'
     this.dataUrl = baseDataUrl;
     this.contentData = null;
     this.loadPromise = null;
@@ -95,8 +95,8 @@ class ContentMiddleware {
         text: contentData.text || '',
         subText: contentData.subText || '',
         image: contentData.image ? {
-          imageUrl: `/portfolio/assets/images/${imageName}.full.webp`,
-          lowResImageUrl: `/portfolio/assets/images/${imageName}.low.webp`,
+          imageUrl: `/assets/images/${imageName}.full.webp`,
+          lowResImageUrl: `/assets/images/${imageName}.low.webp`,
           imageAlt: contentData.image.imageAlt || section.metadata.title,
           aspectRatio: contentData.image.aspectRatio || 'aspect-portrait',
         } : null

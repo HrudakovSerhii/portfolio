@@ -111,7 +111,7 @@ Complete redesign and feature expansion of the portfolio website, including an A
 - LightningCSS for CSS minification
 - vite-plugin-purgecss for unused CSS removal
 - vite-plugin-minify for JS minification
-- Configured base path `/portfolio/` for GitHub Pages
+- Configured base path `/` for GitHub Pages
 - Dev server with proper watch settings
 
 #### Performance Features
